@@ -1,6 +1,8 @@
-# {FILE_NAME}
+# @file {FILE_NAME}
 #
-# Copyright 2014 Martijn J. Schuemie and Marc A. Suchard
+# Copyright 2014 Observational Health Data Sciences and Informatics
+#
+# This file is part of SQLRender
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +15,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# @author Observational Health Data Sciences and Informatics
+# @author Martijn Schuemie
+# @author Marc Suchard
 
 /**
- * {FILE_NAME}
+ * @file {FILE_NAME}
  *
- * Copyright 2014 Martijn J. Schuemie and Marc A. Suchard
+ * This file is part of SQLRender
+ *
+ * Copyright 2014 Observational Health Data Sciences and Informatics
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,5 +38,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @author Observational Health Data Sciences and Informatics
+ * @author Martijn Schuemie
+ * @author Marc Suchard
  */
  
