@@ -5,14 +5,16 @@
 
 using namespace Rcpp;
 
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP SQLRender_rcpp_hello_world() {
+// renderSqlInteral
+Rcpp::List renderSqlInteral(std::string sql, Rcpp::List parameters);
+RcppExport SEXP SQLRender_renderSqlInteral(SEXP sqlSEXP, SEXP parametersSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
-        List __result = rcpp_hello_world();
+        Rcpp::traits::input_parameter< std::string >::type sql(sqlSEXP );
+        Rcpp::traits::input_parameter< Rcpp::List >::type parameters(parametersSEXP );
+        Rcpp::List __result = renderSqlInteral(sql, parameters);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);
