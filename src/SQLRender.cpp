@@ -7,7 +7,6 @@
 #include <iterator>
 #include <stack>
 
-#include "rcpp.h"
 #include "stringUtilities.h"
 #include "SQLRender.h"
 
@@ -208,34 +207,6 @@ String SQLRender::renderSql(String str, ParameterMap& parameterToValue) {
 
 } // namespace renderer
 } // namespace ohdsi
-
-
-// [[Rcpp::export]]
-Rcpp::List renderSqlInteral(std::string sql, Rcpp::List parameters) {
-
-	using namespace ohdsi::renderer;	
-
-  try{
-    //Convert list to map:
-    std::map<std::string, std::string> parameterToValue;
-    Rcpp::List names = parameters.attr("names");
-    for (unsigned int i = 0; i < parameters.size(); i++) {
-      parameterToValue[names[i]] = Rcpp::as<std::string>(parameters[i]);
-    }
-      
-      
-    SQLRender::String renderedSql = SQLRender::renderSql(sql, parameterToValue);
-    return Rcpp::List::create(Rcpp::Named( "parameterizedSql" ) = sql,
-                              Rcpp::Named( "sql" ) = renderedSql,
-                              Rcpp::Named( "parameters" ) = parameterToValue);
-
-    
-  } catch(std::exception &e) {
-    forward_exception_to_r(e);
-  } catch(...) {
-    ::Rf_error("c++ exception (unknown reason)");
-  }
-}
 
 #endif // __SQLRender_cpp__
 

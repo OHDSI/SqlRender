@@ -5,6 +5,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
+
+#include "stringUtilities.h"
 
 namespace ohdsi { // Put everything in a namespace
 namespace renderer { // Nested namespaces are very helpful
