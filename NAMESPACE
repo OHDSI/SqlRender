@@ -1,1 +1,2 @@
-export(renderSql)
+useDynLib(SQLRender)
+exportPattern("^[[:alpha:]]+")
