@@ -7,7 +7,7 @@ Author: Martijn J. Schuemie and Marc A. Suchard
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: Package for working with client-side parameterized SQL, where the
     parameterization goes beyond what is supported by prepared statements.
-License: What Licence is it under ?
+License: Apache
 Depends:
     Rcpp (>= 0.10.4)
 Suggests:
