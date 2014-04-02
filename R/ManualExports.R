@@ -46,5 +46,5 @@
 #' renderSql("{DEFAULT @@b = \"someField\"}SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};",a="myTable")
 #' @export
 renderSql <- function(sql = "", ...) {
-  .Call('SQLRender_renderSqlInteral', PACKAGE = 'SQLRender', sql, list(...))
+	.Call('SQLRender_renderSqlInternal', PACKAGE = 'SQLRender', sql, list(...))
 }

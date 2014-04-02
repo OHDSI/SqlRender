@@ -13,7 +13,6 @@ int main() {
 	parameters["b"] = "";
 	std::cout << SqlRender::renderSql(sql, parameters);
 	return 0;
-
 }
 
 #endif
