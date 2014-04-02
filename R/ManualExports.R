@@ -4,14 +4,14 @@
 #' \code{renderSql} Renders SQL code based on parameterized SQL and parameter values.
 #'
 #' @details
-#' This function takes parameterized SQL and a list of paramter values and renders the SQL that can be 
+#' This function takes parameterized SQL and a list of parameter values and renders the SQL that can be 
 #' send to the server.
 #' 
 #' @param str               The parameterized SQL
 #' @param ...               Parameter values
 #' @return              
 #' A list containing the following elements:
-#' \describe{
+#' \describe{  
 #'   \item{parameterizedSql}{The original parameterized SQL code}
 #'   \item{sql}{The rendered sql}
 #'   \item{parameters}{The parameters used. These may include defaults set in the parameterized SQL code.}

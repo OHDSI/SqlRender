@@ -5,9 +5,12 @@ Version: 0.1
 Date: 2014-03-26
 Author: Martijn J. Schuemie and Marc A. Suchard
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
-Description: Package for working with client-side parameterized SQL, where the parameterization goes beyond what is supported by prepared statements.
+Description: Package for working with client-side parameterized SQL, where the
+    parameterization goes beyond what is supported by prepared statements.
 License: What Licence is it under ?
-Depends: Rcpp (>= 0.10.4)
-Suggests: testthat
+Depends:
+    Rcpp (>= 0.10.4)
+Suggests:
+    testthat
 LinkingTo: Rcpp
 NeedsCompilation: yes

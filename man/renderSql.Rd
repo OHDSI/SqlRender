@@ -22,8 +22,8 @@ SQL and parameter values.
 }
 \details{
 This function takes parameterized SQL and a list of
-paramter values and renders the SQL that can be send to the
-server.
+parameter values and renders the SQL that can be send to
+the server.
 }
 \examples{
 renderSql("SELECT * FROM @a;",a="myTable")
