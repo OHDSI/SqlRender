@@ -26,11 +26,11 @@
 								<option id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.1502426046" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1221769967" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\R\R-3.0.3\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\R\R-3.0.3\library\Rcpp\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\R\R-3.0.3\library\RInside\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\Rcpp\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\RInside\include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.verbose.1037578147" name="Verbose (-v)" superClass="gnu.cpp.compiler.option.other.verbose" value="false" valueType="boolean"/>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.2125827854" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+								<option id="gnu.cpp.compiler.option.preprocessor.def.2125827854" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ECLIPSE"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1622444260" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -42,7 +42,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.1891866729" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
 							<tool command="g++ -m64 " id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug.215915828" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug">
-								<option id="gnu.cpp.link.option.userobjs.1251581149" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs"/>
+								<option id="gnu.cpp.link.option.userobjs.1251581149" name="Other objects" superClass="gnu.cpp.link.option.userobjs"/>
 								<option id="gnu.cpp.link.option.shared.1308850821" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.libs.408653536" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="R"/>
@@ -50,9 +50,9 @@
 									<listOptionValue builtIn="false" value="RInside"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.683108555" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;C:\R\R-3.0.3\bin\x64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\R\R-3.0.3\library\Rcpp\libs\x64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\R\R-3.0.3\library\RInside\libs\x64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\bin\x64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\Rcpp\libs\x64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\RInside\libs\x64&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.549320629" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
