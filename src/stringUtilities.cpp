@@ -22,15 +22,17 @@
  * @author Marc Suchard
  */
 
-#ifndef __stringUtilities_cpp__   // All files should have if-guards
+#ifndef __stringUtilities_cpp__
 #define __stringUtilities_cpp__
+
+#include "stringUtilities.h"
 
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
 #include <functional>
 #include <iterator>
-
-#include "stringUtilities.h"
+#include <sstream>
 
 namespace ohdsi {
 	namespace stringUtilities {
@@ -48,14 +50,6 @@ namespace ohdsi {
 		String& trim(String& s) {
 			return ltrim(rtrim(s));
 		}
-
-// This function is a bit strange.  First, you modify s and then you return a copy.  
-// So, both s and the copy are in lower case.
-// I have changed the behavior to first make a copy and then transform, such that s is const
-// std::string toLowerCase(std::string &s) {
-// 	std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-// 	return s;
-// }
 
 		String toLowerCase(const String& s) {
 			String result;
@@ -94,6 +88,18 @@ namespace ohdsi {
 			while ((pos = result.find(search, pos)) != std::string::npos) {
 				result.replace(pos, search.length(), replace);
 				pos += replace.length();
+			}
+			return result;
+		}
+
+		StringVector split(const String& source, const String& delimiter) {
+			std::stringstream ss(source);
+			StringVector result;
+
+			while (ss.good()) {
+				String substr;
+				std::getline(ss, substr, ',');
+				result.push_back(substr);
 			}
 			return result;
 		}

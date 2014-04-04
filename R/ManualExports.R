@@ -29,7 +29,7 @@
 #' This function takes parameterized SQL and a list of parameter values and renders the SQL that can be 
 #' send to the server.
 #' 
-#' @param str               The parameterized SQL
+#' @param sql               The parameterized SQL
 #' @param ...               Parameter values
 #' @return              
 #' A list containing the following elements:
@@ -43,8 +43,10 @@
 #' renderSql("SELECT * FROM @@a {@@b}?{WHERE x = 1};",a="myTable",b="true")
 #' renderSql("SELECT * FROM @@a {@@b == ''}?{WHERE x = 1}:{ORDER BY x};",a="myTable",b="true")
 #' renderSql("SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};",a="myTable",b="y")
+#' renderSql("SELECT * FROM @@a {1 IN (@@c)}?{WHERE @@b = 1};",a="myTable",b="y", c=c(1,2,3,4))
 #' renderSql("{DEFAULT @@b = \"someField\"}SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};",a="myTable")
 #' @export
 renderSql <- function(sql = "", ...) {
-	.Call('SQLRender_renderSqlInternal', PACKAGE = 'SQLRender', sql, list(...))
+	parameters <- lapply(list(...), function(x){paste(x,collapse=',')})
+	.Call('SQLRender_renderSqlInternal', PACKAGE = 'SQLRender', sql, parameters)
 }

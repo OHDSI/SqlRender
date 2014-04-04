@@ -28,8 +28,6 @@
 #include <Rcpp.h>
 #include "SqlRender.h"
 
-//using namespace Rcpp;
-
 // [[Rcpp::export]]
 Rcpp::List renderSqlInternal(std::string sql, Rcpp::List parameters) {
 
@@ -39,7 +37,7 @@ Rcpp::List renderSqlInternal(std::string sql, Rcpp::List parameters) {
 		//Convert list to map:
 		SqlRender::ParameterMap parameterToValue;
 		Rcpp::List names = parameters.attr("names");
-		for (unsigned int i = 0; i < parameters.size(); i++) {
+		for (int i = 0; i < parameters.size(); i++) {
 			parameterToValue[names[i]] = Rcpp::as<std::string>(parameters[i]);
 		}
 

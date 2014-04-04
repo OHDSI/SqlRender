@@ -1,5 +1,5 @@
 /**
- * @file SQLRender.cpp
+ * @file SqlRender.cpp
  *
  * This file is part of SQLRender
  *
@@ -22,8 +22,8 @@
  * @author Marc Suchard
  */
 
-#ifndef __SQLRender_cpp__
-#define __SQLRender_cpp__
+#ifndef __SqlRender_cpp__
+#define __SqlRender_cpp__
 
 #include <cstddef>
 #include <iterator>
@@ -34,8 +34,6 @@
 
 namespace ohdsi {
 	namespace sqlRender {
-
-		using namespace stringUtilities;
 
 		std::ostream& operator<<(std::ostream &strm, const Span& a) {
 			return strm << "(" << a.start << " - " << ")";
@@ -118,6 +116,24 @@ namespace ohdsi {
 				right = stringUtilities::trim(right);
 				right = stringUtilities::removeParentheses(right);
 				return (left != right);
+			}
+			found = str_lc.find(" in ");
+			if (found != std::string::npos) {
+				String left = str.substr(0, found);
+				left = stringUtilities::trim(left);
+				left = stringUtilities::removeParentheses(left);
+				String right = str.substr(found + 4, str.length());
+				right = stringUtilities::trim(right);
+				if (right.length() > 2 && right.at(0) == '(' && right.at(right.length() - 1) == ')') {
+					right = right.substr(1, right.length() - 2);
+					StringVector parts = split(right, ",");
+					for (StringVector::iterator part = parts.begin(); part != parts.end(); ++part) {
+						String partString = stringUtilities::removeParentheses((*part));
+						if (left == partString)
+							return true;
+					}
+					return false;
+				}
 			}
 			return true;
 		}
@@ -225,5 +241,5 @@ namespace ohdsi {
 	} // namespace renderer
 } // namespace ohdsi
 
-#endif // __SQLRender_cpp__
+#endif // __SqlRender_cpp__
 

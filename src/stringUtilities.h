@@ -41,6 +41,7 @@ namespace ohdsi {
 		String removeParentheses(const String& s);
 		StringVector multiFindBetween(const String& source, const String& pre, const String& post);
 		String replaceAll(const String& source, const String& search, const String& replace);
+		StringVector split(const String& source, const String& delimiter);
 	} // namespace stringUtlities
 } // namespace ohdsi
 

@@ -5,7 +5,7 @@
 renderSql(sql = "", ...)
 }
 \arguments{
-  \item{str}{The parameterized SQL}
+  \item{sql}{The parameterized SQL}
 
   \item{...}{Parameter values}
 }
@@ -30,6 +30,7 @@ renderSql("SELECT * FROM @a;",a="myTable")
 renderSql("SELECT * FROM @a {@b}?{WHERE x = 1};",a="myTable",b="true")
 renderSql("SELECT * FROM @a {@b == ''}?{WHERE x = 1}:{ORDER BY x};",a="myTable",b="true")
 renderSql("SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",a="myTable",b="y")
+renderSql("SELECT * FROM @a {1 IN (@c)}?{WHERE @b = 1};",a="myTable",b="y", c=c(1,2,3,4))
 renderSql("{DEFAULT @b = \\"someField\\"}SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",a="myTable")
 }
 

@@ -1,5 +1,5 @@
 /**
- * @file SQLRender.h
+ * @file SqlRender.h
  *
  * This file is part of SQLRender
  *
@@ -22,8 +22,8 @@
  * @author Marc Suchard
  */
 
-#ifndef __SQLRender_h__
-#define __SQLRender_h__
+#ifndef __SqlRender_h__
+#define __SqlRender_h__
 
 #include <iostream>
 #include <string>
@@ -96,4 +96,4 @@ namespace ohdsi { // Put everything in a namespace
 	} // namespace renderer
 } // namespace ohdsi
 
-#endif // __SQLRender_h__
+#endif // __SqlRender_h__
