@@ -39,3 +39,9 @@ test_that("If-then-else: IN pattern works if value is not in", {
 			sql <- renderSql(s,a = c(2,3,4))$sql
 			expect_equal(sql, "")
 		})
+
+test_that("If-then-else: IN pattern nested in boolean condition", {
+			sql <- renderSql("{true & (true & (true & 4 IN (@a)))}?{true}:{false}",a = c(1,2,3))$sql
+			expect_equal(sql, "false")
+		})
+

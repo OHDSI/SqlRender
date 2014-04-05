@@ -32,5 +32,6 @@ renderSql("SELECT * FROM @a {@b == ''}?{WHERE x = 1}:{ORDER BY x};",a="myTable",
 renderSql("SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",a="myTable",b="y")
 renderSql("SELECT * FROM @a {1 IN (@c)}?{WHERE @b = 1};",a="myTable",b="y", c=c(1,2,3,4))
 renderSql("{DEFAULT @b = \\"someField\\"}SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",a="myTable")
+renderSql("SELECT * FROM @a {@a == 'myTable & @b != 'x'}?{WHERE @b = 1};",a="myTable",b="y")
 }
 
