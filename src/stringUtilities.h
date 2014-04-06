@@ -42,6 +42,8 @@ namespace ohdsi {
 		StringVector multiFindBetween(const String& source, const String& pre, const String& post);
 		String replaceAll(const String& source, const String& search, const String& replace);
 		StringVector split(const String& source, const char delimiter);
+		String loadTextFile(const char *filename);
+		void saveTextFile(const String& string, const char *filename);
 	} // namespace stringUtlities
 } // namespace ohdsi
 

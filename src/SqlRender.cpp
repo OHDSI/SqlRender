@@ -113,7 +113,7 @@ namespace ohdsi {
 			for (SpanVector::iterator span = spans.begin(); span != spans.end(); ++span)
 				if (!precededByIn((*span).start, str)) {
 					bool evaluation = evaluateBooleanCondition(str.substr((*span).start + 1, (*span).end - (*span).start - 2));
-					str.at((*span).start) = evaluation?'1':'0';
+					str.at((*span).start) = evaluation ? '1' : '0';
 					replace(str, spans, (*span).start, (*span).end, (*span).start, (*span).start);
 				}
 			return evaluateBooleanCondition(str);
@@ -292,15 +292,16 @@ namespace ohdsi {
 
 			String result(str); // Explicit copy
 			for (ConditionVector::iterator ifThenElse = ifThenElses.begin(); ifThenElse != ifThenElses.end(); ++ifThenElse) {
-				if ((*ifThenElse).condition->valid
-						&& evaluateCondition(
-								result.substr((*ifThenElse).condition->start + 1, (*ifThenElse).condition->end - (*ifThenElse).condition->start - 2)))
-					replace(result, spans, (*ifThenElse).start(), (*ifThenElse).end(), (*ifThenElse).ifTrue->start + 1, (*ifThenElse).ifTrue->end - 2);
-				else {
-					if ((*ifThenElse).hasIfFalse)
-						replace(result, spans, (*ifThenElse).start(), (*ifThenElse).end(), (*ifThenElse).ifFalse->start + 1, (*ifThenElse).ifFalse->end - 2);
-					else
-						replace(result, spans, (*ifThenElse).start(), (*ifThenElse).end(), 0, -1); //Don't replace, just remove
+				if ((*ifThenElse).condition->valid) {
+					if (evaluateCondition(result.substr((*ifThenElse).condition->start + 1, (*ifThenElse).condition->end - (*ifThenElse).condition->start - 2)))
+						replace(result, spans, (*ifThenElse).start(), (*ifThenElse).end(), (*ifThenElse).ifTrue->start + 1, (*ifThenElse).ifTrue->end - 2);
+					else {
+						if ((*ifThenElse).hasIfFalse)
+							replace(result, spans, (*ifThenElse).start(), (*ifThenElse).end(), (*ifThenElse).ifFalse->start + 1,
+									(*ifThenElse).ifFalse->end - 2);
+						else
+							replace(result, spans, (*ifThenElse).start(), (*ifThenElse).end(), 0, -1); //Don't replace, just remove
+					}
 				}
 			}
 			return result;

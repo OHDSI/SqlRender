@@ -45,3 +45,14 @@ test_that("If-then-else: IN pattern nested in boolean condition", {
 			expect_equal(sql, "false")
 		})
 
+
+test_that("If-then-else: nested if-then-else where nest in firing expression", {
+			sql <- renderSql("{true}?{{true} ? {double true} : {true false}} : {false}")$sql
+			expect_equal(sql, "double true")
+		})
+
+test_that("If-then-else: nested if-then-else where nest in non-firing expression", {
+			sql <- renderSql("{false}?{{true} ? {double true} : {true false}} : {false}")$sql
+			expect_equal(sql, "false")
+		})
+

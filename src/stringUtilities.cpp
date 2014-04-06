@@ -31,8 +31,13 @@
 #include <cctype>
 #include <cstddef>
 #include <functional>
+#include <iostream>
 #include <iterator>
 #include <sstream>
+#include <fstream>
+#include <string>
+#include <cerrno>
+#include <iostream>
 
 namespace ohdsi {
 	namespace stringUtilities {
@@ -101,6 +106,29 @@ namespace ohdsi {
 				result.push_back(substr);
 			}
 			return result;
+		}
+
+		String loadTextFile(const char *filename) {
+			std::ifstream in(filename, std::ios::in | std::ios::binary);
+			if (in) {
+				std::string contents;
+				in.seekg(0, std::ios::end);
+				contents.resize(in.tellg());
+				in.seekg(0, std::ios::beg);
+				in.read(&contents[0], contents.size());
+				in.close();
+				return (contents);
+			}
+			throw(errno);
+		}
+
+		void saveTextFile(const String& string, const char *filename) {
+			std::ofstream myfile(filename);
+			if (myfile.is_open()) {
+				myfile << string;
+				myfile.close();
+			} else
+				throw(errno);
 		}
 
 	} // namespace stringUtilities
