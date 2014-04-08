@@ -2,7 +2,7 @@
 #
 # Copyright 2014 Observational Health Data Sciences and Informatics
 #
-# This file is part of SQLRender
+# This file is part of SqlRender
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,5 +49,5 @@
 #' @export
 renderSql <- function(sql = "", ...) {
 	parameters <- lapply(list(...), function(x){paste(x,collapse=',')})
-	.Call('SQLRender_renderSqlInternal', PACKAGE = 'SQLRender', sql, parameters)
+	.Call('SqlRender_renderSqlInternal', PACKAGE = 'SqlRender', sql, parameters)
 }

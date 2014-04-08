@@ -1,8 +1,8 @@
-# @file SQLRender.R
+# @file SqlRender.R
 #
 # Copyright 2014 Observational Health Data Sciences and Informatics
 #
-# This file is part of SQLRender
+# This file is part of SqlRender
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@
 # @author Marc Suchard
 
 
-#' SQLRender
+#' SqlRender
 #' 
 #' @docType package
-#' @name SQLRender
+#' @name SqlRender
 NULL

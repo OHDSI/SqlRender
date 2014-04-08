@@ -1,4 +1,4 @@
 library(testthat)
-library(SQLRender)
+library(SqlRender)
 
-test_package("SQLRender")
+test_package("SqlRender")
