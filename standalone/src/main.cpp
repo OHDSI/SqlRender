@@ -4,7 +4,7 @@
 #include "SqlRender.h"
 
 
-#ifdef ECLIPSE
+//#ifdef ECLIPSE
 
 int main() {
 	using namespace ohdsi;
@@ -30,4 +30,4 @@ int main() {
 	return 0;
 }
 
-#endif
+//#endif
