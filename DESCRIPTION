@@ -1,4 +1,4 @@
-Package: SQLRender
+Package: SqlRender
 Type: Package
 Title: Package for working with client-side parameterized SQL
 Version: 0.1

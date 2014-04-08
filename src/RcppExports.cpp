@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // renderSqlInternal
 Rcpp::List renderSqlInternal(std::string sql, Rcpp::List parameters);
-RcppExport SEXP SQLRender_renderSqlInternal(SEXP sqlSEXP, SEXP parametersSEXP) {
+RcppExport SEXP SqlRender_renderSqlInternal(SEXP sqlSEXP, SEXP parametersSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
