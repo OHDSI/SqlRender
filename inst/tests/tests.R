@@ -56,3 +56,12 @@ test_that("If-then-else: nested if-then-else where nest in non-firing expression
 			expect_equal(sql, "false")
 		})
 
+test_that("If-then-else: simple negation", {
+			sql <- renderSql("{!false}?{true}:{false}")$sql
+			expect_equal(sql, "true")
+		})
+
+test_that("If-then-else: negation of parameter", {
+			sql <- renderSql("{!@a}?{true}:{false}", a = "true")$sql
+			expect_equal(sql, "false")
+		})

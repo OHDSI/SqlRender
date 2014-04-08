@@ -164,9 +164,9 @@ namespace ohdsi {
 			String str(inStr);
 			str = stringUtilities::trim(str);
 			String str_lc = stringUtilities::toLowerCase(str);
-			if (str_lc == "false" || str_lc == "0")
+			if (str_lc == "false" || str_lc == "0" || str_lc == "!true" || str_lc == "!1")
 				return false;
-			if (str_lc == "true" || str_lc == "1")
+			if (str_lc == "true" || str_lc == "1" || str_lc == "!false" || str_lc == "!0")
 				return true;
 
 			std::size_t found = str.find("==");
