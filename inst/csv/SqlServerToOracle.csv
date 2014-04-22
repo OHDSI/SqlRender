@@ -1,0 +1,5 @@
+Pattern,Replacement
+"DATEADD(dd,@date1,@date2)","(@date1 + @date2)"
+"DATEDIFF(dd,@start, @end)","(@end - @start)"
+"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;","BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table;';\n  EXECUTE IMMEDIATE 'DROP TABLE @table;';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;"
+"USE @schema;","ALTER SESSION SET current_schema = @schema;"

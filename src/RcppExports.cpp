@@ -21,3 +21,19 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// translateSqlInternal
+Rcpp::List translateSqlInternal(std::string sql, Rcpp::DataFrame replacementPatterns);
+RcppExport SEXP SqlRender_translateSqlInternal(SEXP sqlSEXP, SEXP replacementPatternsSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< std::string >::type sql(sqlSEXP );
+        Rcpp::traits::input_parameter< Rcpp::DataFrame >::type replacementPatterns(replacementPatternsSEXP );
+        Rcpp::List __result = translateSqlInternal(sql, replacementPatterns);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}

@@ -51,3 +51,41 @@ renderSql <- function(sql = "", ...) {
 	parameters <- lapply(list(...), function(x){paste(x,collapse=',')})
 	.Call('SqlRender_renderSqlInternal', PACKAGE = 'SqlRender', sql, parameters)
 }
+
+
+
+
+#' @title translateSql
+#'
+#' @description
+#' \code{translateSql} translates SQL from one dialect to another
+#'
+#' @details
+#' This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its 
+#' functionality is limited.
+#' 
+#' @param sql               The SQL to be translated
+#' @param sourceDialect     The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
+#' @param targetDialect		The target dialect. Currently, only "oracle" for Oracle is supported
+#' @return              
+#' A list containing the following elements:
+#' \describe{  
+#'   \item{originalSql}{The original parameterized SQL code}
+#'   \item{sql}{The translated SQL}
+#' }  
+#' @examples
+#' translateSql("USE my_schema","sql server", "oracle")
+#' @export
+translateSql <- function(sql = "", sourceDialect = "sql server", targetDialect = "oracle") {
+	if (sourceDialect == "sql server" && targetDialect == "oracle"){
+		pathToReplacementPatterns <- system.file("csv", "SqlServerToOracle.csv", package="SqlRender")
+		replacementPatterns <- read.csv(pathToReplacementPatterns)
+	} else
+		return;
+	
+	
+	translateSqlInternal(sql,replacementPatterns)
+}
+
+#translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",sourceDialect = "sql server", targetDialect = "oracle")
+

@@ -27,6 +27,7 @@
 
 #include <Rcpp.h>
 #include "SqlRender.h"
+#include "SqlTranslate.h"
 
 // [[Rcpp::export]]
 Rcpp::List renderSqlInternal(std::string sql, Rcpp::List parameters) {
@@ -51,5 +52,35 @@ Rcpp::List renderSqlInternal(std::string sql, Rcpp::List parameters) {
 	}
   return Rcpp::List::create();
 }
+
+// [[Rcpp::export]]
+Rcpp::List translateSqlInternal(std::string sql, Rcpp::DataFrame replacementPatterns) {
+
+	using namespace ohdsi::sqlRender;
+
+	try {
+		//Convert DataFrame to map:
+		SqlTranslate::ReplacementPatterns patternToReplacement;
+		Rcpp::CharacterVector searchPatterns = replacementPatterns[0];
+		Rcpp::CharacterVector replacePatterns = replacementPatterns[1];
+
+		for (int row = 0; row < searchPatterns.length(); row++) {
+			std::string searchPattern = Rcpp::as<std::string>(searchPatterns[row]);
+			std::string replacePattern = Rcpp::as<std::string>(replacePatterns[row]);
+			//std::cout << row << ": " << searchPattern << " - " << replacePattern << "\n";
+			patternToReplacement[searchPattern] = replacePattern;
+		}
+
+		SqlTranslate::String translatedSql = SqlTranslate::translateSql(sql, patternToReplacement);
+		return Rcpp::List::create(Rcpp::Named("originalSql") = sql, Rcpp::Named("sql") = translatedSql);
+
+	} catch (std::exception &e) {
+		forward_exception_to_r(e);
+	} catch (...) {
+		::Rf_error("c++ exception (unknown reason)");
+	}
+	return Rcpp::List::create();
+}
+
 
 #endif // __SQLRender_cpp__

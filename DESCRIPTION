@@ -12,5 +12,6 @@ Depends:
     Rcpp (>= 0.10.4)
 Suggests:
     testthat
+LazyData: false
 LinkingTo: Rcpp
 NeedsCompilation: yes

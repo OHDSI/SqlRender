@@ -26,6 +26,7 @@
 								<option id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.1502426046" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1221769967" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\R\R-3.0.3\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\Rcpp\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\RInside\include&quot;"/>
 								</option>
@@ -136,4 +137,5 @@
 			<resource resourceType="PROJECT" workspacePath="/SQLRender"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

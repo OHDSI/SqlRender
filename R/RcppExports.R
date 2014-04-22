@@ -5,3 +5,7 @@ renderSqlInternal <- function(sql, parameters) {
     .Call('SqlRender_renderSqlInternal', PACKAGE = 'SqlRender', sql, parameters)
 }
 
+translateSqlInternal <- function(sql, replacementPatterns) {
+    .Call('SqlRender_translateSqlInternal', PACKAGE = 'SqlRender', sql, replacementPatterns)
+}
+

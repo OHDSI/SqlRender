@@ -2,31 +2,27 @@
 
 #include "stringUtilities.h"
 #include "SqlRender.h"
-
+#include "SqlTranslate.h"
 
 //#ifdef ECLIPSE
 
 int main() {
 	using namespace ohdsi;
 	using namespace ohdsi::sqlRender;
-	String sql = stringUtilities::loadTextFile("c:/temp/ParamSQLExample3.sql");
 
-	//std::string sql = "{false}?{{true} ? {double true} : {true false}} : {false}";
-	SqlRender::ParameterMap parameters;
-	parameters["drug_concept_id_list"] = "767410,1314924,907879";
-	parameters["condition_concept_id_list"] = "444382, 79106, 138825";
-	parameters["stratify_gender"] = "0";
-	parameters["stratify_age"] = "0";
-	parameters["stratify_index"] = "0";
-	parameters["first_occurrence_drug_only"] = "0";
-	parameters["first_occurrence_condition_only"] = "0";
-	parameters["min_index"] = "";
-	parameters["max_index"] = "";
+	//String sql = stringUtilities::loadTextFile("c:/temp/test.sql");
 
+	String sql = " IF OBJECT_ID('cohort', 'U') IS NOT NULL\nDROP TABLE cohort; ";
+	SqlTranslate::ReplacementPatterns replacementPatterns;
+	//replacementPatterns["DATEADD(  dd ,@date1,@date2)"] = "(@date1 + @date2)";
+	//replacementPatterns["DATEDIFF(dd,@start, @end)"] = "(@end - @start)";
+	replacementPatterns["IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;"] = "TRUNCATE TABLE @table;\nDROP TABLE @table;";
+	//replacementPatterns["USE @schema;"] = "ALTER SESSION SET current_schema = @schema;";
+	//replacementPatterns["INT"] = "BIGINT";
 
-//	std::cout << SqlRender::renderSql(sql, parameters);
-	sql = SqlRender::renderSql(sql, parameters);
-	stringUtilities::saveTextFile(sql, "c:/temp/renderedSql.sql");
+	std::cout << SqlTranslate::translateSql(sql, replacementPatterns);
+	//sql = SqlTranslate::translateSql(sql, replacementPatterns);
+	//stringUtilities::saveTextFile(sql, "c:/temp/translatedTest.sql");
 	return 0;
 }
 
