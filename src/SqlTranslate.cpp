@@ -35,6 +35,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <stdexcept>
 
 namespace ohdsi {
 	namespace sqlRender {
@@ -81,7 +82,7 @@ namespace ohdsi {
 						token.end = cursor + 1;
 						token.text = sql.substr(cursor, 1);
 						tokens.push_back(token);
-						//std::cout << token.text << "\n";
+						//::cout << token.text << "\n";
 					}
 					start = cursor + 1;
 				}
@@ -114,20 +115,21 @@ namespace ohdsi {
 			return blocks;
 		}
 
-		MatchedPattern SqlTranslate::search(const String& sql, const std::vector<Block>& parsedPattern, size_t start) {
+		MatchedPattern SqlTranslate::search(const String& sql, const std::vector<Block>& parsedPattern) {
 			String lowercaseSql = toLowerCase(sql);
 			std::vector<Token> tokens = tokenize(lowercaseSql);
 			size_t matchCount = 0;
 			size_t varStart = 0;
 			std::stack<String> nestStack;
 			MatchedPattern matchedPattern;
-			for (size_t cursor = start; cursor < tokens.size(); cursor++) {
+			for (size_t cursor = 0; cursor < tokens.size(); cursor++) {
 				Token token = tokens.at(cursor);
 				if (parsedPattern[matchCount].isVariable) {
 					if (nestStack.size() == 0 && token.text == parsedPattern[matchCount + 1].text) {
 						matchedPattern.variableToValue[parsedPattern[matchCount].text] = sql.substr(varStart, token.start - varStart);
+						//std::cout << parsedPattern[matchCount].text << " = '" <<  sql.substr(varStart, token.start - varStart) << "'\n";
 						matchCount += 2;
-						if (cursor == parsedPattern.size()) {
+						if (matchCount == parsedPattern.size()) {
 							matchedPattern.end = token.end;
 							return matchedPattern;
 						} else if (parsedPattern[matchCount].isVariable) {
@@ -149,6 +151,9 @@ namespace ohdsi {
 					}
 				} else {
 					if (token.text == parsedPattern[matchCount].text) {
+						if (matchCount == 0) {
+							matchedPattern.start = token.start;
+						}
 						matchCount++;
 						if (matchCount == parsedPattern.size()) {
 							matchedPattern.end = token.end;
@@ -167,21 +172,16 @@ namespace ohdsi {
 
 		String SqlTranslate::searchAndReplace(const String& sql, const std::vector<Block>& parsedPattern, const String& replacePattern) {
 			String result(sql);
-			size_t start = 0;
-			while (start < result.length()) {
-				MatchedPattern matchedPattern = search(result, parsedPattern, start);
-				if (matchedPattern.start == std::string::npos) {
-					start = result.length();
-				} else {
-					String replacement(replacePattern);
-					for (std::map<String, String>::iterator pair = matchedPattern.variableToValue.begin(); pair != matchedPattern.variableToValue.end();
-							++pair) {
-						replacement = replaceAll(replacement, (*pair).first, (*pair).second);
-					}
-					result = result.substr(0, matchedPattern.start) + replacement + result.substr(matchedPattern.end, result.length() - matchedPattern.end);
-					start = matchedPattern.start;
+			MatchedPattern matchedPattern = search(result, parsedPattern);
+			while (matchedPattern.start != std::string::npos) {
+				String replacement(replacePattern);
+				for (std::map<String, String>::iterator pair = matchedPattern.variableToValue.begin(); pair != matchedPattern.variableToValue.end(); ++pair) {
+					replacement = replaceAll(replacement, (*pair).first, (*pair).second);
 				}
+				result = result.substr(0, matchedPattern.start) + replacement + result.substr(matchedPattern.end, result.length() - matchedPattern.end);
+				matchedPattern = search(result, parsedPattern);
 			}
+
 			return result;
 		}
 

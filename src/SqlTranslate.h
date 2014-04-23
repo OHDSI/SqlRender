@@ -64,7 +64,7 @@ namespace ohdsi {
 		private:
 			static std::vector<Token> tokenize(const String& sql);
 			static std::vector<Block> parseSearchPattern(const String& pattern);
-			static MatchedPattern search(const String& sql, const std::vector<Block>& parsedPattern, size_t start);
+			static MatchedPattern search(const String& sql, const std::vector<Block>& parsedPattern);
 			static String searchAndReplace(const String& sql, const std::vector<Block>& parsedPattern, const String& replacePattern);
 		};
 
