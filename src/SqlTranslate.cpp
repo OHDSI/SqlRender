@@ -36,159 +36,125 @@
 #include <utility>
 #include <vector>
 
-//#include "stringUtilities.h"
-
 namespace ohdsi {
 	namespace sqlRender {
 
-		std::vector<Block> SqlTranslate::parseSearchPattern(const String& pattern) {
-			std::vector<Block> blocks;
+		/**
+		 * Splits the SQL into tokens. Any alphanumeric (including underscore) sequence is considered a token. All other
+		 * individual special characters are considered their own tokens. White space and SQL comments are not considered for
+		 * tokens.
+		 */
+		std::vector<Token> SqlTranslate::tokenize(const String& sql) {
+			std::vector<Token> tokens;
 			size_t start = 0;
-			String lowercasePattern = stringUtilities::toLowerCase(pattern);
 			size_t cursor = 0;
-			for (; cursor < lowercasePattern.length(); cursor++) {
-				char ch = lowercasePattern.at(cursor);
-				if (!std::isalnum(ch) && ch != '_' && ch != '@') {
-					size_t end = cursor;
-					if (ch == '(') {
-						end = cursor + 1;
+			bool commentType1 = false; //Type 1: -- ... end of line
+			bool commentType2 = false; //Type 2: /* .. */
+			for (; cursor < sql.length(); cursor++) {
+				char ch = sql.at(cursor);
+				if (commentType1) {
+					if (ch == '\n') {
+						commentType1 = false;
+						start = cursor + 1;
 					}
-					//if (!(ch == '@' && cursor == start)) {
+				} else if (commentType2) {
+					if (ch == '/' && cursor > 0 && sql.at(cursor - 1) == '*') {
+						commentType2 = false;
+						start = cursor + 1;
+					}
+				} else if (!std::isalnum(ch) && ch != '_' && ch != '@') {
 					if (cursor > start) {
-						String content = lowercasePattern.substr(start, end - start);
-						content = trim(content);
-						if (content.length() > 0) {
-							Block block;
-							block.content = content;
-							block.isVariable = (block.content.at(0) == '@');
-							blocks.push_back(block);
-							//std::cout << block.content << "\n";
-						}
+						Token token;
+						token.start = start;
+						token.end = cursor;
+						token.text = sql.substr(start, cursor - start);
+						tokens.push_back(token);
+						//std::cout << token.text << "\n";
 					}
-					if (cursor >= end && !std::isspace(ch)) {
-						Block block;
-						block.content = ch;
-						block.isVariable = false;
-						blocks.push_back(block);
-						//std::cout << block.content << "\n";
-						++end;
+					if (ch == '-' && cursor < sql.length() && sql.at(cursor + 1) == '-') {
+						commentType1 = true;
+					} else if (ch == '/' && cursor < sql.length() && sql.at(cursor + 1) == '*') {
+						commentType2 = true;
+					} else if (!std::isspace(ch)) {
+						Token token;
+						token.start = cursor;
+						token.end = cursor + 1;
+						token.text = sql.substr(cursor, 1);
+						tokens.push_back(token);
+						//std::cout << token.text << "\n";
 					}
-					start = end;
-					//}
+					start = cursor + 1;
 				}
 			}
-			int end = lowercasePattern.length();
-			if (cursor != start) {
 
-				if (cursor > start) {
-					String content = lowercasePattern.substr(start, end - start);
-					content = trim(content);
-					if (content.length() > 0) {
-						Block block;
-						block.content = lowercasePattern.substr(start, end - start);
-						block.isVariable = (block.content.at(0) == '@');
-						blocks.push_back(block);
-						//std::cout << block.content << "\n";
-					}
-				}
+			if (cursor > start) {
+				Token token;
+				token.start = start;
+				token.end = cursor;
+				token.text = sql.substr(start, cursor - start);
+				tokens.push_back(token);
+				//std::cout << token.text << "\n";
+			}
+			return tokens;
+		}
+
+		std::vector<Block> SqlTranslate::parseSearchPattern(const String& pattern) {
+			std::vector<Token> tokens = tokenize(toLowerCase(pattern));
+			std::vector<Block> blocks;
+			for (size_t i = 0; i < tokens.size(); i++) {
+				Block block(tokens.at(i));
+				if (block.text.length() > 1 && block.text.at(0) == '@')
+					block.isVariable = true;
+				blocks.push_back(block);
 			}
 			if (blocks[0].isVariable || blocks[blocks.size() - 1].isVariable) {
 				String error("Error in search pattern: pattern cannot start or end with a variable: " + pattern);
-				//Todo: throw error
+				throw std::invalid_argument(error);
 			}
-
 			return blocks;
 		}
 
 		MatchedPattern SqlTranslate::search(const String& sql, const std::vector<Block>& parsedPattern, size_t start) {
 			String lowercaseSql = toLowerCase(sql);
-			size_t blockCursor = 0;
+			std::vector<Token> tokens = tokenize(lowercaseSql);
 			size_t matchCount = 0;
 			size_t varStart = 0;
-			//String variableValue;
-			std::stack<char> nestStack;
-			bool commentType1 = false; //Type 1: -- ... end of line
-			bool commentType2 = false; //Type 2: /* .. */
+			std::stack<String> nestStack;
 			MatchedPattern matchedPattern;
-			for (size_t cursor = start; cursor < lowercaseSql.length(); cursor++) {
-				char ch = lowercaseSql.at(cursor);
-				if (commentType1) {
-					if (ch == '\n')
-						commentType1 = false;
-				} else if (commentType2) {
-					if (ch == '/' && cursor > 0 && lowercaseSql.at(cursor - 1) == '*')
-						commentType2 = false;
-				} else if (ch == '-' && cursor < lowercaseSql.length() && lowercaseSql.at(cursor + 1) == '-') {
-					commentType1 = true;
-					matchCount = 0;
-				} else if (ch == '/' && cursor < lowercaseSql.length() && lowercaseSql.at(cursor + 1) == '*') {
-					commentType2 = true;
-					matchCount = 0;
-				} else if (matchCount == 0 && std::isspace(ch)) {
-					//do nothing
-				} else if (parsedPattern[blockCursor].isVariable) {
-					if (nestStack.size() == 0 && ch == parsedPattern[blockCursor + 1].content.at(matchCount)) {
-						matchCount++;
-						if (matchCount == parsedPattern[blockCursor + 1].content.length()) {
-							matchedPattern.variableToValue[parsedPattern[blockCursor].content] = sql.substr(varStart, cursor + 1 - matchCount - varStart);
-							//std::cout << "'" << parsedPattern[blockCursor].content << "' '" << sql.substr(varStart, cursor + 1 - matchCount - varStart) << "'\n";
-							matchCount = 0;
-							blockCursor += 2;
-							if (blockCursor == parsedPattern.size()) {
-								if (cursor == lowercaseSql.length() - 1 || (!std::isalnum(ch) || !std::isalnum(lowercaseSql.at(cursor + 1)))) {
-									matchedPattern.end = cursor + 1;
-									return matchedPattern;
-								} else { //Pattern not allowed to end in the middle of a word
-									matchCount = 0;
-									blockCursor -= 2;
-								}
-							}
-							if (parsedPattern[blockCursor].isVariable) {
-								varStart = cursor + 1;
-							}
+			for (size_t cursor = start; cursor < tokens.size(); cursor++) {
+				Token token = tokens.at(cursor);
+				if (parsedPattern[matchCount].isVariable) {
+					if (nestStack.size() == 0 && token.text == parsedPattern[matchCount + 1].text) {
+						matchedPattern.variableToValue[parsedPattern[matchCount].text] = sql.substr(varStart, token.start - varStart);
+						matchCount += 2;
+						if (cursor == parsedPattern.size()) {
+							matchedPattern.end = token.end;
+							return matchedPattern;
+						} else if (parsedPattern[matchCount].isVariable) {
+							varStart = token.end;
 						}
 					} else {
-						matchCount = 0;
-
-						if (nestStack.size() != 0 && (nestStack.top() == '"' || nestStack.top() == '\'')) { //inside quoted string
-							if (ch == nestStack.top())
+						if (nestStack.size() != 0 && (nestStack.top() == "\"" || nestStack.top() == "'")) { //inside quoted string
+							if (token.text == nestStack.top())
 								nestStack.pop();
 						} else {
-							if (ch == '"' || ch == '\'') {
-								nestStack.push(ch);
-							} else if (ch == '(') {
-								nestStack.push(ch);
-							} else if (nestStack.size() != 0 && ch == ')' && nestStack.top() == '(') {
+							if (token.text == "\"" || token.text == "'") {
+								nestStack.push(token.text);
+							} else if (token.text == "(") {
+								nestStack.push(token.text);
+							} else if (nestStack.size() != 0 && token.text == ")" && nestStack.top() == "(") {
 								nestStack.pop();
 							}
 						}
 					}
 				} else {
-					if (ch == parsedPattern[blockCursor].content.at(matchCount)) {
-						if (matchCount == 0 && blockCursor == 0) {
-							if (cursor == 0 || (!std::isalnum(ch) || !std::isalnum(lowercaseSql.at(cursor - 1)))) { //Pattern not allow to start in the middle of a word
-								matchedPattern.start = cursor;
-								matchCount++;
-							}
-						} else {
-							matchCount++;
-						}
-						if (matchCount == parsedPattern[blockCursor].content.length()) {
-							matchCount = 0;
-							blockCursor++;
-							if (blockCursor == parsedPattern.size()) {
-								if (cursor == lowercaseSql.length() - 1 || (!std::isalnum(ch) || !std::isalnum(lowercaseSql.at(cursor + 1)))) {
-									matchedPattern.end = cursor + 1;
-									return matchedPattern;
-								} else { //Pattern not allowed to end in the middle of a word
-									matchCount = 0;
-									blockCursor--;
-								}
-							} else {
-								if (parsedPattern[blockCursor].isVariable) {
-									varStart = cursor + 1;
-								}
-							}
+					if (token.text == parsedPattern[matchCount].text) {
+						matchCount++;
+						if (matchCount == parsedPattern.size()) {
+							matchedPattern.end = token.end;
+							return matchedPattern;
+						} else if (parsedPattern[matchCount].isVariable) {
+							varStart = token.end;
 						}
 					} else {
 						matchCount = 0;

@@ -34,9 +34,17 @@ namespace ohdsi {
 
 		using namespace stringUtilities;
 
-		struct Block {
+		struct Token {
+			size_t start;
+			size_t end;
+			String text;
+		};
+
+		struct Block: Token {
+			Block(const Token& other) :
+					Token(other), isVariable(false) {
+			}
 			bool isVariable;
-			String content;
 		};
 
 		struct MatchedPattern {
@@ -54,6 +62,7 @@ namespace ohdsi {
 			static String translateSql(String str, ReplacementPatterns& replacementPatterns);
 
 		private:
+			static std::vector<Token> tokenize(const String& sql);
 			static std::vector<Block> parseSearchPattern(const String& pattern);
 			static MatchedPattern search(const String& sql, const std::vector<Block>& parsedPattern, size_t start);
 			static String searchAndReplace(const String& sql, const std::vector<Block>& parsedPattern, const String& replacePattern);
