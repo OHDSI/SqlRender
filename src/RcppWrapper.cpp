@@ -68,7 +68,7 @@ Rcpp::List translateSqlInternal(std::string sql, Rcpp::DataFrame replacementPatt
 			std::string searchPattern = Rcpp::as<std::string>(searchPatterns[row]);
 			std::string replacePattern = Rcpp::as<std::string>(replacePatterns[row]);
 			//std::cout << row << ": " << searchPattern << " - " << replacePattern << "\n";
-			patternToReplacement[searchPattern] = replacePattern;
+			patternToReplacement.push_back(std::pair<String,String>(searchPattern,replacePattern));
 		}
 
 		SqlTranslate::String translatedSql = SqlTranslate::translateSql(sql, patternToReplacement);

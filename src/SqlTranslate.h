@@ -57,7 +57,7 @@ namespace ohdsi {
 		struct SqlTranslate {
 		public:
 			typedef stringUtilities::String String;
-			typedef std::map<String, String> ReplacementPatterns;
+			typedef std::vector<std::pair<String, String> > ReplacementPatterns;
 
 			static String translateSql(String str, ReplacementPatterns& replacementPatterns);
 
