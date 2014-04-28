@@ -50,6 +50,7 @@ namespace ohdsi {
 		struct MatchedPattern {
 			size_t start;
 			size_t end;
+      size_t startToken;
 			std::map<String, String> variableToValue;
 
 		};
@@ -64,11 +65,11 @@ namespace ohdsi {
 		private:
 			static std::vector<Token> tokenize(const String& sql);
 			static std::vector<Block> parseSearchPattern(const String& pattern);
-			static MatchedPattern search(const String& sql, const std::vector<Block>& parsedPattern);
+			static MatchedPattern search(const String& sql, const std::vector<Block>& parsedPattern, const int startToken);
 			static String searchAndReplace(const String& sql, const std::vector<Block>& parsedPattern, const String& replacePattern);
 		};
 
 	} // namespace sqlRender
 } // namespace ohdsi
 
-#endif // __SqlTranslate_h__
+#endif // __SqlTranslate_h__

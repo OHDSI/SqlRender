@@ -16,7 +16,7 @@ test_that("translateSQL sql server -> Oracle USE", {
 			expect_equal(sql, "ALTER SESSION SET current_schema =  vocabulary;")
 		})
 
-test_that("translateSQL sql server -> Oracle USE", {
+test_that("translateSQL sql server -> Oracle DROP TABLE IF EXISTS", {
 			sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",sourceDialect = "sql server", targetDialect = "oracle")$sql
-			expect_equal(sql, "BEGIN\\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE  cohort;';\\n  EXECUTE IMMEDIATE 'DROP TABLE  cohort;';\\nEXCEPTION\\n  WHEN OTHERS THEN\\n    IF SQLCODE != -942 THEN\\n      RAISE;\\n    END IF;\\nEND;")
+			expect_equal(sql, "BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE  cohort';\n  EXECUTE IMMEDIATE 'DROP TABLE  cohort';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;")
 		})

@@ -29,6 +29,8 @@ into another. It uses simple pattern replacement, so its
 functionality is limited.
 }
 \examples{
+\dontrun{
 translateSql("USE my_schema","sql server", "oracle")
+}
 }
 

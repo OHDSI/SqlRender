@@ -20,6 +20,15 @@
 # @author Martijn Schuemie
 # @author Marc Suchard
 
+.onLoad <- function(libname, pkgname) {
+  library(utils)
+  pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package="SqlRender")
+  #pathToReplacementPatterns <- "C:/Users/mschuemi/Documents/SqlRender/inst/csv/SqlServerToOracle.csv"
+  patterns <- read.csv(pathToReplacementPatterns)
+  replacementPatterns <<- data.frame(From = patterns[,1],To = patterns[,2],Search = gsub("\\\\n","\n",as.character(patterns[,3])),replace = gsub("\\\\n","\n",as.character(patterns[,4])))
+  #cat("Loaded replacement patterns")
+}
+
 #' @title renderSql
 #'
 #' @description
@@ -48,8 +57,8 @@
 #' renderSql("SELECT * FROM @@a {@@a == 'myTable' & @@b != 'x'}?{WHERE @@b = 1};",a="myTable",b="y")
 #' @export
 renderSql <- function(sql = "", ...) {
-	parameters <- lapply(list(...), function(x){paste(x,collapse=',')})
-	.Call('SqlRender_renderSqlInternal', PACKAGE = 'SqlRender', sql, parameters)
+  parameters <- lapply(list(...), function(x){paste(x,collapse=',')})
+  .Call('SqlRender_renderSqlInternal', PACKAGE = 'SqlRender', sql, parameters)
 }
 
 
@@ -73,19 +82,27 @@ renderSql <- function(sql = "", ...) {
 #'   \item{originalSql}{The original parameterized SQL code}
 #'   \item{sql}{The translated SQL}
 #' }  
-#' @examples
+#' @examples \dontrun{
 #' translateSql("USE my_schema","sql server", "oracle")
+#' }
 #' @export
 translateSql <- function(sql = "", sourceDialect = "sql server", targetDialect = "oracle") {
-	if (sourceDialect == "sql server" && targetDialect == "oracle"){
-		pathToReplacementPatterns <- system.file("csv", "SqlServerToOracle.csv", package="SqlRender")
-		replacementPatterns <- read.csv(pathToReplacementPatterns)
-	} else
-		return;
-	
-	
-	translateSqlInternal(sql,replacementPatterns)
+  patterns <- replacementPatterns[replacementPatterns$From == sourceDialect && replacementPatterns$To == targetDialect,c(3,4)]
+  translateSqlInternal(sql,patterns)
 }
 
-#translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",sourceDialect = "sql server", targetDialect = "oracle")
-
+testCode <- function(){
+  d <- read.csv("c:/temp/scc.sql")
+  sql <- as.character(d$x)
+  tsql <- translateSql(sql)$sql
+  #sql <- "IF OBJECT_ID('scratch.dbo.self_controlled_cohort_results', 'U') IS NOT NULL\nDROP TABLE scratch.dbo.self_controlled_cohort_results;"
+  #sql <- "abc.dbo.defg AND abcd.dbo.def"
+  #translateSqlInternal(sql,patterns[c(5),])$sql
+  
+  write.csv(tsql,file="c:/temp/scc2.sql")
+  
+  library(DatabaseConnector)
+  connectionDetails <- createConnectionDetails("oracle","system","F1r3starter","xe")
+  connection <- connect(connectionDetails)
+  dbSendUpdate(connection,paste("begin ",tsql," end;"))
+}

@@ -115,19 +115,17 @@ namespace ohdsi {
 			return blocks;
 		}
 
-		MatchedPattern SqlTranslate::search(const String& sql, const std::vector<Block>& parsedPattern) {
+		MatchedPattern SqlTranslate::search(const String& sql, const std::vector<Block>& parsedPattern, const int startToken) {
 			String lowercaseSql = toLowerCase(sql);
 			std::vector<Token> tokens = tokenize(lowercaseSql);
 			size_t matchCount = 0;
 			size_t varStart = 0;
 			std::stack<String> nestStack;
 			MatchedPattern matchedPattern;
-			for (size_t cursor = 0; cursor < tokens.size(); cursor++) {
+			for (size_t cursor = startToken; cursor < tokens.size(); cursor++) {
 				Token token = tokens.at(cursor);
 				if (parsedPattern[matchCount].isVariable) {
-					if (nestStack.size() == 0 && token.text == ";"){ //Not allowed to span multiple SQL statements
-						matchCount = 0;
-					} else if (nestStack.size() == 0 && token.text == parsedPattern[matchCount + 1].text) {
+					if (nestStack.size() == 0 && token.text == parsedPattern[matchCount + 1].text) {
 						matchedPattern.variableToValue[parsedPattern[matchCount].text] = sql.substr(varStart, token.start - varStart);
 						//std::cout << parsedPattern[matchCount].text << " = '" <<  sql.substr(varStart, token.start - varStart) << "'\n";
 						matchCount += 2;
@@ -137,6 +135,8 @@ namespace ohdsi {
 						} else if (parsedPattern[matchCount].isVariable) {
 							varStart = token.end;
 						}
+					} else if (nestStack.size() == 0 && token.text == ";"){ //Not allowed to span multiple SQL statements
+  					matchCount = 0;
 					} else {
 						if (nestStack.size() != 0 && (nestStack.top() == "\"" || nestStack.top() == "'")) { //inside quoted string
 							if (token.text == nestStack.top())
@@ -155,6 +155,7 @@ namespace ohdsi {
 					if (token.text == parsedPattern[matchCount].text) {
 						if (matchCount == 0) {
 							matchedPattern.start = token.start;
+              matchedPattern.startToken = cursor;
 						}
 						matchCount++;
 						if (matchCount == parsedPattern.size()) {
@@ -174,14 +175,14 @@ namespace ohdsi {
 
 		String SqlTranslate::searchAndReplace(const String& sql, const std::vector<Block>& parsedPattern, const String& replacePattern) {
 			String result(sql);
-			MatchedPattern matchedPattern = search(result, parsedPattern);
+			MatchedPattern matchedPattern = search(result, parsedPattern, 0);
 			while (matchedPattern.start != std::string::npos) {
 				String replacement(replacePattern);
 				for (std::map<String, String>::iterator pair = matchedPattern.variableToValue.begin(); pair != matchedPattern.variableToValue.end(); ++pair) {
 					replacement = replaceAll(replacement, (*pair).first, (*pair).second);
 				}
 				result = result.substr(0, matchedPattern.start) + replacement + result.substr(matchedPattern.end, result.length() - matchedPattern.end);
-				matchedPattern = search(result, parsedPattern);
+				matchedPattern = search(result, parsedPattern, matchedPattern.startToken + 1);
 			}
 
 			return result;
