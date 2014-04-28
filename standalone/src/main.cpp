@@ -12,7 +12,7 @@ int main() {
 
 	//String sql = stringUtilities::loadTextFile("c:/temp/test.sql");
 
-	String sql = "CREATE TABLE #age_group (\n\n age_group_name VARCHAR(255),\n\n	age_group_min INT,\n\n	age_group_max INT\n\n);";
+	String sql = "CREATE; TABLE #age_group (\n\n age_group_name VARCHAR(255),\n\n	age_group_min INT,\n\n	age_group_max INT\n\n);";
 	SqlTranslate::ReplacementPatterns replacementPatterns;
 //	replacementPatterns["DATEADD(  dd ,@date1,@date2)"] = "(@date1 + @date2)";
 //	replacementPatterns["DATEDIFF(dd,@start, @end)"] = "(@end - @start)";

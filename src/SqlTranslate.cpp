@@ -125,7 +125,9 @@ namespace ohdsi {
 			for (size_t cursor = 0; cursor < tokens.size(); cursor++) {
 				Token token = tokens.at(cursor);
 				if (parsedPattern[matchCount].isVariable) {
-					if (nestStack.size() == 0 && token.text == parsedPattern[matchCount + 1].text) {
+					if (nestStack.size() == 0 && token.text == ";"){ //Not allowed to span multiple SQL statements
+						matchCount = 0;
+					} else if (nestStack.size() == 0 && token.text == parsedPattern[matchCount + 1].text) {
 						matchedPattern.variableToValue[parsedPattern[matchCount].text] = sql.substr(varStart, token.start - varStart);
 						//std::cout << parsedPattern[matchCount].text << " = '" <<  sql.substr(varStart, token.start - varStart) << "'\n";
 						matchCount += 2;
