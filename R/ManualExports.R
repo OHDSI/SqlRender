@@ -101,8 +101,29 @@ testCode <- function(){
   
   write.csv(tsql,file="c:/temp/scc2.sql")
   
+  sqlCommands <- splitSql(tsql)
+  
   library(DatabaseConnector)
   connectionDetails <- createConnectionDetails("oracle","system","F1r3starter","xe")
   connection <- connect(connectionDetails)
-  dbSendUpdate(connection,paste("begin ",tsql," end;"))
+  #dbSendUpdate(connection,"DROP TABLE age_group")
+
+  i <- 1
+  for (sqlCommand in sqlCommands){
+    write.csv(sqlCommand,file=paste("c:/temp/sqlCommand_",i,".sql",sep=""))
+    i = i + 1
+    #dbSendUpdate(connection,paste(sqlCommand,";",sep=""))
+    dbSendUpdate(connection,sqlCommand)
+  }
+  
+  dbGetQuery(connection,"SELECT * FROM scratch.scc_analysis")
+  dbGetQuery(connection,"SELECT * FROM scratch.scc_results")
+  dbGetQuery(connection,"SELECT * FROM age_group")
+  dbGetQuery(connection,"SELECT COUNT(*) FROM cdm4_sim.person")
+  dbGetQuery(connection,"SELECT COUNT(*) FROM cdm4_sim.drug_Era WHERE drug_concept_id IN (915981)	AND drug_type_concept_id IN (38000182)")
+  dbGetQuery(connection,"SELECT COUNT(*) FROM cdm4_sim.drug_Era")
+  dbGetQuery(connection,"SELECT * FROM cdm4_sim.drug_Era WHERE ROWNUM <= 10")
+  dbGetQuery(connection,"SELECT * FROM ALL_TAB_COLS WHERE TABLE_NAME = 'DRUG_ERA' AND OWNER = 'CDM4_SIM'")
+  dbGetQuery(connection,"SELECT COUNT(*) FROM scc_exposure_summary")
+  
 }

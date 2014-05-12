@@ -79,6 +79,7 @@ namespace ohdsi {
 						}
 					} else if (nestStack.size() == 0 && token.text == ";"){ //Not allowed to span multiple SQL statements
   					matchCount = 0;
+            cursor = matchedPattern.startToken;
 					} else {
 						if (nestStack.size() != 0 && (nestStack.top() == "\"" || nestStack.top() == "'")) { //inside quoted string
 							if (token.text == nestStack.top())
@@ -106,8 +107,9 @@ namespace ohdsi {
 						} else if (parsedPattern[matchCount].isVariable) {
 							varStart = token.end;
 						}
-					} else {
+					} else if (matchCount != 0) {
 						matchCount = 0;
+            cursor = matchedPattern.startToken;
 					}
 				}
 			}

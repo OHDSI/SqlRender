@@ -51,15 +51,19 @@ namespace ohdsi {
 				Token token = tokens.at(cursor);
 				if (token.text == "begin" || token.text == "case") {
 					level++;
-				} else if (token.text == "end") {
+				} else if (token.text == "end" && (cursor == tokens.size() - 1 || tokens.at(cursor+1).text != "if")) {
 					level--;
 				} else if (level == 0 && token.text == ";") {
-					parts.push_back(sql.substr(tokens.at(start).start, token.end - tokens.at(start).start - 1));
+          if (cursor == 0 || tokens.at(cursor - 1).text == "end"){ //oracle: must have ; after end
+					  parts.push_back(sql.substr(tokens.at(start).start, token.end - tokens.at(start).start));
+          } else { //oracle: cannot have ; after anything but end
+            parts.push_back(sql.substr(tokens.at(start).start, token.end - tokens.at(start).start - 1));  
+          }
 					start = cursor + 1;
 				}
 			}
-			if (start < cursor - 1) {
-				parts.push_back(sql.substr(tokens.at(start).start, tokens.at(cursor - 1).end - tokens.at(start).start - 1));
+			if (start < cursor) {
+				parts.push_back(sql.substr(tokens.at(start).start, tokens.at(cursor - 1).end - tokens.at(start).start));
 				start = cursor + 1;
 			}
 			return parts;
