@@ -28,11 +28,12 @@
 #include <Rcpp.h>
 #include "SqlRender.h"
 #include "SqlTranslate.h"
+#include "SqlSplit.h"
 
 // [[Rcpp::export]]
 Rcpp::List renderSqlInternal(std::string sql, Rcpp::List parameters) {
 
-  using namespace ohdsi::sqlRender;
+	using namespace ohdsi::sqlRender;
 
 	try {
 		//Convert list to map:
@@ -50,7 +51,7 @@ Rcpp::List renderSqlInternal(std::string sql, Rcpp::List parameters) {
 	} catch (...) {
 		::Rf_error("c++ exception (unknown reason)");
 	}
-  return Rcpp::List::create();
+	return Rcpp::List::create();
 }
 
 // [[Rcpp::export]]
@@ -67,8 +68,7 @@ Rcpp::List translateSqlInternal(std::string sql, Rcpp::DataFrame replacementPatt
 		for (int row = 0; row < searchPatterns.length(); row++) {
 			std::string searchPattern = Rcpp::as<std::string>(searchPatterns[row]);
 			std::string replacePattern = Rcpp::as<std::string>(replacePatterns[row]);
-			//std::cout << row << ": " << searchPattern << " - " << replacePattern << "\n";
-			patternToReplacement.push_back(std::pair<String,String>(searchPattern,replacePattern));
+			patternToReplacement.push_back(std::pair<String, String>(searchPattern, replacePattern));
 		}
 
 		SqlTranslate::String translatedSql = SqlTranslate::translateSql(sql, patternToReplacement);
@@ -82,5 +82,37 @@ Rcpp::List translateSqlInternal(std::string sql, Rcpp::DataFrame replacementPatt
 	return Rcpp::List::create();
 }
 
+//' @title splitSql
+//'
+//' @description
+//' \code{splitSql} splits a string containing multiple SQL statements into a vector of SQL statements
+//'
+//' @details
+//' This function takes is needed because some DBMSs (like ORACLE) do not accepts multiple SQL statements being send as one execution.
+//'
+//' @param sql               The SQL string to split into separate statements
+//' @return
+//' A vector of strings, one for each SQL statement
+//' @examples
+//' splitSql("SELECT * INTO a FROM b; USE x; DROP TABLE c;")
+//'
+//' @export
+// [[Rcpp::export]]
+std::vector<std::string> splitSql(std::string sql) {
 
-#endif // __SQLRender_cpp__
+	using namespace ohdsi::sqlRender;
+
+	try {
+		std::vector<String> parts = SqlSplit::spitSql(sql);
+		return parts;
+
+	} catch (std::exception &e) {
+		forward_exception_to_r(e);
+	} catch (...) {
+		::Rf_error("c++ exception (unknown reason)");
+	}
+	std::vector<std::string> parts;
+	return parts;
+}
+
+#endif // __RcppWrapper_cpp__

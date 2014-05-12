@@ -131,6 +131,65 @@ namespace ohdsi {
 				throw(errno);
 		}
 
+		/**
+		 * Splits the SQL into tokens. Any alphanumeric (including underscore) sequence is considered a token. All other
+		 * individual special characters are considered their own tokens. White space and SQL comments are not considered for
+		 * tokens.
+		 */
+		std::vector<Token> tokenizeSql(const String& sql) {
+			std::vector<Token> tokens;
+			size_t start = 0;
+			size_t cursor = 0;
+			bool commentType1 = false; //Type 1: -- ... end of line
+			bool commentType2 = false; //Type 2: /* .. */
+			for (; cursor < sql.length(); cursor++) {
+				char ch = sql.at(cursor);
+				if (commentType1) {
+					if (ch == '\n') {
+						commentType1 = false;
+						start = cursor + 1;
+					}
+				} else if (commentType2) {
+					if (ch == '/' && cursor > 0 && sql.at(cursor - 1) == '*') {
+						commentType2 = false;
+						start = cursor + 1;
+					}
+				} else if (!std::isalnum(ch) && ch != '_' && ch != '@') {
+					if (cursor > start) {
+						Token token;
+						token.start = start;
+						token.end = cursor;
+						token.text = sql.substr(start, cursor - start);
+						tokens.push_back(token);
+						//std::cout << token.text << "\n";
+					}
+					if (ch == '-' && cursor < sql.length() && sql.at(cursor + 1) == '-') {
+						commentType1 = true;
+					} else if (ch == '/' && cursor < sql.length() && sql.at(cursor + 1) == '*') {
+						commentType2 = true;
+					} else if (!std::isspace(ch)) {
+						Token token;
+						token.start = cursor;
+						token.end = cursor + 1;
+						token.text = sql.substr(cursor, 1);
+						tokens.push_back(token);
+						//::cout << token.text << "\n";
+					}
+					start = cursor + 1;
+				}
+			}
+
+			if (cursor > start) {
+				Token token;
+				token.start = start;
+				token.end = cursor;
+				token.text = sql.substr(start, cursor - start);
+				tokens.push_back(token);
+				//std::cout << token.text << "\n";
+			}
+			return tokens;
+		}
+
 	} // namespace stringUtilities
 } // namespace ohdsi
 

@@ -34,6 +34,12 @@ namespace ohdsi {
 		typedef std::string String;
 		typedef std::vector<String> StringVector;
 
+		struct Token {
+			size_t start;
+			size_t end;
+			String text;
+		};
+
 		String& ltrim(String& s);
 		String& rtrim(String& s);
 		String& trim(String& s);
@@ -44,6 +50,8 @@ namespace ohdsi {
 		StringVector split(const String& source, const char delimiter);
 		String loadTextFile(const char *filename);
 		void saveTextFile(const String& string, const char *filename);
+		std::vector<Token> tokenizeSql(const String& sql);
+
 	} // namespace stringUtlities
 } // namespace ohdsi
 

@@ -37,3 +37,18 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// splitSql
+std::vector<std::string> splitSql(std::string sql);
+RcppExport SEXP SqlRender_splitSql(SEXP sqlSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< std::string >::type sql(sqlSEXP );
+        std::vector<std::string> __result = splitSql(sql);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}

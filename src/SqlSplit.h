@@ -1,5 +1,5 @@
 /**
- * @file SqlTranslate.h
+ * @file SqlSplit.h
  *
  * This file is part of SqlRender
  *
@@ -22,8 +22,8 @@
  * @author Marc Suchard
  */
 
-#ifndef __SqlTranslate_h__
-#define __SqlTranslate_h__
+#ifndef __SqlSplit_h__
+#define __SqlSplit_h__
 
 #include <map>
 
@@ -34,35 +34,15 @@ namespace ohdsi {
 
 		using namespace stringUtilities;
 
-		struct Block: Token {
-			Block(const Token& other) :
-					Token(other), isVariable(false) {
-			}
-			bool isVariable;
-		};
 
-		struct MatchedPattern {
-			size_t start;
-			size_t end;
-      size_t startToken;
-			std::map<String, String> variableToValue;
-
-		};
-
-		struct SqlTranslate {
+		struct SqlSplit {
 		public:
 			typedef stringUtilities::String String;
-			typedef std::vector<std::pair<String, String> > ReplacementPatterns;
 
-			static String translateSql(String str, ReplacementPatterns& replacementPatterns);
-
-		private:
-			static std::vector<Block> parseSearchPattern(const String& pattern);
-			static MatchedPattern search(const String& sql, const std::vector<Block>& parsedPattern, const int startToken);
-			static String searchAndReplace(const String& sql, const std::vector<Block>& parsedPattern, const String& replacePattern);
+			static std::vector<String> spitSql(String sql);
 		};
 
 	} // namespace sqlRender
 } // namespace ohdsi
 
-#endif // __SqlTranslate_h__
+#endif // __SqlSplit_h__

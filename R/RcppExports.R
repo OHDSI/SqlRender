@@ -9,3 +9,22 @@ translateSqlInternal <- function(sql, replacementPatterns) {
     .Call('SqlRender_translateSqlInternal', PACKAGE = 'SqlRender', sql, replacementPatterns)
 }
 
+#' @title splitSql
+#'
+#' @description
+#' \code{splitSql} splits a string containing multiple SQL statements into a vector of SQL statements
+#'
+#' @details
+#' This function takes is needed because some DBMSs (like ORACLE) do not accepts multiple SQL statements being send as one execution.
+#'
+#' @param sql               The SQL string to split into separate statements
+#' @return
+#' A vector of strings, one for each SQL statement
+#' @examples
+#' splitSql("SELECT * INTO a FROM b; USE x; DROP TABLE c;")
+#'
+#' @export
+splitSql <- function(sql) {
+    .Call('SqlRender_splitSql', PACKAGE = 'SqlRender', sql)
+}
+
