@@ -7,7 +7,7 @@ test_that("splitSql split simple statements", {
 
 test_that("splitSql split with BEGIN...END", {
 			sql <- splitSql("BEGIN\nSELECT * INTO a FROM b;\nEND;\nUSE x;")
-			expect_equal(sql, c("BEGIN\nSELECT * INTO a FROM b;\nEND","USE x"))
+			expect_equal(sql, c("BEGIN\nSELECT * INTO a FROM b;\nEND;","USE x"))
 		})
 
 test_that("splitSql split with CASE...END", {
