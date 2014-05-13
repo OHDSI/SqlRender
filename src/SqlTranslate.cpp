@@ -77,7 +77,7 @@ namespace ohdsi {
 						} else if (parsedPattern[matchCount].isVariable) {
 							varStart = token.end;
 						}
-					} else if (nestStack.size() == 0 && token.text == ";"){ //Not allowed to span multiple SQL statements
+					} else if (nestStack.size() == 0 && (token.text == ";" || token.text == ")")){ //Not allowed to span multiple SQL statements or outside of nesting
   					matchCount = 0;
             cursor = matchedPattern.startToken;
 					} else {
