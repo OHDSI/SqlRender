@@ -47,9 +47,18 @@ namespace ohdsi {
 			int level = 0;
 			size_t start = 0;
 			size_t cursor;
+      bool quote = false;
+      String quoteText = "";
 			for (cursor = start; cursor < tokens.size(); cursor++) {
 				Token token = tokens.at(cursor);
-				if (token.text == "begin" || token.text == "case") {
+        if (quote) {
+          if (token.text == quoteText){
+            quote = false;
+          }
+        } else if (token.text == "'" || token.text == "\"") {
+          quote = true;
+          quoteText = token.text;
+        } else if (token.text == "begin" || token.text == "case") {
 					level++;
 				} else if (token.text == "end" && (cursor == tokens.size() - 1 || tokens.at(cursor+1).text != "if")) {
 					level--;

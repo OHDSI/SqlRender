@@ -14,3 +14,9 @@ test_that("splitSql split with CASE...END", {
 			sql <- splitSql("SELECT CASE WHEN x=1 THEN 0 ELSE 1 END AS x INTO a FROM b;\nUSE x;")
 			expect_equal(sql, c("SELECT CASE WHEN x=1 THEN 0 ELSE 1 END AS x INTO a FROM b","USE x"))
 		})
+
+
+test_that("splitSql split with 'end' in quoted text", {
+  sql <- splitSql("insert into a (x) values ('end');\n insert into a (x) values ('begin');")
+  expect_equal(sql, c("insert into a (x) values ('end')","insert into a (x) values ('begin')"))
+})
