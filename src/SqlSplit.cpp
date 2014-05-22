@@ -44,7 +44,8 @@ namespace ohdsi {
 		std::vector<String> SqlSplit::spitSql(String sql) {
 			std::vector<String> parts;
 			std::vector<Token> tokens = tokenizeSql(toLowerCase(sql));
-			int level = 0;
+      std::stack<String> nestStack;
+      String lastPop = "";
 			size_t start = 0;
 			size_t cursor;
       bool quote = false;
@@ -59,11 +60,12 @@ namespace ohdsi {
           quote = true;
           quoteText = token.text;
         } else if (token.text == "begin" || token.text == "case") {
-					level++;
+					nestStack.push(token.text);
 				} else if (token.text == "end" && (cursor == tokens.size() - 1 || tokens.at(cursor+1).text != "if")) {
-					level--;
-				} else if (level == 0 && token.text == ";") {
-          if (cursor == 0 || tokens.at(cursor - 1).text == "end"){ //oracle: must have ; after end
+					lastPop = nestStack.top();
+          nestStack.pop();
+				} else if (nestStack.size() == 0 && token.text == ";") {
+          if (cursor == 0 || (tokens.at(cursor - 1).text == "end" && lastPop == "begin")){ //oracle: must have ; after end belonging to a begin
 					  parts.push_back(sql.substr(tokens.at(start).start, token.end - tokens.at(start).start));
           } else { //oracle: cannot have ; after anything but end
             parts.push_back(sql.substr(tokens.at(start).start, token.end - tokens.at(start).start - 1));  
