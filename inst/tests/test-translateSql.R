@@ -46,3 +46,8 @@ test_that("translateSQL sql server -> Oracle '+' in quote", {
   sql <- translateSql("select '+';",sourceDialect = "sql server", targetDialect = "oracle")$sql
   expect_equal(sql, "select '+';")
 })
+
+test_that("translateSQL sql server -> PostgreSQL USE", {
+  sql <- translateSql("USE vocabulary;",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "SET search_path TO  vocabulary;")
+})

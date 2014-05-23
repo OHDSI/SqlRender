@@ -86,8 +86,8 @@ renderSql <- function(sql = "", ...) {
 #' translateSql("USE my_schema","sql server", "oracle")
 #' }
 #' @export
-translateSql <- function(sql = "", sourceDialect = "sql server", targetDialect = "oracle") {
-  patterns <- replacementPatterns[replacementPatterns$From == sourceDialect && replacementPatterns$To == targetDialect,c(3,4)]
+translateSql <- function(sql = "", sourceDialect = "sql server", targetDialect = "oracle") {  
+  patterns <- replacementPatterns[replacementPatterns$From == sourceDialect & replacementPatterns$To == targetDialect,c(3,4)]
   translateSqlInternal(sql,patterns)
 }
 
