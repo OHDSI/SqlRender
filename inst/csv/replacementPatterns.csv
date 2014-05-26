@@ -42,3 +42,4 @@ From,To,Pattern,Replacement
 "sql server","postgresql","USE @schema;","SET search_path TO @schema;"
 "sql server","postgresql","IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS @table;"
 "sql server","postgresql",".dbo.","."
+"sql server","postgresql","#",""
