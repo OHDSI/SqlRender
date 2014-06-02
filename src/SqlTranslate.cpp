@@ -112,6 +112,10 @@ namespace ohdsi {
             cursor = matchedPattern.startToken;
 					}
 				}
+        if (matchCount != 0 && cursor == tokens.size()-1){ // If at end of sql and still didn't finish pattern, we're not going to finish it
+					matchCount = 0;
+					cursor = matchedPattern.startToken;
+				}
 			}
 			matchedPattern.start = std::string::npos;
 			return matchedPattern;

@@ -51,3 +51,10 @@ test_that("translateSQL sql server -> PostgreSQL USE", {
   sql <- translateSql("USE vocabulary;",sourceDialect = "sql server", targetDialect = "postgresql")$sql
   expect_equal(sql, "SET search_path TO  vocabulary;")
 })
+
+
+test_that("translateSQL sql server -> PostgreSQL string concat", {
+  sql <- translateSql("'x' + b ( 'x' + b)",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "'x' || b ( 'x' || b)")
+})
+
