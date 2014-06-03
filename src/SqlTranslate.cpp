@@ -63,6 +63,7 @@ namespace ohdsi {
 			size_t matchCount = 0;
 			size_t varStart = 0;
 			std::stack<String> nestStack;
+      bool inPatternQuote = false;
 			MatchedPattern matchedPattern;
 			for (size_t cursor = startToken; cursor < tokens.size(); cursor++) {
 				Token token = tokens.at(cursor);
@@ -77,7 +78,9 @@ namespace ohdsi {
 						} else if (parsedPattern[matchCount].isVariable) {
 							varStart = token.end;
 						}
-					} else if (nestStack.size() == 0 && (token.text == ";" || token.text == ")")){ //Not allowed to span multiple SQL statements or outside of nesting
+            if (token.text == "'" || token.text == "'")
+              inPatternQuote = !inPatternQuote;
+					} else if (nestStack.size() == 0 && !inPatternQuote && (token.text == ";" || token.text == ")")){ //Not allowed to span multiple SQL statements or outside of nesting
   					matchCount = 0;
             cursor = matchedPattern.startToken;
 					} else {
@@ -107,6 +110,8 @@ namespace ohdsi {
 						} else if (parsedPattern[matchCount].isVariable) {
 							varStart = token.end;
 						}
+            if (token.text == "'" || token.text == "'")
+              inPatternQuote = !inPatternQuote;
 					} else if (matchCount != 0) {
 						matchCount = 0;
             cursor = matchedPattern.startToken;
