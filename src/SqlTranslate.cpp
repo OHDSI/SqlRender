@@ -27,7 +27,6 @@
 
 #include "SqlTranslate.h"
 
-//#include <_mingw.h> // TODO Is this necessary?  If so, wrap in Windoz-specific ifdef
 #include <R_ext/Error.h>
 #include <cctype>
 #include <iostream>
