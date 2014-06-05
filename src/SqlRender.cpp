@@ -30,7 +30,7 @@
 #include <stack>
 
 #include "stringUtilities.h"
-#include "SQLRender.h"
+#include "SqlRender.h"
 
 namespace ohdsi {
 	namespace sqlRender {
