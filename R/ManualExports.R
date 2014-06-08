@@ -23,10 +23,8 @@
 .onLoad <- function(libname, pkgname) {
   library(utils)
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package="SqlRender")
-  #pathToReplacementPatterns <- "C:/Users/mschuemi/Documents/SqlRender/inst/csv/SqlServerToOracle.csv"
   patterns <- read.csv(pathToReplacementPatterns)
   replacementPatterns <<- data.frame(From = patterns[,1],To = patterns[,2],Search = gsub("\\\\n","\n",as.character(patterns[,3])),replace = gsub("\\\\n","\n",as.character(patterns[,4])))
-  #cat("Loaded replacement patterns")
 }
 
 #' @title renderSql
@@ -36,7 +34,15 @@
 #'
 #' @details
 #' This function takes parameterized SQL and a list of parameter values and renders the SQL that can be 
-#' send to the server.
+#' send to the server. Parameterization syntax:
+#' \describe{
+#'   \item{@@parameterName}{Parameters are indicated using a @@ prefix, and are replaced with the actual
+#'   values provided in the renderSql call.}
+#'   \item{\{DEFAULT @@parameterName = parameterValue\}}{Default values for parameters can be defined using 
+#'   curly and the DEFAULT keyword.}
+#'   \item{\{if\}?\{then\}:\{else\}}{The if-then-else pattern is used to turn on or off blocks of SQL code.}
+#' }
+#' 
 #' 
 #' @param sql               The parameterized SQL
 #' @param ...               Parameter values
@@ -89,41 +95,4 @@ renderSql <- function(sql = "", ...) {
 translateSql <- function(sql = "", sourceDialect = "sql server", targetDialect = "oracle") {  
   patterns <- replacementPatterns[replacementPatterns$From == sourceDialect & replacementPatterns$To == targetDialect,c(3,4)]
   translateSqlInternal(sql,patterns)
-}
-
-testCode <- function(){
-  d <- read.csv("c:/temp/scc.sql")
-  sql <- as.character(d$x)
-  tsql <- translateSql(sql)$sql
-  #sql <- "IF OBJECT_ID('scratch.dbo.self_controlled_cohort_results', 'U') IS NOT NULL\nDROP TABLE scratch.dbo.self_controlled_cohort_results;"
-  #sql <- "abc.dbo.defg AND abcd.dbo.def"
-  #translateSqlInternal(sql,patterns[c(5),])$sql
-  
-  write.csv(tsql,file="c:/temp/scc2.sql")
-  
-  sqlCommands <- splitSql(tsql)
-  
-  library(DatabaseConnector)
-  connectionDetails <- createConnectionDetails("oracle","system","F1r3starter","xe")
-  connection <- connect(connectionDetails)
-  #dbSendUpdate(connection,"DROP TABLE age_group")
-
-  i <- 1
-  for (sqlCommand in sqlCommands){
-    write.csv(sqlCommand,file=paste("c:/temp/sqlCommand_",i,".sql",sep=""))
-    i = i + 1
-    #dbSendUpdate(connection,paste(sqlCommand,";",sep=""))
-    dbSendUpdate(connection,sqlCommand)
-  }
-  
-  dbGetQuery(connection,"SELECT * FROM scratch.scc_analysis")
-  dbGetQuery(connection,"SELECT * FROM scratch.scc_results")
-  dbGetQuery(connection,"SELECT * FROM age_group")
-  dbGetQuery(connection,"SELECT COUNT(*) FROM cdm4_sim.person")
-  dbGetQuery(connection,"SELECT COUNT(*) FROM cdm4_sim.drug_Era WHERE drug_concept_id IN (915981)	AND drug_type_concept_id IN (38000182)")
-  dbGetQuery(connection,"SELECT COUNT(*) FROM cdm4_sim.drug_Era")
-  dbGetQuery(connection,"SELECT * FROM cdm4_sim.drug_Era WHERE ROWNUM <= 10")
-  dbGetQuery(connection,"SELECT * FROM ALL_TAB_COLS WHERE TABLE_NAME = 'DRUG_ERA' AND OWNER = 'CDM4_SIM'")
-  dbGetQuery(connection,"SELECT COUNT(*) FROM scc_exposure_summary")
-  
 }

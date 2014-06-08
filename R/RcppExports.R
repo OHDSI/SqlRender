@@ -15,7 +15,7 @@ translateSqlInternal <- function(sql, replacementPatterns) {
 #' \code{splitSql} splits a string containing multiple SQL statements into a vector of SQL statements
 #'
 #' @details
-#' This function takes is needed because some DBMSs (like ORACLE) do not accepts multiple SQL statements being send as one execution.
+#' This function is needed because some DBMSs (like ORACLE) do not accepts multiple SQL statements being sent as one execution.
 #'
 #' @param sql               The SQL string to split into separate statements
 #' @return

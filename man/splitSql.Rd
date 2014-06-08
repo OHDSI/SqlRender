@@ -16,9 +16,9 @@ A vector of strings, one for each SQL statement
 statements into a vector of SQL statements
 }
 \details{
-This function takes is needed because some DBMSs (like
-ORACLE) do not accepts multiple SQL statements being send
-as one execution.
+This function is needed because some DBMSs (like ORACLE) do
+not accepts multiple SQL statements being sent as one
+execution.
 }
 \examples{
 splitSql("SELECT * INTO a FROM b; USE x; DROP TABLE c;")
