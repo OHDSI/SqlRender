@@ -48,8 +48,9 @@ NULL
 #' @param targetFile               The target SQL file
 #' @param ...                   Parameter values
 
-#' @examples
+#' @examples \dontrun{
 #' renderSqlFile("myParamStatement.sql","myRenderedStatement.sql",a="myTable")
+#' }
 #' @export
 renderSqlFile <- function(sourceFile, targetFile, ...) {
   sql <- readChar(sourceFile, file.info(sourceFile)$size)  

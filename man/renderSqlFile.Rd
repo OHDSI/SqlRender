@@ -27,6 +27,8 @@ send to the server. Parameterization syntax:
 }
 }
 \examples{
+\dontrun{
 renderSqlFile("myParamStatement.sql","myRenderedStatement.sql",a="myTable")
+}
 }
 

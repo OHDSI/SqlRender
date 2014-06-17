@@ -96,3 +96,6 @@ translateSql <- function(sql = "", sourceDialect = "sql server", targetDialect =
   patterns <- replacementPatterns[replacementPatterns$From == sourceDialect & replacementPatterns$To == targetDialect,c(3,4)]
   translateSqlInternal(sql,patterns)
 }
+
+
+
