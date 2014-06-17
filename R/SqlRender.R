@@ -26,3 +26,36 @@
 #' @docType package
 #' @name SqlRender
 NULL
+
+#' Render a SQL file
+#'
+#' @description
+#' \code{renderSqlFile} Renders SQL code in a file based on parameterized SQL and parameter values, and writes it to another file.
+#'
+#' @details
+#' This function takes parameterized SQL and a list of parameter values and renders the SQL that can be 
+#' send to the server. Parameterization syntax:
+#' \describe{
+#'   \item{@@parameterName}{Parameters are indicated using a @@ prefix, and are replaced with the actual
+#'   values provided in the renderSql call.}
+#'   \item{\{DEFAULT @@parameterName = parameterValue\}}{Default values for parameters can be defined using 
+#'   curly and the DEFAULT keyword.}
+#'   \item{\{if\}?\{then\}:\{else\}}{The if-then-else pattern is used to turn on or off blocks of SQL code.}
+#' }
+#' 
+#' 
+#' @param sourceFile               The source SQL file
+#' @param targetFile               The target SQL file
+#' @param ...                   Parameter values
+
+#' @examples
+#' renderSqlFile("myParamStatement.sql","myRenderedStatement.sql",a="myTable")
+#' @export
+renderSqlFile <- function(sourceFile, targetFile, ...) {
+  sql <- readChar(sourceFile, file.info(sourceFile)$size)  
+  sql <- renderSql(sql,...)$sql
+  sink(targetFile)
+  cat(sql)
+  sink()
+}
+

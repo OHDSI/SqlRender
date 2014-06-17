@@ -27,6 +27,15 @@ test_that("If-then-else: else works", {
 			expect_equal(sql, " SELECT * FROM table WHERE x = 123 AND x = 1;")
 		})
 
+test_that("If-then-else: boolean parameter interpreted as character", {
+  sql <- renderSql("SELECT * FROM table {@a}?{WHERE x = 1}",a=FALSE)$sql
+  expect_equal(sql,  "SELECT * FROM table ")
+  
+  sql <- renderSql("SELECT * FROM table {@a}?{WHERE x = 1}",a=TRUE)$sql
+  expect_equal(sql,  "SELECT * FROM table WHERE x = 1")
+  
+})
+
 
 s <- "{1 IN (@a)}?{SELECT * FROM table}"
 
