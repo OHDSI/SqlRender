@@ -1,0 +1,38 @@
+\name{loadRenderTranslateSql}
+\alias{loadRenderTranslateSql}
+\title{Load, render, and translate a SQL file in a package}
+\usage{
+loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server", ...)
+}
+\arguments{
+  \item{sqlFilename}{The source SQL file}
+
+  \item{packageName}{The name of the package that contains
+  the SQL file}
+
+  \item{dbms}{The target dialect. Currently "sql server",
+  "oracle", "postgres", and "redshift" are supported}
+
+  \item{...}{Parameter values used for \code{renderSql}}
+}
+\description{
+\code{loadRenderTranslateSql} Loads a SQL file contained in
+a package, renders it and translates it to the specified
+dialect
+}
+\details{
+This function looks for a SQL file with the specified name
+in the inst/sql/<dbms> folder of the specified package. If
+it doesn't find it in that folder, it will try and load the
+file from the inst/sql/sql_server folder and use the
+\code{translateSql} function to translate it to the
+requested dialect. It will subsequently call the
+\code{renderSql} function with any of the additional
+specified parameters.
+}
+\examples{
+\dontrun{
+  renderedSql <- loadRenderTranslateSql("CohortMethod.sql",packageName = "CohortMethod",dbms = connectionDetails$dbms,CDM_schema = "cdmSchema")
+}
+}
+
