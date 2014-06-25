@@ -25,10 +25,10 @@
 								<option id="gnu.cpp.compiler.mingw.exe.debug.option.optimization.level.1370478975" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.1502426046" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1221769967" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;C:\R\R-3.0.3\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\Rcpp\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\RInside\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_LIBRARY}\Rcpp\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_LIBRARY}\RInside\include&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.verbose.1037578147" name="Verbose (-v)" superClass="gnu.cpp.compiler.option.other.verbose" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.2125827854" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
@@ -52,8 +52,8 @@
 								</option>
 								<option id="gnu.cpp.link.option.paths.683108555" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\bin\x64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\Rcpp\libs\x64&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${env_var:R_HOME}\library\RInside\libs\x64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_LIBRARY}\Rcpp\libs\x64&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:R_LIBRARY}\RInside\libs\x64&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.549320629" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -138,4 +138,5 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

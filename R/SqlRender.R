@@ -96,3 +96,70 @@ loadRenderTranslateSql <- function(sqlFilename, packageName, dbms="sql server", 
   renderedSql
 }
 
+trim <- function(string){
+  gsub("(^ +)|( +$)", "",  string)
+}
+
+snakeCaseToCamelCase <- function(string){
+  string <- tolower(string)
+  for(letter in letters){
+    string = gsub(paste("_",letter,sep=""),toupper(letter),string)
+  }
+  string
+}
+
+#' export
+createRWrapperForSql <- function(sqlFilename, packageName, rFilename){
+  pathToSql <- system.file(paste("sql/","sql_server",sep=""), sqlFilename, package=packageName) 
+  parameterizedSql <- readChar(pathToSql,file.info(pathToSql)$size) 
+  
+  hits <- gregexpr("\\{DEFAULT @[^}]*\\}",parameterizedSql) 
+  hits <- cbind(hits[[1]],attr(hits[[1]],"match.length"))
+  f <- function(x) {
+    x <- substr(parameterizedSql,x[1],x[1]+x[2])
+    start = regexpr("@",x) + 1
+    equalSign = regexpr("=",x)
+    end = regexpr("\\}",x) - 1
+    parameter <- trim(substr(x, start,equalSign-1))
+    value <- trim(substr(x, equalSign+1,end))
+    if (grepl(",",value) & substr(value,1,1) != "'")
+      value <- paste("c(",value,")",sep="")
+    if (substr(value,1,1) == "'" & substr(value,nchar(value),nchar(value)) == "'")
+      value <- paste("\"",substr(value,2,nchar(value)-1),"\"",sep="")
+    ccParameter = snakeCaseToCamelCase(parameter)
+    c(parameter,ccParameter,value)
+  }
+  definitions <- t(apply(hits,1,FUN = f))
+  
+  lines <- c()
+  lines <- c(lines,paste(gsub(".sql","",sqlFilename)," <- function(connectionDetails,",sep=""))
+  for (i in 1:nrow(definitions)){
+    if (i == nrow(definitions))
+      end = ") {"
+    else
+      end = ","
+    lines <- c(lines,paste("                        ",definitions[i,2]," = ",definitions[i,3],end,sep=""))
+  }
+  lines <- c(lines,paste("  renderedSql <- loadRenderTranslateSql(\"",sqlFilename,"\",",sep=""))
+  lines <- c(lines,paste("              packageName = \"",packageName,"\",",sep=""))
+  lines <- c(lines,"              dbms = connectionDetails$dbms,")
+  for (i in 1:nrow(definitions)){
+    if (i == nrow(definitions))
+      end = ")"
+    else
+      end = ","
+    lines <- c(lines,paste("              ",definitions[i,1]," = ",definitions[i,2],end,sep=""))
+  }
+  lines <- c(lines,"  conn <- connect(connectionDetails)")  
+  lines <- c(lines,"")  
+  lines <- c(lines,"  writeLines(\"Executing multiple queries. This could take a while\")")  
+  lines <- c(lines,"  executeSql(conn,connectionDetails$dbms,renderedSql)")  
+  lines <- c(lines,"  writeLines(\"Done\")") 
+  lines <- c(lines,"")  
+  lines <- c(lines,"  dummy <- dbDisconnect(conn)")  
+  lines <- c(lines,"}")  
+  sink(rFilename)
+  cat(paste(lines,collapse="\n"))
+  sink()
+  
+}
