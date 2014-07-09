@@ -27,6 +27,28 @@
 #' @name SqlRender
 NULL
 
+#' Reads a SQL file
+#'
+#' @description
+#' \code{readSql} loads SQL from a file
+#'
+#' @details
+#' \code{readSql} loads SQL from a file
+#' 
+#' @param sourceFile               The source SQL file
+#' 
+#' @return
+#' Returns a string containing the SQL.
+#' 
+#' @examples \dontrun{
+#' readSql("myParamStatement.sql")
+#' }
+#' @export
+readSql <- function(sourceFile) {
+  readChar(sourceFile, file.info(sourceFile)$size)  
+}
+
+
 #' Render a SQL file
 #'
 #' @description
@@ -47,7 +69,7 @@ NULL
 #' @param sourceFile               The source SQL file
 #' @param targetFile               The target SQL file
 #' @param ...                   Parameter values
-
+#'
 #' @examples \dontrun{
 #' renderSqlFile("myParamStatement.sql","myRenderedStatement.sql",a="myTable")
 #' }
@@ -76,7 +98,9 @@ renderSqlFile <- function(sourceFile, targetFile, ...) {
 #' @param packageName           The name of the package that contains the SQL file
 #' @param dbms                  The target dialect. Currently "sql server", "oracle", "postgres", and "redshift" are supported
 #' @param ...                   Parameter values used for \code{renderSql}
-
+#'
+#' @return
+#' Returns a string containing the rendered SQL.
 #' @examples \dontrun{
 #'   renderedSql <- loadRenderTranslateSql("CohortMethod.sql",packageName = "CohortMethod",dbms = connectionDetails$dbms,CDM_schema = "cdmSchema")
 #' }

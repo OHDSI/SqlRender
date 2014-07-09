@@ -14,6 +14,9 @@ loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server", ...)
 
 \item{...}{Parameter values used for \code{renderSql}}
 }
+\value{
+Returns a string containing the rendered SQL.
+}
 \description{
 \code{loadRenderTranslateSql} Loads a SQL file contained in a package, renders it and translates it to the specified dialect
 }
