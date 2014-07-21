@@ -89,9 +89,9 @@ namespace ohdsi {
 						} else {
 							if (token.text == "\"" || token.text == "'") {
 								nestStack.push(token.text);
-							} else if (token.text == "(") {
+							} else if (!inPatternQuote && token.text == "(") {
 								nestStack.push(token.text);
-							} else if (nestStack.size() != 0 && token.text == ")" && nestStack.top() == "(") {
+							} else if (!inPatternQuote && nestStack.size() != 0 && token.text == ")" && nestStack.top() == "(") {
 								nestStack.pop();
 							}
 						}
@@ -109,7 +109,7 @@ namespace ohdsi {
 						} else if (parsedPattern[matchCount].isVariable) {
 							varStart = token.end;
 						}
-            if (token.text == "'" || token.text == "'")
+            if (token.text == "'" || token.text == "\"")
               inPatternQuote = !inPatternQuote;
 					} else if (matchCount != 0) {
 						matchCount = 0;

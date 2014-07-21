@@ -62,3 +62,8 @@ test_that("translateSQL sql server -> PostgreSQL string concat", {
   expect_equal(sql, "a || ';b'")
 })
 
+test_that("translateSQL sql server -> PostgreSQL string concat", {
+  sql <- translateSql("a + ';('",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "a || ';('")
+})
+
