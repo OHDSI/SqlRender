@@ -67,3 +67,9 @@ test_that("translateSQL sql server -> PostgreSQL string concat", {
   expect_equal(sql, "a || ';('")
 })
 
+
+test_that("translateSQL sql server -> PostgreSQL add month", {
+  sql <- translateSql("DATEADD(mm,1,date)",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "CAST((date + 1*INTERVAL'1 month') AS DATE)")
+})
+
