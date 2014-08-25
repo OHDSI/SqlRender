@@ -48,6 +48,28 @@ readSql <- function(sourceFile) {
   readChar(sourceFile, file.info(sourceFile)$size)  
 }
 
+#' Write SQL to a SQL (text) file
+#'
+#' @description
+#' \code{writeSql} writes SQL to a file
+#'
+#' @details
+#' \code{writeSql} writes SQL to a file
+#' 
+#' @param sql                     A string containing the sql
+#' @param targetFile              The target SQL file
+#' 
+#' @examples \dontrun{
+#' sql <- "SELECT * FROM @@table_name"
+#' writeSql(sql,"myParamStatement.sql")
+#' }
+#' @export
+writeSql <- function(sql, targetFile) {
+  sink(targetFile)
+  cat(sql)
+  sink()
+}
+
 
 #' Render a SQL file
 #'
@@ -75,11 +97,32 @@ readSql <- function(sourceFile) {
 #' }
 #' @export
 renderSqlFile <- function(sourceFile, targetFile, ...) {
-  sql <- readChar(sourceFile, file.info(sourceFile)$size)  
+  sql <- readSql(sourceFile)  
   sql <- renderSql(sql,...)$sql
-  sink(targetFile)
-  cat(sql)
-  sink()
+  writeSql(sql,targetFile)
+}
+
+#' Translate a SQL file
+#'
+#' @description
+#' This function takes SQL and translates it to a different dialect.
+#'
+#' @details
+#' This function takes SQL and translates it to a different dialect. 
+#' 
+#' @param sourceFile               The source SQL file
+#' @param targetFile               The target SQL file
+#' @param sourceDialect     The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
+#' @param targetDialect  	The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+#'
+#' @examples \dontrun{
+#' translateSqlFile("myRenderedStatement.sql","myTranslatedStatement.sql",targetDialect="postgresql")
+#' }
+#' @export
+translateSqlFile <- function(sourceFile, targetFile, sourceDialect = "sql server", targetDialect = "oracle") {
+  sql <- readSql(sourceFile)
+  sql <- translateSql(sql,sourceDialect,targetDialect)$sql
+  writeSql(sql,targetFile)
 }
 
 #' Load, render, and translate a SQL file in a package
