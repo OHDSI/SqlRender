@@ -66,6 +66,7 @@ readSql <- function(sourceFile) {
 #' @export
 writeSql <- function(sql, targetFile) {
   sink(targetFile)
+  sql <- gsub("\r","",sql) #outputting to file duplicates carriage returns, so remove them beforehand (still got newline)
   cat(sql)
   sink()
 }
