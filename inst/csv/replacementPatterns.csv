@@ -56,7 +56,7 @@ From,To,Pattern,Replacement
 "sql server","postgresql","#",""
 "sql server","redshift","CAST(@a AS DATE)","TO_DATE(@a, 'yyyymmdd')"
 "sql server","redshift","DATEADD(dd,@days,@date)","(@date + @days)"
-"sql server","redshift","DATEADD(mm,@months,@date)","CAST((@date + @months*INTERVAL'1 month') AS DATE)"
+"sql server","redshift","DATEADD(mm,@months,@date)","CAST(ADD_MONTHS(@date,@months) AS DATE)"
 "sql server","redshift","DATEDIFF(dd,@start, @end)","(@end - @start)"
 "sql server","redshift","GETDATE()","CURRENT_DATE"
 "sql server","redshift","+ '@a'","|| '@a'"
