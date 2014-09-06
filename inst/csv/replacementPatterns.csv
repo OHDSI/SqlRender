@@ -1,4 +1,9 @@
 From,To,Pattern,Replacement
+"sql server","oracle","INSERT INTO @table (@columns) VALUES (@values1),(@values2)","<start_of_insert> INSERT INTO @table (@columns) VALUES (INTO @table <par_open>@columns<par_close> VALUES <par_open>@values1<par_close>\n INTO @table <par_open>@columns<par_close> VALUES <par_open>@values2<par_close>\n)"
+"sql server","oracle","INTO @table <par_open>@columns<par_close> VALUES <par_open>INTO @table <par_open>@columns<par_close> VALUES","INTO @table <par_open>@columns<par_close> VALUES"
+"sql server","oracle","<start_of_insert> @a INSERT INTO @table (@columns) VALUES (@b)","INSERT ALL\n@bSELECT * FROM dual"
+"sql server","oracle","<par_open>","("
+"sql server","oracle","<par_close>",")"
 "sql server","oracle","DATEADD(dd,@days,@date)","(@date + @days)"
 "sql server","oracle","DATEADD(mm,@months,@date)","ADD_MONTHS(@date, @months)"
 "sql server","oracle","DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
