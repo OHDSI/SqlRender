@@ -40,7 +40,7 @@ From,To,Pattern,Replacement
 "sql server","postgresql","DATEADD(dd,@days,@date)","(@date + @days)"
 "sql server","postgresql","DATEADD(mm,@months,@date)","CAST((@date + @months*INTERVAL'1 month') AS DATE)"
 "sql server","postgresql","DATEADD(yy,@years,@date)","CAST((@date + @years*INTERVAL'1 year') AS DATE)"
-"sql server","postgresql","DATEDIFF(dd,@start, @end)","(@end - @start)"
+"sql server","postgresql","DATEDIFF(dd,@start, @end)","CAST(EXTRACT(EPOCH FROM (@end - @start))/86400 AS INTEGER)"
 "sql server","postgresql","GETDATE()","CURRENT_DATE"
 "sql server","postgresql","+ '@a'","|| '@a'"
 "sql server","postgresql","'@a' +","'@a' ||"
