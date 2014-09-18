@@ -74,7 +74,7 @@ From,To,Pattern,Replacement
 "sql server","redshift","MONTH(@date)","EXTRACT(MONTH FROM @date)"
 "sql server","redshift","STDEV(@a)","STDDEV(@a)"
 "sql server","redshift","LEN(@a)","CHAR_LENGTH(@a)"
-"sql server","redshift","LOG(@expression)","LN(@expression)"
+"sql server","redshift","LOG(@expression)","LN(CAST(@expression AS REAL))"
 "sql server","redshift","ISNULL(@a,@b)","COALESCE(@a,@b)"
 "sql server","redshift","COUNT_BIG(@a)","COUNT(@a)"
 "sql server","redshift","USE @schema;","SET search_path TO @schema;"
