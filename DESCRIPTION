@@ -9,9 +9,7 @@ Description: Package for working with client-side parameterized SQL, where the
     parameterization goes beyond what is supported by prepared statements.
 License: Apache License
 Depends:
-    Rcpp (>= 0.10.4)
+    rJava
 Suggests:
     testthat
 LazyData: false
-LinkingTo: Rcpp
-NeedsCompilation: yes

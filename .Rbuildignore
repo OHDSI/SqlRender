@@ -1,4 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .travis.yml
-standalone
+.classpath
+.project

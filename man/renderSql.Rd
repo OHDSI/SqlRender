@@ -15,7 +15,6 @@ A list containing the following elements:
 \describe{
   \item{parameterizedSql}{The original parameterized SQL code}
   \item{sql}{The rendered sql}
-  \item{parameters}{The parameters used. These may include defaults set in the parameterized SQL code.}
 }
 }
 \description{
