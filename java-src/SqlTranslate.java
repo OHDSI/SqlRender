@@ -69,7 +69,7 @@ public class SqlTranslate {
 					if (token.text.equals("'") || token.text.equals("'"))
 						inPatternQuote = !inPatternQuote;
 				} else if (nestStack.size() == 0 && !inPatternQuote && (token.text.equals(";") || token.text.equals(")"))) { // Not allowed to span multiple SQL
-																													// statements or outside of nesting
+					// statements or outside of nesting
 					matchCount = 0;
 					cursor = matchedPattern.startToken;
 				} else {
@@ -136,6 +136,17 @@ public class SqlTranslate {
 		return sql;
 	}
 
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
+	 * @param sourceDialect
+	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @return The translated SQL
+	 */
 	public static String translateSql(String sql, String sourceDialect, String targetDialect) {
 		ensurePatternsAreLoaded();
 		List<String[]> replacementPatterns = sourceTargetToReplacementPatterns.get(sourceDialect + "\t" + targetDialect);

@@ -302,6 +302,21 @@ public class SqlRender {
 		return result;
 	}
 
+	/**
+	 * This function takes parameterized SQL and a list of parameter values and renders the SQL that can be send to the server. Parameterization syntax:<br/>
+	 * &#64;parameterName<br/>
+	 * Parameters are indicated using a &#64; prefix, and are replaced with the actual values provided in the renderSql call.<br/>
+	 * <br/>
+	 * {DEFAULT &#64;parameterName = parameterValue}<br/>
+	 * Default values for parameters can be defined using curly and the DEFAULT keyword.<br/>
+	 * <br/>
+	 * {if}?{then}:{else}<br/>
+	 * The if-then-else pattern is used to turn on or off blocks of SQL code.
+	 * @param sql  The parameterized SQL
+	 * @param parameters  The names of the parameters (without the &#64;-sign).
+	 * @param values 	  The values of the parameters.
+	 * @return The rendered sql
+	 */
 	public static String renderSql(String sql, String[] parameters, String[] values) {
 		Map<String, String> parameterToValue = new HashMap<String, String>();
 		if (parameters != null)

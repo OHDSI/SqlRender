@@ -4,6 +4,13 @@ import java.util.Stack;
 
 public class SqlSplit {
 
+	/**
+	 * Splits a string containing multiple SQL statements into a vector of SQL statements
+	 * 
+	 * @param sql
+	 *            The SQL string to split into separate statements
+	 * @return An array of strings, one for each SQL statement
+	 */
 	public static String[] splitSql(String sql) {
 		List<String> parts = new ArrayList<String>();
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(sql.toLowerCase());
@@ -31,7 +38,7 @@ public class SqlSplit {
 																												// begin
 					parts.add(sql.substring(tokens.get(start).start, token.end));
 				} else { // oracle: cannot have ; after anything but end
-					parts.add(sql.substring(tokens.get(start).start, token.end-1));
+					parts.add(sql.substring(tokens.get(start).start, token.end - 1));
 				}
 				start = cursor + 1;
 			}
