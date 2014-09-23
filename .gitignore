@@ -6,5 +6,5 @@ src/*.so
 src/*.dll
 /Debug
 standalone/build/*
-
+/build
 /bin
