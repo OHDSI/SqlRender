@@ -77,3 +77,8 @@ test_that("translateSQL sql server -> Oracle multiple inserts in one statement",
   sql <- translateSql("INSERT INTO my_table (key,value) VALUES (1,0),(2,0),(3,1)",sourceDialect = "sql server", targetDialect = "oracle")$sql
   expect_equal(sql, "INSERT ALL\nINTO   my_table   (key,value) VALUES (1,0)\n INTO  my_table  (key,value) VALUES (2,0)\n)\n INTO   my_table   (key,value) VALUES (3,1)\nSELECT * FROM dual")
 })
+
+test_that("translateSQL sql server -> RedShift VARCHAR(MAX)", {
+  sql <- translateSql("VARCHAR(MAX)",sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal(sql, "VARCHAR(MAX)")
+})

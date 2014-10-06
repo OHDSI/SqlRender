@@ -62,7 +62,6 @@ From,To,Pattern,Replacement
 "sql server","postgresql","SELECT @a INTO @b FROM @c;","CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;"
 "sql server","postgresql","#",""
 "sql server","redshift","ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
-"sql server","redshift","VARCHAR(MAX)","VARCHAR"
 "sql server","redshift","CAST(@a AS DATE)","TO_DATE(@a, 'yyyymmdd')"
 "sql server","redshift","DATEADD(dd,@days,@date)","(@date + @days)"
 "sql server","redshift","DATEADD(mm,@months,@date)","CAST(ADD_MONTHS(@date,@months) AS DATE)"
