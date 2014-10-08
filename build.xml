@@ -1,13 +1,13 @@
 <project name="SqlRender" default="dist" basedir=".">
     <description>
-        Simple example build file
+        Simple build fine for SqlRender.jar
     </description>
   <!-- set global properties for this build -->
   <property name="src" location="java-src"/>
-<!--   <property name="lib" location="lib"/> -->
   <property name="lib" location="."/>
   <property name="build" location="build"/>
-  <property name="dist"  location="inst/java"/>
+  <property name="dist"  location="inst/java"/> 
+  <property name="csv"   location="inst/csv"/>
   
   <property name="JDK_VERSION" value="1.6"/>
   
@@ -22,6 +22,7 @@
     <tstamp/>
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
+    <mkdir dir="${build}/inst/csv"/>
   </target>
 
   <target name="compile" depends="init"
@@ -35,40 +36,21 @@
       destdir="${build}"
       includeantruntime="false"
     />
+    <!-- Copy csv files from ${csv} into ${csv}/${build} -->
+    <copy todir="${build}/inst/csv">
+        <fileset dir="${csv}"/>
+    </copy>
   </target>
 
   <target name="dist" depends="compile"
         description="generate the distribution" >
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}"/>
-    
-    <!-- Put all dependency jars in a temp file -->
-<!-- 
-    <jar jarfile="${dist}/java/deps.jar">
-    	<zipgroupfileset dir="${lib}">
-    		<include name="**/*.jar"/>
-    	</zipgroupfileset>
-    </jar>
- -->
-    
+        
     <sleep seconds="1"/>
     
     <!-- Put everything in ${build} into the SqlRender-${DSTAMP}.jar file -->
-    <jar jarfile="${dist}/SqlRender.jar" basedir="${build}">
-<!-- 
-      <manifest>
-        <attribute name="Built-By" value="${user.name}"/>
-        <attribute name="Main-Class" value="org.ohdsi.whiteRabbit.WhiteRabbitMain"/>
-      </manifest>
- -->     
-    <fileset dir="${src}">
-<!--       	<include name="org/ohdsi/whiteRabbit/**/*.png"/> -->
-<!--         <include name="**/*.java"/> -->
-        <include name="**/*.csv"/>
-      </fileset>      
-<!--      <zipfileset src="${dist}/lib/deps.jar" excludes="META-INF/*.SF"/>
- -->
-    </jar>                                                                                                                                                       
+    <jar jarfile="${dist}/SqlRender.jar" basedir="${build}"/>                                                                                                                                                      
   </target>
 
   <target name="clean"
