@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -148,7 +149,24 @@ public class SqlTranslate {
 	 * @return The translated SQL
 	 */
 	public static String translateSql(String sql, String sourceDialect, String targetDialect) {
-		ensurePatternsAreLoaded();
+		return translateSql(sql, sourceDialect, targetDialect, null);
+	}
+
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
+	 * @param sourceDialect
+	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @param pathToReplacementPatterns
+	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
+	 * @return The translated SQL
+	 */
+	public static String translateSql(String sql, String sourceDialect, String targetDialect, String pathToReplacementPatterns) {
+		ensurePatternsAreLoaded(pathToReplacementPatterns);
 		List<String[]> replacementPatterns = sourceTargetToReplacementPatterns.get(sourceDialect + "\t" + targetDialect);
 		if (replacementPatterns == null)
 			return sql;
@@ -169,14 +187,19 @@ public class SqlTranslate {
 		return columns;
 	}
 
-	private static void ensurePatternsAreLoaded() {
+	private static void ensurePatternsAreLoaded(String pathToReplacementPatterns) {
 		if (sourceTargetToReplacementPatterns != null)
 			return;
 		else {
 			lock.lock();
 			if (sourceTargetToReplacementPatterns == null) { // Could have been loaded before acquiring the lock
 				try {
-					InputStream inputStream = SqlTranslate.class.getResourceAsStream("replacementPatterns.csv");
+					InputStream inputStream;
+					if (pathToReplacementPatterns == null) // Use CSV file in JAR
+						//inputStream = SqlTranslate.class.getResourceAsStream("replacementPatterns.csv");
+						inputStream = SqlTranslate.class.getResourceAsStream("inst/csv/replacementPatterns.csv");
+					else
+						inputStream = new FileInputStream(pathToReplacementPatterns);
 					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 					sourceTargetToReplacementPatterns = new HashMap<String, List<String[]>>();
 					String line;

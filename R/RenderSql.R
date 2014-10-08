@@ -89,7 +89,8 @@ renderSql <- function(sql = "", ...) {
 #' }
 #' @export
 translateSql <- function(sql = "", sourceDialect = "sql server", targetDialect = "oracle") {  
-  translatedSql <- J("SqlTranslate")$translateSql(sql,sourceDialect,targetDialect)
+  pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package="SqlRender")
+  translatedSql <- J("SqlTranslate")$translateSql(sql,sourceDialect,targetDialect,pathToReplacementPatterns)
   list(originalSql = sql, sql = translatedSql) 
 }
 

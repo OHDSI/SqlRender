@@ -12,5 +12,6 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
         <javaElement handleIdentifier="=SqlRender/java-src"/>
+        <file path="/SqlRender/inst/csv/replacementPatterns.csv"/>
     </selectedElements>
 </jardesc>
