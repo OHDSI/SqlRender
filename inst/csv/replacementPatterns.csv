@@ -4,6 +4,7 @@ From,To,Pattern,Replacement
 "sql server","oracle","<start_of_insert> @a INSERT INTO @table (@columns) VALUES (@b)","INSERT ALL\n@bSELECT * FROM dual"
 "sql server","oracle","<par_open>","("
 "sql server","oracle","<par_close>",")"
+"sql server","oracle","VARCHAR(MAX)","VARCHAR(1000)"
 "sql server","oracle","DATEADD(d,@days,@date)","(@date + @days)"
 "sql server","oracle","DATEADD(dd,@days,@date)","(@date + @days)"
 "sql server","oracle","DATEADD(day,@days,@date)","(@date + @days)"
