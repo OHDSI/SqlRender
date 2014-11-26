@@ -176,10 +176,58 @@ snakeCaseToCamelCase <- function(string){
   string
 }
 
-#' export
-createRWrapperForSql <- function(sqlFilename, packageName, rFilename){
+#' Create an R wrapper for SQL
+#'
+#' @description
+#' \code{createRWrapperForSql} creates an R wrapper for a parameterized SQL file. The created R script
+#' file will contain a single function, that executes the SQL, and accepts the same parameters as
+#' specified in the SQL.
+#'
+#' @details
+#' This function reads the declarations of defaults in the parameterized SQL file, and creates an R 
+#' function that exposes the parameters. It uses the \code{loadRenderTranslateSql} function, and 
+#' assumes the SQL will be used inside a package.
+#' 
+#' To use inside a package, the SQL file should be placed in the inst/sql/sql_server folder of the 
+#' package.  
+#' 
+#' @param sqlFilename           The SQL file.
+#' @param rFilename             The name of the R file to be generated. Defaults to the name of the 
+#' SQL file with the extention reset to R.
+#' @param packageName           The name of the package that will contains the SQL file.
+#' @param createRoxygenTemplate If true, a template of Roxygen comments will be added.
+#'
+#' @examples \dontrun{
+#'   #This will create a file called CohortMethod.R:
+#'   createRWrapperForSql("CohortMethod.sql",packageName = "CohortMethod")
+#' }
+#' @export
+createRWrapperForSql <- function(sqlFilename, 
+                                 rFilename,
+                                 packageName,
+                                 createRoxygenTemplate = TRUE
+){
+  if (missing(rFilename)){
+    periodIndex = which(strsplit(sqlFilename, "")[[1]]==".")
+    if (length(periodIndex) == 0){
+      rFilename = paste(sqlFilename,"R",sep=".")
+    } else {
+      periodIndex = periodIndex[length(periodIndex)] #pick last one
+      rFilename = paste(substr(sqlFilename,1,periodIndex),"R",sep="")
+    }
+  }
+  
   pathToSql <- system.file(paste("sql/","sql_server",sep=""), sqlFilename, package=packageName) 
-  parameterizedSql <- readChar(pathToSql,file.info(pathToSql)$size) 
+  if (file.exists(pathToSql)){
+    writeLines(paste("Reading SQL from package folder:",pathToSql))
+    parameterizedSql <- readSql(pathToSql) 
+  } else if (file.exists(sqlFilename)){
+    writeLines(paste("Reading SQL from current folder:",file.path(getwd(),sqlFilename)))
+    writeLines("Note: make sure the SQL file is placed in the /inst/sql/sql_server folder when building the package")
+    parameterizedSql <- readSql(sqlFilename) 
+  } else {
+    stop("Could not find SQL file")
+  }
   
   hits <- gregexpr("\\{DEFAULT @[^}]*\\}",parameterizedSql) 
   hits <- cbind(hits[[1]],attr(hits[[1]],"match.length"))
@@ -200,6 +248,22 @@ createRWrapperForSql <- function(sqlFilename, packageName, rFilename){
   definitions <- t(apply(hits,1,FUN = f))
   
   lines <- c()
+  if (createRoxygenTemplate){
+    lines <- c(lines,"#' Todo: add title")  
+    lines <- c(lines,"#'")    
+    lines <- c(lines,"#' @description")  
+    lines <- c(lines,"#' Todo: add description")  
+    lines <- c(lines,"#'")  
+    lines <- c(lines,"#' @details")  
+    lines <- c(lines,"#' Todo: add details")  
+    lines <- c(lines,"#'") 
+    lines <- c(lines,"#' @param connectionDetails\t\tAn R object of type \\code{ConnectionDetails} created using the function \\code{createConnectionDetails} in the \\code{DatabaseConnector} package.")  
+    for (i in 1:nrow(definitions)){
+      lines <- c(lines,paste("#' @param",definitions[i,2],"\t\t"))
+    }
+    lines <- c(lines,"#'")  
+    lines <- c(lines,"#' @export")  
+  }
   lines <- c(lines,paste(gsub(".sql","",sqlFilename)," <- function(connectionDetails,",sep=""))
   for (i in 1:nrow(definitions)){
     if (i == nrow(definitions))
@@ -221,13 +285,13 @@ createRWrapperForSql <- function(sqlFilename, packageName, rFilename){
   lines <- c(lines,"  conn <- connect(connectionDetails)")  
   lines <- c(lines,"")  
   lines <- c(lines,"  writeLines(\"Executing multiple queries. This could take a while\")")  
-  lines <- c(lines,"  executeSql(conn,connectionDetails$dbms,renderedSql)")  
+  lines <- c(lines,"  executeSql(conn,renderedSql)")  
   lines <- c(lines,"  writeLines(\"Done\")") 
   lines <- c(lines,"")  
   lines <- c(lines,"  dummy <- dbDisconnect(conn)")  
-  lines <- c(lines,"}")  
+  lines <- c(lines,"}") 
+  writeLines(paste("Writing R function to:",rFilename))
   sink(rFilename)
   cat(paste(lines,collapse="\n"))
   sink()
-  
 }
