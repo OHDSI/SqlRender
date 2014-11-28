@@ -1,0 +1,136 @@
+---
+title: "Using SqlRender"
+output:
+  pdf_document:
+    number_sections: yes
+    toc: yes
+  html_document:
+    number_sections: yes
+    toc: yes
+---
+<!--
+%\VignetteEngine{knitr}
+%\VignetteIndexEntry{Using SqlRender}
+-->
+
+```{r, echo = FALSE, message = FALSE}
+library(SqlRender)
+knitr::opts_chunk$set(
+  cache=FALSE,
+  comment = "#>",
+  error = FALSE,
+  tidy = FALSE)
+```
+
+This vignette describes how one could use the SqlRender R package. 
+
+# Installation Instructions
+SqlRender is maintained in a [Github reppository](https://github.com/OHDSI/SqlRender). It can be downloaded and installed from within R using the `devtools` package:
+
+```{r tidy=TRUE,eval=FALSE}
+install.packages("devtools")
+library("devtools")
+install_github("ohdsi/devtools")
+```
+
+# SQL parameterization
+One of the main functions of the package is to support parameterization of SQL. Often, small variations of SQL need to be generated based on some parameters. SqlRender offers a simple markup syntax inside the SQL code to allow paramerization.Rendering the SQL based on parameter values is done using the `renderSql()` function.
+
+## Substituting parameter values
+The `@` character can be used to indicate parameter names that need to be exchange for actual parameter values when rendering. In the following example, a variable called `a` is mentioned in the SQL. In the call to the renderSql function the value of this parameter is defined:
+
+```{r tidy=TRUE,echo=TRUE,results='asis'}
+sql <- "SELECT * FROM table WHERE id = @a;"
+renderSql(sql, a=123)$sql
+```
+
+Note that, unlike the parameterization offered by most database management systems, it is just as easy to parameterize table or field names as values:
+
+```{r tidy=TRUE,echo=TRUE,results='asis'}
+sql <- "SELECT * FROM @x WHERE id = @a;"
+renderSql(sql, x="my_table", a=123)$sql
+```
+
+The parameter values can be numbers, strings, booleans, as well as vectors, which are converted to comma-delimited lists:
+
+```{r tidy=TRUE,echo=TRUE,results='asis'}
+sql <- "SELECT * FROM table WHERE id IN (@a); "
+renderSql(sql,a = c(1,2,3))$sql
+```
+
+## Default parameter values
+For some or all parameters, it might make sense to define default values that will be used unless the user specifies another value. This can be done using the `{DEFAULT @parameter = value}` syntax:
+
+```{r tidy=TRUE,echo=TRUE,results='asis'}
+sql <- "{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"
+renderSql(sql)$sql
+renderSql(sql,a=2)$sql
+```
+
+Defaults for multiple variables can be defined:
+
+```{r tidy=TRUE,echo=TRUE,results='asis'}
+sql <- "{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"
+renderSql(sql)$sql
+```
+
+## If-then-else 
+Sometimes blocks of codes need to be turned on or off based on the values of one or more parameters. This is done using the `{Condition} ? {if true} : {if false}` syntax. If the *condition* evaluates to true or 1, the *if true* block is used, else the *if false* block is shown (if present).
+
+```{r tidy=TRUE,echo=TRUE,results='asis'}
+sql <- "SELECT * FROM table {@x} ? {WHERE id = 1}"
+renderSql(sql,x = FALSE)$sql
+renderSql(sql,x = TRUE)$sql
+```
+
+Simple comparisons are also supported:
+
+```{r tidy=TRUE,echo=TRUE,results='asis'}
+sql <- "SELECT * FROM table {@x == 1} ? {WHERE id = 1};"
+renderSql(sql,x = 1)$sql
+renderSql(sql,x = 2)$sql
+```
+
+As well as the `IN` operator:
+
+```{r tidy=TRUE,echo=TRUE,results='asis'}
+sql <- "SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1}; "
+renderSql(sql,x = 2)$sql
+```
+
+# Translation to other SQL dialects
+SQL for one platform (e.g. Microsoft SQL Server) will not always execute on other platforms (e.g. Oracle). The `translateSql()` function can be used to translate between different dialects, but there are some limitations.
+
+A first limitation is that the starting dialect has to be **SQL Server**. The reason for this is that this dialect is in general the most specific. For example, the number of days between two dates in SQL Server has to be computed using the DATEDIFF function: `DATEDIFF(dd,a,b)`. In other languages one can simply subtract the two dates: `b-a`. Since you'd need to know a and b are dates, it is not possible to go from other languages to SQL Server, only the other way around.
+
+A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, with some support for **Amazon Redhift**.
+A third limitation is that only a limited set of translation rules have currently been implemented, although adding them to the [list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) should not be hard.
+
+A last limitation is that not all functions supported in one dialect have an equivalent in other dialects.
+
+Below an example:
+
+```{r tidy=TRUE,echo=TRUE,results='asis'}
+sql <- "SELECT DATEDIFF(dd,a,b) FROM table; "
+translateSql(sql,targetDialect = "oracle ")$sql
+```
+
+The `targetDialect` parameter can have the following values:
+
+  - "oracle"
+  - "postgresql"
+  - "redshift"
+  - "sql server" (no translation)
+
+## Functions and structures supported by translateSql
+
+
+## Temp tables
+
+
+# Debugging parameterized SQL
+
+# Executing SQL queries
+
+# Developing R packages that contain parameterized SQL
+
