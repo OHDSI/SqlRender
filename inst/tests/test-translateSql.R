@@ -82,3 +82,35 @@ test_that("translateSQL sql server -> RedShift VARCHAR(MAX)", {
   sql <- translateSql("VARCHAR(MAX)",sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal(sql, "VARCHAR(MAX)")
 })
+
+test_that("translateSQL sql server -> Postgres WITH SELECT", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+})
+
+test_that("translateSQL sql server -> Postgres WITH SELECT INTO", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "CREATE TABLE  d \nAS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
+})
+
+
+test_that("translateSQL sql server -> Postgres WITH INSERT INTO SELECT", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;")
+})
+
+test_that("translateSQL sql server -> Oracle WITH SELECT", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",sourceDialect = "sql server", targetDialect = "oracle")$sql
+  expect_equal(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+})
+
+test_that("translateSQL sql server -> Oracle WITH SELECT INTO", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",sourceDialect = "sql server", targetDialect = "oracle")$sql
+  expect_equal(sql, "CREATE TABLE  d \nAS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
+})
+
+
+test_that("translateSQL sql server -> Oracle WITH INSERT INTO SELECT", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",sourceDialect = "sql server", targetDialect = "oracle")$sql
+  expect_equal(sql, "INSERT INTO  c (d int)  WITH  cte1  AS  (SELECT a FROM b)  SELECT  e FROM cte1;")
+})
