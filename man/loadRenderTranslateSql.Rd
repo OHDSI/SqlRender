@@ -28,7 +28,10 @@ function with any of the additional specified parameters.
 }
 \examples{
 \dontrun{
-  renderedSql <- loadRenderTranslateSql("CohortMethod.sql",packageName = "CohortMethod",dbms = connectionDetails$dbms,CDM_schema = "cdmSchema")
+  renderedSql <- loadRenderTranslateSql("CohortMethod.sql",
+                                         packageName = "CohortMethod",
+                                         dbms = connectionDetails$dbms,
+                                         CDM_schema = "cdmSchema")
 }
 }
 

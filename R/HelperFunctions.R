@@ -20,13 +20,6 @@
 # @author Martijn Schuemie
 # @author Marc Suchard
 
-
-#' SqlRender
-#' 
-#' @docType package
-#' @name SqlRender
-NULL
-
 #' Reads a SQL file
 #'
 #' @description
@@ -146,7 +139,10 @@ translateSqlFile <- function(sourceFile, targetFile, sourceDialect = "sql server
 #' @return
 #' Returns a string containing the rendered SQL.
 #' @examples \dontrun{
-#'   renderedSql <- loadRenderTranslateSql("CohortMethod.sql",packageName = "CohortMethod",dbms = connectionDetails$dbms,CDM_schema = "cdmSchema")
+#'   renderedSql <- loadRenderTranslateSql("CohortMethod.sql",
+#'                                          packageName = "CohortMethod",
+#'                                          dbms = connectionDetails$dbms,
+#'                                          CDM_schema = "cdmSchema")
 #' }
 #' @export
 loadRenderTranslateSql <- function(sqlFilename, packageName, dbms="sql server", ...){

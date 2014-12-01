@@ -54,13 +54,8 @@ Documentation
 =============
 Please see the [vignette](https://raw.githubusercontent.com/OHDSI/SqlRender/master/vignettes/UsingSqlRender.pdf) for details on how to use SqlRender.
 
+See the [manual](https://raw.githubusercontent.com/OHDSI/SqlRender/master/man/SlqRender.pdf) for a list of all the functions in the package.
 
-Once the package is installed, you can use
-```r
-library(SqlRender)
-?SqlRender
-```
-to get an overview of the functions and dataset included in this packages.
 
 License
 =======

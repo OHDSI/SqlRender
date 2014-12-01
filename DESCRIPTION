@@ -1,15 +1,16 @@
 Package: SqlRender
 Type: Package
-Title: Package for working with client-side parameterized SQL
-Version: 0.1
+Title: Rendering parameterized SQL and translation to dialects
+Version: 1.0.0
 Date: 2014-03-26
 Author: Martijn J. Schuemie and Marc A. Suchard
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
-Description: Package for working with client-side parameterized SQL, where the
-    parameterization goes beyond what is supported by prepared statements.
+Description: This is an R package for rendering parameterized SQL, and
+    translating it to different SQL dialects.
 License: Apache License
 Depends:
     rJava
 Suggests:
-    testthat
+    testthat,
+    knitr
 LazyData: false
