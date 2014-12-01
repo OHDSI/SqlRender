@@ -59,7 +59,7 @@ Once the package is installed, you can use
 ```r
 library(SqlRender)
 ?SqlRender
-```r
+```
 to get an overview of the functions and dataset included in this packages.
 
 License
