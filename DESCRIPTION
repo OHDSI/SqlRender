@@ -8,9 +8,11 @@ Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: This is an R package for rendering parameterized SQL, and
     translating it to different SQL dialects.
 License: Apache License
+VignetteBuilder: knitr
 Depends:
     rJava
 Suggests:
     testthat,
-    knitr
+    knitr,
+    rmarkdown
 LazyData: false

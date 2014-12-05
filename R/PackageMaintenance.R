@@ -18,7 +18,8 @@
 .createManualAndVignettes <- function(){
   shell("rm man/SqlRender.pdf")
   shell("R CMD Rd2pdf ./ --output=man/SqlRender.pdf")
-  require (knitr)
-  knit("vignettes/UsingSqlRender.Rmd","vignettes/UsingSqlRender.pdf")
+  
+  require(rmarkdown)
+  render("vignettes/UsingSqlRender.Rmd", pdf_document(latex_engine = "pdflatex",toc = TRUE,number_sections = TRUE))
   
 }
