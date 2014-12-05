@@ -1,6 +1,8 @@
 SqlRender
 =========
 
+Introduction
+============
 This is an R package for rendering parameterized SQL, and translating it to different SQL dialects. 
 
 Features
@@ -13,6 +15,8 @@ Features
 
 Examples
 ========
+This exampe shows the use of parameters, as well as SqlRender's {if} ? {then} : {else} syntax:
+
 ```r
 sql <- renderSql("SELECT * FROM @a; {@b != ''}?{USE @b;}", a = "my_table", b = "my_schema")$sql
 ```
@@ -35,14 +39,21 @@ will produce the variable `sql` containing this value:
 "SELECT * FROM my_table; ALTER SESSION SET current_schema =  my_schema;"
 ```
 
-Requirements
+Technology
 ============
+SqlRender is an R package wrapped around a Java library. The rJava package is used as interface. 
+
+System Requirements
+===================
 Requires R with the package rJava installed. Also requires Java 1.6 or higher.
 
+Dependencies
+============
+ * There are no dependencies.
 
 Getting Started
 ===============
-Use these commands in R to install the SqlRender package:
+Use these commands in R to download and install the SqlRender package:
 
 ```r
 install.packages("devtools")
@@ -50,12 +61,12 @@ library("devtools")
 install_github("ohdsi/SqlRender")
 ```
 
-Documentation
+Getting Involved
 =============
-Please see the [vignette](https://raw.githubusercontent.com/OHDSI/SqlRender/master/vignettes/UsingSqlRender.pdf) for details on how to use SqlRender.
-
-See the [manual](https://raw.githubusercontent.com/OHDSI/SqlRender/master/man/SqlRender.pdf) for a list of all the functions in the package.
-
+* Vignette: [Using SqlRender](https://raw.githubusercontent.com/OHDSI/SqlRender/master/vignettes/UsingSqlRender.pdf)
+* Package manual: [SqlRender manual](https://raw.githubusercontent.com/OHDSI/SqlRender/master/man/SqlRender.pdf) 
+* Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
+* We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
 License
 =======
