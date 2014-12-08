@@ -13,7 +13,7 @@ translateSqlFile(sourceFile, targetFile, sourceDialect = "sql server",
 
 \item{sourceDialect}{The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported}
 
-\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", and "redshift" are supported}
+\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "redshift", and "netezza" are supported}
 }
 \description{
 This function takes SQL and translates it to a different dialect.

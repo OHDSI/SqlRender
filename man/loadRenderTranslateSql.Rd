@@ -10,7 +10,7 @@ loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server", ...)
 
 \item{packageName}{The name of the package that contains the SQL file}
 
-\item{dbms}{The target dialect. Currently "sql server", "oracle", "postgres", and "redshift" are supported}
+\item{dbms}{The target dialect. Currently "sql server", "oracle", "postgres", "redshift", and "netezza" are supported}
 
 \item{...}{Parameter values used for \code{renderSql}}
 }

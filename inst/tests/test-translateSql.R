@@ -73,6 +73,32 @@ test_that("translateSQL sql server -> PostgreSQL add month", {
   expect_equal(sql, "CAST((date + 1*INTERVAL'1 month') AS DATE)")
 })
 
+test_that("translateSQL sql server -> Netezza USE", {
+  sql <- translateSql("USE vocabulary;",sourceDialect = "sql server", targetDialect = "netezza")$sql
+  expect_equal(sql, "SET search_path TO  vocabulary;")
+})
+
+test_that("translateSQL sql server -> Netezza string concat", {
+  sql <- translateSql("'x' + b ( 'x' + b)",sourceDialect = "sql server", targetDialect = "netezza")$sql
+  expect_equal(sql, "'x' || b ( 'x' || b)")
+})
+
+test_that("translateSQL sql server -> Netezza string concat", {
+  sql <- translateSql("a + ';b'",sourceDialect = "sql server", targetDialect = "netezza")$sql
+  expect_equal(sql, "a || ';b'")
+})
+
+test_that("translateSQL sql server -> Netezza string concat", {
+  sql <- translateSql("a + ';('",sourceDialect = "sql server", targetDialect = "netezza")$sql
+  expect_equal(sql, "a || ';('")
+})
+
+
+test_that("translateSQL sql server -> Netezza add month", {
+  sql <- translateSql("DATEADD(mm,1,date)",sourceDialect = "sql server", targetDialect = "netezza")$sql
+  expect_equal(sql, "CAST((date + 1*INTERVAL'1 month') AS DATE)")
+})
+
 test_that("translateSQL sql server -> Oracle multiple inserts in one statement", {
   sql <- translateSql("INSERT INTO my_table (key,value) VALUES (1,0),(2,0),(3,1)",sourceDialect = "sql server", targetDialect = "oracle")$sql
   expect_equal(sql, "INSERT ALL\nINTO   my_table   (key,value) VALUES (1,0)\n INTO  my_table  (key,value) VALUES (2,0)\n)\n INTO   my_table   (key,value) VALUES (3,1)\nSELECT * FROM dual")
@@ -96,6 +122,22 @@ test_that("translateSQL sql server -> Postgres WITH SELECT INTO", {
 
 test_that("translateSQL sql server -> Postgres WITH INSERT INTO SELECT", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;")
+})
+
+test_that("translateSQL sql server -> Netezza WITH SELECT", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",sourceDialect = "sql server", targetDialect = "netezza")$sql
+  expect_equal(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+})
+
+test_that("translateSQL sql server -> Netezza WITH SELECT INTO", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",sourceDialect = "sql server", targetDialect = "netezza")$sql
+  expect_equal(sql, "CREATE TABLE  d \nAS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
+})
+
+
+test_that("translateSQL sql server -> Netezza WITH INSERT INTO SELECT", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",sourceDialect = "sql server", targetDialect = "netezza")$sql
   expect_equal(sql, "WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;")
 })
 
