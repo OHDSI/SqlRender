@@ -145,7 +145,7 @@ public class SqlTranslate {
 	 * @param sourceDialect
 	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
 	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 *            The target dialect. Currently "oracle", "postgresql", "redshift", and "netezza" are supported
 	 * @return The translated SQL
 	 */
 	public static String translateSql(String sql, String sourceDialect, String targetDialect) {
@@ -160,7 +160,7 @@ public class SqlTranslate {
 	 * @param sourceDialect
 	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
 	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 *            The target dialect. Currently "oracle", "postgresql", "redshift", and "netezza" are supported
 	 * @param pathToReplacementPatterns
 	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
 	 * @return The translated SQL

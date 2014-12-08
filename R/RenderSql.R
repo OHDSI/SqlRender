@@ -77,7 +77,7 @@ renderSql <- function(sql = "", ...) {
 #' 
 #' @param sql               The SQL to be translated
 #' @param sourceDialect     The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
-#' @param targetDialect		The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+#' @param targetDialect		The target dialect. Currently "oracle", "postgresql", "redshift", and "netezza" are supported
 #' @return              
 #' A list containing the following elements:
 #' \describe{  

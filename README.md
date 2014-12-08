@@ -10,7 +10,7 @@ Features
 - Supports a simple markup syntax for making SQL parameterized, and renders parameterized SQL (containing the markup syntax) to executable SQL
 - The syntax supports defining default parameter values
 - The syntax supports if-then-else structures
-- Has functions for translating SQL from one dialect (Microsoft SQL Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift)
+- Has functions for translating SQL from one dialect (Microsoft SQL Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift, Netezza)
 - The Java library used in this package can also be used as a stand-alone library in Java applications.
 
 Examples
@@ -78,7 +78,7 @@ SqlRender is being developed in R Studio.
 
 ###Development status
 
-Stable. The code is actively being used in several projects.
+Stable. The code is actively being used in several projects. The support for Netezza-compliant translation is in beta pending further testing.
 
 Acknowledgements
 ================

@@ -107,7 +107,7 @@ renderSqlFile <- function(sourceFile, targetFile, ...) {
 #' @param sourceFile               The source SQL file
 #' @param targetFile               The target SQL file
 #' @param sourceDialect     The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
-#' @param targetDialect  	The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+#' @param targetDialect  	The target dialect. Currently "oracle", "postgresql", "redshift", and "netezza" are supported
 #'
 #' @examples \dontrun{
 #' translateSqlFile("myRenderedStatement.sql","myTranslatedStatement.sql",targetDialect="postgresql")
@@ -133,7 +133,7 @@ translateSqlFile <- function(sourceFile, targetFile, sourceDialect = "sql server
 #' 
 #' @param sqlFilename           The source SQL file
 #' @param packageName           The name of the package that contains the SQL file
-#' @param dbms                  The target dialect. Currently "sql server", "oracle", "postgres", and "redshift" are supported
+#' @param dbms                  The target dialect. Currently "sql server", "oracle", "postgres", "redshift", and "netezza" are supported
 #' @param ...                   Parameter values used for \code{renderSql}
 #'
 #' @return
