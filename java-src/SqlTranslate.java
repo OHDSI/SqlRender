@@ -123,7 +123,10 @@ public class SqlTranslate {
 			for (Map.Entry<String, String> pair : matchedPattern.variableToValue.entrySet())
 				replacement = StringUtils.replaceAll(replacement, pair.getKey(), pair.getValue());
 			sql = sql.substring(0, matchedPattern.start) + replacement + sql.substring(matchedPattern.end, sql.length());
-			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + 1);
+			int delta = 1;
+			if (StringUtils.tokenizeSql(replacement).size() == 0)
+				delta = 0;
+			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + delta);
 		}
 
 		return sql;

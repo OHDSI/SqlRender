@@ -9,13 +9,13 @@ public class TestSqlRender {
 //		sql = SqlRender.renderSql(sql, parameters,values);
 //		System.out.println(sql);
 		
-		String sql = "SELECT * FROM x; DROP TABLE y";
-		for (String str : SqlSplit.splitSql(sql))
-			System.out.println(str + "---");
+//		String sql = "SELECT * FROM x; DROP TABLE y";
+//		for (String str : SqlSplit.splitSql(sql))
+//			System.out.println(str + "---");
 		
-//		String sql = "IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;";
-//		String source = "sql server";
-//		String target = "oracle";
-//		System.out.println(SqlTranslate.translateSql(sql, source, target));
+		String sql = "DROP TABLE #a;\nDROP TABLE #b;";
+		String source = "sql server";
+		String target = "pdw";
+		System.out.println(SqlTranslate.translateSql(sql, source, target,"C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv"));
 	}
 }

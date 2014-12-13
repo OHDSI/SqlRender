@@ -11,7 +11,7 @@ translateSql(sql = "", sourceDialect = "sql server",
 
 \item{sourceDialect}{The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported}
 
-\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", and "redshift" are supported}
+\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", and "redshift" are supported}
 }
 \value{
 A list containing the following elements:

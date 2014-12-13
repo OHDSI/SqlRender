@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 This vignette describes how one could use the SqlRender R package. 
 
 # Installation instructions
-SqlRender is maintained in a [Github reppository](https://github.com/OHDSI/SqlRender). It can be downloaded and installed from within R using the `devtools` package:
+SqlRender is maintained in a [Github repository](https://github.com/OHDSI/SqlRender). It can be downloaded and installed from within R using the `devtools` package:
 
 ```{r tidy=TRUE,eval=FALSE}
 install.packages("devtools")

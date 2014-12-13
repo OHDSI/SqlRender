@@ -109,8 +109,18 @@ test_that("translateSQL sql server -> Oracle WITH SELECT INTO", {
   expect_equal(sql, "CREATE TABLE  d \nAS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
 })
 
-
 test_that("translateSQL sql server -> Oracle WITH INSERT INTO SELECT", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",sourceDialect = "sql server", targetDialect = "oracle")$sql
   expect_equal(sql, "INSERT INTO  c (d int)  WITH  cte1  AS  (SELECT a FROM b)  SELECT  e FROM cte1;")
 })
+
+test_that("translateSQL sql server -> PDW create temp table", {
+  sql <- translateSql("CREATE TABLE #a (x int);",sourceDialect = "sql server", targetDialect = "pdw")$sql
+  expect_equal(sql, "CREATE TABLE #a  (x int)\nWITH ( LOCATION = USER_DB, DISTRIBUTION = REPLICATE);")
+})
+
+test_that("translateSQL sql server -> PDW create temp table with person_id", {
+  sql <- translateSql("CREATE TABLE #a (person_id int);",sourceDialect = "sql server", targetDialect = "pdw")$sql
+  expect_equal(sql, "CREATE TABLE #a  ( person_id  int)\nWITH ( LOCATION = USER_DB, DISTRIBUTION = HASH(person_id));")
+})
+
