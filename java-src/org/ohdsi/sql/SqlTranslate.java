@@ -201,7 +201,7 @@ public class SqlTranslate {
 					InputStream inputStream;
 					if (pathToReplacementPatterns == null) // Use CSV file in JAR
 						//inputStream = SqlTranslate.class.getResourceAsStream("replacementPatterns.csv");
-						inputStream = SqlTranslate.class.getResourceAsStream("inst/csv/replacementPatterns.csv");
+						inputStream = SqlTranslate.class.getResourceAsStream("/inst/csv/replacementPatterns.csv");
 					else
 						inputStream = new FileInputStream(pathToReplacementPatterns);
 					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
