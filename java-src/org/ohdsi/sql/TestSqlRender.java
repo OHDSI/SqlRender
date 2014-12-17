@@ -1,3 +1,4 @@
+package org.ohdsi.sql;
 
 public class TestSqlRender {
 
