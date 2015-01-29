@@ -1,8 +1,12 @@
 package org.ohdsi.sql;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 
 public class SqlRender {
@@ -176,6 +180,8 @@ public class SqlRender {
 			return (left.equals(right));
 		}
 		found = str.indexOf("!=");
+		if (found == -1)
+			found = str.indexOf("<>");
 		if (found != -1) {
 			String left = str.substring(0, found);
 			left = left.trim();
@@ -268,7 +274,22 @@ public class SqlRender {
 			if (!parameterToValue.containsKey(pair.getKey()))
 				parameterToValue.put(pair.getKey(), pair.getValue());
 
-		for (Map.Entry<String, String> pair : parameterToValue.entrySet())
+		// Sort parameters from longest to shortest so if one parameter name is a substring of another, it won't go wrong:
+		List<Map.Entry<String, String>> sortedParameterToValue = new ArrayList<Map.Entry<String, String>>(parameterToValue.entrySet());
+		Collections.sort(sortedParameterToValue, new Comparator<Map.Entry<String, String>>() {
+
+			@Override
+			public int compare(Entry<String, String> o1, Entry<String, String> o2) {
+				int l1 = o1.getKey().length();
+				int l2 = o2.getKey().length();
+				if (l1 > l2)
+					return -1;
+				else if (l1 < l2)
+					return 1;
+				return 0;
+			}
+		});
+		for (Map.Entry<String, String> pair : sortedParameterToValue)
 			string = string.replaceAll("@" + pair.getKey(), pair.getValue());
 		return string;
 	}
@@ -313,9 +334,13 @@ public class SqlRender {
 	 * <br/>
 	 * {if}?{then}:{else}<br/>
 	 * The if-then-else pattern is used to turn on or off blocks of SQL code.
-	 * @param sql  The parameterized SQL
-	 * @param parameters  The names of the parameters (without the &#64;-sign).
-	 * @param values 	  The values of the parameters.
+	 * 
+	 * @param sql
+	 *            The parameterized SQL
+	 * @param parameters
+	 *            The names of the parameters (without the &#64;-sign).
+	 * @param values
+	 *            The values of the parameters.
 	 * @return The rendered sql
 	 */
 	public static String renderSql(String sql, String[] parameters, String[] values) {

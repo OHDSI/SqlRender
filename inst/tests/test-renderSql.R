@@ -74,3 +74,28 @@ test_that("If-then-else: negation of parameter", {
 			sql <- renderSql("{!@a}?{true}:{false}", a = "true")$sql
 			expect_equal(sql, "false")
 		})
+
+test_that("If-then-else: negation of parameter", {
+  sql <- renderSql("{!@a}?{true}:{false}", a = "true")$sql
+  expect_equal(sql, "false")
+})
+
+test_that("If-then-else: does not equals pattern 1", {
+  sql <- renderSql("{123 != 123}?{true}:{false}")$sql
+  expect_equal(sql, "false")
+})
+
+test_that("If-then-else: does not equals pattern 1", {
+  sql <- renderSql("{123 != 234}?{true}:{false}")$sql
+  expect_equal(sql, "true")
+})
+
+test_that("If-then-else: does not equals pattern 2", {
+  sql <- renderSql("{123 <> 123}?{true}:{false}")$sql
+  expect_equal(sql, "false")
+})
+
+test_that("If-then-else: does not equals pattern 2", {
+  sql <- renderSql("{123 <> 234}?{true}:{false}")$sql
+  expect_equal(sql, "true")
+})
