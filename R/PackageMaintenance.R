@@ -20,6 +20,6 @@
   shell("R CMD Rd2pdf ./ --output=man/SqlRender.pdf")
   
   require(rmarkdown)
-  render("vignettes/UsingSqlRender.Rmd", pdf_document(latex_engine = "pdflatex",toc = TRUE,number_sections = TRUE))
+  rmarkdown::render("vignettes/UsingSqlRender.Rmd", rmarkdown::pdf_document(latex_engine = "pdflatex",toc = TRUE,number_sections = TRUE))
   
 }

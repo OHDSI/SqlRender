@@ -77,6 +77,7 @@ Development
 SqlRender is being developed in R Studio.
 
 ###Development status
+[![Build Status](https://travis-ci.org/OHDSI/SqlRender.svg?branch=master)](https://travis-ci.org/OHDSI/SqlRender)
 
 Stable. The code is actively being used in several projects.
 

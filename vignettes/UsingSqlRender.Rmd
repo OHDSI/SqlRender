@@ -41,29 +41,29 @@ One of the main functions of the package is to support parameterization of SQL. 
 ## Substituting parameter values
 The `@` character can be used to indicate parameter names that need to be exchange for actual parameter values when rendering. In the following example, a variable called `a` is mentioned in the SQL. In the call to the renderSql function the value of this parameter is defined:
 
-```{r tidy=TRUE,echo=TRUE,results='asis'}
+```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table WHERE id = @a;"
 renderSql(sql, a=123)$sql
 ```
 
 Note that, unlike the parameterization offered by most database management systems, it is just as easy to parameterize table or field names as values:
 
-```{r tidy=TRUE,echo=TRUE,results='asis'}
+```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM @x WHERE id = @a;"
 renderSql(sql, x="my_table", a=123)$sql
 ```
 
 The parameter values can be numbers, strings, booleans, as well as vectors, which are converted to comma-delimited lists:
 
-```{r tidy=TRUE,echo=TRUE,results='asis'}
-sql <- "SELECT * FROM table WHERE id IN (@a); "
+```{r tidy=TRUE,echo=TRUE}
+sql <- "SELECT * FROM table WHERE id IN (@a);"
 renderSql(sql,a = c(1,2,3))$sql
 ```
 
 ## Default parameter values
 For some or all parameters, it might make sense to define default values that will be used unless the user specifies another value. This can be done using the `{DEFAULT @parameter = value}` syntax:
 
-```{r tidy=TRUE,echo=TRUE,results='asis'}
+```{r tidy=TRUE,echo=TRUE}
 sql <- "{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"
 renderSql(sql)$sql
 renderSql(sql,a=2)$sql
@@ -71,7 +71,7 @@ renderSql(sql,a=2)$sql
 
 Defaults for multiple variables can be defined:
 
-```{r tidy=TRUE,echo=TRUE,results='asis'}
+```{r tidy=TRUE,echo=TRUE}
 sql <- "{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"
 renderSql(sql)$sql
 ```
@@ -79,7 +79,7 @@ renderSql(sql)$sql
 ## If-then-else 
 Sometimes blocks of codes need to be turned on or off based on the values of one or more parameters. This is done using the `{Condition} ? {if true} : {if false}` syntax. If the *condition* evaluates to true or 1, the *if true* block is used, else the *if false* block is shown (if present).
 
-```{r tidy=TRUE,echo=TRUE,results='asis'}
+```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table {@x} ? {WHERE id = 1}"
 renderSql(sql,x = FALSE)$sql
 renderSql(sql,x = TRUE)$sql
@@ -87,7 +87,7 @@ renderSql(sql,x = TRUE)$sql
 
 Simple comparisons are also supported:
 
-```{r tidy=TRUE,echo=TRUE,results='asis'}
+```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table {@x == 1} ? {WHERE id = 1};"
 renderSql(sql,x = 1)$sql
 renderSql(sql,x = 2)$sql
@@ -95,7 +95,7 @@ renderSql(sql,x = 2)$sql
 
 As well as the `IN` operator:
 
-```{r tidy=TRUE,echo=TRUE,results='asis'}
+```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1}; "
 renderSql(sql,x = 2)$sql
 ```
@@ -113,7 +113,7 @@ A last limitation is that not all functions supported in one dialect have an equ
 
 Below an example:
 
-```{r tidy=TRUE,echo=TRUE,results='asis'}
+```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT DATEDIFF(dd,a,b) FROM table; "
 translateSql(sql,targetDialect = "oracle")$sql
 ```
@@ -131,7 +131,7 @@ Giving an exhaustive list of all functions is not feasible. Many SQL functions a
 
 Similarly, many SQL syntax structures are supported. Here is a non-exhaustive lists of things that we know will translate well:
 
-```
+```sql
 SELECT * FROM table;                                        -- Simple selects
 
 SELECT * FROM table_1 INNER JOIN table_2 ON a = b;          -- Selects with joins 
@@ -172,22 +172,53 @@ Temp tables can be very useful to store intermediate results, and when used corr
 
 Instead, it is probably best to use Common Table Expressions (CTEs) when one would normally use a temp table. For example, instead of 
 
-```
+```sql
 SELECT * INTO #children FROM person WHERE year_of_birth > 2000;
 SELECT * FROM #children WHERE gender = 8507;
 ```
 
 it is preferred to use
 
-```
+```sql
 WITH children AS (SELECT * FROM person WHERE year_of_birth > 2000)
 SELECT * FROM children WHERE gender = 8507;
+```
+
+## Schemas and databases
+In SQL Server, tables are located in a schema, and schemas reside in a database. For example, `cdm_data.dbo.person` refers to the `person` table in the `dbo` schema in the `cdm_data` database. In other dialects, even though a similar hierarchy often exists they are used very differently. In SQL Server, there is typically one schema per database (often called `dbo`), and users can easily use data in different databases. On other platforms, for example in PostgreSQL, it is not possible to use data across databases in a single session, but there are often many schemas in a database. In PostgreSQL one could say that the equivalent of SQL Server's database is the schema.
+
+We therefore recommend concatenating SQL Server's database and schema into a single parameter, which we typically call `@databaseSchema`. For example, we could have the parameterized SQL
+```sql
+SELECT * FROM @databaseSchema.person
+```
+where on SQL Server we can include both database and schema names in the value: `databaseSchema = "cdm_data.dbo"`. On otherplatforms, we can use the same code, but now only specify the schema as the parameter value: `databaseSchema = "cdm_data"`.
+
+The one situation where this will fail is the `USE` command, since `USE cdm_data.dbo;` will throw an error. It is therefore preferred not to use the `USE` command, but alway specify the database / schema where a table is located. However, if one wanted to use it anyway, we recommend creating two variables, one called `@database` and the other called `@databaseSchema`. For example, for this parameterized SQL:
+
+```sql
+SELECT * FROM @databaseSchema.person;
+USE @database;
+SELECT * FROM person
+```
+
+we can set `database = "cdm_data"` and the other called `databaseSchema = "cdm_data.dbo"`. On platforms other than SQL Server, the two variables will hold the same value and only on SQL Server will they be different. Within an R function, it is even possible to derive one variable from the other, so the user of your function would need to specify only one value:
+
+```{r tidy=TRUE,echo=TRUE}
+foo <- function(databaseSchema, dbms) {
+  database <- strsplit(databaseSchema ,"\\.")[[1]][1]
+  sql <- "SELECT * FROM @databaseSchema.person; USE @database; SELECT * FROM person;"
+  sql <- renderSql(sql, databaseSchema = databaseSchema, database = database)$sql
+  sql <- translateSql(sql, targetDialect = dbms)$sql
+  return(sql)
+}
+foo("cdm_data.dbo", "sql server")
+foo("cdm_data", "postgresql")
 ```
 
 # Debugging parameterized SQL
 Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL. Two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
 
-``` {r tidy=TRUE,eval=FALSE}
+```{r tidy=TRUE,eval=FALSE}
 translateSqlFile("parameterizedSql.txt","renderedSql.txt")
 ```
 
@@ -198,14 +229,14 @@ Often, the SQL code will become part of an R package, where it might be used to 
 
 The `createRWrapperForSql()` function can be used to create an R wrapper around a rendered SQL file, using the `loadRenderTranslateSql()` function . For example, suppose we have a text file called *test.sql* containing the following parameterized SQL:
 
-```
+```sql
 {DEFAULT @selected_value = 1}
 SELECT * FROM table INTO result where x = @selected_value;
 ```
 
 Then the command
 
-``` {r eval=FALSE}
+```{r eval=FALSE}
 createRWrapperForSql(sqlFilename = "test.sql", 
                      rFilename = "test.R", 
                      packageName = "myPackage")
@@ -213,7 +244,7 @@ createRWrapperForSql(sqlFilename = "test.sql",
 
 would result in the file *test.R* being generated containing this R code:
 
-``` {r tidy=TRUE,eval=FALSE}
+```{r tidy=TRUE,eval=FALSE}
 #' Todo: add title
 #'
 #' @description
