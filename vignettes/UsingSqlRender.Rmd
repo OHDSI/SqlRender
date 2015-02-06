@@ -193,7 +193,7 @@ SELECT * FROM @databaseSchema.person
 ```
 where on SQL Server we can include both database and schema names in the value: `databaseSchema = "cdm_data.dbo"`. On otherplatforms, we can use the same code, but now only specify the schema as the parameter value: `databaseSchema = "cdm_data"`.
 
-The one situation where this will fail is the `USE` command, since `USE cdm_data.dbo;` will throw an error. It is therefore preferred not to use the `USE` command, but alway specify the database / schema where a table is located. However, if one wanted to use it anyway, we recommend creating two variables, one called `@database` and the other called `@databaseSchema`. For example, for this parameterized SQL:
+The one situation where this will fail is the `USE` command, since `USE cdm_data.dbo;` will throw an error. It is therefore preferred not to use the `USE` command, but always specify the database / schema where a table is located. However, if one wanted to use it anyway, we recommend creating two variables, one called `@database` and the other called `@databaseSchema`. For example, for this parameterized SQL:
 
 ```sql
 SELECT * FROM @databaseSchema.person;
