@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
     <jar path="SqlRender/inst/java/SqlRender.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/SqlRender/java-src/SqlRender.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/SqlRender/java-src/SqlRender.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="true" manifestLocation="/WhiteRabbit/jarDesc/WhiteRabbit.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
@@ -11,7 +11,7 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <folder path="/SqlRender/inst/csv"/>
         <javaElement handleIdentifier="=SqlRender/java-src"/>
-        <file path="/SqlRender/inst/csv/replacementPatterns.csv"/>
     </selectedElements>
 </jardesc>
