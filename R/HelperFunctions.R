@@ -288,7 +288,7 @@ createRWrapperForSql <- function(sqlFilename,
     lines <- c(lines,paste("                        ",functionDefinitions[i,2]," = ",functionDefinitions[i,3],end,sep=""))
   }
   for (databaseParameter in databaseParameters[,2]){
-    lines <- c(lines,paste("  ", databaseParameter, " <- strsplit(",databaseParameter,"schema ,\"\\\\.\")[[1]][1]",sep=""))
+    lines <- c(lines,paste("  ", databaseParameter, " <- strsplit(",databaseParameter,"Schema ,\"\\\\.\")[[1]][1]",sep=""))
   }
   lines <- c(lines,paste("  renderedSql <- loadRenderTranslateSql(\"",sqlFilename,"\",",sep=""))
   lines <- c(lines,paste("              packageName = \"",packageName,"\",",sep=""))
