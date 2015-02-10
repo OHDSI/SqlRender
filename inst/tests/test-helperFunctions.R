@@ -27,3 +27,10 @@ test_that("translateSqlFile", {
   file.remove("test2.sql")
   expect_equal(sql2, "SELECT (1 + observation_period_start_date) FROM observation_period")
 })
+
+test_that("snakeCaseToCamelCase", {
+  string1 <- "cdm_database_schema"
+  string2 <- snakeCaseToCamelCase(string1)
+  expect_equal(string2, "cdmDatabaseSchema")
+})
+

@@ -164,6 +164,17 @@ trim <- function(string){
   gsub("(^ +)|( +$)", "",  string)
 }
 
+#' Convert a snake case string to camel case
+#' 
+#' @param string  The string to be converted
+#' 
+#' @return A string
+#' 
+#' @examples
+#' snakeCaseToCamelCase("cdm_database_schema")
+#' #> "cdmDatabaseSchema"
+#' 
+#' @export
 snakeCaseToCamelCase <- function(string){
   string <- tolower(string)
   for(letter in letters){
@@ -242,6 +253,14 @@ createRWrapperForSql <- function(sqlFilename,
     c(parameter,ccParameter,value)
   }
   definitions <- t(apply(hits,1,FUN = f))
+  databaseSchemaParameters <- definitions[grepl("database_schema$", definitions[,1]),]
+  databaseParameters <- c()
+  for (databaseSchemaParameter in databaseSchemaParameters[,1]){
+    databaseParameter <- substr(databaseSchemaParameter, 1, nchar(databaseSchemaParameter) - nchar("_schema"))
+    if (any(definitions[,1] == databaseParameter))
+      databaseParameters <- rbind(databaseParameters, definitions[definitions[,1] == databaseParameter ,])
+  }
+  functionDefinitions <- definitions[!(definitions[,1] %in% databaseParameters[,1]),]
   
   lines <- c()
   if (createRoxygenTemplate){
@@ -254,19 +273,22 @@ createRWrapperForSql <- function(sqlFilename,
     lines <- c(lines,"#' Todo: add details")  
     lines <- c(lines,"#'") 
     lines <- c(lines,"#' @param connectionDetails\t\tAn R object of type \\code{ConnectionDetails} created using the function \\code{createConnectionDetails} in the \\code{DatabaseConnector} package.")  
-    for (i in 1:nrow(definitions)){
-      lines <- c(lines,paste("#' @param",definitions[i,2],"\t\t"))
+    for (i in 1:nrow(functionDefinitions)){
+      lines <- c(lines,paste("#' @param",functionDefinitions[i,2],"\t\t"))
     }
     lines <- c(lines,"#'")  
     lines <- c(lines,"#' @export")  
   }
   lines <- c(lines,paste(gsub(".sql","",sqlFilename)," <- function(connectionDetails,",sep=""))
-  for (i in 1:nrow(definitions)){
-    if (i == nrow(definitions))
+  for (i in 1:nrow(functionDefinitions)){
+    if (i == nrow(functionDefinitions))
       end = ") {"
     else
       end = ","
-    lines <- c(lines,paste("                        ",definitions[i,2]," = ",definitions[i,3],end,sep=""))
+    lines <- c(lines,paste("                        ",functionDefinitions[i,2]," = ",functionDefinitions[i,3],end,sep=""))
+  }
+  for (databaseParameter in databaseParameters[,2]){
+    lines <- c(lines,paste("  ", databaseParameter, " <- strsplit(",databaseParameter,"schema ,\"\\\\.\")[[1]][1]",sep=""))
   }
   lines <- c(lines,paste("  renderedSql <- loadRenderTranslateSql(\"",sqlFilename,"\",",sep=""))
   lines <- c(lines,paste("              packageName = \"",packageName,"\",",sep=""))
