@@ -124,3 +124,18 @@ test_that("translateSQL sql server -> PDW create temp table with person_id", {
   expect_equal(sql, "CREATE TABLE #a  ( person_id  int)\nWITH ( LOCATION = USER_DB, DISTRIBUTION = HASH(person_id));")
 })
 
+test_that("translateSQL sql server -> Postgres create table if not exists", {
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "CREATE TABLE IF NOT EXISTS  cohort\n (cohort_definition_id INT);")
+})
+
+test_that("translateSQL sql server -> Redshift create table if not exists", {
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal(sql, "CREATE TABLE IF NOT EXISTS  cohort\n (cohort_definition_id INT);")
+})
+
+test_that("translateSQL sql server -> Oracle create table if not exists", {
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",sourceDialect = "sql server", targetDialect = "oracle")$sql
+  expect_equal(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE  cohort\n (cohort_definition_id INT)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
+})
+
