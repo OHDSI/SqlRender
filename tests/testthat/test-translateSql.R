@@ -139,3 +139,8 @@ test_that("translateSQL sql server -> Oracle create table if not exists", {
   expect_equal(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE  cohort\n (cohort_definition_id INT)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
 })
 
+test_that("translateSQL sql server -> Oracle datefromparts", {
+  sql <- translateSql("SELECT DATEFROMPARTS(year,month,day) FROM table",sourceDialect = "sql server", targetDialect = "oracle")$sql
+  expect_equal(sql, "SELECT TO_DATE(TO_CHAR(year,'0000')||'-'||TO_CHAR(month,'00')||'-'||TO_CHAR(day,'00'), 'YYYY-MM-DD') FROM table")
+})
+
