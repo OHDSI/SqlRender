@@ -250,17 +250,17 @@ createRWrapperForSql <- function(sqlFilename,
     if (substr(value,1,1) == "'" & substr(value,nchar(value),nchar(value)) == "'")
       value <- paste("\"",substr(value,2,nchar(value)-1),"\"",sep="")
     ccParameter = snakeCaseToCamelCase(parameter)
-    c(parameter,ccParameter,value)
+    c(sqlParameter = parameter,rParameter = ccParameter, value = value)
   }
-  definitions <- t(apply(hits,1,FUN = f))
-  databaseSchemaParameters <- definitions[grepl("database_schema$", definitions[,1]),]
+  definitions <- as.data.frame(t(apply(hits,1,FUN = f)))
+  databaseSchemaParameters <- definitions[grepl("database_schema$", definitions$sqlParameter),]
   databaseParameters <- c()
-  for (databaseSchemaParameter in databaseSchemaParameters[,1]){
+  for (databaseSchemaParameter in databaseSchemaParameters$sqlParameter){
     databaseParameter <- substr(databaseSchemaParameter, 1, nchar(databaseSchemaParameter) - nchar("_schema"))
     if (any(definitions[,1] == databaseParameter))
-      databaseParameters <- rbind(databaseParameters, definitions[definitions[,1] == databaseParameter ,])
+      databaseParameters <- rbind(databaseParameters, definitions[definitions$sqlParameter == databaseParameter ,])
   }
-  functionDefinitions <- definitions[!(definitions[,1] %in% databaseParameters[,1]),]
+  functionDefinitions <- definitions[!(definitions$sqlParameter %in% databaseParameters$sqlParameter),]
   
   lines <- c()
   if (createRoxygenTemplate){
@@ -274,7 +274,7 @@ createRWrapperForSql <- function(sqlFilename,
     lines <- c(lines,"#'") 
     lines <- c(lines,"#' @param connectionDetails\t\tAn R object of type \\code{ConnectionDetails} created using the function \\code{createConnectionDetails} in the \\code{DatabaseConnector} package.")  
     for (i in 1:nrow(functionDefinitions)){
-      lines <- c(lines,paste("#' @param",functionDefinitions[i,2],"\t\t"))
+      lines <- c(lines,paste("#' @param",functionDefinitions$rParameter[i],"\t\t"))
     }
     lines <- c(lines,"#'")  
     lines <- c(lines,"#' @export")  
@@ -285,9 +285,9 @@ createRWrapperForSql <- function(sqlFilename,
       end = ") {"
     else
       end = ","
-    lines <- c(lines,paste("                        ",functionDefinitions[i,2]," = ",functionDefinitions[i,3],end,sep=""))
+    lines <- c(lines,paste("                        ",functionDefinitions$rParameter[i]," = ",functionDefinitions$value[i],end,sep=""))
   }
-  for (databaseParameter in databaseParameters[,2]){
+  for (databaseParameter in databaseParameters$rParameter){
     lines <- c(lines,paste("  ", databaseParameter, " <- strsplit(",databaseParameter,"Schema ,\"\\\\.\")[[1]][1]",sep=""))
   }
   lines <- c(lines,paste("  renderedSql <- loadRenderTranslateSql(\"",sqlFilename,"\",",sep=""))
@@ -298,7 +298,7 @@ createRWrapperForSql <- function(sqlFilename,
       end = ")"
     else
       end = ","
-    lines <- c(lines,paste("              ",definitions[i,1]," = ",definitions[i,2],end,sep=""))
+    lines <- c(lines,paste("              ",definitions$sqlParameter[i]," = ",definitions$rParameter[i],end,sep=""))
   }
   lines <- c(lines,"  conn <- connect(connectionDetails)")  
   lines <- c(lines,"")  
