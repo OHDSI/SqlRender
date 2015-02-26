@@ -4,7 +4,7 @@ public class TestSqlRender {
 
 	public static void main(String[] args) {
 		String sessionId = SqlTranslate.generateSessionId();
-		String sql = "SELECT * FROM #temp";
+		String sql = "CREATE TABLE #covariates (x int);";
 		sql = SqlTranslate.translateSql(sql, "sql server", "oracle", sessionId, "C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv");
 		System.out.println(sql);
 		
