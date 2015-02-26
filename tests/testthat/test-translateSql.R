@@ -144,3 +144,7 @@ test_that("translateSQL sql server -> Oracle datefromparts", {
   expect_equal(sql, "SELECT TO_DATE(TO_CHAR(year,'0000')||'-'||TO_CHAR(month,'00')||'-'||TO_CHAR(day,'00'), 'YYYY-MM-DD') FROM table")
 })
 
+test_that("translateSQL sql server -> Oracle drop temp table if exists", {
+  sql <- translateSql("IF OBJECT_ID('tempdb..#indicated_cohort', 'U') IS NOT NULL\ndrop table #indicated_cohort;",sourceDialect = "sql server", targetDialect = "oracle")$sql
+  expect_equal(sql, "BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE  indicated_cohort';\n  EXECUTE IMMEDIATE 'DROP TABLE  indicated_cohort';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;")
+})
