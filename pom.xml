@@ -41,17 +41,6 @@
 			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
 		</repository>
 	</repositories>
-	<profiles>
-		<profile>
-			<id>doclint-java8-disable</id>
-			<activation>
-				<jdk>[1.8,)</jdk>
-			</activation>
-			<properties>
-				<javadoc.opts>-Xdoclint:none</javadoc.opts>
-			</properties>
-		</profile>
-	</profiles>
 	<build>
 		<!-- sourceDirectory does not follow maven project directory structure -->
 		<sourceDirectory>${src.dir}</sourceDirectory>
@@ -64,14 +53,35 @@
 					<exclude>**/*.jardesc</exclude>
 				</excludes>
 			</resource>
-			<resource>
-				<directory>${basedir}</directory>
-				<includes>
-					<include>**/*.csv</include>
-				</includes>
-			</resource>
+			<!-- Note: see resource dir configured via maven-resources-plugin (needed 
+				for m2e support) -->
 		</resources>
 		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/inst/csv</outputDirectory>
+							<resources>
+								<resource>
+									<directory>inst/csv</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>**/*.csv</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -86,6 +96,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.1</version>
+				<configuration>
+					<additionalparam>${javadoc.doclint.none}</additionalparam>
+					<quiet>true</quiet>
+				</configuration>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -94,9 +108,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<additionalparam>${javadoc.opts}</additionalparam>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -113,7 +124,17 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>java8-disable-strict-javadoc</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
+			</properties>
+		</profile>
+	</profiles>
 </project>
