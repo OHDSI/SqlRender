@@ -53,14 +53,35 @@
 					<exclude>**/*.jardesc</exclude>
 				</excludes>
 			</resource>
-			<resource>
-				<directory>${basedir}</directory>
-				<includes>
-					<include>**/*.csv</include>
-				</includes>
-			</resource>
+			<!-- Note: see resource dir configured via maven-resources-plugin (needed 
+				for m2e support) -->
 		</resources>
 		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/inst/csv</outputDirectory>
+							<resources>
+								<resource>
+									<directory>inst/csv</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>**/*.csv</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
