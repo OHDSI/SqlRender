@@ -53,6 +53,12 @@
 					<exclude>**/*.jardesc</exclude>
 				</excludes>
 			</resource>
+			<resource>
+				<directory>${basedir}</directory>
+				<includes>
+					<include>**/*.csv</include>
+				</includes>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -61,8 +67,8 @@
 				<version>3.2</version>
 				<inherited>true</inherited>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 			<plugin>
