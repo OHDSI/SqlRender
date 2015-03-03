@@ -1,0 +1,108 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.ohdsi.sql</groupId>
+	<artifactId>SqlRender</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>SqlRender</name>
+	<scm>
+		<connection>scm:git:https://github.com/OHDSI/SqlRender</connection>
+		<developerConnection>scm:git:https://github.com/OHDSI/SqlRender</developerConnection>
+		<url>https://github.com/OHDSI/SqlRender</url>
+		<tag>HEAD</tag>
+	</scm>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<src.dir>java-src</src.dir>
+		<test.dir>test</test.dir>
+	</properties>
+	<distributionManagement>
+		<repository>
+			<id>internal</id>
+			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>http://repo.maven.apache.org/maven2/ </url>
+		</repository>
+		<repository>
+			<id>ohdsi</id>
+			<name>repo.ohdsi.org</name>
+			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
+		</repository>
+	</repositories>
+	<build>
+		<!-- sourceDirectory does not follow maven project directory structure -->
+		<sourceDirectory>${src.dir}</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>${src.dir}</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+					<!-- exclude .jardesc file from packaging -->
+					<exclude>**/*.jardesc</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>${basedir}</directory>
+				<includes>
+					<include>**/*.csv</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.2</version>
+				<inherited>true</inherited>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+							<goal>test-jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
