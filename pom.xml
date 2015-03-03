@@ -41,6 +41,17 @@
 			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
 		</repository>
 	</repositories>
+	<profiles>
+		<profile>
+			<id>doclint-java8-disable</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
+	</profiles>
 	<build>
 		<!-- sourceDirectory does not follow maven project directory structure -->
 		<sourceDirectory>${src.dir}</sourceDirectory>
@@ -84,7 +95,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<additionalparam>-Xdoclint:none</additionalparam>
+					<additionalparam>${javadoc.opts}</additionalparam>
 				</configuration>
 			</plugin>
 			<plugin>
