@@ -15,28 +15,28 @@ import java.util.Stack;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class SqlTranslate {
-	public static int							SESSION_ID_LENGTH					= 10;
+	public static int							SESSION_ID_LENGTH					= 8;
 	private static Map<String, List<String[]>>	sourceTargetToReplacementPatterns	= null;
 	private static ReentrantLock				lock								= new ReentrantLock();
 	private static Random						random								= new Random();
 	private static String						globalSessionId						= null;
-
+	
 	private static class Block extends StringUtils.Token {
 		public boolean	isVariable;
-
+		
 		public Block(StringUtils.Token other) {
 			super(other);
 			isVariable = false;
 		}
 	}
-
+	
 	private static class MatchedPattern {
 		public int					start;
 		public int					end;
 		public int					startToken;
 		public Map<String, String>	variableToValue	= new HashMap<String, String>();
 	}
-
+	
 	private static List<Block> parseSearchPattern(String pattern) {
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(pattern.toLowerCase());
 		List<Block> blocks = new ArrayList<Block>();
@@ -51,7 +51,7 @@ public class SqlTranslate {
 		}
 		return blocks;
 	}
-
+	
 	private static MatchedPattern search(String sql, List<Block> parsedPattern, int startToken) {
 		String lowercaseSql = sql.toLowerCase();
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(lowercaseSql);
@@ -120,7 +120,7 @@ public class SqlTranslate {
 		matchedPattern.start = -1;
 		return matchedPattern;
 	}
-
+	
 	private static String searchAndReplace(String sql, List<Block> parsedPattern, String replacePattern) {
 		MatchedPattern matchedPattern = search(sql, parsedPattern, 0);
 		while (matchedPattern.start != -1) {
@@ -133,10 +133,10 @@ public class SqlTranslate {
 				delta = 0;
 			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + delta);
 		}
-
+		
 		return sql;
 	}
-
+	
 	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId) {
 		for (int i = 0; i < replacementPatterns.size(); i++) {
 			String[] pair = replacementPatterns.get(i).clone();
@@ -146,7 +146,7 @@ public class SqlTranslate {
 		}
 		return sql;
 	}
-
+	
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
 	 * 
@@ -161,7 +161,7 @@ public class SqlTranslate {
 	public static String translateSql(String sql, String sourceDialect, String targetDialect) {
 		return translateSql(sql, sourceDialect, targetDialect, null, null);
 	}
-
+	
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
 	 * 
@@ -179,7 +179,7 @@ public class SqlTranslate {
 	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId) {
 		return translateSql(sql, sourceDialect, targetDialect, sessionId, null);
 	}
-
+	
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
 	 * 
@@ -209,7 +209,7 @@ public class SqlTranslate {
 		else
 			return translateSql(sql, replacementPatterns, sessionId);
 	}
-
+	
 	/**
 	 * Generates a random string that can be used as a unique session identifier
 	 * 
@@ -218,13 +218,14 @@ public class SqlTranslate {
 	public static String generateSessionId() {
 		char[] chars = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < SESSION_ID_LENGTH; i++) {
+		sb.append(chars[random.nextInt(26)]); // First character has to be letter or Oracle breaks
+		for (int i = 1; i < SESSION_ID_LENGTH; i++) {
 			char c = chars[random.nextInt(chars.length)];
 			sb.append(c);
 		}
 		return sb.toString();
 	}
-
+	
 	private static List<String> line2columns(String line) {
 		List<String> columns = StringUtils.safeSplit(line, ',');
 		for (int i = 0; i < columns.size(); i++) {
@@ -237,7 +238,7 @@ public class SqlTranslate {
 		}
 		return columns;
 	}
-
+	
 	private static void ensurePatternsAreLoaded(String pathToReplacementPatterns) {
 		if (sourceTargetToReplacementPatterns != null)
 			return;

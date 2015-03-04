@@ -54,7 +54,7 @@ From,To,Pattern,Replacement
 "sql server","oracle","WITH @a AS @b INSERT INTO @c SELECT @d;","INSERT INTO @c WITH @a AS @b SELECT @d;"
 "sql server","oracle","SELECT @a INTO #@b FROM @c;","CREATE GLOBAL TEMPORARY TABLE #@b ON COMMIT PRESERVE ROWS\nAS\nSELECT\n@a\nFROM\n@c;"
 "sql server","oracle","SELECT @a INTO @b FROM @c;","CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;"
-"sql server","oracle","#","tmp%session_id%_"
+"sql server","oracle","#","%session_id%"
 "sql server","postgresql","ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 "sql server","postgresql","CAST(@a AS DATE)","TO_DATE(@a, 'yyyymmdd')"
 "sql server","postgresql","DATEADD(d,@days,@date)","(@date + @days)"
