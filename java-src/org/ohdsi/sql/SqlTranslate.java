@@ -138,28 +138,29 @@ public class SqlTranslate {
 	}
 
 	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId) {
-		for (String[] pair : replacementPatterns) {
+		for (int i = 0; i < replacementPatterns.size(); i++) {
+			String[] pair = replacementPatterns.get(i).clone();
 			pair[1] = pair[1].replace("%session_id%", sessionId);
 			List<Block> parsedPattern = parseSearchPattern(pair[0]);
 			sql = searchAndReplace(sql, parsedPattern, pair[1]);
 		}
 		return sql;
 	}
-	
-    /**
-     * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
-     * 
-     * @param sql
-     *            The SQL to be translated
-     * @param sourceDialect
-     *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
-     * @param targetDialect
-     *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
-     * @return The translated SQL
-     */
-    public static String translateSql(String sql, String sourceDialect, String targetDialect) {
-        return translateSql(sql, sourceDialect, targetDialect, null, null);
-    }
+
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
+	 * @param sourceDialect
+	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @return The translated SQL
+	 */
+	public static String translateSql(String sql, String sourceDialect, String targetDialect) {
+		return translateSql(sql, sourceDialect, targetDialect, null, null);
+	}
 
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.

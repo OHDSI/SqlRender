@@ -8,6 +8,12 @@ public class TestSqlRender {
 		sql = SqlTranslate.translateSql(sql, "sql server", "oracle", sessionId, "C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv");
 		System.out.println(sql);
 		
+		
+		sessionId = SqlTranslate.generateSessionId();
+		sql = "CREATE TABLE #covariates (x int);";
+		sql = SqlTranslate.translateSql(sql, "sql server", "oracle", sessionId, "C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv");
+		System.out.println(sql);
+		
 //		String[] parameters = new String[]{"a","ab"};
 //		String[] values = new String[]{"x","y"};
 //		String sql = "SELECT * FROM table WHERE x = @ab AND {@a == 'blaat'}?{y = 1234}:{x = 1};";
