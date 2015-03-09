@@ -5,13 +5,13 @@ public class TestSqlRender {
 	public static void main(String[] args) {
 		String sessionId = SqlTranslate.generateSessionId();
 		String sql = "CREATE TABLE #covariates (x int);";
-		sql = SqlTranslate.translateSql(sql, "sql server", "oracle", sessionId, "C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv");
+		sql = SqlTranslate.translateSql(sql, "sql server", "oracle", sessionId, "my_temp", "C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv");
 		System.out.println(sql);
 		
 		
 		sessionId = SqlTranslate.generateSessionId();
 		sql = "CREATE TABLE #covariates (x int);";
-		sql = SqlTranslate.translateSql(sql, "sql server", "oracle", sessionId, "C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv");
+		sql = SqlTranslate.translateSql(sql, "sql server", "oracle", sessionId, "my_temp", "C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv");
 		System.out.println(sql);
 		
 //		String[] parameters = new String[]{"a","ab"};

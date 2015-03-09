@@ -20,23 +20,23 @@ public class SqlTranslate {
 	private static ReentrantLock				lock								= new ReentrantLock();
 	private static Random						random								= new Random();
 	private static String						globalSessionId						= null;
-	
+
 	private static class Block extends StringUtils.Token {
 		public boolean	isVariable;
-		
+
 		public Block(StringUtils.Token other) {
 			super(other);
 			isVariable = false;
 		}
 	}
-	
+
 	private static class MatchedPattern {
 		public int					start;
 		public int					end;
 		public int					startToken;
 		public Map<String, String>	variableToValue	= new HashMap<String, String>();
 	}
-	
+
 	private static List<Block> parseSearchPattern(String pattern) {
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(pattern.toLowerCase());
 		List<Block> blocks = new ArrayList<Block>();
@@ -51,7 +51,7 @@ public class SqlTranslate {
 		}
 		return blocks;
 	}
-	
+
 	private static MatchedPattern search(String sql, List<Block> parsedPattern, int startToken) {
 		String lowercaseSql = sql.toLowerCase();
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(lowercaseSql);
@@ -120,7 +120,7 @@ public class SqlTranslate {
 		matchedPattern.start = -1;
 		return matchedPattern;
 	}
-	
+
 	private static String searchAndReplace(String sql, List<Block> parsedPattern, String replacePattern) {
 		MatchedPattern matchedPattern = search(sql, parsedPattern, 0);
 		while (matchedPattern.start != -1) {
@@ -133,20 +133,21 @@ public class SqlTranslate {
 				delta = 0;
 			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + delta);
 		}
-		
+
 		return sql;
 	}
-	
-	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId) {
+
+	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId, String oracleTempPrefix) {
 		for (int i = 0; i < replacementPatterns.size(); i++) {
 			String[] pair = replacementPatterns.get(i).clone();
 			pair[1] = pair[1].replace("%session_id%", sessionId);
+			pair[1] = pair[1].replace("%temp_prefix%", oracleTempPrefix);
 			List<Block> parsedPattern = parseSearchPattern(pair[0]);
 			sql = searchAndReplace(sql, parsedPattern, pair[1]);
 		}
 		return sql;
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
 	 * 
@@ -161,7 +162,7 @@ public class SqlTranslate {
 	public static String translateSql(String sql, String sourceDialect, String targetDialect) {
 		return translateSql(sql, sourceDialect, targetDialect, null, null);
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
 	 * 
@@ -174,12 +175,15 @@ public class SqlTranslate {
 	 * @param sessionId
 	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). If null, a global session ID will
 	 *            be generated and used for all subsequent calls to translateSql.
+	 * @param oracleTempSchema
+	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
+	 *            name is prefixed to the temp table name).
 	 * @return The translated SQL
 	 */
-	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId) {
-		return translateSql(sql, sourceDialect, targetDialect, sessionId, null);
+	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId, String oracleTempSchema) {
+		return translateSql(sql, sourceDialect, targetDialect, sessionId, oracleTempSchema, null);
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
 	 * 
@@ -192,24 +196,34 @@ public class SqlTranslate {
 	 * @param sessionId
 	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). If null, a global session ID will
 	 *            be generated and used for all subsequent calls to translateSql.
+	 * @param oracleTempSchema
+	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
+	 *            name is prefixed to the temp table name).
 	 * @param pathToReplacementPatterns
 	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
 	 * @return The translated SQL
 	 */
-	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId, String pathToReplacementPatterns) {
+	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId, String oracleTempSchema,
+			String pathToReplacementPatterns) {
 		ensurePatternsAreLoaded(pathToReplacementPatterns);
 		if (sessionId == null) {
 			if (globalSessionId == null)
 				globalSessionId = generateSessionId();
 			sessionId = globalSessionId;
 		}
+		String oracleTempPrefix;
+		if (oracleTempSchema == null) 
+			oracleTempPrefix = "";
+		else
+			oracleTempPrefix = oracleTempSchema + ".";
+			
 		List<String[]> replacementPatterns = sourceTargetToReplacementPatterns.get(sourceDialect + "\t" + targetDialect);
 		if (replacementPatterns == null)
 			return sql;
 		else
-			return translateSql(sql, replacementPatterns, sessionId);
+			return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
 	}
-	
+
 	/**
 	 * Generates a random string that can be used as a unique session identifier
 	 * 
@@ -225,7 +239,7 @@ public class SqlTranslate {
 		}
 		return sb.toString();
 	}
-	
+
 	private static List<String> line2columns(String line) {
 		List<String> columns = StringUtils.safeSplit(line, ',');
 		for (int i = 0; i < columns.size(); i++) {
@@ -238,7 +252,7 @@ public class SqlTranslate {
 		}
 		return columns;
 	}
-	
+
 	private static void ensurePatternsAreLoaded(String pathToReplacementPatterns) {
 		if (sourceTargetToReplacementPatterns != null)
 			return;
