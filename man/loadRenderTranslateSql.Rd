@@ -4,7 +4,8 @@
 \alias{loadRenderTranslateSql}
 \title{Load, render, and translate a SQL file in a package}
 \usage{
-loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server", ...)
+loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server", ...,
+  oracleTempSchema = NULL)
 }
 \arguments{
 \item{sqlFilename}{The source SQL file}
@@ -14,6 +15,8 @@ loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server", ...)
 \item{dbms}{The target dialect. Currently "sql server", "oracle", "postgres", and "redshift" are supported}
 
 \item{...}{Parameter values used for \code{renderSql}}
+
+\item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle.}
 }
 \value{
 Returns a string containing the rendered SQL.

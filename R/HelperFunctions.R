@@ -238,6 +238,7 @@ createRWrapperForSql <- function(sqlFilename,
     stop("Could not find SQL file")
   }
   
+  hasTempTables <- any(gregexpr("\\#",parameterizedSql)[[1]] != -1)
   hits <- gregexpr("\\{DEFAULT @[^}]*\\}",parameterizedSql) 
   hits <- cbind(hits[[1]],attr(hits[[1]],"match.length"))
   f <- function(x) {
@@ -275,7 +276,8 @@ createRWrapperForSql <- function(sqlFilename,
     lines <- c(lines,"#' Todo: add details")  
     lines <- c(lines,"#'") 
     lines <- c(lines,"#' @param connectionDetails\t\tAn R object of type \\code{ConnectionDetails} created using the function \\code{createConnectionDetails} in the \\code{DatabaseConnector} package.")  
-    lines <- c(lines,"#' @param oracleTempSchema\t\tA schema where temp tables can be created in Oracle.")
+    if (hasTempTables)
+      lines <- c(lines,"#' @param oracleTempSchema\t\tA schema where temp tables can be created in Oracle.")
     for (i in 1:nrow(functionDefinitions)){
       lines <- c(lines,paste("#' @param",functionDefinitions$rParameter[i],"\t\t"))
     }
@@ -283,12 +285,14 @@ createRWrapperForSql <- function(sqlFilename,
     lines <- c(lines,"#' @export")  
   }
   lines <- c(lines,paste(gsub(".sql","",sqlFilename)," <- function(connectionDetails,",sep=""))
+  if (hasTempTables)  
+    lines <- c(lines,"                         oracleTempSchema,")    
   for (i in 1:nrow(functionDefinitions)){
     if (i == nrow(functionDefinitions))
       end = ") {"
     else
       end = ","
-    lines <- c(lines,paste("                        ",functionDefinitions$rParameter[i]," = ",functionDefinitions$value[i],end,sep=""))
+    lines <- c(lines,paste("                         ",functionDefinitions$rParameter[i]," = ",functionDefinitions$value[i],end,sep=""))
   }
   for (databaseParameter in databaseParameters$rParameter){
     lines <- c(lines,paste("  ", databaseParameter, " <- strsplit(",databaseParameter,"Schema ,\"\\\\.\")[[1]][1]",sep=""))
@@ -296,7 +300,8 @@ createRWrapperForSql <- function(sqlFilename,
   lines <- c(lines,paste("  renderedSql <- loadRenderTranslateSql(\"",sqlFilename,"\",",sep=""))
   lines <- c(lines,paste("              packageName = \"",packageName,"\",",sep=""))
   lines <- c(lines,"              dbms = connectionDetails$dbms,")
-  lines <- c(lines,"              oracleTempSchema = oracleTempSchema,")
+  if (hasTempTables)  
+    lines <- c(lines,"              oracleTempSchema = oracleTempSchema,")
   for (i in 1:nrow(definitions)){
     if (i == nrow(definitions))
       end = ")"
