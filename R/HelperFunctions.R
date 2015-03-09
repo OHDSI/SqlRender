@@ -108,15 +108,16 @@ renderSqlFile <- function(sourceFile, targetFile, ...) {
 #' @param targetFile               The target SQL file
 #' @param sourceDialect     The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
 #' @param targetDialect  	The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
-#'
+#' @param oracleTempSchema  A schema that can be used to create temp tables in when using Oracle.
+#' 
 #' @examples \dontrun{
 #' translateSqlFile("myRenderedStatement.sql","myTranslatedStatement.sql",targetDialect="postgresql")
 #' }
 #' @export
-translateSqlFile <- function(sourceFile, targetFile, sourceDialect = "sql server", targetDialect = "oracle") {
+translateSqlFile <- function(sourceFile, targetFile, sourceDialect = "sql server", targetDialect = "oracle", oracleTempSchema = NULL) {
   sql <- readSql(sourceFile)
-  sql <- translateSql(sql,sourceDialect,targetDialect)$sql
-  writeSql(sql,targetFile)
+  sql <- translateSql(sql, sourceDialect, targetDialect, oracleTempSchema = oracleTempSchema)$sql
+  writeSql(sql, targetFile)
 }
 
 #' Load, render, and translate a SQL file in a package
@@ -135,6 +136,7 @@ translateSqlFile <- function(sourceFile, targetFile, sourceDialect = "sql server
 #' @param packageName           The name of the package that contains the SQL file
 #' @param dbms                  The target dialect. Currently "sql server", "oracle", "postgres", and "redshift" are supported
 #' @param ...                   Parameter values used for \code{renderSql}
+#' @param oracleTempSchema      A schema that can be used to create temp tables in when using Oracle.
 #'
 #' @return
 #' Returns a string containing the rendered SQL.
@@ -145,7 +147,7 @@ translateSqlFile <- function(sourceFile, targetFile, sourceDialect = "sql server
 #'                                          CDM_schema = "cdmSchema")
 #' }
 #' @export
-loadRenderTranslateSql <- function(sqlFilename, packageName, dbms="sql server", ...){
+loadRenderTranslateSql <- function(sqlFilename, packageName, dbms="sql server", ..., oracleTempSchema = NULL){
   pathToSql <- system.file(paste("sql/",gsub(" ","_",dbms),sep=""), sqlFilename, package=packageName)
   mustTranslate <- !file.exists(pathToSql)
   if (mustTranslate) # If DBMS-specific code does not exists, load SQL Server code and translate after rendering
@@ -155,7 +157,7 @@ loadRenderTranslateSql <- function(sqlFilename, packageName, dbms="sql server", 
   renderedSql <- renderSql(parameterizedSql[1], ...)$sql
   
   if (mustTranslate)
-    renderedSql <- translateSql(renderedSql, "sql server", dbms)$sql
+    renderedSql <- translateSql(renderedSql, "sql server", dbms, oracleTempSchema)$sql
   
   renderedSql
 }
@@ -273,6 +275,7 @@ createRWrapperForSql <- function(sqlFilename,
     lines <- c(lines,"#' Todo: add details")  
     lines <- c(lines,"#'") 
     lines <- c(lines,"#' @param connectionDetails\t\tAn R object of type \\code{ConnectionDetails} created using the function \\code{createConnectionDetails} in the \\code{DatabaseConnector} package.")  
+    lines <- c(lines,"#' @param oracleTempSchema\t\tA schema where temp tables can be created in Oracle.")
     for (i in 1:nrow(functionDefinitions)){
       lines <- c(lines,paste("#' @param",functionDefinitions$rParameter[i],"\t\t"))
     }
@@ -293,6 +296,7 @@ createRWrapperForSql <- function(sqlFilename,
   lines <- c(lines,paste("  renderedSql <- loadRenderTranslateSql(\"",sqlFilename,"\",",sep=""))
   lines <- c(lines,paste("              packageName = \"",packageName,"\",",sep=""))
   lines <- c(lines,"              dbms = connectionDetails$dbms,")
+  lines <- c(lines,"              oracleTempSchema = oracleTempSchema,")
   for (i in 1:nrow(definitions)){
     if (i == nrow(definitions))
       end = ")"
