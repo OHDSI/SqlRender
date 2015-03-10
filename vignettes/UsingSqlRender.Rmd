@@ -1,5 +1,7 @@
 ---
 title: "Using SqlRender"
+author: "Martijn J. Schuemie"
+date: "`r Sys.Date()`"
 output:
   pdf_document:
     number_sections: yes
@@ -105,7 +107,7 @@ SQL for one platform (e.g. Microsoft SQL Server) will not always execute on othe
 
 A first limitation is that **the starting dialect has to be SQL Server**. The reason for this is that this dialect is in general the most specific. For example, the number of days between two dates in SQL Server has to be computed using the DATEDIFF function: `DATEDIFF(dd,a,b)`. In other languages one can simply subtract the two dates: `b-a`. Since you'd need to know a and b are dates, it is not possible to go from other languages to SQL Server, only the other way around.
 
-A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, with some support for **Amazon Redhift**.
+A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, with some support for **Amazon Redhift** and **Microsoft PDW (Parallel Data Warehouse)**.
 
 A third limitation is that only a limited set of translation rules have currently been implemented, although adding them to the [list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) should not be hard.
 
@@ -127,7 +129,9 @@ The `targetDialect` parameter can have the following values:
 
 ## Functions and structures supported by translateSql
 
-Giving an exhaustive list of all functions is not feasible. Many SQL functions actually are the same in all dialects and therefore already work fine, and the list of functions that are translated by translateSql is growing over time. See the latest version of the [rule list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) to see which ones are covered. Some of the functions we've used succesfully are `AVG`, `CAST`, `COUNT`, `COUNT_BIG`, `DATEADD`, `DATEDIFF`, `EXP`, `FLOOR`, `GETDATE`, `ISNULL`, `LEFT`, `LEN`, `LOG`, `MAX`, `MIN`, `MONTH`, `RIGHT`, `ROUND`, `STDEV`, `SQRT`, `SUM` and `YEAR`.
+Giving an exhaustive list of all functions is not feasible. Many SQL functions actually are the same in all dialects and therefore already work fine, and the list of functions that are translated by translateSql is growing over time. See the latest version of the [rule list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) to see which ones are covered. Some of the functions we've used succesfully are:
+
+`AVG`, `CAST`, `COUNT`, `COUNT_BIG`, `DATEADD`, `DATEDIFF`, `DATEFROMPARTS`, `DAY`, `EXP`, `FLOOR`, `GETDATE`, `ISNULL`, `LEFT`, `LEN`, `LOG`, `MAX`, `MIN`, `MONTH`, `RIGHT`, `ROUND`, `STDEV`, `SQRT`, `SUM`, `TO_CHAR`, and `YEAR`.
 
 Similarly, many SQL syntax structures are supported. Here is a non-exhaustive lists of things that we know will translate well:
 
@@ -149,7 +153,10 @@ INSERT INTO other_table (field_1) SELECT value FROM table;  -- Inserting from SE
 DROP TABLE table;                                           -- Simple drop commands
 
 IF OBJECT_ID('ACHILLES_analysis', 'U') IS NOT NULL          -- Drop table if it exists
-  drop table ACHILLES_analysis;
+  DROP TABLE ACHILLES_analysis;
+  
+IF OBJECT_ID('tempdb..#cohorts', 'U') IS NOT NULL          -- Drop temp table if it exists
+  DROP TABLE #cohorts;  
 
 WITH cte AS (SELECT * FROM table) SELECT * FROM cte;        -- Common table expressions
 
@@ -164,20 +171,27 @@ SELECT CASE WHEN a=1 THEN a ELSE 0 END AS value FROM table; -- CASE WHEN clauses
 String concatentation is the only part where SQL Server is less specific than other dialects. In SQL Server, one would write `SELECT first_name + ' ' + last_name AS full_name FROM table`, but this should be `SELECT first_name || ' ' || last_name AS full_name FROM table` in PostgreSQL and Oracle. SqlRender tries to guess when values that are being concatenated are strings. In the example above, because we have an explicit string (the space surrounded by single quotation marks), the translation will be correct. However, if the query had been `SELECT first_name + last_name AS full_name FROM table`, SqlRender would have had no clue the two fields were strings, and would incorrectly leave the plus sign. Another clue that a value is a string is an explicit cast to VARCHAR, so `SELECT last_name + CAST(age AS VARCHAR(3)) AS full_name FROM table` would also be translated correctly.
 
 ## Temp tables
-Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In Postgres and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. We therefore recommend using temp tables as little as possible. If you do use them, make sure to 
+Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In Postgres and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. This is why, in Oracle, SqlRender will try to emulate temp tables by
 
- - Always set the current schema to somewhere where the user has write access, and adding explicit schema references to all other tables you need (e.g. @cdm_schema.dbo.person).
- - Add truncate table and drop table statements for temp tables at the beginning and end of the SQL code.
- - Generate random temp table names so they cannot conflict with the temp tables of another user.
+1. Adding a random string to the table name so tables from different users will not conflict.
+2. Allowing the user to specify the schema where the temp tables will be created. 
 
-Instead, it is probably best to use Common Table Expressions (CTEs) when one would normally use a temp table. For example, instead of 
+For example:
+```{r tidy=TRUE,echo=TRUE}
+sql <- "SELECT * FROM #children;"
+translateSql(sql,"sql server", "oracle", oracleTempSchema = "temp_schema")$sql
+```
+
+Note that the user will need to have write priviliges on `temp_schema`.
+
+If possible, try to avoid using temp tables altogether. Sometimes one could use Common Table Expressions (CTEs) when one would normally use a temp table. For example, instead of 
 
 ```sql
 SELECT * INTO #children FROM person WHERE year_of_birth > 2000;
 SELECT * FROM #children WHERE gender = 8507;
 ```
 
-it is preferred to use
+you could use
 
 ```sql
 WITH children AS (SELECT * FROM person WHERE year_of_birth > 2000)
