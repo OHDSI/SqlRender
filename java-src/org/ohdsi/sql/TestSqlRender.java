@@ -3,8 +3,15 @@ package org.ohdsi.sql;
 public class TestSqlRender {
 
 	public static void main(String[] args) {
-		String sql = "{123 <> 123}?{true}:{false}";
-		sql = SqlRender.renderSql(sql, new String[0], new String[0]);
+		String sessionId = SqlTranslate.generateSessionId();
+		String sql = "CREATE TABLE #covariates (x int);";
+		sql = SqlTranslate.translateSql(sql, "sql server", "oracle", sessionId, "my_temp", "C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv");
+		System.out.println(sql);
+		
+		
+		sessionId = SqlTranslate.generateSessionId();
+		sql = "CREATE TABLE #covariates (x int);";
+		sql = SqlTranslate.translateSql(sql, "sql server", "oracle", sessionId, "my_temp", "C:/Users/mschuemi/git/SqlRender/inst/csv/replacementPatterns.csv");
 		System.out.println(sql);
 		
 //		String[] parameters = new String[]{"a","ab"};

@@ -5,7 +5,7 @@
 \title{translateSql}
 \usage{
 translateSql(sql = "", sourceDialect = "sql server",
-  targetDialect = "oracle")
+  targetDialect = "oracle", oracleTempSchema = NULL)
 }
 \arguments{
 \item{sql}{The SQL to be translated}
@@ -13,6 +13,8 @@ translateSql(sql = "", sourceDialect = "sql server",
 \item{sourceDialect}{The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported}
 
 \item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", and "redshift" are supported}
+
+\item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle.}
 }
 \value{
 A list containing the following elements:

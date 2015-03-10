@@ -77,7 +77,8 @@ renderSql <- function(sql = "", ...) {
 #' 
 #' @param sql               The SQL to be translated
 #' @param sourceDialect     The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
-#' @param targetDialect		The target dialect. Currently "oracle", "postgresql", "pdw", and "redshift" are supported
+#' @param targetDialect		  The target dialect. Currently "oracle", "postgresql", "pdw", and "redshift" are supported
+#' @param oracleTempSchema  A schema that can be used to create temp tables in when using Oracle.
 #' @return              
 #' A list containing the following elements:
 #' \describe{  
@@ -88,9 +89,11 @@ renderSql <- function(sql = "", ...) {
 #' translateSql("USE my_schema","sql server", "oracle")
 #' }
 #' @export
-translateSql <- function(sql = "", sourceDialect = "sql server", targetDialect = "oracle") {  
+translateSql <- function(sql = "", sourceDialect = "sql server", targetDialect = "oracle", oracleTempSchema = NULL) {  
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package="SqlRender")
-  translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSql(sql, sourceDialect, targetDialect, pathToReplacementPatterns)
+  if (missing(oracleTempSchema) || is.null(oracleTempSchema))
+    oracleTempSchema <- rJava::.jnull()
+  translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSql(sql, sourceDialect, targetDialect, rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
   list(originalSql = sql, sql = translatedSql) 
 }
 
