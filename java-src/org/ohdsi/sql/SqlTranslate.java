@@ -173,8 +173,9 @@ public class SqlTranslate {
 	 * @param targetDialect
 	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
 	 * @param sessionId
-	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). If null, a global session ID will
-	 *            be generated and used for all subsequent calls to translateSql.
+	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
+	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
+	 *            calls to translateSql.
 	 * @param oracleTempSchema
 	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
 	 *            name is prefixed to the temp table name).
@@ -194,8 +195,9 @@ public class SqlTranslate {
 	 * @param targetDialect
 	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
 	 * @param sessionId
-	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). If null, a global session ID will
-	 *            be generated and used for all subsequent calls to translateSql.
+	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
+	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
+	 *            calls to translateSql.
 	 * @param oracleTempSchema
 	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
 	 *            name is prefixed to the temp table name).
@@ -210,18 +212,29 @@ public class SqlTranslate {
 			if (globalSessionId == null)
 				globalSessionId = generateSessionId();
 			sessionId = globalSessionId;
-		}
+		} else
+			validateSessionId(sessionId);
 		String oracleTempPrefix;
-		if (oracleTempSchema == null) 
+		if (oracleTempSchema == null)
 			oracleTempPrefix = "";
 		else
 			oracleTempPrefix = oracleTempSchema + ".";
-			
+
 		List<String[]> replacementPatterns = sourceTargetToReplacementPatterns.get(sourceDialect + "\t" + targetDialect);
 		if (replacementPatterns == null)
 			return sql;
 		else
 			return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
+	}
+
+	private static void validateSessionId(String sessionId) {
+		if (sessionId.length() != SESSION_ID_LENGTH)
+			throw new RuntimeException("Session ID has length " + sessionId.length() + ", should be " + SESSION_ID_LENGTH);
+		if (!Character.isLetter(sessionId.charAt(0)))
+			throw new RuntimeException("Session ID does not start with a letter");
+		for (int i = 1; i < sessionId.length(); i++)
+			if (!Character.isLetterOrDigit(sessionId.charAt(i)))
+				throw new RuntimeException("Illegal character in session ID");
 	}
 
 	/**
