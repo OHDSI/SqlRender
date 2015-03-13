@@ -286,7 +286,7 @@ createRWrapperForSql <- function(sqlFilename,
   }
   lines <- c(lines,paste(gsub(".sql","",sqlFilename)," <- function(connectionDetails,",sep=""))
   if (hasTempTables)  
-    lines <- c(lines,"                         oracleTempSchema,")    
+    lines <- c(lines,"                         oracleTempSchema = NULL,")    
   for (i in 1:nrow(functionDefinitions)){
     if (i == nrow(functionDefinitions))
       end = ") {"
@@ -297,7 +297,7 @@ createRWrapperForSql <- function(sqlFilename,
   for (databaseParameter in databaseParameters$rParameter){
     lines <- c(lines,paste("  ", databaseParameter, " <- strsplit(",databaseParameter,"Schema ,\"\\\\.\")[[1]][1]",sep=""))
   }
-  lines <- c(lines,paste("  renderedSql <- loadRenderTranslateSql(\"",sqlFilename,"\",",sep=""))
+  lines <- c(lines,paste("  renderedSql <- SqlRender::loadRenderTranslateSql(\"",sqlFilename,"\",",sep=""))
   lines <- c(lines,paste("              packageName = \"",packageName,"\",",sep=""))
   lines <- c(lines,"              dbms = connectionDetails$dbms,")
   if (hasTempTables)  
@@ -309,13 +309,13 @@ createRWrapperForSql <- function(sqlFilename,
       end = ","
     lines <- c(lines,paste("              ",definitions$sqlParameter[i]," = ",definitions$rParameter[i],end,sep=""))
   }
-  lines <- c(lines,"  conn <- connect(connectionDetails)")  
+  lines <- c(lines,"  conn <- DatabaseConnector::connect(connectionDetails)")  
   lines <- c(lines,"")  
   lines <- c(lines,"  writeLines(\"Executing multiple queries. This could take a while\")")  
-  lines <- c(lines,"  executeSql(conn,renderedSql)")  
+  lines <- c(lines,"  DatabaseConnector::executeSql(conn,renderedSql)")  
   lines <- c(lines,"  writeLines(\"Done\")") 
   lines <- c(lines,"")  
-  lines <- c(lines,"  dummy <- dbDisconnect(conn)")  
+  lines <- c(lines,"  dummy <- RJDBC::dbDisconnect(conn)")  
   lines <- c(lines,"}") 
   writeLines(paste("Writing R function to:",rFilename))
   sink(rFilename)
