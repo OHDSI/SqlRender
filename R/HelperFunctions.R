@@ -182,6 +182,10 @@ snakeCaseToCamelCase <- function(string){
   for(letter in letters){
     string = gsub(paste("_",letter,sep=""),toupper(letter),string)
   }
+  for(number in 0:9){
+    string = gsub(paste("_",number,sep=""),number,string)
+  }
+  
   string
 }
 
