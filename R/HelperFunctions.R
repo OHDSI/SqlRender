@@ -189,6 +189,24 @@ snakeCaseToCamelCase <- function(string){
   string
 }
 
+#' Convert a camel case string to snake case
+#' 
+#' @param string  The string to be converted
+#' 
+#' @return A string
+#' 
+#' @examples
+#' camelCaseToSnakeCase("cdmDatabaseSchema")
+#' #> "cdm_database_schema"
+#' 
+#' @export
+camelCaseToSnakeCase <- function(string){
+  for(letter in toupper(letters)){
+    string = gsub(letter, paste("_",tolower(letter),sep=""),string)
+  }  
+  string
+}
+
 #' Create an R wrapper for SQL
 #'
 #' @description
