@@ -131,7 +131,12 @@ The `targetDialect` parameter can have the following values:
 
 Giving an exhaustive list of all functions is not feasible. Many SQL functions actually are the same in all dialects and therefore already work fine, and the list of functions that are translated by translateSql is growing over time. See the latest version of the [rule list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) to see which ones are covered. Some of the functions we've used succesfully are:
 
-`AVG`, `CAST`, `COUNT`, `COUNT_BIG`, `DATEADD`, `DATEDIFF`, `DATEFROMPARTS`, `DAY`, `EXP`, `FLOOR`, `GETDATE`, `ISNULL`, `LEFT`, `LEN`, `LOG`, `MAX`, `MIN`, `MONTH`, `RIGHT`, `ROUND`, `STDEV`, `SQRT`, `SUM`, `TO_CHAR`, and `YEAR`.
+```{r echo=FALSE}
+funs <- c("AVG", "CAST", "COUNT", "COUNT_BIG", "DATEADD", "DATEDIFF", "DATEFROMPARTS", "DAY", "EXP", "FLOOR", "GETDATE", "ISNULL", "LEFT", "LEN", "LOG", "MAX", "MIN", "MONTH", "RIGHT", "ROUND", "STDEV", "SQRT", "SUM", "TO_CHAR", "YEAR","","","")
+
+
+knitr::kable(matrix(funs, ncol = 4), col.names = rep("Function",4), caption = "Functions supported by translateSql")
+```
 
 Similarly, many SQL syntax structures are supported. Here is a non-exhaustive lists of things that we know will translate well:
 
@@ -155,7 +160,7 @@ DROP TABLE table;                                           -- Simple drop comma
 IF OBJECT_ID('ACHILLES_analysis', 'U') IS NOT NULL          -- Drop table if it exists
   DROP TABLE ACHILLES_analysis;
   
-IF OBJECT_ID('tempdb..#cohorts', 'U') IS NOT NULL          -- Drop temp table if it exists
+IF OBJECT_ID('tempdb..#cohorts', 'U') IS NOT NULL           -- Drop temp table if it exists
   DROP TABLE #cohorts;  
 
 WITH cte AS (SELECT * FROM table) SELECT * FROM cte;        -- Common table expressions
@@ -164,6 +169,12 @@ SELECT ROW_NUMBER() OVER (PARTITION BY a ORDER BY b)        -- OVER clauses
   AS "Row Number" FROM table;
   
 SELECT CASE WHEN a=1 THEN a ELSE 0 END AS value FROM table; -- CASE WHEN clauses
+
+SELECT * FROM a UNION SELECT * FROM b                       -- UNIONs
+
+SELECT * FROM a INTERSECT SELECT * FROM b                   -- INTERSECTIONs
+
+SELECT * FROM a EXCEPT SELECT * FROM b                      -- EXCEPT
 
 ```
 
@@ -183,6 +194,8 @@ translateSql(sql,"sql server", "oracle", oracleTempSchema = "temp_schema")$sql
 ```
 
 Note that the user will need to have write priviliges on `temp_schema`.
+
+Also note that because Oracle has a limit on table names of 30 characters, **temp table names are only allowed to be at most 22 characters long** because else the name will become too long after appending the session ID.
 
 If possible, try to avoid using temp tables altogether. Sometimes one could use Common Table Expressions (CTEs) when one would normally use a temp table. For example, instead of 
 
