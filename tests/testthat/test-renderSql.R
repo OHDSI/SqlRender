@@ -49,6 +49,33 @@ test_that("If-then-else: IN pattern works if value is not in", {
 			expect_equal(sql, "")
 		})
 
+test_that("If-then-else: AND operator", {
+  sql <- renderSql("{true & true}?{true}:{false}")$sql
+  expect_equal(sql, "true")
+})
+
+test_that("If-then-else: AND operator", {
+  sql <- renderSql("{true & false}?{true}:{false}")$sql
+  expect_equal(sql, "false")
+})
+
+
+test_that("If-then-else: OR operator", {
+  sql <- renderSql("{true | false}?{true}:{false}")$sql
+  expect_equal(sql, "true")
+})
+
+test_that("If-then-else: OR operator", {
+  sql <- renderSql("{true | true}?{true}:{false}")$sql
+  expect_equal(sql, "true")
+})
+
+test_that("If-then-else: OR operator", {
+  sql <- renderSql("{false | false}?{true}:{false}")$sql
+  expect_equal(sql, "false")
+})
+
+
 test_that("If-then-else: IN pattern nested in boolean condition", {
 			sql <- renderSql("{true & (true & (true & 4 IN (@a)))}?{true}:{false}",a = c(1,2,3))$sql
 			expect_equal(sql, "false")

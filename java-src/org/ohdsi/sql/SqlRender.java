@@ -127,7 +127,7 @@ public class SqlRender {
 		}
 		found = str.indexOf("|");
 		if (found != -1) {
-			String[] parts = str.split("|");
+			String[] parts = str.split("\\|");
 			for (String part : parts)
 				if (evaluatePrimitiveCondition(part))
 					return true;
