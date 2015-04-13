@@ -116,13 +116,34 @@ test_that("translateSQL sql server -> Oracle WITH INSERT INTO SELECT", {
 
 test_that("translateSQL sql server -> PDW create temp table", {
   sql <- translateSql("CREATE TABLE #a (x int);",sourceDialect = "sql server", targetDialect = "pdw")$sql
-  expect_equal(sql, "CREATE TABLE #a  (x int)\nWITH ( LOCATION = USER_DB, DISTRIBUTION = REPLICATE);")
+  expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #a   (x int)\nWITH (LOCATION = USER_DB, DISTRIBUTION =  REPLICATE);")
 })
 
 test_that("translateSQL sql server -> PDW create temp table with person_id", {
   sql <- translateSql("CREATE TABLE #a (person_id int);",sourceDialect = "sql server", targetDialect = "pdw")$sql
-  expect_equal(sql, "CREATE TABLE #a  ( person_id  int)\nWITH ( LOCATION = USER_DB, DISTRIBUTION = HASH(person_id));")
+  expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #a   ( person_id  int)\nWITH (LOCATION = USER_DB, DISTRIBUTION =  HASH(person_id));")
 })
+
+test_that("translateSQL sql server -> PDW create temp table with subject_id", {
+  sql <- translateSql("CREATE TABLE #a (subject_id int);",sourceDialect = "sql server", targetDialect = "pdw")$sql
+  expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #a   ( subject_id  int)\nWITH (LOCATION = USER_DB, DISTRIBUTION =  HASH(subject_id));")
+})
+
+test_that("translateSQL sql server -> PDW create permanent table", {
+  sql <- translateSql("CREATE TABLE a (x int);",sourceDialect = "sql server", targetDialect = "pdw")$sql
+  expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   a  (x int)\nWITH (DISTRIBUTION = REPLICATE);")
+})
+
+test_that("translateSQL sql server -> PDW create permanent table with person_id", {
+  sql <- translateSql("CREATE TABLE a (person_id int);",sourceDialect = "sql server", targetDialect = "pdw")$sql
+  expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   a  ( person_id  int)\nWITH (DISTRIBUTION = HASH(person_id));")
+})
+
+test_that("translateSQL sql server -> PDW create permanent table with person_id", {
+  sql <- translateSql("CREATE TABLE a (subject_id int);",sourceDialect = "sql server", targetDialect = "pdw")$sql
+  expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   a  ( subject_id  int)\nWITH (DISTRIBUTION = HASH(subject_id));")
+})
+
 
 test_that("translateSQL sql server -> Postgres create table if not exists", {
   sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",sourceDialect = "sql server", targetDialect = "postgresql")$sql
