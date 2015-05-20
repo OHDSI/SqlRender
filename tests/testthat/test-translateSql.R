@@ -180,3 +180,33 @@ test_that("translateSQL sql server -> Oracle datetime to timestamp", {
   expect_equal(sql, "CREATE TABLE x (a TIMESTAMP)")
 })
 
+test_that("translateSQL sql server -> Oracle select random row", {
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",sourceDialect = "sql server", targetDialect = "oracle")$sql
+  expect_equal(sql, "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY DBMS_RANDOM.VALUE) AS rn FROM table) tmp WHERE rn <= 1")
+})
+
+test_that("translateSQL sql server -> Postgres select random row", {
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn FROM table) tmp WHERE rn <= 1")
+})
+
+test_that("translateSQL sql server -> Redshift select random row", {
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal(sql, "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn FROM table) tmp WHERE rn <= 1")
+})
+
+test_that("translateSQL sql server -> Oracle select random row using hash", {
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",sourceDialect = "sql server", targetDialect = "oracle")$sql
+  expect_equal(sql, "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY DBMS_CRYPTO.HASH(TO_CHAR(person_id ),2)) tmp WHERE rn <= 1")
+})
+
+test_that("translateSQL sql server -> Postgres select random row using hash", {
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal(sql, "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY MD5(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
+})
+
+test_that("translateSQL sql server -> Redshift select random row using hash", {
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal(sql, "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY MD5(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
+})
+

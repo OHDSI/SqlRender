@@ -242,6 +242,33 @@ foo("cdm_data.dbo", "sql server")
 foo("cdm_data", "postgresql")
 ```
 
+## Random selection
+Sometimes one needs to select a random set of rows from a table. One way to achieve this is to sort the table by a random number, and pick the top n. For example, in SQL Server one could use this code:
+
+```sql
+SELECT column FROM 
+   (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp 
+WHERE rn <= 1
+```
+
+SqlRender will translate this correctly to the supported dialects, except Microsoft PDW which does not support random number generation. Another disadvantage of this approach is that the selection is truly random and will be different every time, making the process non-reproducable.
+
+Another option is to sort the table using the hash of a value in the table. For example, on SQL Server:
+
+```sql
+SELECT column FROM 
+   (SELECT column, 
+       ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) AS rn 
+    FROM table) tmp 
+WHERE rn <= 1
+```
+
+This will be correctly translated to all dialects, and the selection will be the same every time. However, this solution has the disadvantage that the MD5 hash function on Oracle requires special priviliges to be granted to the user, and these can only be granted by the **sys** user (not the **system** user):
+
+```sql
+GRANT EXECUTE ON DBMS_CRYPTO TO <user>;
+```
+
 # Debugging parameterized SQL
 Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL. Two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
 
