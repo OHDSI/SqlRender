@@ -14,5 +14,6 @@ Imports:
 Suggests:
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    OhdsiRTools
 LazyData: false

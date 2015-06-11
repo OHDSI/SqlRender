@@ -17,6 +17,6 @@ Convert a snake case string to camel case
 }
 \examples{
 snakeCaseToCamelCase("cdm_database_schema")
-#> "cdmDatabaseSchema"
+# > 'cdmDatabaseSchema'
 }
 

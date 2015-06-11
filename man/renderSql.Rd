@@ -12,33 +12,33 @@ renderSql(sql = "", ...)
 \item{...}{Parameter values}
 }
 \value{
-A list containing the following elements:
-\describe{
-  \item{parameterizedSql}{The original parameterized SQL code}
-  \item{sql}{The rendered sql}
-}
+A list containing the following elements: \describe{ \item{parameterizedSql}{The original
+parameterized SQL code} \item{sql}{The rendered sql} }
 }
 \description{
 \code{renderSql} Renders SQL code based on parameterized SQL and parameter values.
 }
 \details{
-This function takes parameterized SQL and a list of parameter values and renders the SQL that can be
-send to the server. Parameterization syntax:
-\describe{
-  \item{@parameterName}{Parameters are indicated using a @ prefix, and are replaced with the actual
-  values provided in the renderSql call.}
-  \item{\{DEFAULT @parameterName = parameterValue\}}{Default values for parameters can be defined using
-  curly and the DEFAULT keyword.}
-  \item{\{if\}?\{then\}:\{else\}}{The if-then-else pattern is used to turn on or off blocks of SQL code.}
-}
+This function takes parameterized SQL and a list of parameter values and renders the SQL that can
+be send to the server. Parameterization syntax: \describe{ \item{@parameterName}{Parameters are
+indicated using a @ prefix, and are replaced with the actual values provided in the renderSql
+call.} \item{\{DEFAULT @parameterName = parameterValue\}}{Default values for parameters can be
+defined using curly and the DEFAULT keyword.} \item{\{if\}?\{then\}:\{else\}}{The if-then-else
+pattern is used to turn on or off blocks of SQL code.} }
 }
 \examples{
-renderSql("SELECT * FROM @a;",a="myTable")
-renderSql("SELECT * FROM @a {@b}?{WHERE x = 1};",a="myTable",b="true")
-renderSql("SELECT * FROM @a {@b == ''}?{WHERE x = 1}:{ORDER BY x};",a="myTable",b="true")
-renderSql("SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",a="myTable",b="y")
-renderSql("SELECT * FROM @a {1 IN (@c)}?{WHERE @b = 1};",a="myTable",b="y", c=c(1,2,3,4))
-renderSql("{DEFAULT @b = \\"someField\\"}SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",a="myTable")
-renderSql("SELECT * FROM @a {@a == 'myTable' & @b != 'x'}?{WHERE @b = 1};",a="myTable",b="y")
+renderSql("SELECT * FROM @a;", a = "myTable")
+renderSql("SELECT * FROM @a {@b}?{WHERE x = 1};", a = "myTable", b = "true")
+renderSql("SELECT * FROM @a {@b == ''}?{WHERE x = 1}:{ORDER BY x};", a = "myTable", b = "true")
+renderSql("SELECT * FROM @a {@b != ''}?{WHERE @b = 1};", a = "myTable", b = "y")
+renderSql("SELECT * FROM @a {1 IN (@c)}?{WHERE @b = 1};",
+          a = "myTable",
+          b = "y",
+          c = c(1, 2, 3, 4))
+renderSql("{DEFAULT @b = \\"someField\\"}SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",
+          a = "myTable")
+renderSql("SELECT * FROM @a {@a == 'myTable' & @b != 'x'}?{WHERE @b = 1};",
+          a = "myTable",
+          b = "y")
 }
 

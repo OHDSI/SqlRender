@@ -12,9 +12,11 @@ translateSqlFile(sourceFile, targetFile, sourceDialect = "sql server",
 
 \item{targetFile}{The target SQL file}
 
-\item{sourceDialect}{The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported}
+\item{sourceDialect}{The source dialect. Currently, only 'sql server' for Microsoft SQL Server
+is supported}
 
-\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", and "redshift" are supported}
+\item{targetDialect}{The target dialect. Currently 'oracle', 'postgresql', and 'redshift' are
+supported}
 
 \item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle.}
 }
@@ -26,7 +28,9 @@ This function takes SQL and translates it to a different dialect.
 }
 \examples{
 \dontrun{
-translateSqlFile("myRenderedStatement.sql","myTranslatedStatement.sql",targetDialect="postgresql")
+translateSqlFile("myRenderedStatement.sql",
+                 "myTranslatedStatement.sql",
+                 targetDialect = "postgresql")
 }
 }
 

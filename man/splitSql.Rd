@@ -16,7 +16,8 @@ A vector of strings, one for each SQL statement
 \code{splitSql} splits a string containing multiple SQL statements into a vector of SQL statements
 }
 \details{
-This function is needed because some DBMSs (like ORACLE) do not accepts multiple SQL statements being sent as one execution.
+This function is needed because some DBMSs (like ORACLE) do not accepts multiple SQL statements
+being sent as one execution.
 }
 \examples{
 splitSql("SELECT * INTO a FROM b; USE x; DROP TABLE c;")

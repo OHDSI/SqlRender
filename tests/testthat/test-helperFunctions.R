@@ -2,7 +2,7 @@ library("testthat")
 
 test_that("SQL read write", {
   sql1 <- "SELECT * FROM table"
-  writeSql(sql1,"test.sql")
+  writeSql(sql1, "test.sql")
   sql2 <- readSql("test.sql")
   file.remove("test.sql")
   expect_equal(sql1, sql2)
@@ -10,8 +10,8 @@ test_that("SQL read write", {
 
 test_that("renderSqlFile", {
   sql1 <- "SELECT * FROM @table"
-  writeSql(sql1,"test1.sql")
-  renderSqlFile("test1.sql","test2.sql",table="person")
+  writeSql(sql1, "test1.sql")
+  renderSqlFile("test1.sql", "test2.sql", table = "person")
   sql2 <- readSql("test2.sql")
   file.remove("test1.sql")
   file.remove("test2.sql")
@@ -20,8 +20,8 @@ test_that("renderSqlFile", {
 
 test_that("translateSqlFile", {
   sql1 <- "SELECT DATEADD(dd,observation_period_start_date,1) FROM observation_period"
-  writeSql(sql1,"test1.sql")
-  translateSqlFile("test1.sql","test2.sql",targetDialect="postgresql")
+  writeSql(sql1, "test1.sql")
+  translateSqlFile("test1.sql", "test2.sql", targetDialect = "postgresql")
   sql2 <- readSql("test2.sql")
   file.remove("test1.sql")
   file.remove("test2.sql")
@@ -33,4 +33,3 @@ test_that("snakeCaseToCamelCase", {
   string2 <- snakeCaseToCamelCase(string1)
   expect_equal(string2, "cdmDatabaseSchema")
 })
-

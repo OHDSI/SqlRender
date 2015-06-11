@@ -20,7 +20,7 @@ writeSql(sql, targetFile)
 \examples{
 \dontrun{
 sql <- "SELECT * FROM @table_name"
-writeSql(sql,"myParamStatement.sql")
+writeSql(sql, "myParamStatement.sql")
 }
 }
 

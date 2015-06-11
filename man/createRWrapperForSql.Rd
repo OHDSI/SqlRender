@@ -25,15 +25,13 @@ specified in the SQL.
 \details{
 This function reads the declarations of defaults in the parameterized SQL file, and creates an R
 function that exposes the parameters. It uses the \code{loadRenderTranslateSql} function, and
-assumes the SQL will be used inside a package.
-
-To use inside a package, the SQL file should be placed in the inst/sql/sql_server folder of the
-package.
+assumes the SQL will be used inside a package. To use inside a package, the SQL file should be
+placed in the inst/sql/sql_server folder of the package.
 }
 \examples{
 \dontrun{
-  #This will create a file called CohortMethod.R:
-  createRWrapperForSql("CohortMethod.sql",packageName = "CohortMethod")
+# This will create a file called CohortMethod.R:
+createRWrapperForSql("CohortMethod.sql", packageName = "CohortMethod")
 }
 }
 

@@ -1,6 +1,6 @@
 # @file PackageMaintenance
 #
-# Copyright 2014 Observational Health Data Sciences and Informatics
+# Copyright 2015 Observational Health Data Sciences and Informatics
 #
 # This file is part of SqlRender
 # 
@@ -15,11 +15,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-.createManualAndVignettes <- function(){
+
+.formatAndCheckCode <- function() {
+  OhdsiRTools::formatRFolder()
+  OhdsiRTools::checkUsagePackage("SqlRender")
+  OhdsiRTools::ohdsiLintrFolder()
+}
+
+.createManualAndVignettes <- function() {
   shell("rm man/SqlRender.pdf")
   shell("R CMD Rd2pdf ./ --output=man/SqlRender.pdf")
-  
+
   require(rmarkdown)
-  rmarkdown::render("vignettes/UsingSqlRender.Rmd", rmarkdown::pdf_document(latex_engine = "pdflatex",toc = TRUE,number_sections = TRUE))
-  
+  rmarkdown::render("vignettes/UsingSqlRender.Rmd",
+                    rmarkdown::pdf_document(latex_engine = "pdflatex",
+                                            toc = TRUE,
+                                            number_sections = TRUE))
+
 }
