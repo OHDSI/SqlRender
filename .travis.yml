@@ -13,6 +13,7 @@ install:
   - ./travis-tool.sh install_r_binary rJava
   - ./travis-tool.sh install_deps
   - ./travis-tool.sh install_github OHDSI/OhdsiRTools
+  - ./travis-tool.sh install_github jimhester/covr
 
 script: 
   - ant
@@ -27,9 +28,6 @@ notifications:
   email:
     on_success: change
     on_failure: change
-    
-r_github_packages:
-  - jimhester/covr
 
 after_success:
   - Rscript -e 'library(covr);codecov()'
