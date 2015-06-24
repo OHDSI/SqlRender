@@ -211,6 +211,32 @@ WITH children AS (SELECT * FROM person WHERE year_of_birth > 2000)
 SELECT * FROM children WHERE gender = 8507;
 ```
 
+## Implicit casts
+One of the few points where SQL Server is less explicit than other dialects is that it allows implicit casts. For example, this code will work on SQL Server:
+
+```sql
+CREATE TABLE #temp (txt VARCHAR);
+
+INSERT INTO #temp
+SELECT '1';
+
+SELECT * FROM #temp WHERE txt = 1;
+```
+
+Even though `txt` is a VARCHAR field and we are comparing it with an integer, SQL Server will automatically cast one of the two to the correct type to allow the comparison. In contrast, other dialects such as PosgreSQL will throw an error when trying to compare a VARCHAR with an INT.
+
+You should therefore always make casts explicit. In the above example, the last statement should be replaced with either
+
+```sql
+SELECT * FROM #temp WHERE txt = CAST(1 AS VARCHAR);
+```
+
+or
+
+```sql
+SELECT * FROM #temp WHERE CAST(txt AS INT) = 1;
+```
+
 ## Schemas and databases
 In SQL Server, tables are located in a schema, and schemas reside in a database. For example, `cdm_data.dbo.person` refers to the `person` table in the `dbo` schema in the `cdm_data` database. In other dialects, even though a similar hierarchy often exists they are used very differently. In SQL Server, there is typically one schema per database (often called `dbo`), and users can easily use data in different databases. On other platforms, for example in PostgreSQL, it is not possible to use data across databases in a single session, but there are often many schemas in a database. In PostgreSQL one could say that the equivalent of SQL Server's database is the schema.
 

@@ -26,7 +26,6 @@
   shell("rm man/SqlRender.pdf")
   shell("R CMD Rd2pdf ./ --output=man/SqlRender.pdf")
 
-  require(rmarkdown)
   rmarkdown::render("vignettes/UsingSqlRender.Rmd",
                     rmarkdown::pdf_document(latex_engine = "pdflatex",
                                             toc = TRUE,
