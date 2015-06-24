@@ -203,6 +203,13 @@ test_that("translateSQL sql server -> PDW create permanent table with person_id"
                "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   a  ( subject_id  int)\nWITH (DISTRIBUTION = HASH(subject_id));")
 })
 
+test_that("translateSQL sql server -> PDW select into permanent table", {
+  sql <- translateSql("SELECT a INTO b FROM c WHERE a = 1;",
+                      sourceDialect = "sql server",
+                      targetDialect = "pdw")$sql
+  expect_equal(sql,
+               "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   b  WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n a \nFROM\n c WHERE a = 1;")
+})
 
 test_that("translateSQL sql server -> Postgres create table if not exists", {
   sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",

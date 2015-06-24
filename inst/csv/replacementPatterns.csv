@@ -156,6 +156,7 @@ From,To,Pattern,Replacement
 "sql server","pdw","CREATE TABLE @table (@definition);","CREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = REPLICATE);"
 "sql server","pdw","CREATE TABLE #@table (@definition) WITH (DISTRIBUTION = @distribution);","CREATE TABLE #@table (@definition)\nWITH (LOCATION = USER_DB, DISTRIBUTION = @distribution);"
 "sql server","pdw","SELECT @a INTO #@b FROM @c;","CREATE TABLE #@b WITH (LOCATION = USER_DB, DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a\nFROM\n@c;"
+"sql server","pdw","SELECT @a INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a\nFROM\n@c;"
 "sql server","pdw","TRUNCATE TABLE ","IF XACT_STATE() = 1 COMMIT; TR*NC*T* TABLE "
 "sql server","pdw","DROP TABLE ","IF XACT_STATE() = 1 COMMIT; DR*P TABLE "
 "sql server","pdw","CREATE TABLE ","IF XACT_STATE() = 1 COMMIT; CR**T* TABLE "
