@@ -155,6 +155,14 @@ test_that("translateSQL sql server -> Oracle WITH INSERT INTO SELECT", {
                "INSERT INTO  c (d int)  WITH  cte1  AS  (SELECT a FROM b)  SELECT  e FROM cte1;")
 })
 
+test_that("translateSQL sql server -> PDW WITH SELECT INTO", {
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+                      sourceDialect = "sql server",
+                      targetDialect = "pdw")$sql
+  expect_equal(sql,
+               "IF XACT_STATE() = 1 COMMIT; WITH  cte1 AS (SELECT a FROM b)  CREATE TABLE   d  WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n c \nFROM\n cte1;")
+})
+
 test_that("translateSQL sql server -> PDW create temp table", {
   sql <- translateSql("CREATE TABLE #a (x int);",
                       sourceDialect = "sql server",

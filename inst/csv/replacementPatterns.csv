@@ -164,3 +164,4 @@ From,To,Pattern,Replacement
 "sql server","pdw","DR*P","DROP"
 "sql server","pdw","CR**T*","CREATE"
 "sql server","pdw","IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;","IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL "
+"sql server","pdw","WITH @a IF XACT_STATE() = 1 COMMIT; CREATE TABLE","IF XACT_STATE() = 1 COMMIT; WITH @a CREATE TABLE"
