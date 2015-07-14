@@ -168,7 +168,7 @@ test_that("translateSQL sql server -> PDW WITH SELECT INTO temp table", {
                       sourceDialect = "sql server",
                       targetDialect = "pdw")$sql
   expect_equal(sql,
-               "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #d  WITH (LOCATION = USER_DB, DISTRIBUTION = REPLICATE)\nAS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
+               "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #d   WITH (LOCATION = USER_DB, DISTRIBUTION =  REPLICATE) AS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
 })
 
 test_that("translateSQL sql server -> PDW create temp table", {
@@ -211,7 +211,7 @@ test_that("translateSQL sql server -> PDW create permanent table with person_id"
                "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   a  ( person_id  int)\nWITH (DISTRIBUTION = HASH(person_id));")
 })
 
-test_that("translateSQL sql server -> PDW create permanent table with person_id", {
+test_that("translateSQL sql server -> PDW create permanent table with subject_id", {
   sql <- translateSql("CREATE TABLE a (subject_id int);",
                       sourceDialect = "sql server",
                       targetDialect = "pdw")$sql
@@ -225,6 +225,14 @@ test_that("translateSQL sql server -> PDW select into permanent table", {
                       targetDialect = "pdw")$sql
   expect_equal(sql,
                "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   b  WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n a \nFROM\n c WHERE a = 1;")
+})
+
+test_that("translateSQL sql server -> PDW select into permanent table with person_id", {
+  sql <- translateSql("SELECT a, person_id INTO b FROM c WHERE a = 1;",
+                      sourceDialect = "sql server",
+                      targetDialect = "pdw")$sql
+  expect_equal(sql,
+               "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   b  WITH (DISTRIBUTION = HASH(person_id))\nAS\nSELECT\n a,  person_id  \nFROM\n c WHERE a = 1;")
 })
 
 test_that("translateSQL sql server -> Postgres create table if not exists", {

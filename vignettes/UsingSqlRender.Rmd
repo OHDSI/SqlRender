@@ -38,7 +38,7 @@ install_github("ohdsi/SqlRender")
 ```
 
 # SQL parameterization
-One of the main functions of the package is to support parameterization of SQL. Often, small variations of SQL need to be generated based on some parameters. SqlRender offers a simple markup syntax inside the SQL code to allow paramerization. Rendering the SQL based on parameter values is done using the `renderSql()` function.
+One of the main functions of the package is to support parameterization of SQL. Often, small variations of SQL need to be generated based on some parameters. SqlRender offers a simple markup syntax inside the SQL code to allow parameterization. Rendering the SQL based on parameter values is done using the `renderSql()` function.
 
 ## Substituting parameter values
 The `@` character can be used to indicate parameter names that need to be exchange for actual parameter values when rendering. In the following example, a variable called `a` is mentioned in the SQL. In the call to the renderSql function the value of this parameter is defined:
@@ -129,7 +129,7 @@ The `targetDialect` parameter can have the following values:
 
 ## Functions and structures supported by translateSql
 
-Giving an exhaustive list of all functions is not feasible. Many SQL functions actually are the same in all dialects and therefore already work fine, and the list of functions that are translated by translateSql is growing over time. See the latest version of the [rule list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) to see which ones are covered. Some of the functions we've used succesfully are:
+Giving an exhaustive list of all functions is not feasible. Many SQL functions actually are the same in all dialects and therefore already work fine, and the list of functions that are translated by `translateSql` is growing over time. See the latest version of the [rule list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) to see which ones are covered. Some of the functions we've used successfully are:
 
 ```{r echo=FALSE}
 funs <- c("AVG", "CAST", "COUNT", "COUNT_BIG", "DATEADD", "DATEDIFF", "DATEFROMPARTS", "DAY", "EXP", "FLOOR", "GETDATE", "ISNULL", "LEFT", "LEN", "LOG", "MAX", "MIN", "MONTH", "RIGHT", "ROUND", "STDEV", "SQRT", "SUM", "TO_CHAR", "YEAR","","","")
@@ -179,7 +179,7 @@ SELECT * FROM a EXCEPT SELECT * FROM b                      -- EXCEPT
 ```
 
 ## String concatenation
-String concatentation is the only part where SQL Server is less specific than other dialects. In SQL Server, one would write `SELECT first_name + ' ' + last_name AS full_name FROM table`, but this should be `SELECT first_name || ' ' || last_name AS full_name FROM table` in PostgreSQL and Oracle. SqlRender tries to guess when values that are being concatenated are strings. In the example above, because we have an explicit string (the space surrounded by single quotation marks), the translation will be correct. However, if the query had been `SELECT first_name + last_name AS full_name FROM table`, SqlRender would have had no clue the two fields were strings, and would incorrectly leave the plus sign. Another clue that a value is a string is an explicit cast to VARCHAR, so `SELECT last_name + CAST(age AS VARCHAR(3)) AS full_name FROM table` would also be translated correctly.
+String concatenation is one area where SQL Server is less specific than other dialects. In SQL Server, one would write `SELECT first_name + ' ' + last_name AS full_name FROM table`, but this should be `SELECT first_name || ' ' || last_name AS full_name FROM table` in PostgreSQL and Oracle. SqlRender tries to guess when values that are being concatenated are strings. In the example above, because we have an explicit string (the space surrounded by single quotation marks), the translation will be correct. However, if the query had been `SELECT first_name + last_name AS full_name FROM table`, SqlRender would have had no clue the two fields were strings, and would incorrectly leave the plus sign. Another clue that a value is a string is an explicit cast to VARCHAR, so `SELECT last_name + CAST(age AS VARCHAR(3)) AS full_name FROM table` would also be translated correctly.
 
 ## Temp tables
 Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In Postgres and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. This is why, in Oracle, SqlRender will try to emulate temp tables by
@@ -193,7 +193,7 @@ sql <- "SELECT * FROM #children;"
 translateSql(sql,"sql server", "oracle", oracleTempSchema = "temp_schema")$sql
 ```
 
-Note that the user will need to have write priviliges on `temp_schema`.
+Note that the user will need to have write privileges on `temp_schema`.
 
 Also note that because Oracle has a limit on table names of 30 characters, **temp table names are only allowed to be at most 22 characters long** because else the name will become too long after appending the session ID.
 
@@ -244,7 +244,7 @@ We therefore recommend concatenating SQL Server's database and schema into a sin
 ```sql
 SELECT * FROM @databaseSchema.person
 ```
-where on SQL Server we can include both database and schema names in the value: `databaseSchema = "cdm_data.dbo"`. On otherplatforms, we can use the same code, but now only specify the schema as the parameter value: `databaseSchema = "cdm_data"`.
+where on SQL Server we can include both database and schema names in the value: `databaseSchema = "cdm_data.dbo"`. On other platforms, we can use the same code, but now only specify the schema as the parameter value: `databaseSchema = "cdm_data"`.
 
 The one situation where this will fail is the `USE` command, since `USE cdm_data.dbo;` will throw an error. It is therefore preferred not to use the `USE` command, but always specify the database / schema where a table is located. However, if one wanted to use it anyway, we recommend creating two variables, one called `@database` and the other called `@databaseSchema`. For example, for this parameterized SQL:
 
@@ -277,7 +277,7 @@ SELECT column FROM
 WHERE rn <= 1
 ```
 
-SqlRender will translate this correctly to the supported dialects, except Microsoft PDW which does not support random number generation. Another disadvantage of this approach is that the selection is truly random and will be different every time, making the process non-reproducable.
+SqlRender will translate this correctly to the supported dialects, except Microsoft PDW which does not support random number generation. Another disadvantage of this approach is that the selection is truly random and will be different every time, making the process non-reproducible.
 
 Another option is to sort the table using the hash of a value in the table. For example, on SQL Server:
 
@@ -289,7 +289,7 @@ SELECT column FROM
 WHERE rn <= 1
 ```
 
-This will be correctly translated to all dialects, and the selection will be the same every time. However, this solution has the disadvantage that the MD5 hash function on Oracle requires special priviliges to be granted to the user, and these can only be granted by the **sys** user (not the **system** user):
+This will be correctly translated to all dialects, and the selection will be the same every time. However, this solution has the disadvantage that the MD5 hash function on Oracle requires special privileges to be granted to the user, and these can only be granted by the **sys** user (not the **system** user):
 
 ```sql
 GRANT EXECUTE ON DBMS_CRYPTO TO <user>;
@@ -305,7 +305,7 @@ translateSqlFile("parameterizedSql.txt","renderedSql.txt")
 will render the file, using the default parameter values specified in the SQL. What works well for us is editing in the parameterized file, (re)running the command above, and have the rendered SQL file open in a SQL client for testing. Any problems reported by the server can be dealt with in the source SQL, and can quickly be re-rendered.
 
 # Developing R packages that contain parameterized SQL
-Often, the SQL code will become part of an R package, where it might be used to perform initial data-preprocesing and extraction before further analysis. We've developed the following practice for doing so: The parameterized SQL should be located in the *inst/sql/* folder of the package. The parameterized SQL for SQL Server should be in the *inst/sql/sql_server/* folder. If for some reason you do not want to use the translation functions to generate the SQL for some dialect (e.g because dialect specific code might be written that gives better performance), a dialect-specific version of the parameterized SQL should be placed in a folder with the name of that dialect, for example *inst/sql/oracle/*. SqlRender has a function `loadRenderTranslateSql()` that will first check if a dialect-specific version is available for the target dialect. If it is, that version will be rendered, else the SQL Server version will be rendered and subsequently translated to the target dialect.
+Often, the SQL code will become part of an R package, where it might be used to perform initial data-preprocessing and extraction before further analysis. We've developed the following practice for doing so: The parameterized SQL should be located in the *inst/sql/* folder of the package. The parameterized SQL for SQL Server should be in the *inst/sql/sql_server/* folder. If for some reason you do not want to use the translation functions to generate the SQL for some dialect (e.g because dialect specific code might be written that gives better performance), a dialect-specific version of the parameterized SQL should be placed in a folder with the name of that dialect, for example *inst/sql/oracle/*. SqlRender has a function `loadRenderTranslateSql()` that will first check if a dialect-specific version is available for the target dialect. If it is, that version will be rendered, else the SQL Server version will be rendered and subsequently translated to the target dialect.
 
 The `createRWrapperForSql()` function can be used to create an R wrapper around a rendered SQL file, using the `loadRenderTranslateSql()` function . For example, suppose we have a text file called *test.sql* containing the following parameterized SQL:
 
