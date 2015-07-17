@@ -49,6 +49,13 @@ test_that("If-then-else: IN pattern works if value is not in", {
   expect_equal(sql, "")
 })
 
+test_that("If-then-else: IN pattern works with space at start", {
+  sql <- renderSql("{ 1 IN (@a)}?{SELECT * FROM table}", a = c(2, 3, 4))$sql
+  expect_equal(sql, "")
+  sql <- renderSql("{ 1 IN (@a)}?{SELECT * FROM table}", a = c(1, 2, 3, 4))$sql
+  expect_equal(sql, "SELECT * FROM table")
+})
+
 test_that("If-then-else: AND operator", {
   sql <- renderSql("{true & true}?{true}:{false}")$sql
   expect_equal(sql, "true")

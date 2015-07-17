@@ -3,8 +3,9 @@ package org.ohdsi.sql;
 public class TestSqlRender {
 
 	public static void main(String[] args) {
-		String sql = "{false | false}?{true}:{false}";
-		sql = SqlRender.renderSql(sql, null, null);
+		//String sql = "{false | false | 1 IN (1,2,3)}?{true}:{false}";
+		String sql = "-- { 1500 in (@list_of_analysis_ids) | 1501 in (@list_of_analysis_ids) | 1502 in (@list_of_analysis_ids) | 1503 in (@list_of_analysis_ids) | 1504 in (@list_of_analysis_ids) | 1505 in (@list_of_analysis_ids) | 1506 in (@list_of_analysis_ids) | 1507 in (@list_of_analysis_ids) | 1508 in (@list_of_analysis_ids) | 1509 in (@list_of_analysis_ids) | 1510 in (@list_of_analysis_ids) | 1511 in (@list_of_analysis_ids)}?{HERE!}";
+		sql = SqlRender.renderSql(sql, new String[]{"list_of_analysis_ids"}, new String[]{"1600,1601,1602,1603,1604,1605,1606,1607,1608,1609,1610"});
 		System.out.println(sql);
 		
 //		String[] parameters = new String[]{"a","ab"};

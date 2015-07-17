@@ -103,6 +103,7 @@ public class SqlRender {
 	}
 
 	private static boolean evaluateCondition(String str) {
+		str = str.trim();
 		List<Span> spans = findParentheses(str);
 		// Spans are in order of closing parenthesis, so if we go from first to last we'll always process nested parentheses first
 		for (Span span : spans)
@@ -137,7 +138,6 @@ public class SqlRender {
 	}
 
 	private static boolean precededByIn(int start, String str) {
-		str = str.trim();
 		str = str.toLowerCase();
 		int matched = 0;
 		for (int i = start - 1; i >= 0; i--) {
