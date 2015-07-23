@@ -9,3 +9,5 @@ standalone/build/*
 /build
 /bin
 /target
+.idea
+*.iml
