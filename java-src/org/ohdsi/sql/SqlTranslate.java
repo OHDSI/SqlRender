@@ -93,7 +93,8 @@ public class SqlTranslate {
 					}
 				}
 			} else {
-				if (token.text.equals(parsedPattern.get(matchCount).text)) {
+				// Check if token matches current part of pattern. But first part cannot be within quotes:
+				if (token.text.equals(parsedPattern.get(matchCount).text) && (matchCount != 0 || !token.inQuotes)) {
 					if (matchCount == 0) {
 						matchedPattern.start = token.start;
 						matchedPattern.startToken = cursor;

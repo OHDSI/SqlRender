@@ -27,6 +27,7 @@ public class StringUtils {
 		public int		start;
 		public int		end;
 		public String	text;
+		public boolean inQuotes = false;
 
 		public Token(Token other) {
 			start = other.start;
@@ -48,6 +49,8 @@ public class StringUtils {
 		int cursor = 0;
 		boolean commentType1 = false; // Type 1: -- ... end of line
 		boolean commentType2 = false; // Type 2: /* .. */
+		boolean inSingleQuotes = false;
+		boolean inDoubleQuotes = false;
 		for (; cursor < sql.length(); cursor++) {
 			char ch = sql.charAt(cursor);
 			if (commentType1) {
@@ -66,6 +69,7 @@ public class StringUtils {
 					token.start = start;
 					token.end = cursor;
 					token.text = sql.substring(start, cursor);
+					token.inQuotes = inSingleQuotes || inDoubleQuotes;
 					tokens.add(token);
 				}
 				if (ch == '-' && cursor < sql.length() && sql.charAt(cursor + 1) == '-') {
@@ -77,7 +81,15 @@ public class StringUtils {
 					token.start = cursor;
 					token.end = cursor + 1;
 					token.text = sql.substring(cursor, cursor + 1);
+					token.inQuotes = inSingleQuotes || inDoubleQuotes;
 					tokens.add(token);
+					if (ch == '\'' && !inDoubleQuotes) {
+						inSingleQuotes = !inSingleQuotes;
+					}
+					if (ch == '"' && !inSingleQuotes) {
+						inDoubleQuotes = !inDoubleQuotes;
+					}
+
 				}
 				start = cursor + 1;
 			}
@@ -88,6 +100,7 @@ public class StringUtils {
 			token.start = start;
 			token.end = cursor;
 			token.text = sql.substring(start, cursor);
+			token.inQuotes = inSingleQuotes || inDoubleQuotes;
 			tokens.add(token);
 
 		}

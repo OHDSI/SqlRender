@@ -336,3 +336,14 @@ test_that("translateSQL sql server -> Redshift select random row using hash", {
   expect_equal(sql,
                "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY MD5(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
 })
+
+test_that("translateSQL sql server -> PDW cte with preceding 'with' in quotes", {
+  sql <- translateSql("insert into x (a) values ('with'); with cte (a) as(select a from b) select a INTO #c from cte;",
+                      sourceDialect = "sql server",
+                      targetDialect = "pdw")$sql
+  expect_equal(sql,
+               "insert into x (a) values ('with'); IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #c   WITH (LOCATION = USER_DB, DISTRIBUTION =  REPLICATE) AS\nWITH  cte (a)  AS (select a from b)  SELECT\n a \nFROM\n cte;")
+})
+
+
+
