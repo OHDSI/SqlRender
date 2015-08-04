@@ -1,5 +1,7 @@
 package org.ohdsi.sql;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class StringUtils {
@@ -138,5 +140,18 @@ public class StringUtils {
 		}
 		result.add(string.substring(startpos, i));
 		return result;
+	}
+	
+	public static String join(Collection<?> s, String delimiter) {
+		StringBuilder result = new StringBuilder();
+		Iterator<?> iter = s.iterator();
+		if (iter.hasNext()) {
+			result.append(iter.next().toString());
+		}
+		while (iter.hasNext()) {
+			result.append(delimiter);
+			result.append(iter.next().toString());
+		}
+		return result.toString();
 	}
 }

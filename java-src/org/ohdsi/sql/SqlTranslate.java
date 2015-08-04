@@ -8,9 +8,11 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -222,9 +224,19 @@ public class SqlTranslate {
 			oracleTempPrefix = oracleTempSchema + ".";
 
 		List<String[]> replacementPatterns = sourceTargetToReplacementPatterns.get(sourceDialect + "\t" + targetDialect);
-		if (replacementPatterns == null)
-			return sql;
-		else
+		if (replacementPatterns == null) {
+			if (sourceDialect.equals(targetDialect))
+				return sql;
+			else {
+				Set<String> allowedDialects = new HashSet<String>();
+				allowedDialects.add(sourceDialect);
+				for (String sourceTarget : sourceTargetToReplacementPatterns.keySet())
+					if (sourceTarget.split("\t")[0].equals(sourceDialect))
+						allowedDialects.add(sourceTarget.split("\t")[1]);
+				throw new RuntimeException("Don't know how to translate from " + sourceDialect + " to " + targetDialect + ". Valid target dialects are "
+						+ StringUtils.join(allowedDialects, ", "));
+			}
+		} else
 			return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
 	}
 

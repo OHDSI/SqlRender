@@ -345,5 +345,7 @@ test_that("translateSQL sql server -> PDW cte with preceding 'with' in quotes", 
                "insert into x (a) values ('with'); IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #c   WITH (LOCATION = USER_DB, DISTRIBUTION =  REPLICATE) AS\nWITH  cte (a)  AS (select a from b)  SELECT\n a \nFROM\n cte;")
 })
 
-
+test_that("translateSQL sql server throws error when invalid target is given", {
+  expect_error(translateSql("iSELECT * FROM a;", targetDialect = "pwd")$sql)
+})
 
