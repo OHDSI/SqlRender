@@ -1,2 +1,1 @@
-{DEFAULT @a = 'table'}
-SELECT * FROM @a;
+SELECT * FROM table;

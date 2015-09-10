@@ -42,10 +42,10 @@ test_that("camelCaseToSnakeCase ", {
 
 test_that("loadRenderTranslateSql ", {
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "sql server")
-  expect_equal(sql, "\r\nSELECT * FROM table;")
+  expect_equal(sql, "SELECT * FROM table;")
   
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "postgresql")
-  expect_equal(sql, "\r\nSELECT * FROM table;")
+  expect_equal(sql, "SELECT * FROM table;")
   
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "oracle")
   expect_equal(sql, "SELECT a FROM table;")
@@ -54,5 +54,5 @@ test_that("loadRenderTranslateSql ", {
 test_that("createRWrapperForSql", {
   createRWrapperForSql("test.sql", "test.r", "SqlRender", createRoxygenTemplate = TRUE)
   expect_true(file.exists("test.r"))
-  shell("rm test.r")                
+  unlink("test.r")            
 })
