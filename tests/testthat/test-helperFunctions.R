@@ -33,3 +33,26 @@ test_that("snakeCaseToCamelCase", {
   string2 <- snakeCaseToCamelCase(string1)
   expect_equal(string2, "cdmDatabaseSchema")
 })
+
+test_that("camelCaseToSnakeCase ", {
+  string1 <- "cdmDatabaseSchema"
+  string2 <- camelCaseToSnakeCase(string1)
+  expect_equal(string2, "cdm_database_schema")
+})
+
+test_that("loadRenderTranslateSql ", {
+  sql <- loadRenderTranslateSql("test.sql", "SqlRender", "sql server")
+  expect_equal(sql, "\r\nSELECT * FROM table;")
+  
+  sql <- loadRenderTranslateSql("test.sql", "SqlRender", "postgresql")
+  expect_equal(sql, "\r\nSELECT * FROM table;")
+  
+  sql <- loadRenderTranslateSql("test.sql", "SqlRender", "oracle")
+  expect_equal(sql, "SELECT a FROM table;")
+})
+
+test_that("createRWrapperForSql", {
+  createRWrapperForSql("test.sql", "test.r", "SqlRender", createRoxygenTemplate = TRUE)
+  expect_true(file.exists("test.r"))
+  shell("rm test.r")                
+})
