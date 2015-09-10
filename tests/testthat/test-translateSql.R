@@ -56,7 +56,7 @@ test_that("translateSQL sql server -> Oracle complex query", {
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
   expect_equal(sql,
-               "SELECT  TO_DATE(TO_CHAR(EXTRACT(YEAR FROM x) ) || SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' , 'yyyymmdd') FROM DUAL;")
+               "SELECT  TO_DATE(TO_CHAR(EXTRACT(YEAR FROM x) ) + SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' , 'yyyymmdd') FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle '+' in quote", {
