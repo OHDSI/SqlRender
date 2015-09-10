@@ -4,7 +4,7 @@ test_that("translateSQL sql server -> Oracle DATEDIFF", {
   sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
-  expect_equal(sql, "SELECT (drug_era_end_date - drug_era_start_date) FROM drug_era;")
+  expect_equal(sql, "SELECT   (drug_era_end_date - drug_era_start_date)  FROM  drug_era ;")
 })
 
 
@@ -12,7 +12,7 @@ test_that("translateSQL sql server -> Oracle DATEADD", {
   sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
-  expect_equal(sql, "SELECT (drug_era_end_date + 30) FROM drug_era;")
+  expect_equal(sql, "SELECT   (drug_era_end_date + 30)  FROM  drug_era ;")
 })
 
 test_that("translateSQL sql server -> Oracle USE", {
@@ -41,14 +41,14 @@ test_that("translateSQL sql server -> Oracle concatenate string operator", {
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
   expect_equal(sql,
-               "select distinct TO_DATE(TO_CHAR(EXTRACT(YEAR FROM observation_period_start_date) ) || '01' || '01' , 'yyyymmdd') as obs_year;")
+               "SELECT  distinct TO_DATE(TO_CHAR(EXTRACT(YEAR FROM observation_period_start_date) ) || '01' || '01' , 'yyyymmdd') as obs_year FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle RIGHT functions", {
   sql <- translateSql("select RIGHT(x,4);",
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
-  expect_equal(sql, "select SUBSTR(x,-4);")
+  expect_equal(sql, "SELECT  SUBSTR(x,-4) FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle complex query", {
@@ -56,12 +56,12 @@ test_that("translateSQL sql server -> Oracle complex query", {
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
   expect_equal(sql,
-               "select TO_DATE(TO_CHAR(EXTRACT(YEAR FROM x) ) || SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' , 'yyyymmdd');")
+               "SELECT  TO_DATE(TO_CHAR(EXTRACT(YEAR FROM x) ) || SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' , 'yyyymmdd') FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle '+' in quote", {
   sql <- translateSql("select '+';", sourceDialect = "sql server", targetDialect = "oracle")$sql
-  expect_equal(sql, "select '+';")
+  expect_equal(sql, "SELECT  '+' FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> PostgreSQL USE", {
@@ -136,7 +136,7 @@ test_that("translateSQL sql server -> Oracle WITH SELECT", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
-  expect_equal(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+  expect_equal(sql, "WITH cte1 AS (SELECT   a  FROM  b ) SELECT   c  FROM  cte1 ;")
 })
 
 test_that("translateSQL sql server -> Oracle WITH SELECT INTO", {
@@ -144,7 +144,7 @@ test_that("translateSQL sql server -> Oracle WITH SELECT INTO", {
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
   expect_equal(sql,
-               "CREATE TABLE  d \nAS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
+               "CREATE TABLE  d  \nAS\nWITH  cte1  AS  (SELECT   a  FROM  b )  SELECT\n   c \nFROM\n  cte1 ;")
 })
 
 test_that("translateSQL sql server -> Oracle WITH INSERT INTO SELECT", {
@@ -152,7 +152,7 @@ test_that("translateSQL sql server -> Oracle WITH INSERT INTO SELECT", {
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
   expect_equal(sql,
-               "INSERT INTO  c (d int)  WITH  cte1  AS  (SELECT a FROM b)  SELECT  e FROM cte1;")
+               "INSERT INTO  c (d int)  WITH  cte1  AS  (SELECT   a  FROM  b )  SELECT    e  FROM  cte1 ;")
 })
 
 test_that("translateSQL sql server -> PDW WITH SELECT INTO", {
@@ -294,7 +294,7 @@ test_that("translateSQL sql server -> Oracle select random row", {
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
   expect_equal(sql,
-               "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY DBMS_RANDOM.VALUE) AS rn FROM table) tmp WHERE rn <= 1")
+               "SELECT column FROM (SELECT   column, ROW_NUMBER() OVER (ORDER BY DBMS_RANDOM.VALUE) AS rn  FROM  table ) tmp WHERE rn <= 1")
 })
 
 test_that("translateSQL sql server -> Postgres select random row", {
