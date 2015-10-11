@@ -56,7 +56,7 @@ test_that("translateSQL sql server -> Oracle complex query", {
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
   expect_equal(sql,
-               "SELECT  TO_DATE(TO_CHAR(EXTRACT(YEAR FROM x) ) + SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' , 'yyyymmdd') FROM DUAL;")
+               "SELECT  TO_DATE(TO_CHAR(EXTRACT(YEAR FROM x)  ) || SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' , 'yyyymmdd') FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle '+' in quote", {
@@ -265,22 +265,6 @@ test_that("translateSQL sql server -> Oracle datefromparts", {
                "SELECT TO_DATE(TO_CHAR(year,'0000')||'-'||TO_CHAR(month,'00')||'-'||TO_CHAR(day,'00'), 'YYYY-MM-DD') FROM table")
 })
 
-test_that("translateSQL sql server -> Oracle temp tables with temp schema", {
-  sql <- translateSql("CREATE TABLE #temp (x int)",
-                      sourceDialect = "sql server",
-                      targetDialect = "oracle",
-                      oracleTempSchema = "temp_schema")$sql
-  expect_equal(substr(sql, 1, nchar("CREATE GLOBAL TEMPORARY TABLE temp_schema.")),
-               "CREATE GLOBAL TEMPORARY TABLE temp_schema.")
-})
-
-test_that("translateSQL sql server -> Oracle temp tables without temp schema", {
-  sql <- translateSql("CREATE TABLE #temp (x int)",
-                      sourceDialect = "sql server",
-                      targetDialect = "oracle")$sql
-  expect_equal(substr(sql, 1, nchar("CREATE GLOBAL TEMPORARY TABLE ")),
-               "CREATE GLOBAL TEMPORARY TABLE ")
-})
 
 test_that("translateSQL sql server -> Oracle datetime to timestamp", {
   sql <- translateSql("CREATE TABLE x (a DATETIME)",
