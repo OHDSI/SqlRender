@@ -195,6 +195,14 @@ test_that("translateSQL sql server -> PDW create temp table with subject_id", {
                "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #a   ( subject_id  int)\nWITH (LOCATION = USER_DB, DISTRIBUTION =  HASH(subject_id));")
 })
 
+test_that("translateSQL sql server -> PDW create temp table with analysis_id", {
+  sql <- translateSql("CREATE TABLE #a (analysis_id int);",
+                      sourceDialect = "sql server",
+                      targetDialect = "pdw")$sql
+  expect_equal(sql,
+               "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #a   ( analysis_id  int)\nWITH (LOCATION = USER_DB, DISTRIBUTION =  HASH(analysis_id));")
+})
+
 test_that("translateSQL sql server -> PDW create permanent table", {
   sql <- translateSql("CREATE TABLE a (x int);",
                       sourceDialect = "sql server",
@@ -219,6 +227,14 @@ test_that("translateSQL sql server -> PDW create permanent table with subject_id
                "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   a  ( subject_id  int)\nWITH (DISTRIBUTION = HASH(subject_id));")
 })
 
+test_that("translateSQL sql server -> PDW create permanent table with analysis_id", {
+  sql <- translateSql("CREATE TABLE a (analysis_id int);",
+                      sourceDialect = "sql server",
+                      targetDialect = "pdw")$sql
+  expect_equal(sql,
+               "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   a  ( analysis_id  int)\nWITH (DISTRIBUTION = HASH(analysis_id));")
+})
+
 test_that("translateSQL sql server -> PDW select into permanent table", {
   sql <- translateSql("SELECT a INTO b FROM c WHERE a = 1;",
                       sourceDialect = "sql server",
@@ -233,6 +249,14 @@ test_that("translateSQL sql server -> PDW select into permanent table with perso
                       targetDialect = "pdw")$sql
   expect_equal(sql,
                "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   b  WITH (DISTRIBUTION = HASH(person_id))\nAS\nSELECT\n a,  person_id,  b \nFROM\n c WHERE a = 1;")
+})
+
+test_that("translateSQL sql server -> PDW select into permanent table with analysis_id", {
+  sql <- translateSql("SELECT a, analysis_id, b INTO b FROM c WHERE a = 1;",
+                      sourceDialect = "sql server",
+                      targetDialect = "pdw")$sql
+  expect_equal(sql,
+               "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   b  WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n a,  analysis_id,  b \nFROM\n c WHERE a = 1;")
 })
 
 test_that("translateSQL sql server -> Postgres create table if not exists", {
