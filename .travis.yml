@@ -14,6 +14,11 @@ install:
   - ./travis-tool.sh install_deps
   - ./travis-tool.sh install_github OHDSI/OhdsiRTools
   - ./travis-tool.sh install_github jimhester/covr
+  - ./travis-tool.sh install_github eddelbuettel/drat
+
+before_script:
+  - export PKG_NAME=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package))')
+  - export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package,"_",pkg$version,".tar.gz"))')
 
 script: 
   - ant
@@ -33,3 +38,8 @@ after_success:
   - Rscript -e 'library(covr);codecov()'
   # Rebuild docker container
   - curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/development/trigger/e51f720d-c4e7-45df-b042-5d8a362bd7e0/
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy.sh
+  
+env:
+  global:
+    secure: eUCnclALTsNc8+oOVS8qeSkD8CcYwAPfq759YG/WYXHpTgWDtjCAeHBARWmELHxkGDromzT+lNL3gnbs0WfqD+Nm0prAO7tjPIVKRe4h8zDHwLgZyPQSv17YwwNQZknEPWDrP18BpGqrKCDl8qYsL80+6QVqBs1FczZI7taSfB0=
