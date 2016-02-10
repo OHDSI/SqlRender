@@ -1,6 +1,6 @@
 Package: SqlRender
 Type: Package
-Title: Rendering parameterized SQL and translation to dialects
+Title: Rendering Parameterized SQL and Translation to Dialects
 Version: 1.1.3
 Date: 2015-03-10
 Author: Martijn J. Schuemie and Marc A. Suchard
