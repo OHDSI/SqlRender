@@ -42,13 +42,13 @@ test_that("camelCaseToSnakeCase ", {
 
 test_that("loadRenderTranslateSql ", {
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "sql server")
-  expect_equal(sql, "SELECT * FROM table;\r\n")
+  expect_equal(sql, "SELECT * FROM table;")
 
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "postgresql")
-  expect_equal(sql, "SELECT * FROM table;\r\n")
+  expect_equal(sql, "SELECT * FROM table;")
 
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "oracle")
-  expect_equal(sql, "SELECT a FROM table;\r\n")
+  expect_equal(sql, "SELECT a FROM table;")
 })
 
 test_that("createRWrapperForSql", {
