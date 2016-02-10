@@ -16,19 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-.formatAndCheckCode <- function() {
-  OhdsiRTools::formatRFolder()
-  OhdsiRTools::checkUsagePackage("SqlRender")
-  OhdsiRTools::ohdsiLintrFolder()
-}
+# Format and check codeP
+OhdsiRTools::formatRFolder()
+OhdsiRTools::checkUsagePackage("SqlRender")
+OhdsiRTools::updateCopyrightYearFolder()
 
-.createManualAndVignettes <- function() {
-  shell("rm man/SqlRender.pdf")
-  shell("R CMD Rd2pdf ./ --output=man/SqlRender.pdf")
+# Create manual and vignettes:
+shell("rm man/SqlRender.pdf")
+shell("R CMD Rd2pdf ./ --output=man/SqlRender.pdf")
 
-  rmarkdown::render("vignettes/UsingSqlRender.Rmd",
-                    rmarkdown::pdf_document(latex_engine = "pdflatex",
-                                            toc = TRUE,
-                                            number_sections = TRUE))
-
-}
+rmarkdown::render("vignettes/UsingSqlRender.Rmd",
+                  rmarkdown::pdf_document(latex_engine = "pdflatex",
+                                          toc = TRUE,
+                                          number_sections = TRUE))
