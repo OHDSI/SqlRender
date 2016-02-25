@@ -124,6 +124,13 @@ test_that("translateSQL sql server -> Postgres WITH SELECT INTO", {
                "CREATE TABLE  d \nAS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
 })
 
+test_that("translateSQL sql server -> Postgres WITH SELECT INTO without FROM", {
+  sql <- translateSql("SELECT c INTO d;",
+                      sourceDialect = "sql server",
+                      targetDialect = "postgresql")$sql
+  expect_equal(sql, "CREATE TABLE  d AS\nSELECT\n c ;")
+})
+
 
 test_that("translateSQL sql server -> Postgres WITH INSERT INTO SELECT", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",
