@@ -364,3 +364,9 @@ test_that("translateSQL sql server throws error when invalid target is given", {
   expect_error(translateSql("iSELECT * FROM a;", targetDialect = "pwd")$sql)
 })
 
+
+test_that("translateSQL select into issue for pdw", {
+  sql <- "SELECT @c1 INTO table FROM @c2 WHERE a = 1;"
+  sql <- translateSql(sql, targetDialect = "pdw")$sql
+  expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   table  WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n @c1 \nFROM\n @c2 WHERE a = 1;")
+})

@@ -22,10 +22,11 @@ OhdsiRTools::checkUsagePackage("SqlRender")
 OhdsiRTools::updateCopyrightYearFolder()
 
 # Create manual and vignettes:
-shell("rm man/SqlRender.pdf")
-shell("R CMD Rd2pdf ./ --output=man/SqlRender.pdf")
+shell("rm extras/SqlRender.pdf")
+shell("R CMD Rd2pdf ./ --output=extras/SqlRender.pdf")
 
 rmarkdown::render("vignettes/UsingSqlRender.Rmd",
+                  output_file = "../inst/doc/UsingSqlRender.pdf",
                   rmarkdown::pdf_document(latex_engine = "pdflatex",
                                           toc = TRUE,
                                           number_sections = TRUE))

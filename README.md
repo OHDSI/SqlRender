@@ -99,8 +99,8 @@ You can fetch the JAR file in the inst/java folder of this repository, or use Ma
 
 Getting Involved
 =============
-* Vignette: [Using SqlRender](https://raw.githubusercontent.com/OHDSI/SqlRender/master/vignettes/UsingSqlRender.pdf)
-* Package manual: [SqlRender manual](https://raw.githubusercontent.com/OHDSI/SqlRender/master/man/SqlRender.pdf) 
+* Vignette: [Using SqlRender](https://raw.githubusercontent.com/OHDSI/SqlRender/master/inst/doc/UsingSqlRender.pdf)
+* Package manual: [SqlRender manual](https://raw.githubusercontent.com/OHDSI/SqlRender/master/extras/SqlRender.pdf) 
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
