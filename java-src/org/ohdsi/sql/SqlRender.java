@@ -108,9 +108,9 @@ public class SqlRender {
 		// Spans are in order of closing parenthesis, so if we go from first to last we'll always process nested parentheses first
 		for (Span span : spans)
 			if (!precededByIn(span.start, str)) {
-				boolean evaluation = evaluateBooleanCondition(str.substring(span.start + 1, span.end - 2));
+				boolean evaluation = evaluateBooleanCondition(str.substring(span.start + 1, span.end - 1));
 				str = StringUtils.replaceCharAt(str, span.start, evaluation ? '1' : '0');
-				replace(str, spans, span.start, span.end, span.start, span.start);
+				str = replace(str, spans, span.start, span.end, span.start, span.start);
 			}
 		return evaluateBooleanCondition(str);
 	}

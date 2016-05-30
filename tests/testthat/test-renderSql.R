@@ -133,3 +133,14 @@ test_that("If-then-else: does not equals pattern 2", {
   sql <- renderSql("{123 <> 234}?{true}:{false}")$sql
   expect_equal(sql, "true")
 })
+
+test_that("If-then-else: Nested IN evaluates to true", {
+  sql <- renderSql("{TRUE & (FALSE | 1 IN (1,2,3))} ? {true} : {false}")$sql
+  expect_equal(sql, "true")
+})
+
+test_that("If-then-else: Nested IN evaluates to false", {
+  sql <- renderSql("{TRUE & (FALSE | 4 IN (1,2,3))} ? {true} : {false}")$sql
+  expect_equal(sql, "false")
+})
+
