@@ -1,3 +1,4 @@
+require(SqlRender)
 library("testthat")
 
 test_that("translateSQL sql server -> Oracle DATEDIFF", {

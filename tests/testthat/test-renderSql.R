@@ -1,3 +1,4 @@
+require(SqlRender)
 library("testthat")
 
 s <- "{DEFAULT @a = '123'} SELECT * FROM table WHERE x = @a AND {@b == 'blaat'}?{y = 1234}:{x = 1};"
