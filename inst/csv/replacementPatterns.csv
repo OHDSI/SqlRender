@@ -251,4 +251,5 @@ From,To,Pattern,Replacement
 "sql server","mysql","SELECT @a INTO #@b FROM @c;","CREATE TEMPORARY TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;"
 "sql server","mysql","SELECT @a INTO @b FROM @c;","CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;"
 "sql server","mysql","SELECT @a INTO @b;","CREATE TABLE @b AS\nSELECT\n@a;"
+"sql server","mysql",".dbo.","."
 "sql server","mysql","#",""
