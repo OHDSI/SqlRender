@@ -214,6 +214,7 @@ From,To,Pattern,Replacement
 "sql server","googlebigquery","HASHBYTES('MD5',@a)","SHA1(@a)"
 "sql server","googlebigquery","LEN(@a)","LENGTH(@a)"
 "sql server","googlebigquery","COUNT_BIG(@a)","COUNT(@a)"
+"sql server","googlebigquery","#",""
 "sql server","mysql","DATEADD(d,@days,@date)","DATE_ADD(@date,INTERVAL @days DAY)"
 "sql server","mysql","DATEADD(dd,@days,@date)","DATE_ADD(@date,INTERVAL @days DAY)"
 "sql server","mysql","DATEADD(day,@days,@date)","DATE_ADD(@date,INTERVAL @days DAY)"
@@ -250,3 +251,4 @@ From,To,Pattern,Replacement
 "sql server","mysql","SELECT @a INTO #@b FROM @c;","CREATE TEMPORARY TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;"
 "sql server","mysql","SELECT @a INTO @b FROM @c;","CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;"
 "sql server","mysql","SELECT @a INTO @b;","CREATE TABLE @b AS\nSELECT\n@a;"
+"sql server","mysql","#",""
