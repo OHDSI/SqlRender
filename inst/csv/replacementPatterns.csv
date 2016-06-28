@@ -246,6 +246,7 @@ From,To,Pattern,Replacement
 "sql server","mysql","PRIMARY KEY NONCLUSTERED","PRIMARY KEY"
 "sql server","mysql","VARCHAR(MAX)","TEXT"
 "sql server","mysql","FLOAT","NUMERIC"
+"sql server","mysql","WITH @table (@definition) AS @b","CREATE TEMPORARY TABLE IF NOT EXISTS @table AS @b"
 "sql server","mysql","WITH @a AS @b SELECT @c INTO #@d FROM @e;","CREATE TEMPORARY TABLE IF NOT EXISTS @a AS @b; CREATE TEMPORARY TABLE IF NOT EXISTS @d AS (SELECT @c FROM @e);"
 "sql server","mysql","WITH @a AS @b SELECT @c INTO @d FROM @e;","CREATE TEMPORARY TABLE IF NOT EXISTS @a AS @b; CREATE TEMPORARY TABLE IF NOT EXISTS @d AS (SELECT @c FROM @e);"
 "sql server","mysql","SELECT @a INTO #@b FROM @c;","CREATE TEMPORARY TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;"
