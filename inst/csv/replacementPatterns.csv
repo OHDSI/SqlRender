@@ -254,6 +254,6 @@ From,To,Pattern,Replacement
 "sql server","mysql","SELECT @a INTO #@b FROM @c;","CREATE TEMPORARY TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;"
 "sql server","mysql","SELECT @a INTO @b FROM @c;","CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;"
 "sql server","mysql","SELECT @a INTO @b;","CREATE TABLE @b AS\nSELECT\n@a;"
-"sql server","mysql","select @a1, @a2, row_number() over (order by @b) as @c from @d group by @e;","select @a1,@a2, @row_number:=@row_number+1 as @c from @d, (SELECT @row_number := 0) r group by @e order by @b;"
+"sql server","mysql","select @a1, @a2, row_number() over (order by @b) as @c FROM @d group by @e","select @a1,@a2, @row_number:=@row_number+1 as @c from @d, (SELECT @row_number := 0) r group by @e order by @b"
 "sql server","mysql",".dbo.","."
 "sql server","mysql","#",""
