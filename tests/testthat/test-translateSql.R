@@ -370,3 +370,11 @@ test_that("translateSQL select into issue for pdw", {
   sql <- translateSql(sql, targetDialect = "pdw")$sql
   expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   table  WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n @c1 \nFROM\n @c2 WHERE a = 1;")
 })
+
+
+
+test_that("translateSQL ## issue on oracle", {
+  sql <- "SELECT a FROM c##blah.table;"
+  sql <- translateSql(sql, targetDialect = "oracle")$sql
+  expect_equal(sql, "SELECT   a  FROM  c##blah.table ;")
+})
