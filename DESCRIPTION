@@ -5,9 +5,10 @@ Version: 1.1.6
 Date: 2016-07-20
 Author: Martijn J. Schuemie and Marc A. Suchard
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
-Description: This is an R package for rendering parameterized SQL, and
-    translating it to different SQL dialects.
-License: Apache License
+Description: A rendering tool for parameterized SQL that also translates into
+    different SQL dialects.  These dialects include SqlServer, Oracle, 
+    postgresql and RedShift.    
+License: Apache License 2.0
 VignetteBuilder: knitr
 Imports:
     rJava

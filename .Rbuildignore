@@ -3,9 +3,14 @@
 .travis.yml
 .classpath
 .project
-build
+build/
 build.xml
 deploy.sh
-extras
+extras/
 pom.xml
 java-src
+bin/
+.idea/
+SqlRender.iml
+license_header_stub.txt
+target/
