@@ -6,3 +6,6 @@
 build
 build.xml
 deploy.sh
+extras
+pom.xml
+java-src
