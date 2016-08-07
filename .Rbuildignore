@@ -1,8 +1,13 @@
+extras
+java-src
+license_header_stub.txt
+pom.xml
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .travis.yml
 .classpath
 .project
+^cran-comments.md$
 build
 build.xml
 deploy.sh
