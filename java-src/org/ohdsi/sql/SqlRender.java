@@ -289,8 +289,11 @@ public class SqlRender {
 				return 0;
 			}
 		});
-		for (Map.Entry<String, String> pair : sortedParameterToValue)
-			string = string.replaceAll("@" + pair.getKey(), pair.getValue());
+		for (Map.Entry<String, String> pair : sortedParameterToValue) {
+			String key = pair.getKey();
+			String value = pair.getValue().replaceAll("\\\\", "\\\\\\\\"); // Escape backslashes (again)
+			string = string.replaceAll("@" + key, value);
+		}
 		return string;
 	}
 

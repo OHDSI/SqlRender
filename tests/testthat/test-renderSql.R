@@ -144,3 +144,7 @@ test_that("If-then-else: Nested IN evaluates to false", {
   expect_equal(sql, "false")
 })
 
+test_that("Backslash in parameter is handled correctly", {
+  sql <- renderSql("SELECT * FROM table WHERE name = '@name';", name = "NA\\joe")$sql
+  expect_equal(sql, "SELECT * FROM table WHERE name = 'NA\\joe';")
+})
