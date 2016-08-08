@@ -11,3 +11,11 @@ pom.xml
 build
 build.xml
 deploy.sh
+extras/
+pom.xml
+java-src
+bin/
+.idea/
+SqlRender.iml
+license_header_stub.txt
+target/
