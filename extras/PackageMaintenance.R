@@ -30,3 +30,8 @@ rmarkdown::render("vignettes/UsingSqlRender.Rmd",
                   rmarkdown::pdf_document(latex_engine = "pdflatex",
                                           toc = TRUE,
                                           number_sections = TRUE))
+
+# Release package:
+devtools::build_win()
+
+devtools::release()
