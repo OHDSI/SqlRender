@@ -3,7 +3,7 @@
         Simple build fine for SqlRender.jar
     </description>
   <!-- set global properties for this build -->
-  <property name="src" location="java-src"/>
+  <property name="src" location="java"/>
   <property name="lib" location="."/>
   <property name="build" location="build"/>
   <property name="dist"  location="inst/java"/> 

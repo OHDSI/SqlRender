@@ -10,8 +10,8 @@ output:
     number_sections: yes
     toc: yes
 vignette: >
-  %\VignetteIndexEntry{Using SqlRender}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Using SqlRender}
   %\VignetteEncoding{UTF-8}    
 ---
 
