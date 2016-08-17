@@ -1,6 +1,8 @@
 SqlRender
 =========
 
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SqlRender)](http://cran.r-project.org/package=SqlRender)
+
 Introduction
 ============
 This is an R package for rendering parameterized SQL, and translating it to different SQL dialects. SqlRender can also be used as a stand-alone Java library.
@@ -56,11 +58,17 @@ Getting Started
 ===============
 ## R package
 
-Use these commands in R to download and install the SqlRender package:
+In R, use the following commands to install the latest stable version from CRAN:
+
+```r
+install.packages("SqlRender")
+```
+
+To install the latest development version directly from GitHub, use:
 
 ```r
 install.packages("devtools")
-library("devtools")
+library(devtools)
 install_github("ohdsi/SqlRender")
 ```
 
