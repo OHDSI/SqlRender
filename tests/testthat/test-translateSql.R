@@ -296,6 +296,14 @@ test_that("translateSQL sql server -> Oracle datefromparts", {
                "SELECT TO_DATE(TO_CHAR(year,'0000')||'-'||TO_CHAR(month,'00')||'-'||TO_CHAR(day,'00'), 'YYYY-MM-DD') FROM table")
 })
 
+test_that("translateSQL sql server -> redshift datefromparts", {
+  sql <- translateSql("SELECT DATEFROMPARTS(year,month,day) FROM table",
+                      sourceDialect = "sql server",
+                      targetDialect = "redshift")$sql
+  expect_equal(sql,
+               "SELECT TO_DATE(TO_CHAR(year,'0000')||'-'||TO_CHAR(month,'00')||'-'||TO_CHAR(day,'00'), ' YYYY- MM- DD') FROM table")
+})
+
 
 test_that("translateSQL sql server -> Oracle datetime to timestamp", {
   sql <- translateSql("CREATE TABLE x (a DATETIME)",

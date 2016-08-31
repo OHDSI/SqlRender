@@ -149,7 +149,7 @@ From,To,Pattern,Replacement
 "sql server","redshift","+ CAST(@a AS varchar(@b))","|| CAST(@a AS varchar(@b))"
 "sql server","redshift","CAST(@a AS varchar) +","CAST(@a AS varchar) ||"
 "sql server","redshift","+ CAST(@a AS varchar)","|| CAST(@a AS varchar)"
-"sql server","redshift","DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
+"sql server","redshift","DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), ' YYYY- MM- DD')"
 "sql server","redshift","YEAR(@date)","EXTRACT(YEAR FROM @date)"
 "sql server","redshift","MONTH(@date)","EXTRACT(MONTH FROM @date)"
 "sql server","redshift","DAY(@date)","EXTRACT(DAY FROM @date)"
