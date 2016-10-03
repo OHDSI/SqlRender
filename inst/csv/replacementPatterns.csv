@@ -274,7 +274,9 @@ From,To,Pattern,Replacement
 "sql server","googlebigquery","HASHBYTES('MD5',@a)","SHA1(@a)"
 "sql server","googlebigquery","LEN(@a)","LENGTH(@a)"
 "sql server","googlebigquery","COUNT_BIG(@a)","COUNT(@a)"
+"sql server","googlebigquery","varchar(@a)",":string"
+"sql server","googlebigquery","int",":integer"
 "sql server","googlebigquery","insert into @table (@columns) values (@values)","bq query --append=true --destination_table=@table 'select @values'"
-"sql server","googlebigquery","IF OBJECT_ID('@table', 'U') IS NOT NULL drop table @table;","bq rm -f -t @table;"
+"sql server","googlebigquery","create table @table (@columns);","bq mk --schema @columns -t @table"
 "sql server","googlebigquery","#",""
 
