@@ -277,6 +277,6 @@ From,To,Pattern,Replacement
 "sql server","googlebigquery"," varchar(@a)",":string"
 "sql server","googlebigquery"," int",":integer"
 "sql server","googlebigquery","insert into @table (@columns) values (@values)","bq query --append=true --destination_table=@table 'select @values'"
-"sql server","googlebigquery","create table @table (@columns);","bq mk --schema @columns -t @table"
+"sql server","googlebigquery","create table @table (@columns)","bq mk --schema @columns -t @table"
 "sql server","googlebigquery","#",""
 
