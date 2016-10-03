@@ -274,6 +274,6 @@ From,To,Pattern,Replacement
 "sql server","googlebigquery","HASHBYTES('MD5',@a)","SHA1(@a)"
 "sql server","googlebigquery","LEN(@a)","LENGTH(@a)"
 "sql server","googlebigquery","COUNT_BIG(@a)","COUNT(@a)"
+"sql server","googlebigquery","INSERT INTO @table (@columns) VALUES (@values)","bq query --destination_table=@table ""select @values"""
 "sql server","googlebigquery","#",""
-"sql server","googlebigquery","insert into @a (@b) values @c","bq query --destination_table=@a 'select @c'"
 
