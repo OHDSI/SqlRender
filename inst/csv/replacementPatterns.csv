@@ -274,9 +274,10 @@ From,To,Pattern,Replacement
 "sql server","googlebigquery","HASHBYTES('MD5',@a)","SHA1(@a)"
 "sql server","googlebigquery","LEN(@a)","LENGTH(@a)"
 "sql server","googlebigquery","COUNT_BIG(@a)","COUNT(@a)"
-"sql server","googlebigquery"," varchar(@a)",":string"
-"sql server","googlebigquery"," int",":integer"
-"sql server","googlebigquery","insert into @table (@columns) values (@values)","bq query --append=true --destination_table=@table 'select @values'"
+"sql server","googlebigquery","varchar(@a)",":string"
+"sql server","googlebigquery","int",":integer"
+"sql server","googlebigquery","insert into @table (@column) values (@value)","bq query --append=true --destination_table=@table 'select @value as @column'"
+"sql server","googlebigquery","insert into @table (@column1,@column2) values (@value1,@value2)","bq query --append=true --destination_table=@table 'select @value1 as @column1, @value2 as @column2'"
 "sql server","googlebigquery","create table @table (@columns)","bq mk --schema @columns -t @table"
 "sql server","googlebigquery","#",""
 
