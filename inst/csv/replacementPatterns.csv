@@ -288,8 +288,12 @@ From,To,Pattern,Replacement
 "sql server","googlebigquery","insert into @table1 (@columns) select @values from @table2 group by @param;","bq query --append=true --destination_table=@table1 ""select @values from @table2 group by @param""\n"
 "sql server","googlebigquery","insert into @table1 (@columns) select @values from @table where @condition;","bq query --append=true --destination_table=@table1 ""select @values from @table where @condition""\n"
 "sql server","googlebigquery","insert into @table1 (@columns) select @values from @table2;","bq query --append=true --destination_table=@table1 ""select @values from @table2""\n"
-"sql server","googlebigquery","with @table1 (@columns) as (select @values from @table2)","bq query  --append=true --destination_table=@table1 ""select @values from @table2""\n\n"
-"sql server","googlebigquery",",@table1 (@columns) as (select @values FROM @table2)","bq --append=true --destination_table=@table1 ""select @values from @table2""\n\n"
-"sql server","googlebigquery","select @values INTO @table1 from @table2;","bq --append=true --destination_table=@table1 ""select @values from @table2""\n"
+"sql server","googlebigquery","with @table1 (@columns) as (select @values from @table2)","bq rm -f -t @table1\n\nbq query  --append=true --destination_table=@table1 ""select @values from @table2""\n\n"
+"sql server","googlebigquery",",@table1 (@columns) as (select @values FROM @table2)","bq rm -f -t @table1\n\nbq query --append=true --destination_table=@table1 ""select @values from @table2""\n\n"
+"sql server","googlebigquery","select @values INTO @table1 from @table2;","bq querys --append=true --destination_table=@table1 ""select @values from @table2""\n"
+"sql server","googlebigquery","truncate table @table;","#No support for truncate\n"
+"sql server","googlebigquery","drop table @table;","bq rm -f -t @table\n"
+
+
 
 
