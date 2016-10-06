@@ -274,6 +274,7 @@ From,To,Pattern,Replacement
 "sql server","googlebigquery","HASHBYTES('MD5',@a)","SHA1(@a)"
 "sql server","googlebigquery","LEN(@a)","LENGTH(@a)"
 "sql server","googlebigquery","COUNT_BIG(@a)","COUNT(@a)"
+"sql server","googlebigquery","float",":float"
 "sql server","googlebigquery","varchar(@a)",":string"
 "sql server","googlebigquery","bigint",":integer"
 "sql server","googlebigquery","int",":integer"
