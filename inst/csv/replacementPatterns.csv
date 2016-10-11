@@ -299,6 +299,7 @@ From,To,Pattern,Replacement
 "sql server","googlebigquery","select @values INTO @table1 from @table2;","bq query --use_legacy_sql=false --append=true --destination_table=@table1 \"select @values from @table2\"\n"
 "sql server","googlebigquery","truncate table @table;","#No support for truncate\n"
 "sql server","googlebigquery","drop table @table;","bq rm -f -t @table\n"
+"sql server","googlebigquery",",@id as stratum_1","CAST(@id as string) as stratum_1"
 
 
 
