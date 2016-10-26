@@ -283,6 +283,8 @@ From,To,Pattern,Replacement
 "sql server","googlebigquery","CAST(@a as:string)","CAST(@a as string)"
 "sql server","googlebigquery","CAST(@a as:integer)","CAST(@a as int64)"
 "sql server","googlebigquery","CAST(@a as:float)","CAST(@a as float64)"
+"sql server","googlebigquery","('@a')","'@a'"
+"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
 "sql server","googlebigquery","'@a' + '@b'","CONCAT('@a','@b')"
 "sql server","googlebigquery","CONCAT(@a) + CONCAT(@b)","CONCAT(@a,@b)"
 "sql server","googlebigquery","CONCAT(@a) + '@b'","CONCAT(@a,'@b')"
