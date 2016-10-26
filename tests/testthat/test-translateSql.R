@@ -386,3 +386,91 @@ test_that("translateSQL ## issue on oracle", {
   sql <- translateSql(sql, targetDialect = "oracle")$sql
   expect_equal(sql, "SELECT   a  FROM  c##blah.table ;")
 })
+
+# Impala tests
+
+test_that("translateSQL sql server -> Impala USE", {
+    sql <- translateSql("USE vocabulary;",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "USE vocabulary;")
+})
+
+test_that("translateSQL sql server -> Impala CAST(AS DATE)", {
+    sql <- translateSql("CAST('20000101' AS DATE);",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "CASE TYPEOF('20000101' ) WHEN 'TIMESTAMP' THEN CAST('20000101'  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST('20000101'  AS STRING), 1, 4), SUBSTR(CAST('20000101'  AS STRING), 5, 2), SUBSTR(CAST('20000101'  AS STRING), 7, 2)), 'UTC') END;")
+})
+
+test_that("translateSQL sql server -> Impala DATEDIFF", {
+    sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "SELECT DATEDIFF(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, CASE TYPEOF(drug_era_start_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_start_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_start_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_start_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_start_date  AS STRING), 7, 2)), 'UTC') END) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> Impala DATEADD", {
+    sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "SELECT DATE_ADD(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, 30) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> Impala WITH SELECT", {
+    sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+})
+
+test_that("translateSQL sql server -> Impala WITH SELECT INTO", {
+    sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql,
+    "CREATE TABLE  d \nAS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
+})
+
+test_that("translateSQL sql server -> Impala WITH SELECT INTO without FROM", {
+    sql <- translateSql("SELECT c INTO d;",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "CREATE TABLE  d AS\nSELECT\n c ;")
+})
+
+test_that("translateSQL sql server -> Impala create table if not exists", {
+    sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "CREATE TABLE IF NOT EXISTS  cohort\n (cohort_definition_id INT);")
+})
+
+test_that("translateSQL sql server -> Impala DROP TABLE IF EXISTS", {
+    sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql,
+    "DROP TABLE IF EXISTS  cohort;")
+})
+
+test_that("translateSQL sql server -> Impala RIGHT functions", {
+    sql <- translateSql("SELECT RIGHT(x,4);",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "SELECT SUBSTR(x,-4);")
+})
+
+test_that("translateSQL sql server -> Impala DELETE FROM", {
+    sql <- translateSql("delete from ACHILLES_results;",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "/* DELETE FROM  ACHILLES_results; */")
+})
+
+test_that("translateSQL sql server -> Impala DELETE FROM WHERE", {
+    sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "/* DELETE FROM  ACHILLES_results where analysis_id IN (1, 2, 3); */")
+})
