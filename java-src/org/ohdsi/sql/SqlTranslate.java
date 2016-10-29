@@ -1,4 +1,4 @@
-package org.ohdsi.sql;
+
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -15,6 +15,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SqlTranslate {
 	public static int							SESSION_ID_LENGTH					= 8;
@@ -141,6 +143,9 @@ public class SqlTranslate {
 	}
 
 	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId, String oracleTempPrefix) {
+		//<hajar>
+		sql=preprocess(sql);
+		//</hajar>
 		for (int i = 0; i < replacementPatterns.size(); i++) {
 			String[] pair = replacementPatterns.get(i).clone();
 			pair[1] = pair[1].replace("%session_id%", sessionId);
@@ -150,6 +155,212 @@ public class SqlTranslate {
 		}
 		return sql;
 	}
+
+	//<hajar>
+	public static String preprocess(String sql)
+	{
+		String lowercaseSql = sql.toLowerCase();	
+		String markCast=lowercaseSql.replaceAll("(cast\\(.* as .*char\\))","'#$1#'");
+		//String markCast=lowercaseSql.replaceAll("(cast\\(.* as .*char.*\\))","'#$1#'"); --- has problem for varchar(n)
+		String witoutSpaceSql=removeSpaces(markCast);
+		
+		//general while  "\\(*\\w+\\)*\\+\\'" name +'
+		String results4=witoutSpaceSql;
+		while(checkForMatche(results4.replaceAll("\\s+",""), "\\(*\\w+\\)*\\+\\(*\\'")!=-1 || checkForMatche(results4.replaceAll("\\s+",""), "\\'\\)*\\+\\(*\\w+\\)*")!=-1){
+
+		witoutSpaceSql=results4;
+		//checks for "'+" patterns in sql
+		String results1="";
+		while(true)
+		{
+			witoutSpaceSql=removeSpaces(witoutSpaceSql);
+			
+			if(witoutSpaceSql.contains("'+")){
+				int startIndex=witoutSpaceSql.indexOf("'+");
+				results1+=witoutSpaceSql.substring(0,startIndex+2);
+				
+				List<StringUtils.Token> tokens = StringUtils.tokenizeSql(witoutSpaceSql.substring(startIndex+2));
+				
+				int index=0;
+				while(tokens.get(index).text.equals("(")) index++;
+				
+				if(!tokens.get(index).text.equals("'"))
+				{
+					tokens.get(index).text="'#"+tokens.get(index).text+"#'";
+				}
+				
+				witoutSpaceSql="";
+				for(StringUtils.Token element: tokens)
+				{
+					witoutSpaceSql+=element.text+' ';
+					
+				}	
+			}
+			else
+			{
+				results1+=witoutSpaceSql;
+				break;
+			}
+		}
+		//checks for "+'" in sql
+		witoutSpaceSql=results1;
+		String results2="";
+		while(true)
+		{
+			witoutSpaceSql=removeSpaces(witoutSpaceSql);
+			
+			if(witoutSpaceSql.contains("+'")){
+				int startIndex=witoutSpaceSql.indexOf("+'");
+				results2=witoutSpaceSql.substring(startIndex)+results2;
+				
+				List<StringUtils.Token> tokens = StringUtils.tokenizeSql(witoutSpaceSql.substring(0,startIndex));
+				
+				int index=tokens.size()-1;
+				while(tokens.get(index).text.equals("(")) index--;
+				
+				if(!tokens.get(index).text.equals("'"))
+				{
+					tokens.get(index).text="'#"+tokens.get(index).text+"#'";
+				}
+				
+				witoutSpaceSql="";
+				for(StringUtils.Token element: tokens)
+				{
+					witoutSpaceSql+=element.text+' ';
+					
+				}	
+			}
+			else
+			{
+				results2=witoutSpaceSql+results2;
+				break;
+			}
+		}
+		//checks for "'\\)*\\+" patterns in sql
+		witoutSpaceSql=results2;
+		String results3="";
+		while(true)
+		{
+			witoutSpaceSql=removeSpaces(witoutSpaceSql);
+	
+			if (checkForMatche(witoutSpaceSql,"\\'\\)+\\+")!=-1){			
+				int startIndex=checkForMatche(witoutSpaceSql,"\\'\\)+\\+");
+				
+				//skip paranthesis
+				String temp=witoutSpaceSql.substring(startIndex+1);
+				for(char c:temp.toCharArray()){
+					if(c==')')
+						startIndex++;
+					else
+						break;
+					
+				}
+				
+				
+				results3+=witoutSpaceSql.substring(0,startIndex+2); //maybe +1
+				
+				List<StringUtils.Token> tokens = StringUtils.tokenizeSql(witoutSpaceSql.substring(startIndex+2));
+				
+				int index=0;
+				while(tokens.get(index).text.equals("(")) index++;
+				
+				if(!tokens.get(index).text.equals("'"))
+				{
+					tokens.get(index).text="'#"+tokens.get(index).text+"#'";
+				}
+				
+				witoutSpaceSql="";
+				for(StringUtils.Token element: tokens)
+				{
+					witoutSpaceSql+=element.text+' ';
+					
+				}	
+			}
+			else
+			{
+				results3+=witoutSpaceSql;
+				break;
+			}
+		}
+		
+		//checks for "\\+\\(*\\'" patterns in sql
+		witoutSpaceSql=results3;
+		results4="";
+		while(true)
+		{
+			witoutSpaceSql=removeSpaces(witoutSpaceSql);
+			
+			if(checkForMatche(witoutSpaceSql, "\\+\\(*\\'")!=-1){
+				int startIndex=checkForMatche(witoutSpaceSql, "\\+\\(*\\'"); //check for correctness
+				
+				
+				//skip paranthesis
+				String temp=witoutSpaceSql.substring(startIndex);
+				for(char c:temp.toCharArray()){
+					if(c=='(')
+						startIndex--;
+					else
+						break;
+					
+				}
+				
+				
+				results4=witoutSpaceSql.substring(startIndex)+results4;
+				
+				List<StringUtils.Token> tokens = StringUtils.tokenizeSql(witoutSpaceSql.substring(0,startIndex));
+				
+				int index=tokens.size()-1;
+				while(tokens.get(index).text.equals("(")) index--;
+				
+				if(!tokens.get(index).text.equals("'"))
+				{
+					System.out.println(tokens.get(index).text);
+					tokens.get(index).text="'#"+tokens.get(index).text+"#'";
+				}
+				
+				witoutSpaceSql="";
+				for(StringUtils.Token element: tokens)
+				{
+					witoutSpaceSql+=element.text+' ';
+					
+				}	
+			}
+			else
+			{
+				results4=witoutSpaceSql+results4;
+				break;
+			}
+		}
+
+		} 
+		return results4;
+		
+	}
+	private static String removeSpaces(String s){
+		
+		String witoutSpaceSql=s.replaceAll("\\+\\s+'","+'");
+		witoutSpaceSql=witoutSpaceSql.replaceAll("'\\s+\\+","'+");
+		witoutSpaceSql=witoutSpaceSql.replaceAll("\\(\\s+\\(","((");
+		witoutSpaceSql=witoutSpaceSql.replaceAll("\\)\\s+\\)","))");			
+		witoutSpaceSql=witoutSpaceSql.replaceAll("'\\s+\\)","')");
+		witoutSpaceSql=witoutSpaceSql.replaceAll("\\(\\s+'","('");
+		witoutSpaceSql=witoutSpaceSql.replaceAll("\\)\\s+\\+",")+");
+		witoutSpaceSql=witoutSpaceSql.replaceAll("\\+\\s+\\(","+(");
+		return witoutSpaceSql;
+	}
+	
+	private static int checkForMatche(String input, String pattern){
+		
+		Pattern p = Pattern.compile(pattern);
+		Matcher m = p.matcher(input);
+		if (m.find()){	
+			return m.start();
+		}
+		
+		return -1;
+	}
+	
+	//</hajar>
 
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
