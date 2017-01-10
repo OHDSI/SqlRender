@@ -13,7 +13,7 @@ translateSql(sql = "", sourceDialect = "sql server",
 \item{sourceDialect}{The source dialect. Currently, only "sql server" for Microsoft SQL Server
 is supported}
 
-\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", and
+\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala", and
 "redshift" are supported}
 
 \item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle.}

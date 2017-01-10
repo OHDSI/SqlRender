@@ -82,7 +82,7 @@ renderSql <- function(sql = "", ...) {
 #' @param sql                The SQL to be translated
 #' @param sourceDialect      The source dialect. Currently, only "sql server" for Microsoft SQL Server
 #'                           is supported
-#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", and
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", and
 #'                           "redshift" are supported
 #' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle.
 #' @return
