@@ -1,4 +1,4 @@
-This is the first submission of this package
+This update has one bugfix and adds support for Impala SQL
 
 ---
 
@@ -12,4 +12,4 @@ There were no ERRORs or WARNINGs.
 
 ## Downstream dependencies
 
-This is a new submission, there are no downstream dependencies.
+There are no downstream dependencies.

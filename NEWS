@@ -1,4 +1,16 @@
+SqlRender v1.2.0 (Release date: 2017-01-12)
+===========================================
+
+Changes: 
+
+1. Added support for Impala
+
+Bugfixes:
+
+1. Fixed translation for DATEFROMPARTS for RedShift
+
+
 SqlRender v1.1.7 (Release date: 2016-08-15)
-==============
+===========================================
 
 Changes: initial submission to CRAN
