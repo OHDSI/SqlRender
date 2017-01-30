@@ -474,3 +474,71 @@ test_that("translateSQL sql server -> Impala DELETE FROM WHERE", {
     targetDialect = "impala")$sql
     expect_equal(sql, "/* DELETE FROM  ACHILLES_results where analysis_id IN (1, 2, 3); */")
 })
+
+
+# Netezza tests
+
+test_that("translateSQL sql server -> Netezza CAST(AS DATE)", {
+    sql <- translateSql("CAST('20000101' AS DATE);",
+    sourceDialect = "sql server",
+    targetDialect = "netezza")$sql
+    expect_equal(sql, "TO_DATE('20000101' , 'yyyymmdd');")
+})
+
+test_that("translateSQL sql server -> Netezza DATEDIFF", {
+    sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+    sourceDialect = "sql server",
+    targetDialect = "netezza")$sql
+    expect_equal(sql, "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> Netezza DATEADD", {
+    sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
+    sourceDialect = "sql server",
+    targetDialect = "netezza")$sql
+    expect_equal(sql, "SELECT (drug_era_end_date + 30) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> Netezza WITH SELECT", {
+    sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
+    sourceDialect = "sql server",
+    targetDialect = "netezza")$sql
+    expect_equal(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+})
+
+test_that("translateSQL sql server -> Netezza WITH SELECT INTO", {
+    sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+    sourceDialect = "sql server",
+    targetDialect = "netezza")$sql
+    expect_equal(sql,
+    "CREATE TABLE  d \nAS\nWITH  cte1  AS  (SELECT a FROM b)  SELECT\n c \nFROM\n cte1;")
+})
+
+test_that("translateSQL sql server -> Netezza DROP TABLE IF EXISTS", {
+    sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
+    sourceDialect = "sql server",
+    targetDialect = "netezza")$sql
+    expect_equal(sql,
+    "DROP TABLE  cohort IF EXISTS;")
+})
+
+test_that("translateSQL sql server -> Netezza RIGHT functions", {
+    sql <- translateSql("SELECT RIGHT(x,4);",
+    sourceDialect = "sql server",
+    targetDialect = "netezza")$sql
+    expect_equal(sql, "SELECT STRRIGHT(x,4);")
+})
+
+test_that("translateSQL sql server -> Netezza DELETE FROM WHERE", {
+    sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
+    sourceDialect = "sql server",
+    targetDialect = "netezza")$sql
+    expect_equal(sql, "delete from ACHILLES_results where analysis_id IN (1, 2, 3);")
+})
+
+test_that("translateSQL sql server -> Netezza CAST AS VARCHAR", {
+    sql <- translateSql("CAST(person_id AS VARCHAR);",
+    sourceDialect = "sql server",
+    targetDialect = "netezza")$sql
+    expect_equal(sql, "CAST(person_id  AS VARCHAR(1000));")
+})
