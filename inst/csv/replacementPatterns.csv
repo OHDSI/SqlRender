@@ -248,6 +248,7 @@ From,To,Pattern,Replacement
 "sql server","impala","##","<hash><hash>"
 "sql server","impala","#","%temp_prefix%%session_id%"
 "sql server","impala","<hash><hash>","##"
+"sql server","impala",".location",".`location`"
 "sql server","netezza","ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 "sql server","netezza","CAST(@a AS DATE)","TO_DATE(@a, 'yyyymmdd')"
 "sql server","netezza","CAST(@a AS INT)","CAST(@a AS INTEGER)"

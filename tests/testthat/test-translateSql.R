@@ -475,6 +475,13 @@ test_that("translateSQL sql server -> Impala DELETE FROM WHERE", {
     expect_equal(sql, "/* DELETE FROM  ACHILLES_results where analysis_id IN (1, 2, 3); */")
 })
 
+test_that("translateSQL sql server -> Impala location reserved word", {
+    sql <- translateSql("select count(1) from omop_cdm.location;",
+    sourceDialect = "sql server",
+    targetDialect = "impala")$sql
+    expect_equal(sql, "select count(1) from omop_cdm.`location`;")
+})
+
 
 # Netezza tests
 
