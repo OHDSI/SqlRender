@@ -15,6 +15,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SqlTranslate {
 	public static int							SESSION_ID_LENGTH					= 8;
@@ -25,6 +27,7 @@ public class SqlTranslate {
 
 	private static class Block extends StringUtils.Token {
 		public boolean	isVariable;
+		public String	regEx;
 
 		public Block(StringUtils.Token other) {
 			super(other);
@@ -44,11 +47,34 @@ public class SqlTranslate {
 		List<Block> blocks = new ArrayList<Block>();
 		for (int i = 0; i < tokens.size(); i++) {
 			Block block = new Block(tokens.get(i));
-			if (block.text.length() > 1 && block.text.charAt(0) == '@')
+			if (block.text.length() > 2 && block.text.charAt(0) == '@') {
 				block.isVariable = true;
+			}
+			if (block.text.equals("@@") && i < tokens.size() - 2 && tokens.get(i + 1).text.equals("(")) {
+				// Its a regex variable. Rejoin subsequent tokens
+				boolean escape = false;
+				int nesting = 0;
+				for (int j = i + 2; j < tokens.size(); j++) {
+					if (tokens.get(j).text.equals("\\"))
+						escape = !escape;
+					else if (!escape && tokens.get(j).text.equals("("))
+						nesting++;
+					else if (!escape && tokens.get(j).text.equals(")")) {
+						if (nesting == 0) {
+							block.text = "@@" + tokens.get(j + 1).text;
+							block.regEx = pattern.substring(tokens.get(i + 1).end, tokens.get(j).start);
+							block.end = tokens.get(j + 1).end;
+							block.isVariable = true;
+							i = j + 1;
+							break;
+						}
+						nesting--;
+					}
+				}
+			}
 			blocks.add(block);
 		}
-		if (blocks.get(0).isVariable || blocks.get(blocks.size() - 1).isVariable) {
+		if (blocks.get(0).isVariable || (blocks.get(blocks.size() - 1).isVariable && blocks.get(blocks.size() - 1).regEx == null)) {
 			throw new RuntimeException("Error in search pattern: pattern cannot start or end with a variable: " + pattern);
 		}
 		return blocks;
@@ -65,7 +91,26 @@ public class SqlTranslate {
 		for (int cursor = startToken; cursor < tokens.size(); cursor++) {
 			StringUtils.Token token = tokens.get(cursor);
 			if (parsedPattern.get(matchCount).isVariable) {
-				if (nestStack.size() == 0 && token.text.equals(parsedPattern.get(matchCount + 1).text)) {
+				if (parsedPattern.get(matchCount).regEx != null) {
+					Pattern pattern = Pattern.compile(parsedPattern.get(matchCount).regEx);
+					Matcher matcher = pattern.matcher(sql.substring(token.start));
+					if (matcher.find() && matcher.start() == 0) {
+						matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(token.start, token.start + matcher.end()));
+						matchCount++;
+						if (matchCount == parsedPattern.size()) {
+							matchedPattern.end = token.start + matcher.end();
+							return matchedPattern;
+						} else if (parsedPattern.get(matchCount).isVariable) {
+							varStart = token.start + matcher.end();
+						}
+						// Fast forward cursor to after matched patterns:
+						while (cursor < tokens.size() && tokens.get(cursor).start < token.start + matcher.end())
+							cursor++;
+					} else {
+						matchCount = 0;
+						cursor = matchedPattern.startToken;
+					}
+				} else if (nestStack.size() == 0 && token.text.equals(parsedPattern.get(matchCount + 1).text)) {
 					matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(varStart, token.start));
 					matchCount += 2;
 					if (matchCount == parsedPattern.size()) {
@@ -107,6 +152,7 @@ public class SqlTranslate {
 						return matchedPattern;
 					} else if (parsedPattern.get(matchCount).isVariable) {
 						varStart = token.end;
+
 					}
 					if (token.text.equals("'") || token.text.equals("\""))
 						inPatternQuote = !inPatternQuote;

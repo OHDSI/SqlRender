@@ -549,3 +549,38 @@ test_that("translateSQL sql server -> Netezza CAST AS VARCHAR", {
     targetDialect = "netezza")$sql
     expect_equal(sql, "CAST(person_id  AS VARCHAR(1000));")
 })
+
+test_that("translateSQL sql server -> PostgreSql TOP", {
+  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      sourceDialect = "sql server",
+                      targetDialect = "postgresql")$sql
+  expect_equal(sql, "SELECT  * FROM my_table WHERE a = b LIMIT 10;")
+})
+
+test_that("translateSQL sql server -> Oracle TOP", {
+  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      sourceDialect = "sql server",
+                      targetDialect = "oracle")$sql
+  expect_equal(sql, "SELECT   *   FROM   my_table    WHERE   a = b   AND  ROWNUM <= 10; ")
+})
+
+test_that("translateSQL sql server -> redshift TOP", {
+  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      sourceDialect = "sql server",
+                      targetDialect = "redshift")$sql
+  expect_equal(sql, "SELECT  * FROM my_table WHERE a = b LIMIT 10;")
+})
+
+test_that("translateSQL sql server -> impala TOP", {
+  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      sourceDialect = "sql server",
+                      targetDialect = "impala")$sql
+  expect_equal(sql, "SELECT  * FROM my_table WHERE a = b LIMIT 10;")
+})
+
+test_that("translateSQL sql server -> redshift TOP", {
+  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      sourceDialect = "sql server",
+                      targetDialect = "netezza")$sql
+  expect_equal(sql, "SELECT  * FROM my_table WHERE a = b LIMIT 10;")
+})

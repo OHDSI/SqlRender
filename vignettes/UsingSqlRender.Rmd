@@ -144,6 +144,8 @@ SELECT * FROM table_1 INNER JOIN table_2 ON a = b;          -- Selects with join
 
 SELECT * FROM (SELECT * FROM table_1) tmp WHERE a = b;      -- Nested queries
 
+SELECT TOP 10 * FROM table;                                 -- Limiting to top rows
+
 SELECT * INTO new_table FROM table;                         -- Selecting into a new table
 
 CREATE TABLE table (field INT);                             -- Creating tables
