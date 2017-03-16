@@ -7,7 +7,7 @@ public class TestSqlRender {
 //		sql = SqlRender.renderSql(sql, new String[]{"name"}, new String[]{"NA\\joe"});
 //		System.out.println(sql);	
 		String path = "inst/csv/replacementPatterns.csv";
-		String sourceSql = "SELECT TOP 10 * FROM my_table WHERE a = b;";
+		String sourceSql = "SELECT DATEADD(DAY, observation_period_start_date, 1) FROM observation_period;";
 		String sql;
 		sql = SqlTranslate.translateSql(sourceSql, "sql server", "postgresql", null, null, path);
 		System.out.println(sql);		

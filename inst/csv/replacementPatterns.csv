@@ -5,18 +5,21 @@ sql server,oracle,<start_of_insert> @a INSERT INTO @table (@columns) VALUES (@b)
 sql server,oracle,<par_open>,(
 sql server,oracle,<par_close>,)
 sql server,oracle,EXCEPT,MINUS
-sql server,oracle,"DATEADD(d,@days,@date)",(@date + @days)
-sql server,oracle,"DATEADD(dd,@days,@date)",(@date + @days)
-sql server,oracle,"DATEADD(day,@days,@date)",(@date + @days)
+sql server,oracle,"DATEADD(second,@seconds,@datetime)",(@datetime + interval '@seconds' second)
+sql server,oracle,"DATEADD(minute,@minutes,@datetime)",(@datetime + interval '@minutes' minute)
+sql server,oracle,"DATEADD(hour,@hours,@datetime)",(@datetime + interval '@hours' hour)
+sql server,oracle,"DATEADD(d,@days,@date)",(@date + interval '@days' day)
+sql server,oracle,"DATEADD(dd,@days,@date)",(@date + interval '@days' day)
+sql server,oracle,"DATEADD(day,@days,@date)",(@date + interval '@days' day)
 sql server,oracle,"DATEADD(month,@months,@date)","ADD_MONTHS(@date, @months)"
 sql server,oracle,"DATEADD(mm,@months,@date)","ADD_MONTHS(@date, @months)"
 sql server,oracle,"DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"
 sql server,oracle,"DATEADD(year,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 sql server,oracle,"DATEADD(yyyy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 sql server,oracle,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
-sql server,oracle,"DATEDIFF(day,@start, @end)",(@end - @start)
-sql server,oracle,"DATEDIFF(dd,@start, @end)",(@end - @start)
-sql server,oracle,"DATEDIFF(d,@start, @end)",(@end - @start)
+sql server,oracle,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+sql server,oracle,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+sql server,oracle,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,oracle,GETDATE(),SYSDATE
 sql server,oracle,+ '@a',|| '@a'
 sql server,oracle,'@a' +,'@a' ||
@@ -24,7 +27,7 @@ sql server,oracle,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
 sql server,oracle,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
 sql server,oracle,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
 sql server,oracle,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
-sql server,oracle,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
+sql server,oracle,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
 sql server,oracle,CAST(@a AS VARCHAR(@b)),TO_CHAR(@a)
 sql server,oracle,CAST(@a AS VARCHAR),TO_CHAR(@a)
 sql server,oracle,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
@@ -77,16 +80,19 @@ sql server,oracle,<hash><hash>,##
 sql server,oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a WHERE ROWNUM <= @rows; 
 sql server,oracle,SELECT @a WHERE @b WHERE @c;,SELECT @a WHERE @b AND @c;
 sql server,postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
-sql server,postgresql,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
-sql server,postgresql,"DATEADD(d,@days,@date)",(@date + @days)
-sql server,postgresql,"DATEADD(dd,@days,@date)",(@date + @days)
-sql server,postgresql,"DATEADD(day,@days,@date)",(@date + @days)
-sql server,postgresql,"DATEADD(m,@months,@date)",CAST((@date + @months*INTERVAL'1 month') AS DATE)
-sql server,postgresql,"DATEADD(mm,@months,@date)",CAST((@date + @months*INTERVAL'1 month') AS DATE)
-sql server,postgresql,"DATEADD(month,@months,@date)",CAST((@date + @months*INTERVAL'1 month') AS DATE)
-sql server,postgresql,"DATEADD(yy,@years,@date)",CAST((@date + @years*INTERVAL'1 year') AS DATE)
-sql server,postgresql,"DATEADD(yyyy,@years,@date)",CAST((@date + @years*INTERVAL'1 year') AS DATE)
-sql server,postgresql,"DATEADD(year,@years,@date)",CAST((@date + @years*INTERVAL'1 year') AS DATE)
+sql server,postgresql,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
+sql server,postgresql,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
+sql server,postgresql,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
+sql server,postgresql,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
+sql server,postgresql,"DATEADD(d,@days,@date)",(@date + @days*INTERVAL'1 day')
+sql server,postgresql,"DATEADD(dd,@days,@date)",(@date + @days*INTERVAL'1 day')
+sql server,postgresql,"DATEADD(day,@days,@date)",(@date + @days*INTERVAL'1 day')
+sql server,postgresql,"DATEADD(m,@months,@date)",(@date + @months*INTERVAL'1 month')
+sql server,postgresql,"DATEADD(mm,@months,@date)",(@date + @months*INTERVAL'1 month')
+sql server,postgresql,"DATEADD(month,@months,@date)",(@date + @months*INTERVAL'1 month')
+sql server,postgresql,"DATEADD(yy,@years,@date)",(@date + @years*INTERVAL'1 year')
+sql server,postgresql,"DATEADD(yyyy,@years,@date)",(@date + @years*INTERVAL'1 year')
+sql server,postgresql,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
 sql server,postgresql,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,postgresql,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,postgresql,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
@@ -135,16 +141,22 @@ sql server,postgresql,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 sql server,postgresql,#,
 sql server,postgresql,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 sql server,redshift,"ROUND(@a,@b)","ROUND(CAST(@a AS FLOAT),@b)"
-sql server,redshift,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
-sql server,redshift,"DATEADD(d,@days,@date)",(@date + @days)
-sql server,redshift,"DATEADD(dd,@days,@date)",(@date + @days)
-sql server,redshift,"DATEADD(day,@days,@date)",(@date + @days)
-sql server,redshift,"DATEADD(m,@months,@date)","CAST(ADD_MONTHS(@date,@months) AS DATE)"
-sql server,redshift,"DATEADD(mm,@months,@date)","CAST(ADD_MONTHS(@date,@months) AS DATE)"
-sql server,redshift,"DATEADD(month,@months,@date)","CAST(ADD_MONTHS(@date,@months) AS DATE)"
-sql server,redshift,"DATEDIFF(d,@start, @end)",(@end - @start)
-sql server,redshift,"DATEDIFF(dd,@start, @end)",(@end - @start)
-sql server,redshift,"DATEDIFF(day,@start, @end)",(@end - @start)
+sql server,redshift,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
+sql server,redshift,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
+sql server,redshift,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
+sql server,redshift,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
+sql server,redshift,"DATEADD(d,@days,@date)",(@date + @days*INTERVAL'1 day')
+sql server,redshift,"DATEADD(dd,@days,@date)",(@date + @days*INTERVAL'1 day')
+sql server,redshift,"DATEADD(day,@days,@date)",(@date + @days*INTERVAL'1 day')
+sql server,redshift,"DATEADD(m,@months,@date)",(@date + @months*INTERVAL'1 month')
+sql server,redshift,"DATEADD(mm,@months,@date)",(@date + @months*INTERVAL'1 month')
+sql server,redshift,"DATEADD(month,@months,@date)",(@date + @months*INTERVAL'1 month')
+sql server,redshift,"DATEADD(yy,@years,@date)",(@date + @years*INTERVAL'1 year')
+sql server,redshift,"DATEADD(yyyy,@years,@date)",(@date + @years*INTERVAL'1 year')
+sql server,redshift,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
+sql server,redshift,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+sql server,redshift,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+sql server,redshift,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,redshift,GETDATE(),CURRENT_DATE
 sql server,redshift,+ '@a',|| '@a'
 sql server,redshift,'@a' +,'@a' ||

@@ -4,7 +4,7 @@ test_that("translateSQL sql server -> Oracle DATEDIFF", {
   sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
-  expect_equal(sql, "SELECT   (drug_era_end_date - drug_era_start_date)  FROM  drug_era ;")
+  expect_equal(sql, "SELECT   (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE))  FROM  drug_era ;")
 })
 
 
@@ -12,7 +12,7 @@ test_that("translateSQL sql server -> Oracle DATEADD", {
   sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
-  expect_equal(sql, "SELECT   (drug_era_end_date + 30)  FROM  drug_era ;")
+  expect_equal(sql, "SELECT   (drug_era_end_date + interval '30' day)  FROM  drug_era ;")
 })
 
 test_that("translateSQL sql server -> Oracle USE", {
@@ -33,7 +33,14 @@ test_that("translateSQL sql server -> Oracle CAST(AS DATE)", {
   sql <- translateSql("CAST('20000101' AS DATE);",
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
-  expect_equal(sql, "TO_DATE('20000101' , 'yyyymmdd');")
+  expect_equal(sql, "CAST('20000101' AS DATE);")
+})
+
+test_that("translateSQL sql server -> Oracle CONVERT(AS DATE)", {
+  sql <- translateSql("CONVERT(DATE, '20000101');",
+                      sourceDialect = "sql server",
+                      targetDialect = "oracle")$sql
+  expect_equal(sql, "TO_DATE( '20000101', 'yyyymmdd');")
 })
 
 test_that("translateSQL sql server -> Oracle concatenate string operator", {
@@ -41,7 +48,7 @@ test_that("translateSQL sql server -> Oracle concatenate string operator", {
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
   expect_equal(sql,
-               "SELECT  distinct TO_DATE(TO_CHAR(EXTRACT(YEAR FROM observation_period_start_date) ) || '01' || '01' , 'yyyymmdd') as obs_year FROM DUAL;")
+               "SELECT  distinct cast(TO_CHAR(EXTRACT(YEAR FROM observation_period_start_date) ) || '01' || '01' as date) as obs_year FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle RIGHT functions", {
@@ -56,7 +63,7 @@ test_that("translateSQL sql server -> Oracle complex query", {
                       sourceDialect = "sql server",
                       targetDialect = "oracle")$sql
   expect_equal(sql,
-               "SELECT  TO_DATE(TO_CHAR(EXTRACT(YEAR FROM x)  ) || SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' , 'yyyymmdd') FROM DUAL;")
+               "SELECT  CAST(TO_CHAR(EXTRACT(YEAR FROM x)  ) || SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' AS DATE) FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle '+' in quote", {
@@ -93,7 +100,7 @@ test_that("translateSQL sql server -> PostgreSQL add month", {
   sql <- translateSql("DATEADD(mm,1,date)",
                       sourceDialect = "sql server",
                       targetDialect = "postgresql")$sql
-  expect_equal(sql, "CAST((date + 1*INTERVAL'1 month') AS DATE)")
+  expect_equal(sql, "(date + 1*INTERVAL'1 month')")
 })
 
 test_that("translateSQL sql server -> Oracle multiple inserts in one statement", {
