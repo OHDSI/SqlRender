@@ -591,3 +591,10 @@ test_that("translateSQL sql server -> redshift TOP", {
                       targetDialect = "netezza")$sql
   expect_equal(sql, "SELECT  * FROM my_table WHERE a = b LIMIT 10;")
 })
+
+test_that("translateSQL sql server -> postgres date to varchar", {
+  sql <- translateSql("SELECT CONVERT(VARCHAR,start_date,112) FROM table;",
+                      sourceDialect = "sql server",
+                      targetDialect = "postgresql")$sql
+  expect_equal(sql, "SELECT TO_CHAR(start_date, 'YYYYMMDD') FROM table;")
+})

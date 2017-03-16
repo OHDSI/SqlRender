@@ -20,6 +20,7 @@ sql server,oracle,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 sql server,oracle,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,oracle,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,oracle,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+sql server,oracle,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
 sql server,oracle,GETDATE(),SYSDATE
 sql server,oracle,+ '@a',|| '@a'
 sql server,oracle,'@a' +,'@a' ||
@@ -96,6 +97,7 @@ sql server,postgresql,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 ye
 sql server,postgresql,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,postgresql,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,postgresql,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+sql server,postgresql,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
 sql server,postgresql,GETDATE(),CURRENT_DATE
 sql server,postgresql,+ '@a',|| '@a'
 sql server,postgresql,'@a' +,'@a' ||
@@ -157,6 +159,7 @@ sql server,redshift,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year
 sql server,redshift,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,redshift,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 sql server,redshift,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+sql server,redshift,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
 sql server,redshift,GETDATE(),CURRENT_DATE
 sql server,redshift,+ '@a',|| '@a'
 sql server,redshift,'@a' +,'@a' ||
