@@ -4,19 +4,19 @@
 \alias{translateSql}
 \title{translateSql}
 \usage{
-translateSql(sql = "", sourceDialect = "sql server",
-  targetDialect = "oracle", oracleTempSchema = NULL)
+translateSql(sql = "", targetDialect, oracleTempSchema = NULL,
+  sourceDialect)
 }
 \arguments{
 \item{sql}{The SQL to be translated}
 
-\item{sourceDialect}{The source dialect. Currently, only "sql server" for Microsoft SQL Server
-is supported}
-
-\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala", and
+\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", and
 "redshift" are supported}
 
-\item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle.}
+\item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle or Impala.}
+
+\item{sourceDialect}{Deprecated: The source dialect. Currently, only "sql server" for Microsoft SQL Server
+is supported}
 }
 \value{
 A list containing the following elements: \describe{ \item{originalSql}{The original parameterized
@@ -30,8 +30,7 @@ This function takes SQL in one dialect and translates it into another. It uses s
 replacement, so its functionality is limited.
 }
 \examples{
-\dontrun{
-translateSql("USE my_schema", "sql server", "oracle")
-}
+translateSql("USE my_schema;", targetDialect = "oracle")
+
 }
 

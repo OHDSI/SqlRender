@@ -20,10 +20,11 @@ import java.util.regex.Pattern;
 
 public class SqlTranslate {
 	public static int							SESSION_ID_LENGTH					= 8;
-	private static Map<String, List<String[]>>	sourceTargetToReplacementPatterns	= null;
+	private static Map<String, List<String[]>>	targetToReplacementPatterns	= null;
 	private static ReentrantLock				lock								= new ReentrantLock();
 	private static Random						random								= new Random();
 	private static String						globalSessionId						= null;
+	private static String						SOURCE_DIALECT						= "sql server";
 
 	private static class Block extends StringUtils.Token {
 		public boolean	isVariable;
@@ -208,8 +209,22 @@ public class SqlTranslate {
 	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
 	 * @return The translated SQL
 	 */
+	@Deprecated
 	public static String translateSql(String sql, String sourceDialect, String targetDialect) {
 		return translateSql(sql, sourceDialect, targetDialect, null, null);
+	}
+
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @return The translated SQL
+	 */
+	public static String translateSql(String sql, String targetDialect) {
+		return translateSql(sql, targetDialect, null, null);
 	}
 
 	/**
@@ -230,8 +245,9 @@ public class SqlTranslate {
 	 *            name is prefixed to the temp table name).
 	 * @return The translated SQL
 	 */
+	@Deprecated
 	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId, String oracleTempSchema) {
-		return translateSql(sql, sourceDialect, targetDialect, sessionId, oracleTempSchema, null);
+		return translateSql(sql, targetDialect, sessionId, oracleTempSchema);
 	}
 
 	/**
@@ -239,8 +255,28 @@ public class SqlTranslate {
 	 * 
 	 * @param sql
 	 *            The SQL to be translated
-	 * @param sourceDialect
+	 * @param SOURCE_DIALECT
 	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @param sessionId
+	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
+	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
+	 *            calls to translateSql.
+	 * @param oracleTempSchema
+	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
+	 *            name is prefixed to the temp table name).
+	 * @return The translated SQL
+	 */
+	public static String translateSql(String sql, String targetDialect, String sessionId, String oracleTempSchema) {
+		return translateSql(sql, sessionId, oracleTempSchema, null);
+	}
+
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
 	 * @param targetDialect
 	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
 	 * @param sessionId
@@ -254,8 +290,7 @@ public class SqlTranslate {
 	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
 	 * @return The translated SQL
 	 */
-	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId, String oracleTempSchema,
-			String pathToReplacementPatterns) {
+	public static String translateSqlWithPath(String sql, String targetDialect, String sessionId, String oracleTempSchema, String pathToReplacementPatterns) {
 		ensurePatternsAreLoaded(pathToReplacementPatterns);
 		if (sessionId == null) {
 			if (globalSessionId == null)
@@ -269,17 +304,17 @@ public class SqlTranslate {
 		else
 			oracleTempPrefix = oracleTempSchema + ".";
 
-		List<String[]> replacementPatterns = sourceTargetToReplacementPatterns.get(sourceDialect + "\t" + targetDialect);
+		List<String[]> replacementPatterns = targetToReplacementPatterns.get(targetDialect);
 		if (replacementPatterns == null) {
-			if (sourceDialect.equals(targetDialect))
+			if (SOURCE_DIALECT.equals(targetDialect))
 				return sql;
 			else {
 				Set<String> allowedDialects = new HashSet<String>();
-				allowedDialects.add(sourceDialect);
-				for (String sourceTarget : sourceTargetToReplacementPatterns.keySet())
-					if (sourceTarget.split("\t")[0].equals(sourceDialect))
+				allowedDialects.add(SOURCE_DIALECT);
+				for (String sourceTarget : targetToReplacementPatterns.keySet())
+					if (sourceTarget.split("\t")[0].equals(SOURCE_DIALECT))
 						allowedDialects.add(sourceTarget.split("\t")[1]);
-				throw new RuntimeException("Don't know how to translate from " + sourceDialect + " to " + targetDialect + ". Valid target dialects are "
+				throw new RuntimeException("Don't know how to translate from " + SOURCE_DIALECT + " to " + targetDialect + ". Valid target dialects are "
 						+ StringUtils.join(allowedDialects, ", "));
 			}
 		} else
@@ -326,20 +361,19 @@ public class SqlTranslate {
 	}
 
 	private static void ensurePatternsAreLoaded(String pathToReplacementPatterns) {
-		if (sourceTargetToReplacementPatterns != null)
+		if (targetToReplacementPatterns != null)
 			return;
 		else {
 			lock.lock();
-			if (sourceTargetToReplacementPatterns == null) { // Could have been loaded before acquiring the lock
+			if (targetToReplacementPatterns == null) { // Could have been loaded before acquiring the lock
 				try {
 					InputStream inputStream;
 					if (pathToReplacementPatterns == null) // Use CSV file in JAR
-						// inputStream = SqlTranslate.class.getResourceAsStream("replacementPatterns.csv");
 						inputStream = SqlTranslate.class.getResourceAsStream("/inst/csv/replacementPatterns.csv");
 					else
 						inputStream = new FileInputStream(pathToReplacementPatterns);
 					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-					sourceTargetToReplacementPatterns = new HashMap<String, List<String[]>>();
+					targetToReplacementPatterns = new HashMap<String, List<String[]>>();
 					String line;
 					boolean first = true;
 					while ((line = bufferedReader.readLine()) != null) {
@@ -348,13 +382,13 @@ public class SqlTranslate {
 							continue;
 						}
 						List<String> row = line2columns(line);
-						String sourceTarget = row.get(0) + "\t" + row.get(1);
-						List<String[]> replacementPatterns = sourceTargetToReplacementPatterns.get(sourceTarget);
+						String target = row.get(0);
+						List<String[]> replacementPatterns = targetToReplacementPatterns.get(target);
 						if (replacementPatterns == null) {
 							replacementPatterns = new ArrayList<String[]>();
-							sourceTargetToReplacementPatterns.put(sourceTarget, replacementPatterns);
+							targetToReplacementPatterns.put(target, replacementPatterns);
 						}
-						replacementPatterns.add(new String[] { row.get(2).replaceAll("@", "@@"), row.get(3).replaceAll("@", "@@") });
+						replacementPatterns.add(new String[] { row.get(1).replaceAll("@", "@@"), row.get(2).replaceAll("@", "@@") });
 					}
 				} catch (UnsupportedEncodingException e) {
 					System.err.println("Computer does not support UTF-8 encoding");

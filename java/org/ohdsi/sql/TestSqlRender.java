@@ -9,10 +9,10 @@ public class TestSqlRender {
 		String path = "inst/csv/replacementPatterns.csv";
 		String sourceSql = "SELECT DATEADD(DAY, observation_period_start_date, 1) FROM observation_period;";
 		String sql;
-		sql = SqlTranslate.translateSql(sourceSql, "sql server", "postgresql", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sourceSql, "postgresql", null, null, path);
 		System.out.println(sql);		
 		
-		sql = SqlTranslate.translateSql(sourceSql, "sql server", "oracle", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sourceSql, "oracle", null, null, path);
 		System.out.println(sql);
 
 	}

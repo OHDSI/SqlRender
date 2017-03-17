@@ -80,27 +80,28 @@ renderSql <- function(sql = "", ...) {
 #' replacement, so its functionality is limited.
 #'
 #' @param sql                The SQL to be translated
-#' @param sourceDialect      The source dialect. Currently, only "sql server" for Microsoft SQL Server
+#' @param sourceDialect      Deprecated: The source dialect. Currently, only "sql server" for Microsoft SQL Server
 #'                           is supported
-#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", and
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", and
 #'                           "redshift" are supported
-#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle.
+#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
 #' @return
 #' A list containing the following elements: \describe{ \item{originalSql}{The original parameterized
 #' SQL code} \item{sql}{The translated SQL} }
 #' @examples
-#' \dontrun{
-#' translateSql("USE my_schema", "sql server", "oracle")
-#' }
+#' translateSql("USE my_schema;", targetDialect = "oracle")
+#' 
 #' @export
 translateSql <- function(sql = "",
-                         sourceDialect = "sql server",
-                         targetDialect = "oracle",
-                         oracleTempSchema = NULL) {
+                         targetDialect,
+                         oracleTempSchema = NULL,
+                         sourceDialect) {
+  if (!missing(sourceDialect))
+    warning("sourceDialect argument is deprecated in the translateSql function in SqlRender. Please update your code")
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
   if (missing(oracleTempSchema) || is.null(oracleTempSchema))
     oracleTempSchema <- rJava::.jnull()
-  translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSql(sql, sourceDialect, targetDialect, rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
+  translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(sql, targetDialect, rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
   list(originalSql = sql, sql = translatedSql)
 }
 
