@@ -224,7 +224,7 @@ public class SqlRender {
 				return false;
 			}
 		}
-		return true;
+		throw new RuntimeException("Error parsing boolean condition: \"" + str + "\"" );
 	}
 
 	private static String replace(String str, List<Span> spans, int toReplaceStart, int toReplaceEnd, int replaceWithStart, int replaceWithEnd) {
