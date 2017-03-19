@@ -284,7 +284,7 @@ public class SqlTranslate {
 	 * @return The translated SQL
 	 */
 	public static String translateSql(String sql, String targetDialect, String sessionId, String oracleTempSchema) {
-		return translateSql(sql, sessionId, oracleTempSchema, null);
+		return translateSqlWithPath(sql, targetDialect, sessionId, oracleTempSchema, null);
 	}
 
 	/**

@@ -84,13 +84,16 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.2</version>
-				<inherited>true</inherited>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+       		 	<configuration>
+        			<archive>
+            			<manifest>
+              				<addClasspath>true</addClasspath>
+              				<mainClass>org.ohdsi.sql.MainClass</mainClass>
+            			</manifest>
+          			</archive>
+        		</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
