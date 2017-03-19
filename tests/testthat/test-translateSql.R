@@ -581,3 +581,11 @@ test_that("translateSql: warning on temp table name that is too long", {
 test_that("translateSql: warning on table name that is too long", {
   expect_warning(translateSql("DROP TABLE abcdefghijklmnopqrstuvwxyz123456789", "pdw")$sql)
 })
+
+
+test_that("translateSQL sql server -> oracle concat", {
+  sql <- translateSql("SELECT CONCAT(a,\" , \",c,d,e) FROM x;",
+                      targetDialect = "oracle")$sql
+  expect_equal(sql, "SELECT   CONCAT(a, CONCAT(\" , \", CONCAT( c, CONCAT( d, e))))  FROM  x ;")
+})
+
