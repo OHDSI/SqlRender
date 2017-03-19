@@ -90,8 +90,8 @@ public class SqlTranslate {
 			}
 			blocks.add(block);
 		}
-		if (blocks.get(0).isVariable || (blocks.get(blocks.size() - 1).isVariable && blocks.get(blocks.size() - 1).regEx == null)) {
-			throw new RuntimeException("Error in search pattern: pattern cannot start or end with a variable: " + pattern);
+		if ((blocks.get(0).isVariable && blocks.get(0).regEx == null) || (blocks.get(blocks.size() - 1).isVariable && blocks.get(blocks.size() - 1).regEx == null)) {
+			throw new RuntimeException("Error in search pattern: pattern cannot start or end with a non-regex variable: " + pattern);
 		}
 		return blocks;
 	}
@@ -111,6 +111,10 @@ public class SqlTranslate {
 					Pattern pattern = Pattern.compile(parsedPattern.get(matchCount).regEx);
 					Matcher matcher = pattern.matcher(sql.substring(token.start));
 					if (matcher.find() && matcher.start() == 0) {
+						if (matchCount == 0) {
+							matchedPattern.start = token.start;
+							matchedPattern.startToken = cursor;
+						}
 						matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(token.start, token.start + matcher.end()));
 						matchCount++;
 						if (matchCount == parsedPattern.size()) {
@@ -124,7 +128,6 @@ public class SqlTranslate {
 							cursor++;
 					} else {
 						matchCount = 0;
-						cursor = matchedPattern.startToken;
 					}
 				} else if (nestStack.size() == 0 && token.text.equals(parsedPattern.get(matchCount + 1).text)) {
 					matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(varStart, token.start));
