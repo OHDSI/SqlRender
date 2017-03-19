@@ -547,3 +547,29 @@ test_that("translateSQL sql server -> postgres date to varchar", {
                       targetDialect = "postgresql")$sql
   expect_equal(sql, "SELECT TO_CHAR(start_date, 'YYYYMMDD') FROM table;")
 })
+
+
+test_that("translateSQL sql server -> pdw hint distribute_on_key", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
+                      targetDialect = "pdw")$sql
+  expect_equal(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE  #my_table   WITH (LOCATION = USER_DB, DISTRIBUTION =  HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
+})
+
+test_that("translateSQL sql server -> pdw hint distribute_on_key", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
+                      targetDialect = "pdw")$sql
+  expect_equal(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE   (row_id INT)\nWITH (DISTRIBUTION = HASH(row_id));")
+})
+
+
+test_that("translateSQL sql server -> redshift hint distribute_on_key", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
+                      targetDialect = "redshift")$sql
+  expect_equal(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TEMP TABLE my_table  DISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
+})
+
+test_that("translateSQL sql server -> redshift hint distribute_on_key", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
+                      targetDialect = "redshift")$sql
+  expect_equal(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE  (row_id INT) DISTKEY(row_id);")
+})

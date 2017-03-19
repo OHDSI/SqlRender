@@ -14,6 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 package org.ohdsi.sql;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ public class StringUtils {
 		public int		start;
 		public int		end;
 		public String	text;
-		public boolean inQuotes = false;
+		public boolean	inQuotes	= false;
 
 		public Token(Token other) {
 			start = other.start;
@@ -90,7 +91,9 @@ public class StringUtils {
 					tokens.add(token);
 				}
 				if (ch == '-' && cursor < sql.length() && sql.charAt(cursor + 1) == '-') {
-					commentType1 = true;
+					// Exception: comments that are hints are still considered tokens:
+					if (sql.length() - cursor < 6 || !sql.substring(cursor + 2, cursor + 6).equals("hint"))
+						commentType1 = true;
 				} else if (ch == '/' && cursor < sql.length() && sql.charAt(cursor + 1) == '*') {
 					commentType2 = true;
 				} else if (!Character.isWhitespace(ch)) {
@@ -156,7 +159,7 @@ public class StringUtils {
 		result.add(string.substring(startpos, i));
 		return result;
 	}
-	
+
 	public static String join(Collection<?> s, String delimiter) {
 		StringBuilder result = new StringBuilder();
 		Iterator<?> iter = s.iterator();

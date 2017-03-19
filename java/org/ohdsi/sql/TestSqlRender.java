@@ -7,9 +7,9 @@ public class TestSqlRender {
 //		sql = SqlRender.renderSql(sql, new String[]{"name", "a"}, new String[]{"NA\\joe", "true"});
 //		System.out.println(sql);	
 		String path = "inst/csv/replacementPatterns.csv";
-		String sourceSql = "SELECT DATEADD(DAY, observation_period_start_date, 1) FROM observation_period;";
+		String sourceSql = "--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;";
 		String sql;
-		sql = SqlTranslate.translateSqlWithPath(sourceSql, "oracle", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sourceSql, "pdw", null, null, path);
 		System.out.println(sql);		
 //		
 //		sql = SqlTranslate.translateSqlWithPath(sourceSql, "oracle", null, null, path);

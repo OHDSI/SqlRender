@@ -297,6 +297,27 @@ This will be correctly translated to all dialects, and the selection will be the
 GRANT EXECUTE ON DBMS_CRYPTO TO <user>;
 ```
 
+## Optimization for massively parallel processing
+Both PDW and RedShift are massively parallel processing platforms, meaning they consist of many nodes that work together. In such an environment, significant increases in performance can be achieved by finetuning the SQL for these platforms. Probably most importantly, developers can specify the way data is distributed over the nodes. Ideally, data in a node only needs to be combined with data in the same node. For example, if I have two tables with the field `person_id`, I would like all records with the same person ID to be on the same node, so a join on `person_id` can be performed locally without exchanging data between nodes. 
+
+SQL Server SQL, our source dialect, does not allow for these optimizations, so we've introduced the notion of hints. In the following example, a hint is provided on which field should be used for the distribution of data across nodes:
+
+```sql
+--HINT DISTRIBUTE_ON_KEY(person_id)
+SELECT * INTO one_table FROM other_table;
+```
+
+which will translate into the following on PDW:
+
+```sql
+--HINT DISTRIBUTE_ON_KEY(person_id)
+IF XACT_STATE() = 1 COMMIT; 
+CREATE TABLE one_table WITH (DISTRIBUTION = HASH(person_id)) AS
+SELECT * FROM other_table;
+```
+
+The hint should be formatted as shown above, and directly precede the statement where the table is created. 
+
 # Debugging parameterized SQL
 Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL. Two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
 
