@@ -574,7 +574,10 @@ test_that("translateSQL sql server -> redshift hint distribute_on_key", {
   expect_equal(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE  (row_id INT) DISTKEY(row_id);")
 })
 
-test_that("If-then-else: warning on temp table name that is too long", {
-  # Note wrong parameter name:
+test_that("translateSql: warning on temp table name that is too long", {
   expect_warning(translateSql("SELECT * FROM #abcdefghijklmnopqrstuvwxyz", "pdw")$sql)
+})
+
+test_that("translateSql: warning on table name that is too long", {
+  expect_warning(translateSql("DROP TABLE abcdefghijklmnopqrstuvwxyz123456789", "pdw")$sql)
 })

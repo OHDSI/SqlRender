@@ -19,7 +19,7 @@ public class TestSqlRender {
 //		for (String warning : SqlRender.checkSql(sql, new String[]{"my_table"}, new String[]{"asdfs"}))
 //			System.out.println(warning);
 
-		String sql = "SELECT * FROM #abcdefghijklmnopqrstuvwxyz";
+		String sql = "CREATE TABLE abcdefghijklmnopqrstuvwxyz1234567890;";
 		for (String warning : SqlTranslate.check(sql, ""))
 			System.out.println(warning);
 	}
