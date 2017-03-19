@@ -64,6 +64,10 @@ renderSql <- function(sql = "", ...) {
   parameters <- lapply(list(...), function(x) {
     paste(x, collapse = ",")
   })
+  messages <- rJava::J("org.ohdsi.sql.SqlRender")$check(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
+  for (message in messages) {
+    warning(message)
+  }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlRender")$renderSql(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
   list(originalSql = sql, sql = translatedSql, parameters = parameters)
 }
@@ -101,6 +105,10 @@ translateSql <- function(sql = "",
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
   if (missing(oracleTempSchema) || is.null(oracleTempSchema))
     oracleTempSchema <- rJava::.jnull()
+  messages <- rJava::J("org.ohdsi.sql.SqlTranslate")$check(sql, targetDialect)
+  for (message in messages) {
+    warning(message)
+  }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(sql, targetDialect, rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
   list(originalSql = sql, sql = translatedSql)
 }

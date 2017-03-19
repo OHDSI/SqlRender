@@ -34,12 +34,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SqlTranslate {
-	public static int							SESSION_ID_LENGTH					= 8;
-	private static Map<String, List<String[]>>	targetToReplacementPatterns	= null;
-	private static ReentrantLock				lock								= new ReentrantLock();
-	private static Random						random								= new Random();
-	private static String						globalSessionId						= null;
-	private static String						SOURCE_DIALECT						= "sql server";
+	public static int							SESSION_ID_LENGTH				= 8;
+	public static int							MAX_ORACLE_TABLE_NAME_LENGTH	= 30;
+	private static Map<String, List<String[]>>	targetToReplacementPatterns		= null;
+	private static ReentrantLock				lock							= new ReentrantLock();
+	private static Random						random							= new Random();
+	private static String						globalSessionId					= null;
+	private static String						SOURCE_DIALECT					= "sql server";
 
 	private static class Block extends StringUtils.Token {
 		public boolean	isVariable;
@@ -90,7 +91,8 @@ public class SqlTranslate {
 			}
 			blocks.add(block);
 		}
-		if ((blocks.get(0).isVariable && blocks.get(0).regEx == null) || (blocks.get(blocks.size() - 1).isVariable && blocks.get(blocks.size() - 1).regEx == null)) {
+		if ((blocks.get(0).isVariable && blocks.get(0).regEx == null)
+				|| (blocks.get(blocks.size() - 1).isVariable && blocks.get(blocks.size() - 1).regEx == null)) {
 			throw new RuntimeException("Error in search pattern: pattern cannot start or end with a non-regex variable: " + pattern);
 		}
 		return blocks;
@@ -417,5 +419,19 @@ public class SqlTranslate {
 			}
 			lock.unlock();
 		}
+	}
+
+	public static String[] check(String sql, String targetDialect) {
+		Pattern pattern = Pattern.compile("#[0-9a-zA-Z_]+");
+		Matcher matcher = pattern.matcher(sql);
+		Set<String> longNames = new HashSet<String>();
+		while (matcher.find())
+			if (matcher.group().length() > MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH - 1)
+				longNames.add(matcher.group());
+		List<String> warnings = new ArrayList<String>();
+		for (String longName : longNames)
+			warnings.add("Temp table name '" + longName + "' is too long. Temp table names should be shorter than "
+					+ (MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH) + " characters to prevent Oracle from crashing.");
+		return warnings.toArray(new String[warnings.size()]);
 	}
 }

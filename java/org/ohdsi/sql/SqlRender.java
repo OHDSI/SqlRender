@@ -224,7 +224,7 @@ public class SqlRender {
 				return false;
 			}
 		}
-		throw new RuntimeException("Error parsing boolean condition: \"" + str + "\"" );
+		throw new RuntimeException("Error parsing boolean condition: \"" + str + "\"");
 	}
 
 	private static String replace(String str, List<Span> spans, int toReplaceStart, int toReplaceEnd, int replaceWithStart, int replaceWithEnd) {
@@ -368,6 +368,15 @@ public class SqlRender {
 				parameterToValue.put(parameters[i], values[i]);
 			}
 		return renderSql(sql, parameterToValue);
+	}
+
+	public static String[] check(String sql, String[] parameters, String[] values) {
+		List<String> warnings = new ArrayList<String>();
+		if (parameters != null)
+			for (String parameter : parameters)
+				if (!sql.contains("@" + parameter))
+					warnings.add("Parameter '" + parameter + "' not found in SQL");
+		return warnings.toArray(new String[warnings.size()]);
 	}
 
 }
