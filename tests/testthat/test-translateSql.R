@@ -276,10 +276,10 @@ test_that("translateSQL sql server -> Oracle datefromparts", {
 })
 
 test_that("translateSQL sql server -> redshift datefromparts", {
- sql <- translateSql("SELECT DATEFROMPARTS(year,month,day) FROM table",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT TO_DATE(TO_CHAR(year,'0000')||'-'||TO_CHAR(month,'00')||'-'||TO_CHAR(day,'00'), ' YYYY- MM- DD') FROM table")
+  sql <- translateSql("SELECT DATEFROMPARTS(year,month,day) FROM table",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql,
+               "SELECT TO_DATE(TO_CHAR(year,'0000FM')||'-'||TO_CHAR(month,'00FM')||'-'||TO_CHAR(day,'00FM'), 'YYYY-MM-DD') FROM table")
 })
 
 
@@ -549,9 +549,9 @@ test_that("translateSQL sql server -> pdw hint distribute_on_key", {
 
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
- sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TEMP TABLE my_table DISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE #my_table  DISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
@@ -956,3 +956,325 @@ test_that("translateSQL sql server -> bigquery isnull", {
 
 # For debugging: force reload of patterns:
 # rJava::J("org.ohdsi.sql.SqlTranslate")$setReplacementPatterns("inst/csv/replacementPatterns.csv")
+
+test_that("translateSQL sql server -> RedShift DATE ADD DAYS dd", {
+  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(day, 30, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATE ADD MONTH mm", {
+  sql <- translateSql("SELECT DATEADD(mm,3,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(month, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATE ADD MONTH m", {
+  sql <- translateSql("SELECT DATEADD(m,3,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(month, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATE ADD YEAR yyyy", {
+  sql <- translateSql("SELECT DATEADD(yyyy,3,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(year, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATE ADD YEAR yy", {
+  sql <- translateSql("SELECT DATEADD(yy,3,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(year, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATE DIFF dd", {
+  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(day, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIMEFROMPARTS", {
+  sql <- translateSql("SELECT DATETIMEFROMPARTS(year,month,day,hour,minute,second,millisecond) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CAST(TO_CHAR(year,'0000FM')||'-'||TO_CHAR(month,'00FM')||'-'||TO_CHAR(day,'00FM')||' '||TO_CHAR(hour,'00FM')||':'||TO_CHAR(minute,'00FM')||':'||TO_CHAR(second,'00FM')||'.'||TO_CHAR(millisecond,'000FM') as TIMESTAMP) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift EOMONTH", {
+  sql <- translateSql("SELECT EOMONTH(date) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT LAST_DAY(date) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift VARIANCE", {
+  sql <- translateSql("SELECT VAR(a) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT VARIANCE(a) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift SQUARE", {
+  sql <- translateSql("SELECT SQUARE(a + b) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT ((a + b) * (a + b)) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift NEWID", {
+  sql <- translateSql("SELECT NEWID()", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT MD5(RANDOM()::TEXT || GETDATE()::TEXT)")
+})
+
+test_that("translateSQL sql server -> RedShift BOOL TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col BIT not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col BOOLEAN not null)")
+})
+
+test_that("translateSQL sql server -> RedShift MONEY TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col MONEY not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col DECIMAL(19, 4) not null)")
+})
+
+test_that("translateSQL sql server -> RedShift SMALLMONEY TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col SMALLMONEY not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col DECIMAL(10, 4) not null)")
+})
+
+test_that("translateSQL sql server -> RedShift TINYINT TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col TINYINT not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col SMALLINT not null)")
+})
+
+test_that("translateSQL sql server -> RedShift FLOAT TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col FLOAT(@s) not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col FLOAT not null)")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIME2 TYPE with precision specified", {
+  sql <- translateSql("CREATE TABLE table ( col DATETIME2(@p) not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col TIMESTAMP not null)")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIME2 TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col DATETIME2 not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col TIMESTAMP not null)")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIME TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col DATETIME not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col TIMESTAMP not null)")
+})
+
+test_that("translateSQL sql server -> RedShift SMALLDATETIME TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col SMALLDATETIME not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col TIMESTAMP not null)")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIMEOFFSET TYPE with precision specified", {
+  sql <- translateSql("CREATE TABLE table ( col DATETIMEOFFSET(@p) not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col TIMESTAMPTZ not null)")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIMEOFFSET TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col DATETIMEOFFSET not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col TIMESTAMPTZ not null)")
+})
+
+test_that("translateSQL sql server -> RedShift TEXT TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col TEXT not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col VARCHAR(max) not null)")
+})
+
+test_that("translateSQL sql server -> RedShift NTEXT TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col NTEXT not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col VARCHAR(max) not null)")
+})
+
+test_that("translateSQL sql server -> RedShift UNIQUEIDENTIFIER TYPE", {
+  sql <- translateSql("CREATE TABLE table ( col UNIQUEIDENTIFIER not null)", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE table ( col CHAR(36) not null)")
+})
+
+test_that("translateSQL sql server -> RedShift STDEV POP", {
+  sql <- translateSql("SELECT STDEVP(col) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT STDDEV_POP(col) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift VAR POP", {
+  sql <- translateSql("SELECT VARP(col) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT VAR_POP(col) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(dd, start, end) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(day, start, end) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATE PART yyyy", {
+  sql <- translateSql("SELECT DATEPART(yyyy, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(year, start) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATE PART yy", {
+  sql <- translateSql("SELECT DATEPART(yy, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(year, start) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATE PART mm", {
+  sql <- translateSql("SELECT DATEPART(mm, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(month, start) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATE PART m", {
+  sql <- translateSql("SELECT DATEPART(m, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(month, start) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATE PART dd", {
+  sql <- translateSql("SELECT DATEPART(dd, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(day, start) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATE PART other", {
+  sql <- translateSql("SELECT DATEPART(year, start), DATEPART(month, start), DATEPART(day, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(year, start), DATE_PART(month, start), DATE_PART(day, start) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIME2FROMPARTS", {
+  sql <- translateSql("SELECT DATETIME2FROMPARTS(year,month,day,hour,minute,seconds, 0, 0) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CAST(TO_CHAR(year,'0000FM')||'-'||TO_CHAR(month,'00FM')||'-'||TO_CHAR(day,'00FM')||' '||TO_CHAR(hour,'00FM')||':'||TO_CHAR(minute,'00FM')||':'||TO_CHAR(seconds,'00FM') as TIMESTAMP) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIME2FROMPARTS with fractions", {
+  sql <- translateSql("SELECT DATETIME2FROMPARTS(year,month,day,hour,minute,seconds,fractions,precision) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CAST(TO_CHAR(year,'0000FM')||'-'||TO_CHAR(month,'00FM')||'-'||TO_CHAR(day,'00FM')||' '||TO_CHAR(hour,'00FM')||':'||TO_CHAR(minute,'00FM')||':'||TO_CHAR(seconds,'00FM')||'.'||TO_CHAR(fractions,repeat('0', precision) || 'FM') as TIMESTAMP) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIMEOFFSETFROMPARTS", {
+  sql <- translateSql("SELECT DATETIMEOFFSETFROMPARTS(year,month,day,hour,minute,seconds, 0,h_offset,m_offset, 0) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CAST(TO_CHAR(year,'0000FM')||'-'||TO_CHAR(month,'00FM')||'-'||TO_CHAR(day,'00FM')||' '||TO_CHAR(hour,'00FM')||':'||TO_CHAR(minute,'00FM')||':'||TO_CHAR(seconds,'00FM')||case when h_offset >= 0 then '+' else '-' end ||TO_CHAR(ABS(h_offset),'00FM')||':'||TO_CHAR(ABS(m_offset),'00FM') as TIMESTAMPTZ) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift DATETIMEOFFSETFROMPARTS with fractions", {
+  sql <- translateSql("SELECT DATETIMEOFFSETFROMPARTS(year,month,day,hour,minute,seconds,fractions,h_offset,m_offset,precision) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CAST(TO_CHAR(year,'0000FM')||'-'||TO_CHAR(month,'00FM')||'-'||TO_CHAR(day,'00FM')||' '||TO_CHAR(hour,'00FM')||':'||TO_CHAR(minute,'00FM')||':'||TO_CHAR(seconds,'00FM')||'.'||TO_CHAR(fractions,repeat('0',precision) || 'FM')||case when h_offset >= 0 then '+' else '-' end ||TO_CHAR(ABS(h_offset),'00FM')||':'||TO_CHAR(ABS(m_offset),'00FM') as TIMESTAMPTZ) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift GETUTCDATE", {
+  sql <- translateSql("SELECT GETUTCDATE();", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CURRENT_TIMESTAMP;")
+})
+
+test_that("translateSQL sql server -> RedShift SMALLDATETIMEFROMPARTS", {
+  sql <- translateSql("SELECT SMALLDATETIMEFROMPARTS(year,month,day,hour,minute) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CAST(TO_CHAR(year,'0000FM')||'-'||TO_CHAR(month,'00FM')||'-'||TO_CHAR(day,'00FM')||' '||TO_CHAR(hour,'00FM')||':'||TO_CHAR(minute,'00FM') as TIMESTAMP) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift SYSUTCDATETIME", {
+  sql <- translateSql("SELECT SYSUTCDATETIME();", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CURRENT_TIMESTAMP;")
+})
+
+test_that("translateSQL sql server -> RedShift ATN2", {
+  sql <- translateSql("SELECT ATN2(a, b) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT ATAN2(a, b) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift TRUNCATION OF NUMBER", {
+  sql <- translateSql("SELECT ROUND(expression,length,trunc) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT case when trunc = 0 then ROUND(CAST(expression AS FLOAT),length) else TRUNC(CAST(expression AS FLOAT),length) end FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift CHARINDEX from position", {
+  sql <- translateSql("SELECT CHARINDEX('test',column, 3) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT case when CHARINDEX('test', SUBSTRING(column, 3)) > 0 then (CHARINDEX('test', SUBSTRING(column, 3)) + 3 - 1) else 0 end FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift QUOTENAME", {
+  sql <- translateSql("SELECT QUOTENAME(a) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT QUOTE_IDENT(a) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift SPACE", {
+  sql <- translateSql("SELECT SPACE(n) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT REPEAT(' ',n) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift STUFF", {
+  sql <- translateSql("SELECT STUFF(expression, start, length, replace) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT SUBSTRING(expression, 0, start)|| replace||SUBSTRING(expression, start + length) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift CONCAT", {
+  sql <- translateSql(
+    "SELECT CONCAT(p1,p2,p3,p4,p5,p6,p7) FROM table", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CONCAT(p1,CONCAT(p2,CONCAT(p3,CONCAT(p4,CONCAT(p5,CONCAT(p6,p7)))))) FROM table")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id", {
+  sql <- translateSql(
+    "WITH a AS b SELECT person_id, col1, col2 INTO #table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTA WITH CTE person_id", {
+  sql <- translateSql(
+    "WITH a AS b SELECT person_id, col1, col2 INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS TEMP person_id", {
+  sql <- translateSql(
+    "SELECT person_id, col1, col2 INTO #table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE #table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS person_id", {
+  sql <- translateSql(
+    "SELECT person_id, col1, col2 INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CREATE TABLE person_id", {
+  sql <- translateSql(
+    "CREATE TABLE [dbo].[drug_era] ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL);", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  [dbo].[drug_era]  ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL)\nDISTKEY(person_id);")
+})
+
+test_that("translateSQL sql server -> PDW CREATE TABLE person_id", {
+  sql <- translateSql(
+    "CREATE TABLE [dbo].[drug_era] ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL);", 
+    sourceDialect = "sql server", targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, 
+  "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   [dbo].[drug_era]  ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL)\nWITH (DISTRIBUTION = HASH(person_id));")
+})
+
+test_that("translateSQL sql server -> RedShift ISDATE", {
+  sql <- translateSql(
+    "SELECT * FROM table WHERE ISDATE(col) = 1", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "SELECT * FROM table WHERE REGEXP_INSTR(col, '^(\\\\d{4}[/\\-]?[01]\\\\d[/\\-]?[0123]\\\\d)([ T]([0-1][0-9]|[2][0-3]):([0-5][0-9])(:[0-5][0-9](.\\\\d+)?)?)?$') = 1")
+})
+
+test_that("translateSQL sql server -> RedShift ISNUMERIC", {
+  sql <- translateSql(
+    "SELECT * FROM table WHERE ISNUMERIC(col) = 1", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "SELECT * FROM table WHERE REGEXP_INSTR(col, '^[\\-\\+]?(\\\\d*\\\\.)?\\\\d+([Ee][\\-\\+]?\\\\d+)?$') = 1")
+})
+
+test_that("translateSQL sql server -> RedShift PATINDEX", {
+  sql <- translateSql(
+    "SELECT PATINDEX(pattern,expression) FROM table;",
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "SELECT REGEXP_INSTR(expression, case when LEFT(pattern,1)<>'%' and RIGHT(pattern,1)='%' then '^' else '' end||TRIM('%' FROM REPLACE(pattern,'_','.'))||case when LEFT(pattern,1)='%' and RIGHT(pattern,1)<>'%' then '$' else '' end) FROM table;")
+})
+
+test_that("translateSQL sql server -> RedShift CREATE TABLE IF NOT EXISTS with hashing", {
+  sql <- translateSql(
+    "IF OBJECT_ID('cdm.heracles_results', 'U') IS NULL CREATE TABLE cdm.heracles_results (cohort_definition_id int, analysis_id int, stratum_1 varchar(255), stratum_2 varchar(255), stratum_3 varchar(255), stratum_4 varchar(255), stratum_5 varchar(255), count_value bigint, last_update_time datetime) DISTKEY(analysis_id);",
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "CREATE TABLE IF NOT EXISTS  cdm.heracles_results  (cohort_definition_id int, analysis_id int, stratum_1 varchar(255), stratum_2 varchar(255), stratum_3 varchar(255), stratum_4 varchar(255), stratum_5 varchar(255), count_value bigint, last_update_time TIMESTAMP) DISTKEY(analysis_id);")
+})
