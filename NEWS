@@ -1,3 +1,22 @@
+SqlRender v1.3.0 (Release date: 2017-03-24)
+===========================================
+
+Changes: 
+
+1. Added ability to use regular expression in translation patterns. This allowed SELECT TOP n to be translated.
+2. Deprecated sourceDialect argument.
+3. Added translation for CONCAT function with >2 arguments to Oracle (which only allows 2 arguments)
+4. Added hints for translation optimation to massive parallel platforms like RedShift
+5. Throw warnings when translateSql is called with variable names that are not in the SQL
+6. Throw warnings when table names are too long for Oracle
+
+
+Bugfixes:
+
+1. Fixed translation for date functions so they will now work properly with datetime fields as well.
+2. Now throwing error when boolean logic cannot be parsed (instead of assuming result is TRUE)
+
+
 SqlRender v1.2.0 (Release date: 2017-01-12)
 ===========================================
 

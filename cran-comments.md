@@ -1,6 +1,6 @@
 Resubmission: fixed URL
 
-This update has one bugfix and adds support for Impala SQL
+This update has two bugfixes and adds some new functionality (see NEWS)
 
 ---
 
