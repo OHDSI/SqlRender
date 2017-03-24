@@ -256,9 +256,9 @@ test_that("translateSQL sql server -> Postgres create table if not exists", {
 })
 
 test_that("translateSQL sql server -> Redshift create table if not exists", {
- sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS cohort\n (cohort_definition_id INT);")
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE  IF NOT EXISTS  cohort\n  (cohort_definition_id INT)\nDISTSTYLE ALL;")
 })
 
 test_that("translateSQL sql server -> Oracle create table if not exists", {
@@ -551,7 +551,7 @@ test_that("translateSQL sql server -> pdw hint distribute_on_key", {
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
                       targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE #my_table  DISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE  #my_table  DISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
@@ -1204,7 +1204,7 @@ test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id", {
     "WITH a AS b SELECT person_id, col1, col2 INTO #table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+  "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTA WITH CTE person_id", {
@@ -1220,7 +1220,7 @@ test_that("translateSQL sql server -> RedShift CTAS TEMP person_id", {
     "SELECT person_id, col1, col2 INTO #table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE #table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+  "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id", {
@@ -1271,10 +1271,145 @@ test_that("translateSQL sql server -> RedShift PATINDEX", {
     "SELECT REGEXP_INSTR(expression, case when LEFT(pattern,1)<>'%' and RIGHT(pattern,1)='%' then '^' else '' end||TRIM('%' FROM REPLACE(pattern,'_','.'))||case when LEFT(pattern,1)='%' and RIGHT(pattern,1)<>'%' then '$' else '' end) FROM table;")
 })
 
-test_that("translateSQL sql server -> RedShift CREATE TABLE IF NOT EXISTS with hashing", {
+test_that("translateSQL sql server -> RedShift SELECT INTO temp table with CTE and default hashing (DISTSTYLE ALL)", {
+  sql <- translateSql(paste(
+    "WITH cte(a1) AS (SELECT a1 FROM table_a)",
+    "SELECT *",
+    "INTO #table",
+    "FROM cte;",
+    sep = " "),
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, paste(
+    "CREATE TABLE  #table  DISTSTYLE ALL",
+    "AS",
+    "WITH",
+    " cte(a1) ",
+    "AS",
+    " (SELECT a1 FROM table_a) ",
+    "SELECT",
+    " * ",
+    "FROM",
+    " cte;",
+    sep = "\n"))
+})
+
+test_that("translateSQL sql server -> RedShift SELECT INTO permanent table with CTE and default hashing (DISTSTYLE ALL)", {
+  sql <- translateSql(paste(
+    "WITH cte(a1) AS (SELECT a1 FROM table_a)",
+    "SELECT *",
+    "INTO table",
+    "FROM cte;",
+    sep = " "),
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, paste(
+    "CREATE TABLE  table  DISTSTYLE ALL",
+    "AS",
+    "WITH",
+    " cte(a1) ",
+    "AS",
+    " (SELECT a1 FROM table_a) ",
+    "SELECT",
+    " * ",
+    "FROM",
+    " cte;",
+    sep = "\n"))
+})
+
+test_that("translateSQL sql server -> RedShift SELECT INTO temp table with default hashing (DISTSTYLE ALL)", {
+  sql <- translateSql(paste(
+    "SELECT *",
+    "INTO #table",
+    "FROM another_table;",
+    sep = " "),
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, paste(
+    "CREATE TABLE  #table  DISTSTYLE ALL",
+    "AS",
+    "SELECT",
+    " * ",
+    "FROM",
+    " another_table;",
+    sep = "\n"))
+})
+
+test_that("translateSQL sql server -> RedShift SELECT INTO permanent table with default hashing (DISTSTYLE ALL)", {
+  sql <- translateSql(paste(
+    "SELECT *",
+    "INTO table",
+    "FROM another_table;",
+    sep = " "),
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, paste(
+    "CREATE TABLE  table  DISTSTYLE ALL",
+    "AS",
+    "SELECT",
+    " * ",
+    "FROM",
+    " another_table;",
+    sep = "\n"))
+})
+
+test_that("translateSQL sql server -> RedShift SELECT value INTO temp table with default hashing (DISTSTYLE ALL)", {
   sql <- translateSql(
-    "IF OBJECT_ID('cdm.heracles_results', 'U') IS NULL CREATE TABLE cdm.heracles_results (cohort_definition_id int, analysis_id int, stratum_1 varchar(255), stratum_2 varchar(255), stratum_3 varchar(255), stratum_4 varchar(255), stratum_5 varchar(255), count_value bigint, last_update_time datetime) DISTKEY(analysis_id);",
+    "SELECT a INTO #table;",
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "CREATE TABLE IF NOT EXISTS  cdm.heracles_results  (cohort_definition_id int, analysis_id int, stratum_1 varchar(255), stratum_2 varchar(255), stratum_3 varchar(255), stratum_4 varchar(255), stratum_5 varchar(255), count_value bigint, last_update_time TIMESTAMP) DISTKEY(analysis_id);")
+    "CREATE TABLE  #table DISTSTYLE ALL\nAS\nSELECT\n a ;")
+})
+
+test_that("translateSQL sql server -> RedShift SELECT value INTO permanent table with default hashing (DISTSTYLE ALL)", {
+  sql <- translateSql(
+    "SELECT a INTO table;",
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "CREATE TABLE  table DISTSTYLE ALL\nAS\nSELECT\n a ;")
+})
+
+test_that("translateSQL sql server -> RedShift create temp table with default hashing (DISTSTYLE ALL)", {
+  sql <- translateSql(
+    "CREATE TABLE #table (id int not null, col varchar(max));",
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "CREATE TABLE  #table  (id int not null, col varchar(max))\nDISTSTYLE ALL;")
+})
+
+test_that("translateSQL sql server -> RedShift create permanent table with default hashing (DISTSTYLE ALL)", {
+  sql <- translateSql(
+    "CREATE TABLE table (id int not null, col varchar(max));",
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "CREATE TABLE  table  (id int not null, col varchar(max))\nDISTSTYLE ALL;")
+})
+
+test_that("translateSQL sql server -> RedShift CREATE TABLE IF NOT EXISTS with hashing", {
+  sql <- translateSql(paste(    
+    "IF OBJECT_ID('dbo.heracles_results', 'U') IS NULL",
+    "CREATE TABLE dbo.heracles_results",
+    "(",
+    "cohort_definition_id int,",
+    "analysis_id int,",
+    "stratum_1 varchar(255),",
+    "stratum_2 varchar(255),",
+    "stratum_3 varchar(255),",
+    "stratum_4 varchar(255),",
+    "stratum_5 varchar(255),",
+    "count_value bigint,",
+    "last_update_time datetime",
+    ");",
+    sep = "\n"),
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, paste(
+    "CREATE TABLE  IF NOT EXISTS  dbo.heracles_results",
+    "  (cohort_definition_id int,",
+    " analysis_id  int,",
+    "stratum_1 varchar(255),",
+    "stratum_2 varchar(255),",
+    "stratum_3 varchar(255),",
+    "stratum_4 varchar(255),",
+    "stratum_5 varchar(255),",
+    "count_value bigint,",
+    "last_update_time TIMESTAMP",
+    ")",
+    "DISTKEY(analysis_id);",
+    sep = "\n"))
 })
