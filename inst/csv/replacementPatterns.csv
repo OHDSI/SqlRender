@@ -200,7 +200,7 @@ redshift,SELECT @a INTO #@b;,CREATE TEMP TABLE @b AS\nSELECT\n@a;
 redshift,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 redshift,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 redshift,DATETIME,TIMESTAMP
-redshift,#,
+redshift,#,#
 redshift,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 pdw,VARCHAR(MAX),VARCHAR(1000)
 pdw,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
