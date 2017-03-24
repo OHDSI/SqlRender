@@ -5,7 +5,7 @@ SqlRender
 
 Introduction
 ============
-This is an R package for rendering parameterized SQL, and translating it to different SQL dialects. SqlRender can also be used as a stand-alone Java library.
+This is an R package for rendering parameterized SQL, and translating it to different SQL dialects. SqlRender can also be used as a stand-alone Java library and a command-line executable.
 
 Features
 ========
@@ -13,6 +13,7 @@ Features
 - The syntax supports defining default parameter values
 - The syntax supports if-then-else structures
 - Has functions for translating SQL from one dialect (Microsoft SQL Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift, Microsoft PDW)
+- Can be used as R package, Java library, or as stand-alone executable through a command-line interface
 
 Examples
 ========
@@ -103,6 +104,12 @@ You can fetch the JAR file in the inst/java folder of this repository, or use Ma
 	<artifactId>SqlRender</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 </dependency>
+```
+
+## Command-line executable
+You can fetch the JAR file in the inst/java folder of this repository, or use Maven as described above. Run this from the command line to get a list of options:
+```
+java -jar SqlRender.jar ?
 ```
 
 Getting Involved
