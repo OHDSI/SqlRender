@@ -33,4 +33,3 @@ replacement, so its functionality is limited.
 translateSql("USE my_schema;", targetDialect = "oracle")
 
 }
-

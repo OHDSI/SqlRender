@@ -20,4 +20,4 @@ Suggests:
     knitr,
     rmarkdown
 LazyData: false
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

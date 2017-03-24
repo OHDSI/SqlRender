@@ -41,4 +41,3 @@ renderSql("SELECT * FROM @a {@a == 'myTable' & @b != 'x'}?{WHERE @b = 1};",
           a = "myTable",
           b = "y")
 }
-

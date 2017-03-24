@@ -33,4 +33,3 @@ translateSqlFile("myRenderedStatement.sql",
                  targetDialect = "postgresql")
 }
 }
-

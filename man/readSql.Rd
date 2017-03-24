@@ -23,4 +23,3 @@ Returns a string containing the SQL.
 readSql("myParamStatement.sql")
 }
 }
-

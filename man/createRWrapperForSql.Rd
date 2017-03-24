@@ -34,4 +34,3 @@ placed in the inst/sql/sql_server folder of the package.
 createRWrapperForSql("CohortMethod.sql", packageName = "CohortMethod")
 }
 }
-

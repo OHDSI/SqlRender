@@ -23,4 +23,3 @@ sql <- "SELECT * FROM @table_name"
 writeSql(sql, "myParamStatement.sql")
 }
 }
-

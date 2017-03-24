@@ -20,4 +20,3 @@ camelCaseToSnakeCase("cdmDatabaseSchema")
 # > 'cdm_database_schema'
 
 }
-
