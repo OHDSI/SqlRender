@@ -1,5 +1,3 @@
-Resubmission: fixed URL
-
 This update has two bugfixes and adds some new functionality (see NEWS)
 
 ---
