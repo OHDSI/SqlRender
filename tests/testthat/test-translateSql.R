@@ -63,6 +63,12 @@ test_that("translateSQL sql server -> Oracle '+' in quote", {
   expect_equal(sql, "SELECT  '+' FROM DUAL;")
 })
 
+test_that("translateSQL sql server -> Oracle HINT", {
+  sql <- translateSql("HINT DISTRIBUTE_ON_KEY(person_id)", sourceDialect = "sql server", 
+                      targetDialect = "oracle")$sql
+  expect_equal(sql, "")
+})
+
 test_that("translateSQL sql server -> PostgreSQL USE", {
   sql <- translateSql("USE vocabulary;",
                       targetDialect = "postgresql")$sql
@@ -90,6 +96,12 @@ test_that("translateSQL sql server -> PostgreSQL add month", {
   sql <- translateSql("DATEADD(mm,1,date)",
                       targetDialect = "postgresql")$sql
   expect_equal(sql, "(date + 1*INTERVAL'1 month')")
+})
+
+test_that("translateSQL sql server -> PostgreSQL HINT", {
+  sql <- translateSql("HINT DISTRIBUTE_ON_KEY(person_id)", sourceDialect = "sql server", 
+                      targetDialect = "postgresql")$sql
+  expect_equal(sql, "")
 })
 
 test_that("translateSQL sql server -> Oracle multiple inserts in one statement", {
@@ -444,6 +456,11 @@ test_that("translateSQL sql server -> Impala location reserved word", {
   expect_equal(sql, "select count(1) from omop_cdm.`location`;")
 })
 
+test_that("translateSQL sql server -> Impala HINT", {
+  sql <- translateSql("HINT DISTRIBUTE_ON_KEY(person_id)", sourceDialect = "sql server", 
+                      targetDialect = "impala")$sql
+  expect_equal(sql, "")
+})
 
 # Netezza tests
 
@@ -512,6 +529,12 @@ test_that("translateSQL sql server -> Netezza CAST AS VARCHAR", {
   expect_equal(sql, "CAST(person_id  AS VARCHAR(1000));")
 })
 
+test_that("translateSQL sql server -> Netezza HINT", {
+  sql <- translateSql("HINT DISTRIBUTE_ON_KEY(person_id)", sourceDialect = "sql server", 
+                      targetDialect = "netezza")$sql
+  expect_equal(sql, "")
+})
+
 test_that("translateSQL sql server -> PostgreSql TOP", {
   sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
                       targetDialect = "postgresql")$sql
@@ -550,28 +573,28 @@ test_that("translateSQL sql server -> postgres date to varchar", {
 
 
 test_that("translateSQL sql server -> pdw hint distribute_on_key", {
-  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
+  sql <- translateSql("HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
                       targetDialect = "pdw")$sql
-  expect_equal(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE  #my_table   WITH (LOCATION = USER_DB, DISTRIBUTION =  HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
+  expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #my_table   WITH (LOCATION = USER_DB, DISTRIBUTION =  HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> pdw hint distribute_on_key", {
-  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
+  sql <- translateSql("HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
                       targetDialect = "pdw")$sql
-  expect_equal(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE   (row_id INT)\nWITH (DISTRIBUTION = HASH(row_id));")
+  expect_equal(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   (row_id INT)\nWITH (DISTRIBUTION = HASH(row_id));")
 })
 
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
-  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
+  sql <- translateSql("HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
                       targetDialect = "redshift")$sql
-  expect_equal(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TEMP TABLE my_table  DISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
+  expect_equal(sql, "CREATE TEMP TABLE my_table  DISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
-  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
+  sql <- translateSql("HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
                       targetDialect = "redshift")$sql
-  expect_equal(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE  (row_id INT) DISTKEY(row_id);")
+  expect_equal(sql, "CREATE TABLE  (row_id INT) DISTKEY(row_id);")
 })
 
 test_that("translateSql: warning on temp table name that is too long", {
