@@ -957,35 +957,281 @@ test_that("translateSQL sql server -> bigquery isnull", {
 # For debugging: force reload of patterns:
 # rJava::J("org.ohdsi.sql.SqlTranslate")$setReplacementPatterns("inst/csv/replacementPatterns.csv")
 
-test_that("translateSQL sql server -> RedShift DATE ADD DAYS dd", {
-  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+test_that("translateSQL sql server -> RedShift DATEADD dd", {
+  sql <- translateSql("SELECT DATEADD(dd, 30, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "SELECT DATEADD(day, 30, drug_era_end_date) FROM drug_era;")
 })
 
-test_that("translateSQL sql server -> RedShift DATE ADD MONTH mm", {
-  sql <- translateSql("SELECT DATEADD(mm,3,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+test_that("translateSQL sql server -> RedShift DATEADD mm", {
+  sql <- translateSql("SELECT DATEADD(mm, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "SELECT DATEADD(month, 3, drug_era_end_date) FROM drug_era;")
 })
 
-test_that("translateSQL sql server -> RedShift DATE ADD MONTH m", {
-  sql <- translateSql("SELECT DATEADD(m,3,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+test_that("translateSQL sql server -> RedShift DATEADD m", {
+  sql <- translateSql("SELECT DATEADD(m, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "SELECT DATEADD(month, 3, drug_era_end_date) FROM drug_era;")
 })
 
-test_that("translateSQL sql server -> RedShift DATE ADD YEAR yyyy", {
-  sql <- translateSql("SELECT DATEADD(yyyy,3,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+test_that("translateSQL sql server -> RedShift DATEADD yyyy", {
+  sql <- translateSql("SELECT DATEADD(yyyy, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "SELECT DATEADD(year, 3, drug_era_end_date) FROM drug_era;")
 })
 
-test_that("translateSQL sql server -> RedShift DATE ADD YEAR yy", {
-  sql <- translateSql("SELECT DATEADD(yy,3,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+test_that("translateSQL sql server -> RedShift DATEADD yy", {
+  sql <- translateSql("SELECT DATEADD(yy, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "SELECT DATEADD(year, 3, drug_era_end_date) FROM drug_era;")
 })
 
-test_that("translateSQL sql server -> RedShift DATE DIFF dd", {
-  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+test_that("translateSQL sql server -> RedShift DATEADD qq", {
+  sql <- translateSql("SELECT DATEADD(qq, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(quarter, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEADD q", {
+  sql <- translateSql("SELECT DATEADD(q, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(quarter, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEADD wk", {
+  sql <- translateSql("SELECT DATEADD(wk, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(week, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEADD ww", {
+  sql <- translateSql("SELECT DATEADD(ww, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(week, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEADD hh", {
+  sql <- translateSql("SELECT DATEADD(hh, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(hour, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEADD mi", {
+  sql <- translateSql("SELECT DATEADD(mi, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(minute, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEADD ss", {
+  sql <- translateSql("SELECT DATEADD(ss, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(second, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEADD mcs", {
+  sql <- translateSql("SELECT DATEADD(mcs, 3, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(microsecond, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF dd", {
+  sql <- translateSql("SELECT DATEDIFF(dd, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(day, drug_era_start_date, drug_era_end_date) FROM drug_era;")
 })
+
+test_that("translateSQL sql server -> RedShift DATEDIFF m", {
+  sql <- translateSql("SELECT DATEDIFF(m, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(month, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF mm", {
+  sql <- translateSql("SELECT DATEDIFF(mm, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(month, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF yyyy", {
+  sql <- translateSql("SELECT DATEDIFF(yyyy, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(year, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF yy", {
+  sql <- translateSql("SELECT DATEDIFF(yy, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(year, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF qq", {
+  sql <- translateSql("SELECT DATEDIFF(qq, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(quarter, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF q", {
+  sql <- translateSql("SELECT DATEDIFF(q, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(quarter, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF wk", {
+  sql <- translateSql("SELECT DATEDIFF(wk, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(week, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF ww", {
+  sql <- translateSql("SELECT DATEDIFF(ww, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(week, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF hh", {
+  sql <- translateSql("SELECT DATEDIFF(hh, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(hour, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF mi", {
+  sql <- translateSql("SELECT DATEDIFF(mi, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(minute, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF n", {
+  sql <- translateSql("SELECT DATEDIFF(n, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(minute, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF ss", {
+  sql <- translateSql("SELECT DATEDIFF(ss, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(second, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF mcs", {
+  sql <- translateSql("SELECT DATEDIFF(mcs, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(microsecond, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG dd", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(dd, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(day, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG m", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(m, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(month, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG mm", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(mm, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(month, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG yyyy", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(yyyy, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(year, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG yy", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(yy, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(year, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG qq", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(qq, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(quarter, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG q", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(q, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(quarter, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG wk", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(wk, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(week, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG ww", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(ww, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(week, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG hh", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(hh, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(hour, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG mi", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(mi, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(minute, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG n", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(n, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(minute, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG ss", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(ss, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(second, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEDIFF_BIG mcs", {
+  sql <- translateSql("SELECT DATEDIFF_BIG(mcs, drug_era_start_date, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(microsecond, drug_era_start_date, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART dd", {
+  sql <- translateSql("SELECT DATEPART(dd, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(day, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART m", {
+  sql <- translateSql("SELECT DATEPART(m, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(month, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART mm", {
+  sql <- translateSql("SELECT DATEPART(mm, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(month, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART yyyy", {
+  sql <- translateSql("SELECT DATEPART(yyyy, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(year, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART yy", {
+  sql <- translateSql("SELECT DATEPART(yy, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(year, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART qq", {
+  sql <- translateSql("SELECT DATEPART(qq, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(quarter, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART q", {
+  sql <- translateSql("SELECT DATEPART(q, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(quarter, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART wk", {
+  sql <- translateSql("SELECT DATEPART(wk, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(week, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART ww", {
+  sql <- translateSql("SELECT DATEPART(ww, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(week, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART hh", {
+  sql <- translateSql("SELECT DATEPART(hh, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(hour, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART mi", {
+  sql <- translateSql("SELECT DATEPART(mi, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(minute, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART n", {
+  sql <- translateSql("SELECT DATEPART(n, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(minute, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART ss", {
+  sql <- translateSql("SELECT DATEPART(ss, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(second, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translateSQL sql server -> RedShift DATEPART mcs", {
+  sql <- translateSql("SELECT DATEPART(mcs, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEPART(microsecond, drug_era_end_date) FROM drug_era;")
+})
+
 
 test_that("translateSQL sql server -> RedShift DATETIMEFROMPARTS", {
   sql <- translateSql("SELECT DATETIMEFROMPARTS(year,month,day,hour,minute,second,millisecond) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
@@ -1090,41 +1336,6 @@ test_that("translateSQL sql server -> RedShift STDEV POP", {
 test_that("translateSQL sql server -> RedShift VAR POP", {
   sql <- translateSql("SELECT VARP(col) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "SELECT VAR_POP(col) FROM table")
-})
-
-test_that("translateSQL sql server -> RedShift DATEDIFF_BIG", {
-  sql <- translateSql("SELECT DATEDIFF_BIG(dd, start, end) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(day, start, end) FROM table")
-})
-
-test_that("translateSQL sql server -> RedShift DATE PART yyyy", {
-  sql <- translateSql("SELECT DATEPART(yyyy, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(year, start) FROM table")
-})
-
-test_that("translateSQL sql server -> RedShift DATE PART yy", {
-  sql <- translateSql("SELECT DATEPART(yy, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(year, start) FROM table")
-})
-
-test_that("translateSQL sql server -> RedShift DATE PART mm", {
-  sql <- translateSql("SELECT DATEPART(mm, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(month, start) FROM table")
-})
-
-test_that("translateSQL sql server -> RedShift DATE PART m", {
-  sql <- translateSql("SELECT DATEPART(m, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(month, start) FROM table")
-})
-
-test_that("translateSQL sql server -> RedShift DATE PART dd", {
-  sql <- translateSql("SELECT DATEPART(dd, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(day, start) FROM table")
-})
-
-test_that("translateSQL sql server -> RedShift DATE PART other", {
-  sql <- translateSql("SELECT DATEPART(year, start), DATEPART(month, start), DATEPART(day, start) FROM table", sourceDialect = "sql server", targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "SELECT DATE_PART(year, start), DATE_PART(month, start), DATE_PART(day, start) FROM table")
 })
 
 test_that("translateSQL sql server -> RedShift DATETIME2FROMPARTS", {
