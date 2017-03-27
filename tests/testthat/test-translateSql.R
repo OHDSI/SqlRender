@@ -510,12 +510,6 @@ test_that("translateSQL sql server -> Oracle TOP", {
  expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b AND ROWNUM <= 10; ")
 })
 
-test_that("translateSQL sql server -> redshift TOP", {
- sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
-})
-
 test_that("translateSQL sql server -> impala TOP", {
  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
  targetDialect = "impala")$sql
@@ -1623,4 +1617,12 @@ test_that("translateSQL sql server -> RedShift CREATE TABLE IF NOT EXISTS with h
     ")",
     "DISTKEY(analysis_id);",
     sep = "\n"))
+})
+
+test_that("translateSQL sql server -> RedShift DISTINCT + TOP", {
+  sql <- translateSql(
+    "SELECT DISTINCT TOP 100 * FROM table WHERE a = b;",
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "SELECT TOP 100 DISTINCT * FROM table WHERE a = b;")
 })

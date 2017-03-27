@@ -271,7 +271,7 @@ redshift,[ subject_id ],[subject_id]
 redshift,[ analysis_id ],[analysis_id]
 redshift,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 redshift,DATETIME,TIMESTAMP
-redshift,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+redshift,SELECT DISTINCT TOP @([0-9]+)rows,SELECT TOP @rows DISTINCT
 redshift,BIT,BOOLEAN
 redshift,MONEY,"DECIMAL(19, 4)"
 redshift,SMALLMONEY,"DECIMAL(10, 4)"
