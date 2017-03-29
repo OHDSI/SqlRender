@@ -151,12 +151,12 @@ redshift,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
 redshift,"DATEADD(d,@days,@date)",(@date + @days*INTERVAL'1 day')
 redshift,"DATEADD(dd,@days,@date)",(@date + @days*INTERVAL'1 day')
 redshift,"DATEADD(day,@days,@date)",(@date + @days*INTERVAL'1 day')
-redshift,"DATEADD(m,@months,@date)",(@date + @months*INTERVAL'1 month')
-redshift,"DATEADD(mm,@months,@date)",(@date + @months*INTERVAL'1 month')
-redshift,"DATEADD(month,@months,@date)",(@date + @months*INTERVAL'1 month')
-redshift,"DATEADD(yy,@years,@date)",(@date + @years*INTERVAL'1 year')
-redshift,"DATEADD(yyyy,@years,@date)",(@date + @years*INTERVAL'1 year')
-redshift,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
+redshift,"DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"
+redshift,"DATEADD(mm,@months,@date)","ADD_MONTHS(@date, @months)"
+redshift,"DATEADD(month,@months,@date)","ADD_MONTHS(@date, @months)"
+redshift,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12*@months)"
+redshift,"DATEADD(yyyy,@years,@date)","ADD_MONTHS(@date, 12*@months)"
+redshift,"DATEADD(year,@years,@date)","ADD_MONTHS(@date, 12*@months)"
 redshift,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 redshift,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 redshift,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
