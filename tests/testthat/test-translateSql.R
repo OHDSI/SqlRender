@@ -567,3 +567,57 @@ test_that("translateSQL sql server -> oracle concat", {
   expect_equal(sql, "SELECT   CONCAT(a, CONCAT(\" , \", CONCAT( c, CONCAT( d, e))))  FROM  x ;")
 })
 
+test_that("translateSQL sql server -> oracle natural log", {
+  sql <- translateSql("SELECT LOG(number) FROM table",
+                      targetDialect = "oracle")$sql
+  expect_equal(sql, "SELECT LOG(2.718281828459,number) FROM table")
+})
+
+test_that("translateSQL sql server -> oracle log base 10", {
+  sql <- translateSql("SELECT LOG10(number) FROM table;",
+                      targetDialect = "oracle")$sql
+  expect_equal(sql, "SELECT   LOG(10,number)  FROM  table ;")
+})
+
+test_that("translateSQL sql server -> oracle log any base", {
+  sql <- translateSql("SELECT LOG(number, base) FROM table",
+                      targetDialect = "oracle")$sql
+  expect_equal(sql, "SELECT LOG( base,number) FROM table")
+})
+
+test_that("translateSQL sql server -> redshift natural log", {
+  sql <- translateSql("SELECT LOG(number) FROM table",
+                      targetDialect = "redshift")$sql
+  expect_equal(sql, "SELECT LN(number) FROM table")
+})
+
+test_that("translateSQL sql server -> redshift log base 10", {
+  sql <- translateSql("SELECT LOG10(number) FROM table;",
+                      targetDialect = "redshift")$sql
+  expect_equal(sql, "SELECT LOG(number) FROM table;")
+})
+
+test_that("translateSQL sql server -> redshift log any base", {
+  sql <- translateSql("SELECT LOG(number, base) FROM table",
+                      targetDialect = "redshift")$sql
+  expect_equal(sql, "SELECT (LN(number)/LN( base)) FROM table")
+})
+
+test_that("translateSQL sql server -> postgresql natural log", {
+  sql <- translateSql("SELECT LOG(number) FROM table",
+                      targetDialect = "postgresql")$sql
+  expect_equal(sql, "SELECT LN(number) FROM table")
+})
+
+test_that("translateSQL sql server -> postgresql log base 10", {
+  sql <- translateSql("SELECT LOG10(number) FROM table;",
+                      targetDialect = "postgresql")$sql
+  expect_equal(sql, "SELECT LOG(10,number) FROM table;")
+})
+
+test_that("translateSQL sql server -> postgresql log any base", {
+  sql <- translateSql("SELECT LOG(number, base) FROM table",
+                      targetDialect = "postgresql")$sql
+  expect_equal(sql, "SELECT LOG( base,number) FROM table")
+})
+
