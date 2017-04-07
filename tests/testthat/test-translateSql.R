@@ -588,36 +588,36 @@ test_that("translateSQL sql server -> oracle log any base", {
 test_that("translateSQL sql server -> redshift natural log", {
   sql <- translateSql("SELECT LOG(number) FROM table",
                       targetDialect = "redshift")$sql
-  expect_equal(sql, "SELECT LN(number) FROM table")
+  expect_equal(sql, "SELECT LN(CAST((number) AS REAL)) FROM table")
 })
 
 test_that("translateSQL sql server -> redshift log base 10", {
   sql <- translateSql("SELECT LOG10(number) FROM table;",
                       targetDialect = "redshift")$sql
-  expect_equal(sql, "SELECT LOG(number) FROM table;")
+  expect_equal(sql, "SELECT LOG(CAST((number) AS REAL)) FROM table;")
 })
 
 test_that("translateSQL sql server -> redshift log any base", {
   sql <- translateSql("SELECT LOG(number, base) FROM table",
                       targetDialect = "redshift")$sql
-  expect_equal(sql, "SELECT (LN(number)/LN( base)) FROM table")
+  expect_equal(sql, "SELECT (LN(CAST((number) AS REAL))/LN(CAST(( base) AS REAL))) FROM table")
 })
 
 test_that("translateSQL sql server -> postgresql natural log", {
   sql <- translateSql("SELECT LOG(number) FROM table",
                       targetDialect = "postgresql")$sql
-  expect_equal(sql, "SELECT LN(number) FROM table")
+  expect_equal(sql, "SELECT LN(CAST((number) AS REAL)) FROM table")
 })
 
 test_that("translateSQL sql server -> postgresql log base 10", {
   sql <- translateSql("SELECT LOG10(number) FROM table;",
                       targetDialect = "postgresql")$sql
-  expect_equal(sql, "SELECT LOG(10,number) FROM table;")
+  expect_equal(sql, "SELECT LOG(10,CAST((number) AS NUMERIC)) FROM table;")
 })
 
 test_that("translateSQL sql server -> postgresql log any base", {
   sql <- translateSql("SELECT LOG(number, base) FROM table",
                       targetDialect = "postgresql")$sql
-  expect_equal(sql, "SELECT LOG( base,number) FROM table")
+  expect_equal(sql, "SELECT LOG(CAST(( base) AS NUMERIC),CAST((number) AS NUMERIC)) FROM table")
 })
 

@@ -120,10 +120,10 @@ postgresql,RAND(),RANDOM()
 postgresql,"HASHBYTES('MD5',@a)",MD5(@a)
 postgresql,LEN(@a),CHAR_LENGTH(@a)
 postgresql,"CHARINDEX(@a,@b)","STRPOS(@b,@a)"
-postgresql,"LOG(@expression,@base)","<L_O_G>(@base,@expression)"
-postgresql,LOG(@expression),LN(@expression)
+postgresql,"LOG(@expression,@base)","<L_O_G>(CAST((@base) AS NUMERIC),CAST((@expression) AS NUMERIC))"
+postgresql,LOG(@expression),LN(CAST((@expression) AS REAL))
 postgresql,<L_O_G>,LOG
-postgresql,LOG10(@expression),"LOG(10,@expression)"
+postgresql,LOG10(@expression),"LOG(10,CAST((@expression) AS NUMERIC))"
 postgresql,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 postgresql,COUNT_BIG(@a),COUNT(@a)
 postgresql,SQUARE(@a),((@a)*(@a))
@@ -180,9 +180,9 @@ redshift,STDEV(@a),STDDEV(@a)
 redshift,RAND(),RANDOM()
 redshift,"HASHBYTES('MD5',@a)",MD5(@a)
 redshift,LEN(@a),CHAR_LENGTH(@a)
-redshift,"LOG(@expression,@base)",(LN(@expression)/LN(@base))
-redshift,LOG(@expression),LN(@expression)
-redshift,LOG10(@expression),LOG(@expression)
+redshift,"LOG(@expression,@base)",(LN(CAST((@expression) AS REAL))/LN(CAST((@base) AS REAL)))
+redshift,LOG(@expression),LN(CAST((@expression) AS REAL))
+redshift,LOG10(@expression),LOG(CAST((@expression) AS REAL))
 redshift,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 redshift,COUNT_BIG(@a),COUNT(@a)
 redshift,USE @schema;,SET search_path TO @schema;
