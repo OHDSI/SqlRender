@@ -83,6 +83,7 @@ oracle,#,%temp_prefix%%session_id%
 oracle,<hash><hash>,##
 oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a WHERE ROWNUM <= @rows; 
 oracle,SELECT @a WHERE @b WHERE @c;,SELECT @a WHERE @b AND @c;
+oracle,HINT DISTRIBUTE_ON_KEY(@key),
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 postgresql,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
 postgresql,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
@@ -147,6 +148,7 @@ postgresql,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 postgresql,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 postgresql,#,
 postgresql,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+postgresql,HINT DISTRIBUTE_ON_KEY(@key),
 redshift,"ROUND(@a,@b)","ROUND(CAST(@a AS FLOAT),@b)"
 redshift,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
 redshift,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
@@ -190,16 +192,16 @@ redshift,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);
 redshift,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
 redshift,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
 redshift,.dbo.,.
-redshift,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE #@table (@definition),HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TEMP TABLE @table (@definition) DISTKEY(@key)
+redshift,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition) DISTKEY(@key)
 redshift,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
-redshift,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE @table (@definition);,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @table (@definition) DISTKEY(@key);
-redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO #@d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TEMP TABLE @d DISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d DISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE @table (@definition);,CREATE TABLE @table (@definition) DISTKEY(@key);
+redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d DISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d DISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 redshift,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 redshift,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO #@b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TEMP TABLE @b DISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b DISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
 redshift,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
-redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @b DISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,CREATE TABLE @b DISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
 redshift,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 redshift,SELECT @a INTO #@b;,CREATE TEMP TABLE @b AS\nSELECT\n@a;
 redshift,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
@@ -208,19 +210,19 @@ redshift,DATETIME,TIMESTAMP
 redshift,#,
 redshift,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 pdw,VARCHAR(MAX),VARCHAR(1000)
-pdw,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+pdw,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 pdw,"WITH @a AS @b SELECT @c1 subject_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(subject_id))\nAS\nWITH @a AS @b SELECT\n@c1 subject_id, @c2\nFROM\n@e;"
 pdw,"WITH @a AS @b SELECT @c1 person_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(person_id))\nAS\nWITH @a AS @b SELECT\n@c1 person_id, @c2\nFROM\n@e;"
 pdw,"WITH @a AS @b SELECT @c1 analysis_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nWITH @a AS @b SELECT\n@c1 analysis_id, @c2\nFROM\n@e;"
 pdw,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d WITH (DISTRIBUTION = REPLICATE)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-pdw,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @b WITH (DISTRIBUTION = HASH(@key))\nAS\nSELECT\n@a\nFROM\n@c;
+pdw,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,CREATE TABLE @b WITH (DISTRIBUTION = HASH(@key))\nAS\nSELECT\n@a\nFROM\n@c;
 pdw,"SELECT @a1 subject_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(subject_id))\nAS\nSELECT\n@a1 subject_id, @a2\nFROM\n@c;"
 pdw,"SELECT @a1 person_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(person_id))\nAS\nSELECT\n@a1 person_id, @a2\nFROM\n@c;"
 pdw,"SELECT @a1 analysis_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n@a1 analysis_id, @a2\nFROM\n@c;"
 pdw,SELECT @a INTO @b FROM @c;,CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a\nFROM\n@c;
 pdw,SELECT @a INTO @b;,CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a;
 pdw,CREATE TABLE #@a WITH (DISTRIBUTION = @b) AS,"CREATE TABLE #@a WITH (LOCATION = USER_DB, DISTRIBUTION = @b) AS"
-pdw,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE @table (@definition);,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = HASH(@key));
+pdw,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE @table (@definition);,CREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = HASH(@key));
 pdw,CREATE TABLE @table (@definition_part1 subject_id @definition_part2);,CREATE TABLE @table (@definition_part1 subject_id @definition_part2)\nWITH (DISTRIBUTION = HASH(subject_id));
 pdw,CREATE TABLE @table (@definition_part1 person_id @definition_part2);,CREATE TABLE @table (@definition_part1 person_id @definition_part2)\nWITH (DISTRIBUTION = HASH(person_id));
 pdw,CREATE TABLE @table (@definition_part1 analysis_id @definition_part2);,CREATE TABLE @table (@definition_part1 analysis_id @definition_part2)\nWITH (DISTRIBUTION = HASH(analysis_id));
@@ -285,6 +287,7 @@ impala,#,%temp_prefix%%session_id%
 impala,<hash><hash>,##
 impala,.location,.`location`
 impala,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+impala,HINT DISTRIBUTE_ON_KEY(@key),
 netezza,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 netezza,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
 netezza,CAST(@a AS INT),CAST(@a AS INTEGER)
@@ -334,3 +337,4 @@ netezza,#,
 netezza,"LEFT(@variable,@b)","STRLEFT(@variable,@b)"
 netezza,"RIGHT(@variable,@b)","STRRIGHT(@variable,@b)"
 netezza,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+netezza,HINT DISTRIBUTE_ON_KEY(@key),
