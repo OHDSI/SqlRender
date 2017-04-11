@@ -6,12 +6,12 @@ oracle,<par_open>,(
 oracle,<par_close>,)
 oracle,EXCEPT,MINUS
 oracle,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
-oracle,"DATEADD(second,@seconds,@datetime)",(@datetime + interval '@seconds' second)
-oracle,"DATEADD(minute,@minutes,@datetime)",(@datetime + interval '@minutes' minute)
-oracle,"DATEADD(hour,@hours,@datetime)",(@datetime + interval '@hours' hour)
-oracle,"DATEADD(d,@days,@date)",(@date + interval '@days' day)
-oracle,"DATEADD(dd,@days,@date)",(@date + interval '@days' day)
-oracle,"DATEADD(day,@days,@date)",(@date + interval '@days' day)
+oracle,"DATEADD(second,@seconds,@datetime)","(@date + NUMTODSINTERVAL(@seconds, 'second'))"
+oracle,"DATEADD(minute,@minutes,@datetime)","(@date + NUMTODSINTERVAL(@minutes, 'minute'))"
+oracle,"DATEADD(hour,@hours,@datetime)","(@date + NUMTODSINTERVAL(@hours, 'hour'))"
+oracle,"DATEADD(d,@days,@date)","(@date + NUMTODSINTERVAL(@days, 'day'))"
+oracle,"DATEADD(dd,@days,@date)","(@date + NUMTODSINTERVAL(@days, 'day'))"
+oracle,"DATEADD(day,@days,@date)","(@date + NUMTODSINTERVAL(@days, 'day'))"
 oracle,"DATEADD(month,@months,@date)","ADD_MONTHS(@date, @months)"
 oracle,"DATEADD(mm,@months,@date)","ADD_MONTHS(@date, @months)"
 oracle,"DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"

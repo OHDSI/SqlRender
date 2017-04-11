@@ -10,7 +10,7 @@ test_that("translateSQL sql server -> Oracle DATEDIFF", {
 test_that("translateSQL sql server -> Oracle DATEADD", {
   sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                       targetDialect = "oracle")$sql
-  expect_equal(sql, "SELECT   (drug_era_end_date + interval '30' day)  FROM  drug_era ;")
+  expect_equal(sql, "SELECT   (drug_era_end_date + NUMTODSINTERVAL(30, 'day'))  FROM  drug_era ;")
 })
 
 test_that("translateSQL sql server -> Oracle USE", {
