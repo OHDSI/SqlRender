@@ -154,6 +154,7 @@ postgresql,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 postgresql,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 postgresql,#,
 postgresql,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+postgresql,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 redshift,"ROUND(@a,@b)","ROUND(CAST(@a AS FLOAT),@b)"
 redshift,"ROUND(@expression,@length,@trunc)","case when @trunc = 0 then ROUND(@expression,@length) else TRUNC(@expression,@length) end"
 redshift,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
@@ -303,6 +304,7 @@ redshift,"CONCAT(@a,@b,@tail)","CONCAT(@a,CONCAT(@b,@tail))"
 redshift,"ISDATE(@s)","REGEXP_INSTR(@s, '^(\\d{4}[/\-]?[01]\\d[/\-]?[0123]\\d)([ T]([0-1][0-9]|[2][0-3]):([0-5][0-9])(:[0-5][0-9](.\\d+)?)?)?$')"
 redshift,"ISNUMERIC(@s)","REGEXP_INSTR(@s, '^[\-\+]?(\\d*\\.)?\\d+([Ee][\-\+]?\\d+)?$')"
 redshift,"PATINDEX(@pattern,@expression)","REGEXP_INSTR(@expression, case when LEFT(@pattern,1)<>'%' and RIGHT(@pattern,1)='%' then '^' else '' end||TRIM('%' FROM REPLACE(@pattern,'_','.'))||case when LEFT(@pattern,1)='%' and RIGHT(@pattern,1)<>'%' then '$' else '' end)"
+redshift,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 pdw,VARCHAR(MAX),VARCHAR(1000)
 pdw,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 pdw,"WITH @a AS @b SELECT @c1 subject_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(subject_id))\nAS\nWITH @a AS @b SELECT\n@c1 subject_id, @c2\nFROM\n@e;"

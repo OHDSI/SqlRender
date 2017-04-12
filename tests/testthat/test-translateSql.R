@@ -1605,7 +1605,8 @@ test_that("translateSQL sql server -> RedShift CREATE TABLE IF NOT EXISTS with h
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, paste(
     "CREATE TABLE  IF NOT EXISTS  dbo.heracles_results",
-    "  (cohort_definition_id int,",
+    "  (",
+    "cohort_definition_id int,",
     " analysis_id  int,",
     "stratum_1 varchar(255),",
     "stratum_2 varchar(255),",
@@ -1625,4 +1626,20 @@ test_that("translateSQL sql server -> RedShift DISTINCT + TOP", {
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
     "SELECT TOP 100 DISTINCT * FROM table WHERE a = b;")
+})
+
+test_that("RedShift String literal within CTE should be explicitly casted to character type", {
+  sql <- translateSql(
+    "WITH expression AS(SELECT 'my literal' literal, col1, CAST('other literal' as VARCHAR(MAX)), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;",
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "WITH  expression  AS (SELECT CAST('my literal' as TEXT) literal, col1, CAST('other literal' as VARCHAR(MAX)), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;")
+})
+
+test_that("Postgres String literal within CTE should be explicitly casted to character type", {
+  sql <- translateSql(
+    "WITH expression AS(SELECT 'my literal', col1, CAST('other literal' as VARCHAR(MAX)), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;",
+    sourceDialect = "sql server", targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, 
+    "WITH  expression  AS (SELECT CAST('my literal' as TEXT), col1, CAST('other literal' as TEXT), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;")
 })
