@@ -109,8 +109,9 @@ public class SqlTranslate {
 		for (int cursor = startToken; cursor < tokens.size(); cursor++) {
 			StringUtils.Token token = tokens.get(cursor);
 			if (parsedPattern.get(matchCount).isVariable) {
-				if (parsedPattern.get(matchCount).regEx != null) {
-					Pattern pattern = Pattern.compile(parsedPattern.get(matchCount).regEx);
+				if (parsedPattern.get(matchCount).regEx != null && (matchCount == parsedPattern.size() - 1 || parsedPattern.get(matchCount + 1).isVariable)) {
+					// Regex variable at end of pattern, or has another variable following it
+					Pattern pattern = Pattern.compile(parsedPattern.get(matchCount).regEx, Pattern.CASE_INSENSITIVE);
 					Matcher matcher = pattern.matcher(sql.substring(token.start));
 					if (matcher.find() && matcher.start() == 0) {
 						if (matchCount == 0) {
@@ -131,17 +132,25 @@ public class SqlTranslate {
 					} else {
 						matchCount = 0;
 					}
-				} else if (nestStack.size() == 0 && token.text.equals(parsedPattern.get(matchCount + 1).text)) {
-					matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(varStart, token.start));
-					matchCount += 2;
-					if (matchCount == parsedPattern.size()) {
-						matchedPattern.end = token.end;
-						return matchedPattern;
-					} else if (parsedPattern.get(matchCount).isVariable) {
-						varStart = token.end;
+				} else if (nestStack.size() == 0 && matchCount < parsedPattern.size() - 1 && token.text.equals(parsedPattern.get(matchCount + 1).text)) {
+					// Found the token after the variable
+					if (parsedPattern.get(matchCount).regEx != null && !matches(parsedPattern.get(matchCount).regEx, sql.substring(varStart, token.start))) {
+						// Content didn't match regex
+						matchCount = 0;
+						cursor = matchedPattern.startToken;
+					} else {
+						// No regex or matched regex
+						matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(varStart, token.start));
+						matchCount += 2;
+						if (matchCount == parsedPattern.size()) {
+							matchedPattern.end = token.end;
+							return matchedPattern;
+						} else if (parsedPattern.get(matchCount).isVariable) {
+							varStart = (cursor < tokens.size() - 1)?tokens.get(cursor+1).start:-1;
+						}
+						if (token.text.equals("'") || token.text.equals("'"))
+							inPatternQuote = !inPatternQuote;
 					}
-					if (token.text.equals("'") || token.text.equals("'"))
-						inPatternQuote = !inPatternQuote;
 				} else if (nestStack.size() == 0 && !inPatternQuote && (token.text.equals(";") || token.text.equals(")"))) { // Not allowed to span multiple SQL
 					// statements or outside of nesting
 					matchCount = 0;
@@ -172,8 +181,7 @@ public class SqlTranslate {
 						matchedPattern.end = token.end;
 						return matchedPattern;
 					} else if (parsedPattern.get(matchCount).isVariable) {
-						varStart = token.end;
-
+						varStart = (cursor < tokens.size() - 1)?tokens.get(cursor+1).start:-1;
 					}
 					if (token.text.equals("'") || token.text.equals("\""))
 						inPatternQuote = !inPatternQuote;
@@ -189,6 +197,12 @@ public class SqlTranslate {
 		}
 		matchedPattern.start = -1;
 		return matchedPattern;
+	}
+
+	private static boolean matches(String regex, String string) {
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(string);
+		return (matcher.matches());
 	}
 
 	private static String searchAndReplace(String sql, List<Block> parsedPattern, String replacePattern) {
@@ -423,7 +437,7 @@ public class SqlTranslate {
 
 	public static String[] check(String sql, String targetDialect) {
 		List<String> warnings = new ArrayList<String>();
-		
+
 		// temp table names:
 		Pattern pattern = Pattern.compile("#[0-9a-zA-Z_]+");
 		Matcher matcher = pattern.matcher(sql);
@@ -431,24 +445,35 @@ public class SqlTranslate {
 		while (matcher.find())
 			if (matcher.group().length() > MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH - 1)
 				longTempNames.add(matcher.group());
-		
+
 		for (String longName : longTempNames)
 			warnings.add("Temp table name '" + longName + "' is too long. Temp table names should be shorter than "
 					+ (MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH) + " characters to prevent Oracle from crashing.");
-		
+
 		// normal table names:
 		pattern = Pattern.compile("(create|drop|truncate)\\s+table +[0-9a-zA-Z_]+");
 		matcher = pattern.matcher(sql.toLowerCase());
 		Set<String> longNames = new HashSet<String>();
 		while (matcher.find()) {
-			String name = sql.substring(matcher.start() + matcher.group().lastIndexOf(" "), matcher.end()); 
-			if (name.length() > MAX_ORACLE_TABLE_NAME_LENGTH && !longTempNames.contains("#" +name))
+			String name = sql.substring(matcher.start() + matcher.group().lastIndexOf(" "), matcher.end());
+			if (name.length() > MAX_ORACLE_TABLE_NAME_LENGTH && !longTempNames.contains("#" + name))
 				longNames.add(name);
 		}
 		for (String longName : longNames)
-			warnings.add("Table name '" + longName + "' is too long. Table names should be shorter than "
-					+ MAX_ORACLE_TABLE_NAME_LENGTH + " characters to prevent Oracle from crashing.");
-		
+			warnings.add("Table name '" + longName + "' is too long. Table names should be shorter than " + MAX_ORACLE_TABLE_NAME_LENGTH
+					+ " characters to prevent Oracle from crashing.");
+
 		return warnings.toArray(new String[warnings.size()]);
+	}
+	
+	/**
+	 * Forces the replacement patterns to be loaded from the specified path. Useful for debugging.
+	 * 
+	 * @param pathToReplacementPatterns
+	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
+	 */
+	public static void setReplacementPatterns(String pathToReplacementPatterns) {
+		targetToReplacementPatterns = null;
+		ensurePatternsAreLoaded(pathToReplacementPatterns);
 	}
 }

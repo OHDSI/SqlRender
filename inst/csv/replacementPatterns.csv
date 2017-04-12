@@ -34,9 +34,6 @@ oracle,CAST(@a AS VARCHAR(@b)),TO_CHAR(@a)
 oracle,CAST(@a AS VARCHAR),TO_CHAR(@a)
 oracle,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
 oracle,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
-oracle,YEAR(@date),EXTRACT(YEAR FROM @date)
-oracle,MONTH(@date),EXTRACT(MONTH FROM @date)
-oracle,DAY(@date),EXTRACT(DAY FROM @date)
 oracle,EOMONTH(@date),LAST_DAY(@date)
 oracle,STDEV(@a),STDDEV(@a)
 oracle,VAR(@a),VARIANCE(@a)
@@ -58,10 +55,18 @@ oracle,NEWID(),SYS_GUID()
 oracle,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
 oracle,SELECT @a WHERE @b;,SELECT @a FROM DUAL WHERE @b;
 oracle,(SELECT @a WHERE @b),(SELECT @a FROM DUAL WHERE @b)
+oracle,SELECT @a WHERE @b UNION,SELECT @a FROM DUAL WHERE @b UNION
 oracle,SELECT @a;,SELECT @a FROM DUAL;
 oracle,(SELECT @a),(SELECT @a FROM DUAL)
-oracle,SELECT @a FROM @b FROM DUAL,SELECT @a FROM @b
-oracle,SELECT @a FROM @b FROM DUAL,SELECT @a FROM @b
+oracle,SELECT @a UNION,SELECT @a FROM DUAL UNION
+oracle,SELECT @a FROM @b FROM DUAL;,SELECT @a FROM @b;
+oracle,FROM @a FROM DUAL,FROM @a
+oracle,FROM @a FROM DUAL,FROM @a
+oracle,FROM @a FROM DUAL,FROM @a
+oracle,FROM @a FROM DUAL,FROM @a
+oracle,YEAR(@date),EXTRACT(YEAR FROM @date)
+oracle,MONTH(@date),EXTRACT(MONTH FROM @date)
+oracle,DAY(@date),EXTRACT(DAY FROM @date)
 oracle,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE @table (@definition)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
@@ -82,7 +87,7 @@ oracle,##,<hash><hash>
 oracle,#,%temp_prefix%%session_id%
 oracle,<hash><hash>,##
 oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a WHERE ROWNUM <= @rows; 
-oracle,SELECT @a WHERE @b WHERE @c;,SELECT @a WHERE @b AND @c;
+oracle,SELECT @a WHERE @b WHERE ROWNUM <= @rows;,SELECT @a WHERE @b AND ROWNUM <= @rows;
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 postgresql,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
 postgresql,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
