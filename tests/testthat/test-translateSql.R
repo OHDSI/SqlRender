@@ -368,19 +368,19 @@ test_that("translateSQL sql server -> Impala USE", {
 test_that("translateSQL sql server -> Impala CAST(AS DATE)", {
  sql <- translateSql("CAST('20000101' AS DATE);",
  targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "CAST('20000101' AS TIMESTAMP);")
+ expect_equal_ignore_spaces(sql, "CASE TYPEOF('20000101' ) WHEN 'TIMESTAMP' THEN CAST('20000101'  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST('20000101'  AS STRING), 1, 4), SUBSTR(CAST('20000101'  AS STRING), 5, 2), SUBSTR(CAST('20000101'  AS STRING), 7, 2)), 'UTC') END;")
 })
 
 test_that("translateSQL sql server -> Impala DATEDIFF", {
  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
  targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(CAST(drug_era_end_date AS TIMESTAMP), CAST(drug_era_start_date AS TIMESTAMP)) FROM drug_era;")
+ expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, CASE TYPEOF(drug_era_start_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_start_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_start_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_start_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_start_date  AS STRING), 7, 2)), 'UTC') END) FROM drug_era;")
 })
 
 test_that("translateSQL sql server -> Impala DATEADD", {
  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
  targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "SELECT DATE_ADD(CAST(drug_era_end_date AS TIMESTAMP), 30) FROM drug_era;")
+ expect_equal_ignore_spaces(sql, "SELECT DATE_ADD(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, 30) FROM drug_era;")
 })
 
 test_that("translateSQL sql server -> Impala WITH SELECT", {
