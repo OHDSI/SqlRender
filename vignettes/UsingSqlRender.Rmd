@@ -239,6 +239,17 @@ or
 SELECT * FROM #temp WHERE CAST(txt AS INT) = 1;
 ```
 
+## Case sensitivity in string comparisons
+Some DBMS platforms such as SQL Server always perform string comparisons in a case-insensitive way, while others such as PostgreSQL are always case sensitive. It is therefore recommended to always assume case-sensitive comparisons, and to explicitly make comparisons case-insensitive when unsure about the case. For example, instead of 
+
+```sql
+SELECT * FROM concept WHERE concep_class_id = 'Clinical Finding'
+```
+it is preferred to use
+```sql
+SELECT * FROM concept WHERE LOWER(concep_class_id) = 'clinical finding'
+```
+
 ## Schemas and databases
 In SQL Server, tables are located in a schema, and schemas reside in a database. For example, `cdm_data.dbo.person` refers to the `person` table in the `dbo` schema in the `cdm_data` database. In other dialects, even though a similar hierarchy often exists they are used very differently. In SQL Server, there is typically one schema per database (often called `dbo`), and users can easily use data in different databases. On other platforms, for example in PostgreSQL, it is not possible to use data across databases in a single session, but there are often many schemas in a database. In PostgreSQL one could say that the equivalent of SQL Server's database is the schema.
 
