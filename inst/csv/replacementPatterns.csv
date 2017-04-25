@@ -48,6 +48,7 @@ oracle,LOG(@expression),"LOG(2.718281828459,@expression)"
 oracle,<L_O_G>,LOG
 oracle,LOG10(@expression),"LOG(10,@expression)"
 oracle,"ISNULL(@a,@b)","NVL(@a,@b)"
+oracle,ISNUMERIC(@a),"(LENGTH(TRIM(TRANSLATE(@a, ' +-.0123456789',' '))) IS NULL)"
 oracle,COUNT_BIG(@a),COUNT(@a)
 oracle,SQUARE(@a),((@a)*(@a))
 oracle,PI(),3.141592654
@@ -130,6 +131,7 @@ postgresql,LOG(@expression),LN(CAST((@expression) AS REAL))
 postgresql,<L_O_G>,LOG
 postgresql,LOG10(@expression),"LOG(10,CAST((@expression) AS NUMERIC))"
 postgresql,"ISNULL(@a,@b)","COALESCE(@a,@b)"
+postgresql,ISNUMERIC(@a),(@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$')
 postgresql,COUNT_BIG(@a),COUNT(@a)
 postgresql,SQUARE(@a),((@a)*(@a))
 postgresql,NEWID(),MD5(RANDOM()::TEXT || CLOCK_TIMESTAMP()::TEXT)
@@ -189,6 +191,7 @@ redshift,"LOG(@expression,@base)",(LN(CAST((@expression) AS REAL))/LN(CAST((@bas
 redshift,LOG(@expression),LN(CAST((@expression) AS REAL))
 redshift,LOG10(@expression),LOG(CAST((@expression) AS REAL))
 redshift,"ISNULL(@a,@b)","COALESCE(@a,@b)"
+redshift,ISNUMERIC(@a),(@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$')
 redshift,COUNT_BIG(@a),COUNT(@a)
 redshift,USE @schema;,SET search_path TO @schema;
 redshift,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);

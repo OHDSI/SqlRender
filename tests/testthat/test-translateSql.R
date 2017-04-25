@@ -654,5 +654,23 @@ test_that("translateSQL sql server -> oracle from dual", {
   expect_equal_ignore_spaces(sql, "SELECT (SELECT id FROM a WHERE b=2) AS id FROM DUAL;")
 })
 
+test_that("translateSQL sql server -> oracle ISNUMERIC", {
+  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) THEN a ELSE b FROM c;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN a ELSE b  FROM c ;")
+})
+
+test_that("translateSQL sql server -> postgres ISNUMERIC", {
+  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) THEN a ELSE b FROM c;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN a ELSE b FROM c;")
+})
+
+test_that("translateSQL sql server -> redshift ISNUMERIC", {
+  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) THEN a ELSE b FROM c;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN a ELSE b FROM c;")
+})
+
 # For debugging: force reload of patterns:
 # rJava::J("org.ohdsi.sql.SqlTranslate")$setReplacementPatterns("inst/csv/replacementPatterns.csv")
