@@ -1605,9 +1605,8 @@ test_that("translateSQL sql server -> RedShift CREATE TABLE IF NOT EXISTS with h
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, paste(
     "CREATE TABLE  IF NOT EXISTS  dbo.heracles_results",
-    "  (",
-    "cohort_definition_id int,",
-    " analysis_id  int,",
+    "(cohort_definition_id int,",
+    "analysis_id  int,",
     "stratum_1 varchar(255),",
     "stratum_2 varchar(255),",
     "stratum_3 varchar(255),",
@@ -1642,4 +1641,12 @@ test_that("Postgres String literal within CTE should be explicitly casted to cha
     sourceDialect = "sql server", targetDialect = "postgresql")$sql
   expect_equal_ignore_spaces(sql, 
     "WITH  expression  AS (SELECT CAST('my literal' as TEXT), col1, CAST('other literal' as TEXT), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;")
+})
+
+test_that("RedShift Prevent 'Divide by zero' error", {
+  sql <- translateSql(
+    "select m.range_high, m.value_as_number FROM cdm.MEASUREMENT WHERE range_high > 0.0000 AND (value_as_number / range_high) > 1.0000;",
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "select m.range_high, m.value_as_number FROM cdm.MEASUREMENT WHERE range_high > 0.0000 AND (value_as_number / NULLIF(range_high, 0)) > 1.0000;")
 })
