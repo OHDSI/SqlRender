@@ -115,7 +115,7 @@ public class StringUtils {
 			}
 		}
 
-		if (cursor > start) {
+		if (cursor > start && !commentType1 && !commentType2) {
 			Token token = new Token();
 			token.start = start;
 			token.end = cursor;

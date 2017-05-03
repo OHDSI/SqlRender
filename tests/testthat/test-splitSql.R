@@ -33,3 +33,9 @@ test_that("splitSql split with reserved word 'end' as field name", {
   expect_equal(sql,
                c("INSERT INTO CDM_CPRD_TESTING_RAW.dbo.hes_linkage_coverage (data_source, start, [end]) VALUES ('hes', '1990-01-01', '2014-12-31')"))
 })
+
+test_that("splitSql split with last line containing comment and having no EOL", {
+  sql <- splitSql("SELECT * FROM table;\n-- end")
+  expect_equal(sql,
+               c("SELECT * FROM table"))
+})

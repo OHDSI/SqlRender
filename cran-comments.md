@@ -1,4 +1,4 @@
-This update has four bugfixes and adds some new translation rules (see NEWS)
+This update has five bugfixes and adds some new translation rules (see NEWS)
 
 ---
 
