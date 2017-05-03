@@ -35,6 +35,7 @@ public class SqlSplit {
 		int start = 0;
 		int cursor;
 		boolean quote = false;
+		boolean bracket = false;
 		String quoteText = "";
 		for (cursor = start; cursor < tokens.size(); cursor++) {
 			StringUtils.Token token = tokens.get(cursor);
@@ -42,9 +43,14 @@ public class SqlSplit {
 				if (token.text.equals(quoteText)) {
 					quote = false;
 				}
+			} else if (bracket) {
+				if (token.text.equals("]"))
+					bracket = false;
 			} else if (token.text.equals("'") || token.text.equals("\"")) {
 				quote = true;
 				quoteText = token.text;
+			} else if (token.text.equals("[")) {
+					bracket = true;
 			} else if (token.text.equals("begin") || token.text.equals("case")) {
 				nestStack.push(token.text);
 			} else if (token.text.equals("end") && (cursor == tokens.size() - 1 || !tokens.get(cursor + 1).text.equals("if"))) {
