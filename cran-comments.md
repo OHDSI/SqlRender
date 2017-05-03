@@ -4,7 +4,7 @@ This update has five bugfixes and adds some new translation rules (see NEWS)
 
 ## Test environments
 * Ubuntu 12.04.5 LTS (Travis), R 3.2.5
-* Windows 7, R 3.3.3
+* Windows 7, R 3.4.0
 
 ## R CMD check results
 
