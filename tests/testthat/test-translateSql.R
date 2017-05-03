@@ -660,12 +660,6 @@ test_that("translateSQL sql server -> postgres ISNUMERIC", {
   expect_equal_ignore_spaces(sql, "SELECT CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN a ELSE b FROM c;")
 })
 
-test_that("translateSQL sql server -> redshift ISNUMERIC", {
-  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) THEN a ELSE b FROM c;",
-                      targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN a ELSE b FROM c;")
-})
-
 test_that("translateSQL sql server -> bigquery lowercase all but strings", {
  sql <- translateSql("SELECT X.Y, 'Mixed Case String' FROM \"MixedCaseTableName.T\" GROUP BY X.Y",
                      targetDialect = "bigquery")$sql

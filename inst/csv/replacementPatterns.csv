@@ -238,7 +238,6 @@ redshift,"LOG(@expression,@base)",(LN(CAST((@expression) AS REAL))/LN(CAST((@bas
 redshift,LOG(@expression),LN(CAST((@expression) AS REAL))
 redshift,LOG10(@expression),LOG(CAST((@expression) AS REAL))
 redshift,"ISNULL(@a,@b)","COALESCE(@a,@b)"
-redshift,ISNUMERIC(@a),(@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$')
 redshift,COUNT_BIG(@a),COUNT(@a)
 redshift,SQUARE(@a),((@a) * (@a))
 redshift,TEXT,VARCHAR(max)
