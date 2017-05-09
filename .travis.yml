@@ -15,9 +15,11 @@ addons:
     packages:
     - r-base-dev
     - r-recommended
+    - texinfo
     - pandoc
     - default-jdk
     - default-jre
+    - qpdf
 
 # cache local R libraries directory:
 cache:
@@ -30,6 +32,11 @@ install:
   - echo 'R_LIBS=~/Rlib' > .Renviron
   - echo 'options(repos = "http://cran.rstudio.com")' > .Rprofile
   - mkdir -p ~/.R
+  # Build LaTex and pandoc
+  - mkdir -p ~/bin
+  - wget -q -O - https://github.com/yihui/crandalf/raw/master/inst/scripts/install-texlive | bash
+  - wget -q -O - https://github.com/yihui/crandalf/raw/master/inst/scripts/install-pandoc | bash
+  - PATH=$HOME/texlive/bin/x86_64-linux:$PATH    
   - Rscript -e 'if(!"devtools" %in% rownames(installed.packages())) { install.packages("devtools", dependencies = TRUE) }'
   - Rscript -e 'if (!require("covr")) devtools::install_github("jimhester/covr")'
   - Rscript -e 'if (!require("drat")) install.packages("drat")'     
@@ -46,10 +53,10 @@ before_script:
 
 # Build and check package
 script:
-  - R CMD build . --no-build-vignettes --no-manual
+  - R CMD build .
   - PKG_FILE_NAME=$(ls -1t *.tar.gz | head -n 1)
   - PKG_NAME=$(ls -1t *.tar.gz | head -n 1 | sed 's/_.*gz//')
-  - _R_CHECK_CRAN_INCOMING_=FALSE R CMD check "${PKG_FILE_NAME}" --no-build-vignettes --no-manual
+  - _R_CHECK_CRAN_INCOMING_=FALSE R CMD check "${PKG_FILE_NAME}" --as-cran
   - cat ${PKG_NAME}.Rcheck/00install.out # Print out install / compile log
 
 notifications:
@@ -63,7 +70,7 @@ notifications:
 after_success:
   - Rscript -e 'library(covr);codecov()'
   # Rebuild docker container
-  - curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/development/trigger/e51f720d-c4e7-45df-b042-5d8a362bd7e0/
+  - curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/broadsea-methodslibrary/trigger/f0b51cec-4027-4781-9383-4b38b42dd4f5/
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy.sh
   
 env:

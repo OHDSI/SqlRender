@@ -23,4 +23,3 @@ being sent as one execution.
 splitSql("SELECT * INTO a FROM b; USE x; DROP TABLE c;")
 
 }
-

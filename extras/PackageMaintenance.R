@@ -1,6 +1,6 @@
 # @file PackageMaintenance
 #
-# Copyright 2016 Observational Health Data Sciences and Informatics
+# Copyright 2017 Observational Health Data Sciences and Informatics
 #
 # This file is part of SqlRender
 # 
@@ -30,3 +30,8 @@ rmarkdown::render("vignettes/UsingSqlRender.Rmd",
                   rmarkdown::pdf_document(latex_engine = "pdflatex",
                                           toc = TRUE,
                                           number_sections = TRUE))
+
+# Release package:
+devtools::build_win()
+
+devtools::release()

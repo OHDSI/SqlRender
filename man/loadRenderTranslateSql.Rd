@@ -41,4 +41,3 @@ renderedSql <- loadRenderTranslateSql("CohortMethod.sql",
                                       CDM_schema = "cdmSchema")
 }
 }
-

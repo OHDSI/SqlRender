@@ -1,16 +1,19 @@
 SqlRender
 =========
 
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SqlRender)](https://cran.r-project.org/package=SqlRender)
+
 Introduction
 ============
-This is an R package for rendering parameterized SQL, and translating it to different SQL dialects. SqlRender can also be used as a stand-alone Java library.
+This is an R package for rendering parameterized SQL, and translating it to different SQL dialects. SqlRender can also be used as a stand-alone Java library and a command-line executable.
 
 Features
 ========
 - Supports a simple markup syntax for making SQL parameterized, and renders parameterized SQL (containing the markup syntax) to executable SQL
 - The syntax supports defining default parameter values
 - The syntax supports if-then-else structures
-- Has functions for translating SQL from one dialect (Microsoft SQL Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift)
+- Has functions for translating SQL from one dialect (Microsoft SQL Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift, Microsoft PDW)
+- Can be used as R package, Java library, or as stand-alone executable through a command-line interface
 
 Examples
 ========
@@ -56,11 +59,17 @@ Getting Started
 ===============
 ## R package
 
-Use these commands in R to download and install the SqlRender package:
+In R, use the following commands to install the latest stable version from CRAN:
+
+```r
+install.packages("SqlRender")
+```
+
+To install the latest development version directly from GitHub, use:
 
 ```r
 install.packages("devtools")
-library("devtools")
+library(devtools)
 install_github("ohdsi/SqlRender")
 ```
 
@@ -97,6 +106,12 @@ You can fetch the JAR file in the inst/java folder of this repository, or use Ma
 </dependency>
 ```
 
+## Command-line executable
+You can fetch the JAR file in the inst/java folder of this repository, or use Maven as described above. Run this from the command line to get a list of options:
+```
+java -jar SqlRender.jar ?
+```
+
 Getting Involved
 =============
 * Vignette: [Using SqlRender](https://raw.githubusercontent.com/OHDSI/SqlRender/master/inst/doc/UsingSqlRender.pdf)
@@ -112,7 +127,7 @@ Development
 ===========
 SqlRender is being developed in R Studio.
 
-###Development status
+### Development status
 [![Build Status](https://travis-ci.org/OHDSI/SqlRender.svg?branch=master)](https://travis-ci.org/OHDSI/SqlRender)
 [![codecov.io](https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/SqlRender?branch=master)
 

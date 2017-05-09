@@ -1,385 +1,461 @@
-From,To,Pattern,Replacement
-"sql server","oracle","INSERT INTO @table (@columns) VALUES (@values1),(@values2)","<start_of_insert> INSERT INTO @table (@columns) VALUES (INTO @table <par_open>@columns<par_close> VALUES <par_open>@values1<par_close>\n INTO @table <par_open>@columns<par_close> VALUES <par_open>@values2<par_close>\n)"
-"sql server","oracle","INTO @table <par_open>@columns<par_close> VALUES <par_open>INTO @table <par_open>@columns<par_close> VALUES","INTO @table <par_open>@columns<par_close> VALUES"
-"sql server","oracle","<start_of_insert> @a INSERT INTO @table (@columns) VALUES (@b)","INSERT ALL\n@bSELECT * FROM dual"
-"sql server","oracle","<par_open>","("
-"sql server","oracle","<par_close>",")"
-"sql server","oracle","EXCEPT","MINUS"
-"sql server","oracle","DATEADD(d,@days,@date)","(@date + @days)"
-"sql server","oracle","DATEADD(dd,@days,@date)","(@date + @days)"
-"sql server","oracle","DATEADD(day,@days,@date)","(@date + @days)"
-"sql server","oracle","DATEADD(month,@months,@date)","ADD_MONTHS(@date, @months)"
-"sql server","oracle","DATEADD(mm,@months,@date)","ADD_MONTHS(@date, @months)"
-"sql server","oracle","DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"
-"sql server","oracle","DATEADD(year,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
-"sql server","oracle","DATEADD(yyyy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
-"sql server","oracle","DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
-"sql server","oracle","DATEDIFF(day,@start, @end)","(@end - @start)"
-"sql server","oracle","DATEDIFF(dd,@start, @end)","(@end - @start)"
-"sql server","oracle","DATEDIFF(d,@start, @end)","(@end - @start)"
-"sql server","oracle","GETDATE()","SYSDATE"
-"sql server","oracle","+ '@a'","|| '@a'"
-"sql server","oracle","'@a' +","'@a' ||"
-"sql server","oracle","CAST(@a AS varchar(@b)) +","CAST(@a AS varchar(@b)) ||"
-"sql server","oracle","+ CAST(@a AS varchar(@b))","|| CAST(@a AS varchar(@b))"
-"sql server","oracle","CAST(@a AS varchar) +","CAST(@a AS varchar) ||"
-"sql server","oracle","+ CAST(@a AS varchar)","|| CAST(@a AS varchar)"
-"sql server","oracle","CAST(@a AS DATE)","TO_DATE(@a, 'yyyymmdd')"
-"sql server","oracle","CAST(@a AS VARCHAR(@b))","TO_CHAR(@a)"
-"sql server","oracle","CAST(@a AS VARCHAR)","TO_CHAR(@a)"
-"sql server","oracle","DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
-"sql server","oracle","DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
-"sql server","oracle","YEAR(@date)","EXTRACT(YEAR FROM @date)"
-"sql server","oracle","MONTH(@date)","EXTRACT(MONTH FROM @date)"
-"sql server","oracle","DAY(@date)","EXTRACT(DAY FROM @date)"
-"sql server","oracle","EOMONTH(@date)","LAST_DAY(@date)"
-"sql server","oracle","STDEV(@a)","STDDEV(@a)"
-"sql server","oracle","VAR(@a)","VARIANCE(@a)"
-"sql server","oracle","RAND()","DBMS_RANDOM.VALUE"
-"sql server","oracle","CEILING(@a)","CEIL(@a)"
-"sql server","oracle","HASHBYTES('MD5',@a)","DBMS_CRYPTO.HASH(@a,2)"
-"sql server","oracle","LEN(@a)","LENGTH(@a)"
-"sql server","oracle","LEFT(@str,@chars)","SUBSTR(@str,0,@chars)"
-"sql server","oracle","RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
-"sql server","oracle","LOG(@expression)","LOG(2.718281828459, @expression)"
-"sql server","oracle","LOG10(@expression)","LOG(10,@expression)"
-"sql server","oracle","ISNULL(@a,@b)","NVL(@a,@b)"
-"sql server","oracle","COUNT_BIG(@a)","COUNT(@a)"
-"sql server","oracle","SQUARE(@a)","((@a)*(@a))"
-"sql server","oracle","PI()","3.14159265358979"
-"sql server","oracle","NEWID()","SYS_GUID()"
-"sql server","oracle","CHARINDEX(@a,@b)","INSTR(@b,@a)"
-"sql server","oracle","SELECT @a WHERE @b;","SELECT @a FROM DUAL WHERE @b;"
-"sql server","oracle","(SELECT @a WHERE @b)","(SELECT @a FROM DUAL WHERE @b)"
-"sql server","oracle","SELECT @a;","SELECT @a FROM DUAL;"
-"sql server","oracle","(SELECT @a)","(SELECT @a FROM DUAL)"
-"sql server","oracle","SELECT @a FROM @b FROM DUAL","SELECT @a FROM @b"
-"sql server","oracle","SELECT @a FROM @b FROM DUAL","SELECT @a FROM @b"
-"sql server","oracle","IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);","BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE @table (@definition)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;"
-"sql server","oracle","IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;","BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;"
-"sql server","oracle","IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;","BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;"
-"sql server","oracle","USE @schema;","ALTER SESSION SET current_schema = @schema;"
-"sql server","oracle",".dbo.","."
-"sql server","oracle","CREATE CLUSTERED INDEX","CREATE INDEX"
-"sql server","oracle","CREATE UNIQUE INDEX @name ON @table (@variable);","BEGIN\n  EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX @name ON @table (@variable)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -1408 THEN\n      RAISE;\n    END IF;\nEND;"
-"sql server","oracle","CREATE UNIQUE CLUSTERED INDEX @name ON @table (@variable);","BEGIN\n  EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX @name ON @table (@variable)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -1408 THEN\n      RAISE;\n    END IF;\nEND;"
-"sql server","oracle","PRIMARY KEY NONCLUSTERED","PRIMARY KEY"
-"sql server","oracle","DATETIME","TIMESTAMP"
-"sql server","oracle","BIGINT","NUMBER(19)"
-"sql server","oracle","VARCHAR(MAX)","CLOB"
-"sql server","oracle","WITH @a AS @b SELECT @c INTO @d FROM @e;","CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;"
-"sql server","oracle","WITH @a AS @b INSERT INTO @c SELECT @d;","INSERT INTO @c WITH @a AS @b SELECT @d;"
-"sql server","oracle","SELECT @a INTO @b FROM @c;","CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;"
-"sql server","oracle","SELECT @a INTO @b;","CREATE TABLE @b AS\nSELECT\n@a;"
-"sql server","oracle","#","%temp_prefix%%session_id%"
-"sql server","postgresql","ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
-"sql server","postgresql","CAST(@a AS DATE)","TO_DATE(@a, 'yyyymmdd')"
-"sql server","postgresql","DATEADD(d,@days,@date)","(@date + @days)"
-"sql server","postgresql","DATEADD(dd,@days,@date)","(@date + @days)"
-"sql server","postgresql","DATEADD(day,@days,@date)","(@date + @days)"
-"sql server","postgresql","DATEADD(m,@months,@date)","CAST((@date + @months*INTERVAL'1 month') AS DATE)"
-"sql server","postgresql","DATEADD(mm,@months,@date)","CAST((@date + @months*INTERVAL'1 month') AS DATE)"
-"sql server","postgresql","DATEADD(month,@months,@date)","CAST((@date + @months*INTERVAL'1 month') AS DATE)"
-"sql server","postgresql","DATEADD(yy,@years,@date)","CAST((@date + @years*INTERVAL'1 year') AS DATE)"
-"sql server","postgresql","DATEADD(yyyy,@years,@date)","CAST((@date + @years*INTERVAL'1 year') AS DATE)"
-"sql server","postgresql","DATEADD(year,@years,@date)","CAST((@date + @years*INTERVAL'1 year') AS DATE)"
-"sql server","postgresql","DATEDIFF(d,@start, @end)","(CAST(@end AS DATE) - CAST(@start AS DATE))"
-"sql server","postgresql","DATEDIFF(dd,@start, @end)","(CAST(@end AS DATE) - CAST(@start AS DATE))"
-"sql server","postgresql","DATEDIFF(day,@start, @end)","(CAST(@end AS DATE) - CAST(@start AS DATE))"
-"sql server","postgresql","GETDATE()","CURRENT_DATE"
-"sql server","postgresql","+ '@a'","|| '@a'"
-"sql server","postgresql","'@a' +","'@a' ||"
-"sql server","postgresql","CAST(@a AS varchar(@b)) +","CAST(@a AS varchar(@b)) ||"
-"sql server","postgresql","+ CAST(@a AS varchar(@b))","|| CAST(@a AS varchar(@b))"
-"sql server","postgresql","CAST(@a AS varchar) +","CAST(@a AS varchar) ||"
-"sql server","postgresql","+ CAST(@a AS varchar)","|| CAST(@a AS varchar)"
-"sql server","postgresql","DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
-"sql server","postgresql","DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
-"sql server","postgresql","YEAR(@date)","EXTRACT(YEAR FROM @date)"
-"sql server","postgresql","MONTH(@date)","EXTRACT(MONTH FROM @date)"
-"sql server","postgresql","DAY(@date)","EXTRACT(DAY FROM @date)"
-"sql server","postgresql","EOMONTH(@date)","(DATE_TRUNC('MONTH', @date) + INTERVAL '1 MONTH - 1 day')::DATE"
-"sql server","postgresql","STDEV(@a)","STDDEV(@a)"
-"sql server","postgresql","VAR(@a)","VARIANCE(@a)"
-"sql server","postgresql","RAND()","RANDOM()"
-"sql server","postgresql","HASHBYTES('MD5',@a)","MD5(@a)"
-"sql server","postgresql","LEN(@a)","CHAR_LENGTH(@a)"
-"sql server","postgresql","CHARINDEX(@a,@b)","STRPOS(@b,@a)"
-"sql server","postgresql","LOG(@expression)","LN(@expression)"
-"sql server","postgresql","LOG10(@expression)","LOG(10,@expression)"
-"sql server","postgresql","ISNULL(@a,@b)","COALESCE(@a,@b)"
-"sql server","postgresql","COUNT_BIG(@a)","COUNT(@a)"
-"sql server","postgresql","SQUARE(@a)","((@a)*(@a))"
-"sql server","postgresql","NEWID()","MD5(RANDOM()::TEXT || CLOCK_TIMESTAMP()::TEXT)"
-"sql server","postgresql","USE @schema;","SET search_path TO @schema;"
-"sql server","postgresql","IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);","CREATE TABLE IF NOT EXISTS @table (@definition);"
-"sql server","postgresql","IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS @table;"
-"sql server","postgresql","IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS @table;"
-"sql server","postgresql",".dbo.","."
-"sql server","postgresql","CREATE TABLE #@table (@definition)","CREATE TEMP TABLE @table (@definition)"
-"sql server","postgresql","CREATE CLUSTERED INDEX @index_name ON @table (@variable);","CREATE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;"
-"sql server","postgresql","CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);","CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;"
-"sql server","postgresql","PRIMARY KEY NONCLUSTERED","PRIMARY KEY"
-"sql server","postgresql","DATETIME","TIMESTAMP"
-"sql server","postgresql","VARCHAR(MAX)","TEXT"
-"sql server","postgresql","FLOAT","NUMERIC"
-"sql server","postgresql","WITH @a AS @b SELECT @c INTO #@d FROM @e;","CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;"
-"sql server","postgresql","WITH @a AS @b SELECT @c INTO @d FROM @e;","CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;"
-"sql server","postgresql","SELECT @a INTO #@b FROM @c;","CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;"
-"sql server","postgresql","SELECT @a INTO @b FROM @c;","CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;"
-"sql server","postgresql","SELECT @a INTO @b;","CREATE TABLE @b AS\nSELECT\n@a;"
-"sql server","postgresql","#",""
-"sql server","redshift","ROUND(@a,@b)","ROUND(CAST(@a AS FLOAT),@b)"
-"sql server","redshift","CAST(@a AS DATE)","TO_DATE(@a, 'yyyymmdd')"
-"sql server","redshift","DATEADD(d,@days,@date)","(@date + @days)"
-"sql server","redshift","DATEADD(dd,@days,@date)","(@date + @days)"
-"sql server","redshift","DATEADD(day,@days,@date)","(@date + @days)"
-"sql server","redshift","DATEADD(m,@months,@date)","CAST(ADD_MONTHS(@date,@months) AS DATE)"
-"sql server","redshift","DATEADD(mm,@months,@date)","CAST(ADD_MONTHS(@date,@months) AS DATE)"
-"sql server","redshift","DATEADD(month,@months,@date)","CAST(ADD_MONTHS(@date,@months) AS DATE)"
-"sql server","redshift","DATEDIFF(d,@start, @end)","(@end - @start)"
-"sql server","redshift","DATEDIFF(dd,@start, @end)","(@end - @start)"
-"sql server","redshift","DATEDIFF(day,@start, @end)","(@end - @start)"
-"sql server","redshift","GETDATE()","CURRENT_DATE"
-"sql server","redshift","+ '@a'","|| '@a'"
-"sql server","redshift","'@a' +","'@a' ||"
-"sql server","redshift","CAST(@a AS varchar(@b)) +","CAST(@a AS varchar(@b)) ||"
-"sql server","redshift","+ CAST(@a AS varchar(@b))","|| CAST(@a AS varchar(@b))"
-"sql server","redshift","CAST(@a AS varchar) +","CAST(@a AS varchar) ||"
-"sql server","redshift","+ CAST(@a AS varchar)","|| CAST(@a AS varchar)"
-"sql server","redshift","DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
-"sql server","redshift","YEAR(@date)","EXTRACT(YEAR FROM @date)"
-"sql server","redshift","MONTH(@date)","EXTRACT(MONTH FROM @date)"
-"sql server","redshift","DAY(@date)","EXTRACT(DAY FROM @date)"
-"sql server","redshift","STDEV(@a)","STDDEV(@a)"
-"sql server","redshift","RAND()","RANDOM()"
-"sql server","redshift","HASHBYTES('MD5',@a)","MD5(@a)"
-"sql server","redshift","LEN(@a)","CHAR_LENGTH(@a)"
-"sql server","redshift","LOG(@expression)","LN(CAST(@expression AS REAL))"
-"sql server","redshift","ISNULL(@a,@b)","COALESCE(@a,@b)"
-"sql server","redshift","COUNT_BIG(@a)","COUNT(@a)"
-"sql server","redshift","USE @schema;","SET search_path TO @schema;"
-"sql server","redshift","IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);","CREATE TABLE IF NOT EXISTS @table (@definition);"
-"sql server","redshift","IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS @table;"
-"sql server","redshift","IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS @table;"
-"sql server","redshift",".dbo.","."
-"sql server","redshift","CREATE TABLE #@table (@definition)","CREATE TEMP TABLE @table (@definition)"
-"sql server","redshift","WITH @a AS @b SELECT @c INTO #@d FROM @e;","CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;"
-"sql server","redshift","WITH @a AS @b SELECT @c INTO @d FROM @e;","CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;"
-"sql server","redshift","SELECT @a INTO #@b FROM @c;","CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;"
-"sql server","redshift","SELECT @a INTO @b FROM @c;","CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;"
-"sql server","redshift","SELECT @a INTO @b;","CREATE TABLE @b AS\nSELECT\n@a;"
-"sql server","redshift","PRIMARY KEY NONCLUSTERED","PRIMARY KEY"
-"sql server","redshift","DATETIME","TIMESTAMP"
-"sql server","redshift","#",""
-"sql server","pdw","VARCHAR(MAX)","VARCHAR(1000)"
-"sql server","pdw","WITH @a AS @b SELECT @c1 subject_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(subject_id))\nAS\nWITH @a AS @b SELECT\n@c1 subject_id, @c2\nFROM\n@e;"
-"sql server","pdw","WITH @a AS @b SELECT @c1 person_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(person_id))\nAS\nWITH @a AS @b SELECT\n@c1 person_id, @c2\nFROM\n@e;"
-"sql server","pdw","WITH @a AS @b SELECT @c1 analysis_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nWITH @a AS @b SELECT\n@c1 analysis_id, @c2\nFROM\n@e;"
-"sql server","pdw","WITH @a AS @b SELECT @c INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = REPLICATE)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;"
-"sql server","pdw","SELECT @a1 subject_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(subject_id))\nAS\nSELECT\n@a1 subject_id, @a2\nFROM\n@c;"
-"sql server","pdw","SELECT @a1 person_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(person_id))\nAS\nSELECT\n@a1 person_id, @a2\nFROM\n@c;"
-"sql server","pdw","SELECT @a1 analysis_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n@a1 analysis_id, @a2\nFROM\n@c;"
-"sql server","pdw","SELECT @a INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a\nFROM\n@c;"
-"sql server","pdw","SELECT @a INTO @b;","CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a;"
-"sql server","pdw","CREATE TABLE #@a WITH (DISTRIBUTION = @b) AS","CREATE TABLE #@a WITH (LOCATION = USER_DB, DISTRIBUTION = @b) AS"
-"sql server","pdw","CREATE TABLE @table (@definition_part1 subject_id @definition_part2);","CREATE TABLE @table (@definition_part1 subject_id @definition_part2)\nWITH (DISTRIBUTION = HASH(subject_id));"
-"sql server","pdw","CREATE TABLE @table (@definition_part1 person_id @definition_part2);","CREATE TABLE @table (@definition_part1 person_id @definition_part2)\nWITH (DISTRIBUTION = HASH(person_id));"
-"sql server","pdw","CREATE TABLE @table (@definition_part1 analysis_id @definition_part2);","CREATE TABLE @table (@definition_part1 analysis_id @definition_part2)\nWITH (DISTRIBUTION = HASH(analysis_id));"
-"sql server","pdw","CREATE TABLE @table (@definition);","CREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = REPLICATE);"
-"sql server","pdw","CREATE TABLE #@table (@definition) WITH (DISTRIBUTION = @distribution);","CREATE TABLE #@table (@definition)\nWITH (LOCATION = USER_DB, DISTRIBUTION = @distribution);"
-"sql server","pdw","TRUNCATE TABLE ","IF XACT_STATE() = 1 COMMIT; TR*NC*T* TABLE "
-"sql server","pdw","DROP TABLE ","IF XACT_STATE() = 1 COMMIT; DR*P TABLE "
-"sql server","pdw","CREATE TABLE ","IF XACT_STATE() = 1 COMMIT; CR**T* TABLE "
-"sql server","pdw","TR*NC*T*","TRUNCATE"
-"sql server","pdw","DR*P","DROP"
-"sql server","pdw","CR**T*","CREATE"
-"sql server","pdw","IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;","IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL "
-"sql server","mysql","DATEADD(d,@days,@date)","DATE_ADD(@date,INTERVAL @days DAY)"
-"sql server","mysql","DATEADD(dd,@days,@date)","DATE_ADD(@date,INTERVAL @days DAY)"
-"sql server","mysql","DATEADD(day,@days,@date)","DATE_ADD(@date,INTERVAL @days DAY)"
-"sql server","mysql","DATEADD(m,@months,@date)","DATE_ADD(@date,INTERVAL @months MONTH)"
-"sql server","mysql","DATEADD(mm,@months,@date)","DATE_ADD(@date,INTERVAL @months MONTH)"
-"sql server","mysql","DATEADD(month,@months,@date)","DATE_ADD(@date,INTERVAL @months MONTH)"
-"sql server","mysql","DATEADD(yy,@years,@date)","DATE_ADD(@date,INTERVAL @years YEAR)"
-"sql server","mysql","DATEADD(yyyy,@years,@date)","DATE_ADD(@date,INTERVAL @years YEAR)"
-"sql server","mysql","DATEADD(year,@years,@date)","DATE_ADD(@date,INTERVAL @years YEAR)"
-"sql server","mysql","DATEDIFF(d,@start, @end)","DATEDIFF(@start,@end)"
-"sql server","mysql","DATEDIFF(dd,@start, @end)","DATEDIFF(@start,@end)"
-"sql server","mysql","DATEDIFF(day,@start, @end)","DATEDIFF(@start,@end)"
-"sql server","mysql","CAST(@a AS VARCHAR(@b))","CAST(@a AS CHAR(@b))"
-"sql server","mysql","CAST(@a+@b+@c AS DATE)","CAST(concat(@a,'-',@b,'-',@c) AS DATE)"
-"sql server","mysql","RIGHT(@str1+@str2,@chars)","RIGHT(CONCAT(@str1,@str2),@chars)"
-"sql server","mysql","GETDATE()","NOW()"
-"sql server","mysql","DATEFROMPARTS(@year,@month,@day)"," DATE_ADD(DATE_ADD(MAKEDATE(@year, 1), INTERVAL (@month)-1 MONTH), INTERVAL (@day)-1 DAY)"
-"sql server","mysql","EOMONTH(@date)","LAST_DAY(@date)"
-"sql server","mysql","STDEV(@a)","STDDEV(@a)"
-"sql server","mysql","VAR(@a)","VARIANCE(@a)"
-"sql server","mysql","HASHBYTES('MD5',@a)","MD5(@a)"
-"sql server","mysql","LEN(@a)","LENGTH(@a)"
-"sql server","mysql","COUNT_BIG(@a)","COUNT(@a)"
-"sql server","mysql","LOG(@expression)","LN(@expression)"
-"sql server","mysql","LOG10(@expression)","LOG(10,@expression)"
-"sql server","mysql","SQUARE(@a)","((@a)*(@a))"
-"sql server","mysql","IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);","CREATE TABLE IF NOT EXISTS @table (@definition);"
-"sql server","mysql","IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS @table;"
-"sql server","mysql","IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS @table;"
-"sql server","mysql","CREATE CLUSTERED INDEX @index_name ON @table (@variable);","CREATE INDEX @index_name ON @table (@variable);"
-"sql server","mysql","CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);","CREATE UNIQUE INDEX @index_name ON @table (@variable);"
-"sql server","mysql","PRIMARY KEY NONCLUSTERED","PRIMARY KEY"
-"sql server","mysql","VARCHAR(MAX)","TEXT"
-"sql server","mysql","FLOAT","NUMERIC"
-"sql server","mysql","WITH @tablea (@definitiona) AS @ba, @tableb (@definitionb) as @bb, @tablec (@definitionc) as @bc, @tabled (@definitiond) as @bd SELECT @c INTO #@d FROM @e;","CREATE TABLE IF NOT EXISTS @tablea @ba;CREATE TABLE IF NOT EXISTS @tableb @bb;CREATE TABLE IF NOT EXISTS @tablec @bc; CREATE TABLE IF NOT EXISTS @tabled @bd; CREATE TABLE IF NOT EXISTS @d SELECT @c FROM @e;Drop table @tablea,@tableb,@tablec,@tabled;"
-"sql server","mysql","WITH @tablea (@definitiona) AS @ba, @tableb (@definitionb) as @bb, @tablec (@definitionc) as @bc SELECT @c INTO #@d FROM @e;","CREATE TABLE IF NOT EXISTS @tablea @ba;CREATE TABLE IF NOT EXISTS @tableb @bb;CREATE TABLE IF NOT EXISTS @tablec @bc; CREATE TABLE IF NOT EXISTS @d SELECT @c FROM @e;Drop table @tablea,@tableb,@tablec;"
-"sql server","mysql","WITH @aa AS @ba, @ab as @bb, @ac as @bc,@ad as @bd SELECT @c INTO #@d FROM @e;","CREATE TABLE IF NOT EXISTS @aa AS @ba;CREATE TABLE IF NOT EXISTS @ab @bb;CREATE TABLE IF NOT EXISTS @ac @bc;CREATE TABLE IF NOT EXISTS @ad @bd; CREATE TABLE IF NOT EXISTS @d SELECT @c FROM @e;Drop table @aa,@ab,@ac,@ad;"
-"sql server","mysql","WITH @table (@definition) AS @b SELECT @c INTO #@d FROM @e;","CREATE TABLE IF NOT EXISTS @table @b; CREATE TABLE IF NOT EXISTS @d SELECT @c FROM @e;Drop table @table;"
-"sql server","mysql","WITH @a AS @b SELECT @c INTO #@d FROM @e;","CREATE TABLE IF NOT EXISTS @a @b; CREATE TABLE IF NOT EXISTS @d SELECT @c FROM @e;Drop table @a;"
-"sql server","mysql","WITH @a AS @b SELECT @c INTO @d FROM @e;","CREATE TABLE IF NOT EXISTS @a @b; CREATE TABLE IF NOT EXISTS @d SELECT @c FROM @e;Drop table @a;"
-"sql server","mysql","SELECT @a INTO #@b FROM @c;","CREATE TEMPORARY TABLE @b SELECT @a FROM @c;"
-"sql server","mysql","SELECT @a INTO @b FROM @c;","CREATE TABLE @b  SELECT @a FROM @c;"
-"sql server","mysql","SELECT @a INTO @b;","CREATE TABLE @b SELECT @a;"
-"sql server","mysql","(SELECT @a,@b,@c,@d, ROW_NUMBER() over (PARTITION by @e order by @f) as @g FROM @h group by @i)","(select @a,@b,@c,@d, 0 as @g from @h group by @i)"
-"sql server","mysql","SELECT @a,@b,@c,@d, ROW_NUMBER() over (PARTITION by @e order by @f) as @g FROM @h group by @i;","select @a,@b,@c,@d, 0 as @g from @h group by @i;"
-"sql server","mysql","(SELECT @a,@b,@c,ROW_NUMBER() over (PARTITION by @d order by @e asc) as @f FROM @g)","(select @a,@b,@c, 0 as @f from @g)"
-"sql server","mysql","(SELECT @a,@b, ROW_NUMBER() over (PARTITION by @d order by @e asc) as @f FROM @g)","(select @a,@b, 0 as @f from @g)"
-"sql server","mysql","(SELECT @aa, ROW_NUMBER() over (PARTITION by @b order by @o asc) as @c FROM @d)","(select @aa, 0 as @c from @d)"
-"sql server","mysql","(SELECT @aa, @ab, row_number() over (order by @b) as @c FROM @d group by @e)","(select @aa, @ab, 0 as @c from @d group by @e)"
-"sql server","mysql","(SELECT @aa, @ab, @ac, row_number() over (order by @b) as @c FROM @d group by @e)","(select @aa, @ab,@ac, 0 as @c from @d group by @e)"
-"sql server","mysql","IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);","CREATE TABLE IF NOT EXISTS @table (@definition);"
-"sql server","mysql","IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS @table;"
-"sql server","mysql","IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS @table;"
-"sql server","mysql",".dbo.","."
-"sql server","mysql","(row_number() over (order by @a))","0"
-"sql server","mysql","COUNT(@a) over ()","count(@a)"
-"sql server","mysql","OBSERVATION_PERIOD","observation_period"
-"sql server","mysql","temp_Dates","temp_dates"
-"sql server","mysql","PERSON","person"
-"sql server","mysql","#",""
-"sql server","googlebigquery","DATEDIFF(d,@start, @end)","DATE_DIFF(DATE(@end), DATE(@start), DAY)"
-"sql server","googlebigquery","DATEDIFF(dd,@start, @end)","DATE_DIFF(DATE(@end), DATE(@start), DAY)"
-"sql server","googlebigquery","DATEDIFF(day,@start, @end)","DATE_DIFF(DATE(@end), DATE(@start), DAY)"
-"sql server","googlebigquery","DATEADD(d,@days,@date)","DATE_ADD(DATE(@date), @days, DAY)"
-"sql server","googlebigquery","DATEADD(dd,@days,@date)","DATE_ADD(DATE(@date), @days, DAY)"
-"sql server","googlebigquery","DATEADD(day,@days,@date)","DATE_ADD(DATE(@date), @days, DAY)"
-"sql server","googlebigquery","DATEADD(m,@months,@date)","DATE_ADD(DATE(@date), @months, MONTH)"
-"sql server","googlebigquery","DATEADD(mm,@months,@date)","DATE_ADD(DATE(@date), @months, MONTH)"
-"sql server","googlebigquery","DATEADD(month,@months,@date)","DATE_ADD(DATE(@date), @months, MONTH)"
-"sql server","googlebigquery","GETDATE()","CURRENT_DATE()"
-"sql server","googlebigquery","YEAR(@date)","EXTRACT(YEAR from @date)"
-"sql server","googlebigquery","MONTH(@date)","EXTRACT(MONTH from @date)"
-"sql server","googlebigquery","DAY(@date)","EXTRACT(DAY from @date)"
-"sql server","googlebigquery","DATETIME","TIMESTAMP"
-"sql server","googlebigquery","STDEV(@a)","STDDEV(@a)"
-"sql server","googlebigquery","VAR(@a)","VARIANCE(@a)"
-"sql server","googlebigquery","HASHBYTES('MD5',@a)","SHA1(@a)"
-"sql server","googlebigquery","LEN(@a)","LENGTH(@a)"
-"sql server","googlebigquery","COUNT_BIG(@a)","COUNT(@a)"
-"sql server","googlebigquery","float",":float_temp"
-"sql server","googlebigquery",":float_temp",":float"
-"sql server","googlebigquery","varchar(@a)",":string"
-"sql server","googlebigquery","varchar",":string"
-"sql server","googlebigquery","bigint",":integer"
-"sql server","googlebigquery","int",":integer"
-"sql server","googlebigquery","CAST(@a as:string)","CAST(@a as string)"
-"sql server","googlebigquery","CAST(@a as:integer)","CAST(@a as int64)"
-"sql server","googlebigquery","CAST(@a as:float)","CAST(@a as float64)"
-"sql server","googlebigquery","('@a')","'@a'"
-"sql server","googlebigquery","'@a' + '@b'","CONCAT('@a','@b')"
-"sql server","googlebigquery","CONCAT(@a) + CONCAT(@b)","CONCAT(@a,@b)"
-"sql server","googlebigquery","CONCAT(@a) + '@b'","CONCAT(@a,'@b')"
-"sql server","googlebigquery","'@a' + CONCAT(@b)","CONCAT('@a',@b)"
-"sql server","googlebigquery","'@a'+@b,@c+","CONCAT('@a',@b),@c+"
-"sql server","googlebigquery","'@a'+@b+@c,","CONCAT('@a',@b)+@c,"
-"sql server","googlebigquery","'@a' + @b +","CONCAT('@a',@b)+"
-"sql server","googlebigquery","'@a'+@b as @c,","CONCAT('@a',@b) as @c,"
-"sql server","googlebigquery","'@a'+@b,@c as","CONCAT('@a',@b),@c as"
-"sql server","googlebigquery","'@a' + @b as","CONCAT('@a',@b) as"
-"sql server","googlebigquery","'@a' + @b,","CONCAT('@a',@b),"
-"sql server","googlebigquery","'@a'+@b) from","CONCAT('@a',@b)) from"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","'@a' + @b from","CONCAT('@a',@b) from"
-"sql server","googlebigquery","'@a'+@b) as","CONCAT('@a',@b)) as"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","'@a'+@b)@d,","CONCAT('@a',@b))@d,"
-"sql server","googlebigquery","'@a' + @b)","CONCAT('@a',@b))"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","'@a' + @b;","CONCAT('@a',@b);"
-"sql server","googlebigquery","CONCAT(@a)+@b,@c+","CONCAT(@a,@b),@c+"
-"sql server","googlebigquery","CONCAT(@a) + @b +","CONCAT(@a,@b)+"
-"sql server","googlebigquery","CONCAT(@a)+@b as @c,","CONCAT(@a,@b)as @c,"
-"sql server","googlebigquery","CONCAT(@a)+@b,@c as","CONCAT(@a,@b),@c as"
-"sql server","googlebigquery","CONCAT(@a) + @b as","CONCAT(@a,@b) as"
-"sql server","googlebigquery","CONCAT(@a) + @b,","CONCAT(@a,@b),"
-"sql server","googlebigquery","CONCAT(@a)+@b) from","CONCAT(@a,@b)) from"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","CONCAT(@a) + @b from","CONCAT(@a,@b) from"
-"sql server","googlebigquery","CONCAT(@a)+@b) as","CONCAT(@a,@b)) as"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","CONCAT(@a)+@b)@d,","CONCAT(@a,@b))@d,"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","CONCAT(@a) + @b)","CONCAT(@a,@b))"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","CONCAT(@a) + @b;","CONCAT(@a,@b);"
-"sql server","googlebigquery","+@a,@b+'@c'","+@a,CONCAT(@b,'@c')"
-"sql server","googlebigquery",",(@a+@b+'@c'",",(@a+CONCAT(@b,'@c')"
-"sql server","googlebigquery",",(@a+'@b'",",(CONCAT(@a,'@b')"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","(@a,@b+'@c'","(@a,CONCAT(@b,'@c')"
-"sql server","googlebigquery",",@a+@b+'@c'",",@a+CONCAT(@b,'@c')"
-"sql server","googlebigquery","+(@a+'@b'","+(CONCAT(@a,'@b')"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","(@a+@b+'@c'","(@a+CONCAT(@b,'@c')"
-"sql server","googlebigquery","+select @a+'@b'","+select CONCAT(@a,'@b')"
-"sql server","googlebigquery","select @a+@b+'@c'","select @a+CONCAT(@b,'@c')"
-"sql server","googlebigquery","+@a+'@b'","+CONCAT(@a,'@b')"
-"sql server","googlebigquery","select (@a+'@b'","select (CONCAT(@a,'@b')"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","(select @a+'@b'","(select CONCAT(@a,'@b')"
-"sql server","googlebigquery","(@a+'@b'","(CONCAT(@a,'@b')"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery",",@a,@b+'@c'",",@a,CONCAT(@b,'@c')"
-"sql server","googlebigquery",",select @a+'@b'",",select CONCAT(@a,'@b')"
-"sql server","googlebigquery","select @a,@b+'@c'","select @a,CONCAT(@b,'@c')"
-"sql server","googlebigquery",",@a+'@b'",",CONCAT(@a,'@b')"
-"sql server","googlebigquery","select @a+'@b'","select CONCAT(@a,'@b')"
-"sql server","googlebigquery","+@a,@b+CONCAT(@c)","+@a,CONCAT(@b,@c)"
-"sql server","googlebigquery",",(@a+@b+CONCAT(@c)",",(@a+CONCAT(@b,@c)"
-"sql server","googlebigquery",",(@a+CONCAT(@b)",",(CONCAT(@a,@b)"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","(@a,@b+CONCAT(@c)","(@a,CONCAT(@b,@c)"
-"sql server","googlebigquery",",@a+@b+CONCAT(@c)",",@a+CONCAT(@b,@c)"
-"sql server","googlebigquery","+(@a+CONCAT(@b)","+(CONCAT(@a,@b)"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","(@a+@b+CONCAT(@c)","(@a+CONCAT(@b,@c)"
-"sql server","googlebigquery","+select @a+CONCAT(@b)","+select CONCAT(@a,@b)"
-"sql server","googlebigquery","select @a+@b+CONCAT(@c)","select @a+CONCAT(@b,@c)"
-"sql server","googlebigquery","+@a+CONCAT(@b)","+CONCAT(@a,@b)"
-"sql server","googlebigquery","select (@a+CONCAT(@b)","select (CONCAT(@a,@b)"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery","(select @a+CONCAT(@c)","(select CONCAT(@a,@b)"
-"sql server","googlebigquery","(@a+CONCAT(@b)","(CONCAT(@a,@b)"
-"sql server","googlebigquery","(CONCAT(@a))","CONCAT(@a)"
-"sql server","googlebigquery",",@a,@b+CONCAT(@c)",",@a,CONCAT(@b,@c)"
-"sql server","googlebigquery",",select @a+CONCAT(@b)",",select CONCAT(@a,@b)"
-"sql server","googlebigquery","select @a,@b+CONCAT(@c)","select @a,CONCAT(@b,@c)"
-"sql server","googlebigquery",",@a+CONCAT(@b)",",CONCAT(@a,@b)"
-"sql server","googlebigquery","select @a+CONCAT(@b)","select CONCAT(@a,@b)"
-"sql server","googlebigquery","#",""
-"sql server","googlebigquery","select @a;","#standardSQL\n select @a;"
-"sql server","googlebigquery","insert @a;","#standardSQL\n insert @a;"
-"sql server","googlebigquery","update @a;","#standardSQL\n update @a;"
-"sql server","googlebigquery","create @a;","#standardSQL\n create @a;"
-"sql server","googlebigquery","drop @a;","#standardSQL\n drop @a;"
-"sql server","googlebigquery","delete @a;","#standardSQL\n delete @a;"
-"sql server","googlebigquery","with @a;","#standardSQL\n with @a;"
-
-
-
-
-
-
-
-
-
-
-
+To,Pattern,Replacement
+oracle,"INSERT INTO @table (@columns) VALUES (@values1),(@values2)",<start_of_insert> INSERT INTO @table (@columns) VALUES (INTO @table <par_open>@columns<par_close> VALUES <par_open>@values1<par_close>\n INTO @table <par_open>@columns<par_close> VALUES <par_open>@values2<par_close>\n)
+oracle,INTO @table <par_open>@columns<par_close> VALUES <par_open>INTO @table <par_open>@columns<par_close> VALUES,INTO @table <par_open>@columns<par_close> VALUES
+oracle,<start_of_insert> @a INSERT INTO @table (@columns) VALUES (@b),INSERT ALL\n@bSELECT * FROM dual
+oracle,<par_open>,(
+oracle,<par_close>,)
+oracle,EXCEPT,MINUS
+oracle,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
+oracle,"DATEADD(second,@seconds,@datetime)","(@date + NUMTODSINTERVAL(@seconds, 'second'))"
+oracle,"DATEADD(minute,@minutes,@datetime)","(@date + NUMTODSINTERVAL(@minutes, 'minute'))"
+oracle,"DATEADD(hour,@hours,@datetime)","(@date + NUMTODSINTERVAL(@hours, 'hour'))"
+oracle,"DATEADD(d,@days,@date)","(@date + NUMTODSINTERVAL(@days, 'day'))"
+oracle,"DATEADD(dd,@days,@date)","(@date + NUMTODSINTERVAL(@days, 'day'))"
+oracle,"DATEADD(day,@days,@date)","(@date + NUMTODSINTERVAL(@days, 'day'))"
+oracle,"DATEADD(month,@months,@date)","ADD_MONTHS(@date, @months)"
+oracle,"DATEADD(mm,@months,@date)","ADD_MONTHS(@date, @months)"
+oracle,"DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"
+oracle,"DATEADD(year,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
+oracle,"DATEADD(yyyy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
+oracle,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
+oracle,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+oracle,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+oracle,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+oracle,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
+oracle,GETDATE(),SYSDATE
+oracle,+ '@a',|| '@a'
+oracle,'@a' +,'@a' ||
+oracle,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
+oracle,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
+oracle,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
+oracle,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
+oracle,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
+oracle,CAST(@a AS VARCHAR(@b)),TO_CHAR(@a)
+oracle,CAST(@a AS VARCHAR),TO_CHAR(@a)
+oracle,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
+oracle,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
+oracle,EOMONTH(@date),LAST_DAY(@date)
+oracle,STDEV(@a),STDDEV(@a)
+oracle,VAR(@a),VARIANCE(@a)
+oracle,RAND(),DBMS_RANDOM.VALUE
+oracle,CEILING(@a),CEIL(@a)
+oracle,"HASHBYTES('MD5',@a)","DBMS_CRYPTO.HASH(@a,2)"
+oracle,LEN(@a),LENGTH(@a)
+oracle,"LEFT(@str,@chars)","SUBSTR(@str,0,@chars)"
+oracle,"RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
+oracle,"LOG(@expression,@base)","<L_O_G>(@base,@expression)"
+oracle,LOG(@expression),"LOG(2.718281828459,@expression)"
+oracle,<L_O_G>,LOG
+oracle,LOG10(@expression),"LOG(10,@expression)"
+oracle,"ISNULL(@a,@b)","NVL(@a,@b)"
+oracle,ISNUMERIC(@a),"(LENGTH(TRIM(TRANSLATE(@a, ' +-.0123456789',' '))) IS NULL)"
+oracle,COUNT_BIG(@a),COUNT(@a)
+oracle,SQUARE(@a),((@a)*(@a))
+oracle,PI(),3.141592654
+oracle,NEWID(),SYS_GUID()
+oracle,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
+oracle,SELECT @a WHERE @b;,SELECT @a FROM DUAL WHERE @b;
+oracle,(SELECT @a WHERE @b),(SELECT @a FROM DUAL WHERE @b)
+oracle,SELECT @a WHERE @b UNION,SELECT @a FROM DUAL WHERE @b UNION
+oracle,SELECT @a;,SELECT @a FROM DUAL;
+oracle,(SELECT @a),(SELECT @a FROM DUAL)
+oracle,SELECT @a UNION,SELECT @a FROM DUAL UNION
+oracle,SELECT @a FROM @b FROM DUAL;,SELECT @a FROM @b;
+oracle,FROM @a FROM DUAL,FROM @a
+oracle,FROM @a FROM DUAL,FROM @a
+oracle,FROM @a FROM DUAL,FROM @a
+oracle,FROM @a FROM DUAL,FROM @a
+oracle,YEAR(@date),EXTRACT(YEAR FROM @date)
+oracle,MONTH(@date),EXTRACT(MONTH FROM @date)
+oracle,DAY(@date),EXTRACT(DAY FROM @date)
+oracle,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE @table (@definition)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;
+oracle,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
+oracle,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
+oracle,USE @schema;,ALTER SESSION SET current_schema = @schema;
+oracle,.dbo.,.
+oracle,CREATE CLUSTERED INDEX,CREATE INDEX
+oracle,CREATE UNIQUE INDEX @name ON @table (@variable);,BEGIN\n  EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX @name ON @table (@variable)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -1408 THEN\n      RAISE;\n    END IF;\nEND;
+oracle,CREATE UNIQUE CLUSTERED INDEX @name ON @table (@variable);,BEGIN\n  EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX @name ON @table (@variable)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -1408 THEN\n      RAISE;\n    END IF;\nEND;
+oracle,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
+oracle,DATETIME,TIMESTAMP
+oracle,BIGINT,NUMBER(19)
+oracle,VARCHAR(MAX),CLOB
+oracle,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+oracle,WITH @a AS @b INSERT INTO @c SELECT @d;,INSERT INTO @c WITH @a AS @b SELECT @d;
+oracle,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+oracle,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+oracle,##,<hash><hash>
+oracle,#,%temp_prefix%%session_id%
+oracle,<hash><hash>,##
+oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a WHERE ROWNUM <= @rows; 
+oracle,SELECT @a WHERE @b WHERE ROWNUM <= @rows;,SELECT @a WHERE @b AND ROWNUM <= @rows;
+postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
+postgresql,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
+postgresql,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
+postgresql,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
+postgresql,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
+postgresql,"DATEADD(d,@days,@date)",(@date + @days*INTERVAL'1 day')
+postgresql,"DATEADD(dd,@days,@date)",(@date + @days*INTERVAL'1 day')
+postgresql,"DATEADD(day,@days,@date)",(@date + @days*INTERVAL'1 day')
+postgresql,"DATEADD(m,@months,@date)",(@date + @months*INTERVAL'1 month')
+postgresql,"DATEADD(mm,@months,@date)",(@date + @months*INTERVAL'1 month')
+postgresql,"DATEADD(month,@months,@date)",(@date + @months*INTERVAL'1 month')
+postgresql,"DATEADD(yy,@years,@date)",(@date + @years*INTERVAL'1 year')
+postgresql,"DATEADD(yyyy,@years,@date)",(@date + @years*INTERVAL'1 year')
+postgresql,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
+postgresql,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+postgresql,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+postgresql,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+postgresql,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
+postgresql,GETDATE(),CURRENT_DATE
+postgresql,+ '@a',|| '@a'
+postgresql,'@a' +,'@a' ||
+postgresql,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
+postgresql,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
+postgresql,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
+postgresql,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
+postgresql,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
+postgresql,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
+postgresql,YEAR(@date),EXTRACT(YEAR FROM @date)
+postgresql,MONTH(@date),EXTRACT(MONTH FROM @date)
+postgresql,DAY(@date),EXTRACT(DAY FROM @date)
+postgresql,EOMONTH(@date),"(DATE_TRUNC('MONTH', @date) + INTERVAL '1 MONTH - 1 day')::DATE"
+postgresql,STDEV(@a),STDDEV(@a)
+postgresql,VAR(@a),VARIANCE(@a)
+postgresql,RAND(),RANDOM()
+postgresql,"HASHBYTES('MD5',@a)",MD5(@a)
+postgresql,LEN(@a),CHAR_LENGTH(@a)
+postgresql,"CHARINDEX(@a,@b)","STRPOS(@b,@a)"
+postgresql,"LOG(@expression,@base)","<L_O_G>(CAST((@base) AS NUMERIC),CAST((@expression) AS NUMERIC))"
+postgresql,LOG(@expression),LN(CAST((@expression) AS REAL))
+postgresql,<L_O_G>,LOG
+postgresql,LOG10(@expression),"LOG(10,CAST((@expression) AS NUMERIC))"
+postgresql,"ISNULL(@a,@b)","COALESCE(@a,@b)"
+postgresql,ISNUMERIC(@a),(@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$')
+postgresql,COUNT_BIG(@a),COUNT(@a)
+postgresql,SQUARE(@a),((@a)*(@a))
+postgresql,NEWID(),MD5(RANDOM()::TEXT || CLOCK_TIMESTAMP()::TEXT)
+postgresql,USE @schema;,SET search_path TO @schema;
+postgresql,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+postgresql,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+postgresql,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+postgresql,.dbo.,.
+postgresql,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
+postgresql,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
+postgresql,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
+postgresql,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
+postgresql,DATETIME,TIMESTAMP
+postgresql,VARCHAR(MAX),TEXT
+postgresql,FLOAT,NUMERIC
+postgresql,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+postgresql,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+postgresql,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
+postgresql,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+postgresql,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+postgresql,#,
+postgresql,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+redshift,"ROUND(@a,@b)","ROUND(CAST(@a AS FLOAT),@b)"
+redshift,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
+redshift,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
+redshift,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
+redshift,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
+redshift,"DATEADD(d,@days,@date)",(@date + @days*INTERVAL'1 day')
+redshift,"DATEADD(dd,@days,@date)",(@date + @days*INTERVAL'1 day')
+redshift,"DATEADD(day,@days,@date)",(@date + @days*INTERVAL'1 day')
+redshift,"DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"
+redshift,"DATEADD(mm,@months,@date)","ADD_MONTHS(@date, @months)"
+redshift,"DATEADD(month,@months,@date)","ADD_MONTHS(@date, @months)"
+redshift,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12*@months)"
+redshift,"DATEADD(yyyy,@years,@date)","ADD_MONTHS(@date, 12*@months)"
+redshift,"DATEADD(year,@years,@date)","ADD_MONTHS(@date, 12*@months)"
+redshift,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+redshift,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+redshift,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+redshift,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
+redshift,GETDATE(),CURRENT_DATE
+redshift,+ '@a',|| '@a'
+redshift,'@a' +,'@a' ||
+redshift,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
+redshift,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
+redshift,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
+redshift,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
+redshift,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), ' YYYY- MM- DD')"
+redshift,YEAR(@date),EXTRACT(YEAR FROM @date)
+redshift,MONTH(@date),EXTRACT(MONTH FROM @date)
+redshift,DAY(@date),EXTRACT(DAY FROM @date)
+redshift,STDEV(@a),STDDEV(@a)
+redshift,RAND(),RANDOM()
+redshift,"HASHBYTES('MD5',@a)",MD5(@a)
+redshift,LEN(@a),CHAR_LENGTH(@a)
+redshift,"LOG(@expression,@base)",(LN(CAST((@expression) AS REAL))/LN(CAST((@base) AS REAL)))
+redshift,LOG(@expression),LN(CAST((@expression) AS REAL))
+redshift,LOG10(@expression),LOG(CAST((@expression) AS REAL))
+redshift,"ISNULL(@a,@b)","COALESCE(@a,@b)"
+redshift,ISNUMERIC(@a),(@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$')
+redshift,COUNT_BIG(@a),COUNT(@a)
+redshift,USE @schema;,SET search_path TO @schema;
+redshift,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+redshift,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+redshift,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+redshift,.dbo.,.
+redshift,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE #@table (@definition),HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TEMP TABLE @table (@definition) DISTKEY(@key)
+redshift,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
+redshift,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE @table (@definition);,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @table (@definition) DISTKEY(@key);
+redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO #@d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TEMP TABLE @d DISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d DISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO #@b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TEMP TABLE @b DISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @b DISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+redshift,SELECT @a INTO #@b;,CREATE TEMP TABLE @b AS\nSELECT\n@a;
+redshift,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+redshift,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
+redshift,DATETIME,TIMESTAMP
+redshift,#,
+redshift,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+pdw,VARCHAR(MAX),VARCHAR(1000)
+pdw,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+pdw,"WITH @a AS @b SELECT @c1 subject_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(subject_id))\nAS\nWITH @a AS @b SELECT\n@c1 subject_id, @c2\nFROM\n@e;"
+pdw,"WITH @a AS @b SELECT @c1 person_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(person_id))\nAS\nWITH @a AS @b SELECT\n@c1 person_id, @c2\nFROM\n@e;"
+pdw,"WITH @a AS @b SELECT @c1 analysis_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nWITH @a AS @b SELECT\n@c1 analysis_id, @c2\nFROM\n@e;"
+pdw,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d WITH (DISTRIBUTION = REPLICATE)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+pdw,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @b WITH (DISTRIBUTION = HASH(@key))\nAS\nSELECT\n@a\nFROM\n@c;
+pdw,"SELECT @a1 subject_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(subject_id))\nAS\nSELECT\n@a1 subject_id, @a2\nFROM\n@c;"
+pdw,"SELECT @a1 person_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(person_id))\nAS\nSELECT\n@a1 person_id, @a2\nFROM\n@c;"
+pdw,"SELECT @a1 analysis_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n@a1 analysis_id, @a2\nFROM\n@c;"
+pdw,SELECT @a INTO @b FROM @c;,CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a\nFROM\n@c;
+pdw,SELECT @a INTO @b;,CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a;
+pdw,CREATE TABLE #@a WITH (DISTRIBUTION = @b) AS,"CREATE TABLE #@a WITH (LOCATION = USER_DB, DISTRIBUTION = @b) AS"
+pdw,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE @table (@definition);,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = HASH(@key));
+pdw,CREATE TABLE @table (@definition_part1 subject_id @definition_part2);,CREATE TABLE @table (@definition_part1 subject_id @definition_part2)\nWITH (DISTRIBUTION = HASH(subject_id));
+pdw,CREATE TABLE @table (@definition_part1 person_id @definition_part2);,CREATE TABLE @table (@definition_part1 person_id @definition_part2)\nWITH (DISTRIBUTION = HASH(person_id));
+pdw,CREATE TABLE @table (@definition_part1 analysis_id @definition_part2);,CREATE TABLE @table (@definition_part1 analysis_id @definition_part2)\nWITH (DISTRIBUTION = HASH(analysis_id));
+pdw,CREATE TABLE @table (@definition);,CREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = REPLICATE);
+pdw,CREATE TABLE #@table (@definition) WITH (DISTRIBUTION = @distribution);,"CREATE TABLE #@table (@definition)\nWITH (LOCATION = USER_DB, DISTRIBUTION = @distribution);"
+pdw,TRUNCATE TABLE ,IF XACT_STATE() = 1 COMMIT; TR*NC*T* TABLE 
+pdw,DROP TABLE ,IF XACT_STATE() = 1 COMMIT; DR*P TABLE 
+pdw,CREATE TABLE ,IF XACT_STATE() = 1 COMMIT; CR**T* TABLE 
+pdw,TR*NC*T*,TRUNCATE
+pdw,DR*P,DROP
+pdw,CR**T*,CREATE
+pdw,IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL 
+impala,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
+impala,COUNT_BIG(@a),COUNT(@a)
+impala,"LEFT(@str,@chars)","SUBSTR(@str,1,@chars)"
+impala,LEN(@a),LENGTH(@a)
+impala,LOG(@expression),LN(@expression)
+impala,NEWID(),UUID()
+impala,"RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
+impala,"ROUND(@a,@b)","ROUND(CAST(@a AS DOUBLE),@b)"
+impala,SQUARE(@a),((@a)*(@a))
+impala,STDEV(@a),STDDEV(@a)
+impala,VAR(@a),VARIANCE(@a)
+impala,"DATEADD(d,@days,CAST(@date AS DATE))","DATE_ADD(@date, @days)"
+impala,"DATEADD(dd,@days,CAST(@date AS DATE))","DATE_ADD(@date, @days)"
+impala,"DATEADD(day,@days,CAST(@date AS DATE))","DATE_ADD(@date, @days)"
+impala,"DATEADD(month,@months,CAST(@date AS DATE))","ADD_MONTHS(@date, @months)"
+impala,"DATEADD(mm,@months,CAST(@date AS DATE))","ADD_MONTHS(@date, @months)"
+impala,"DATEADD(m,@months,CAST(@date AS DATE))","ADD_MONTHS(@date, @months)"
+impala,"DATEADD(year,@years,CAST(@date AS DATE))","ADD_MONTHS(@date, 12 * @years)"
+impala,"DATEADD(yyyy,@years,CAST(@date AS DATE))","ADD_MONTHS(@date, 12 * @years)"
+impala,"DATEADD(yy,@years,CAST(@date AS DATE))","ADD_MONTHS(@date, 12 * @years)"
+impala,"DATEADD(d,@days,@date)","DATE_ADD(CAST(@date AS DATE), @days)"
+impala,"DATEADD(dd,@days,@date)","DATE_ADD(CAST(@date AS DATE), @days)"
+impala,"DATEADD(day,@days,@date)","DATE_ADD(CAST(@date AS DATE), @days)"
+impala,"DATEADD(month,@months,@date)","ADD_MONTHS(CAST(@date AS DATE), @months)"
+impala,"DATEADD(mm,@months,@date)","ADD_MONTHS(CAST(@date AS DATE), @months)"
+impala,"DATEADD(m,@months,@date)","ADD_MONTHS(CAST(@date AS DATE), @months)"
+impala,"DATEADD(year,@years,@date)","ADD_MONTHS(CAST(@date AS DATE), 12 * @years)"
+impala,"DATEADD(yyyy,@years,@date)","ADD_MONTHS(CAST(@date AS DATE), 12 * @years)"
+impala,"DATEADD(yy,@years,@date)","ADD_MONTHS(CAST(@date AS DATE), 12 * @years)"
+impala,"DATEDIFF(d,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
+impala,"DATEDIFF(dd,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
+impala,"DATEDIFF(day,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
+impala,DAY(@date),DAY(CAST(@date AS DATE))
+impala,GETDATE(),NOW()
+impala,MONTH(@date),MONTH(CAST(@date AS DATE))
+impala,YEAR(@date),YEAR(CAST(@date AS DATE))
+impala,CAST(@a AS DATE),"CASE TYPEOF(@a) WHEN 'TIMESTAMP' THEN CAST(@a AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(@a AS STRING), 1, 4), SUBSTR(CAST(@a AS STRING), 5, 2), SUBSTR(CAST(@a AS STRING), 7, 2)), 'UTC') END"
+impala,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+impala,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+impala,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+impala,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+impala,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+impala,SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c;,SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2;
+impala,(SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c),(SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2)
+impala,DELETE FROM @a;,/* DELETE FROM @a; */
+impala,DELETE FROM @a WHERE @b;,/* DELETE FROM @a WHERE @b; */
+impala,.dbo.,.
+impala,##,<hash><hash>
+impala,#,%temp_prefix%%session_id%
+impala,<hash><hash>,##
+impala,.location,.`location`
+impala,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+netezza,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
+netezza,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
+netezza,CAST(@a AS INT),CAST(@a AS INTEGER)
+netezza,CAST(@a AS VARCHAR),CAST(@a AS VARCHAR(1000))
+netezza,"DATEADD(d,@days,@date)",(@date + @days)
+netezza,"DATEADD(dd,@days,@date)",(@date + @days)
+netezza,"DATEADD(day,@days,@date)",(@date + @days)
+netezza,"DATEADD(m,@months,@date)",CAST((@date + @months*INTERVAL'1 month') AS DATE)
+netezza,"DATEADD(mm,@months,@date)",CAST((@date + @months*INTERVAL'1 month') AS DATE)
+netezza,"DATEADD(month,@months,@date)",CAST((@date + @months*INTERVAL'1 month') AS DATE)
+netezza,"DATEADD(yy,@years,@date)",CAST((@date + @years*INTERVAL'1 year') AS DATE)
+netezza,"DATEADD(yyyy,@years,@date)",CAST((@date + @years*INTERVAL'1 year') AS DATE)
+netezza,"DATEADD(year,@years,@date)",CAST((@date + @years*INTERVAL'1 year') AS DATE)
+netezza,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+netezza,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+netezza,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+netezza,GETDATE(),CURRENT_DATE
+netezza,+ '@a',|| '@a'
+netezza,'@a' +,'@a' ||
+netezza,YEAR(@variable),"DATE_PART('YEAR', @variable)"
+netezza,MONTH(@variable),"DATE_PART('MONTH', @variable)"
+netezza,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
+netezza,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
+netezza,YEAR(@date),EXTRACT(YEAR FROM @date)
+netezza,MONTH(@date),EXTRACT(MONTH FROM @date)
+netezza,STDEV(@a),STDDEV(@a)
+netezza,LEN(@a),CHAR_LENGTH(@a)
+netezza,"LOG(@expression,@base)",(LN(@expression)/LN(@base))
+netezza,LOG(@expression),LN(@expression)
+netezza,LOG10(@expression),LOG(@expression)
+netezza,"ISNULL(@a,@b)","COALESCE(@a,@b)"
+netezza,COUNT_BIG(@a),COUNT(@a)
+netezza,USE @schema;,SET search_path TO @schema;
+netezza,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE @table IF EXISTS;
+netezza,.dbo.,.
+netezza,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
+netezza,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
+netezza,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
+netezza,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
+netezza,VARCHAR(MAX),VARCHAR(1000)
+netezza,FLOAT,NUMERIC
+netezza,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+netezza,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+netezza,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
+netezza,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+netezza,#,
+netezza,"LEFT(@variable,@b)","STRLEFT(@variable,@b)"
+netezza,"RIGHT(@variable,@b)","STRRIGHT(@variable,@b)"
+netezza,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+googlebigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(DATE(@end), DATE(@start), DAY)"
+googlebigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(DATE(@end), DATE(@start), DAY)"
+googlebigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(DATE(@end), DATE(@start), DAY)"
+googlebigquery,"DATEADD(d,@days,@date)","DATE_ADD(DATE(@date), @days, DAY)"
+googlebigquery,"DATEADD(dd,@days,@date)","DATE_ADD(DATE(@date), @days, DAY)"
+googlebigquery,"DATEADD(day,@days,@date)","DATE_ADD(DATE(@date), @days, DAY)"
+googlebigquery,"DATEADD(m,@months,@date)","DATE_ADD(DATE(@date), @months, MONTH)"
+googlebigquery,"DATEADD(mm,@months,@date)","DATE_ADD(DATE(@date), @months, MONTH)"
+googlebigquery,"DATEADD(month,@months,@date)","DATE_ADD(DATE(@date), @months, MONTH)"
+googlebigquery,"GETDATE()","CURRENT_DATE()"
+googlebigquery,"YEAR(@date)","EXTRACT(YEAR from @date)"
+googlebigquery,"MONTH(@date)","EXTRACT(MONTH from @date)"
+googlebigquery,"DAY(@date)","EXTRACT(DAY from @date)"
+googlebigquery,"DATETIME","TIMESTAMP"
+googlebigquery,"STDEV(@a)","STDDEV(@a)"
+googlebigquery,"VAR(@a)","VARIANCE(@a)"
+googlebigquery,"HASHBYTES('MD5',@a)","SHA1(@a)"
+googlebigquery,"LEN(@a)","LENGTH(@a)"
+googlebigquery,"COUNT_BIG(@a)","COUNT(@a)"
+googlebigquery,"float",":float_temp"
+googlebigquery,":float_temp",":float"
+googlebigquery,"varchar(@a)",":string"
+googlebigquery,"varchar",":string"
+googlebigquery,"bigint",":integer"
+googlebigquery,"int",":integer"
+googlebigquery,"CAST(@a as:string)","CAST(@a as string)"
+googlebigquery,"CAST(@a as:integer)","CAST(@a as int64)"
+googlebigquery,"CAST(@a as:float)","CAST(@a as float64)"
+googlebigquery,"('@a')","'@a'"
+googlebigquery,"'@a' + '@b'","CONCAT('@a','@b')"
+googlebigquery,"CONCAT(@a) + CONCAT(@b)","CONCAT(@a,@b)"
+googlebigquery,"CONCAT(@a) + '@b'","CONCAT(@a,'@b')"
+googlebigquery,"'@a' + CONCAT(@b)","CONCAT('@a',@b)"
+googlebigquery,"'@a'+@b,@c+","CONCAT('@a',@b),@c+"
+googlebigquery,"'@a'+@b+@c,","CONCAT('@a',@b)+@c,"
+googlebigquery,"'@a' + @b +","CONCAT('@a',@b)+"
+googlebigquery,"'@a'+@b as @c,","CONCAT('@a',@b) as @c,"
+googlebigquery,"'@a'+@b,@c as","CONCAT('@a',@b),@c as"
+googlebigquery,"'@a' + @b as","CONCAT('@a',@b) as"
+googlebigquery,"'@a' + @b,","CONCAT('@a',@b),"
+googlebigquery,"'@a'+@b) from","CONCAT('@a',@b)) from"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"'@a' + @b from","CONCAT('@a',@b) from"
+googlebigquery,"'@a'+@b) as","CONCAT('@a',@b)) as"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"'@a'+@b)@d,","CONCAT('@a',@b))@d,"
+googlebigquery,"'@a' + @b)","CONCAT('@a',@b))"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"'@a' + @b;","CONCAT('@a',@b);"
+googlebigquery,"CONCAT(@a)+@b,@c+","CONCAT(@a,@b),@c+"
+googlebigquery,"CONCAT(@a) + @b +","CONCAT(@a,@b)+"
+googlebigquery,"CONCAT(@a)+@b as @c,","CONCAT(@a,@b)as @c,"
+googlebigquery,"CONCAT(@a)+@b,@c as","CONCAT(@a,@b),@c as"
+googlebigquery,"CONCAT(@a) + @b as","CONCAT(@a,@b) as"
+googlebigquery,"CONCAT(@a) + @b,","CONCAT(@a,@b),"
+googlebigquery,"CONCAT(@a)+@b) from","CONCAT(@a,@b)) from"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"CONCAT(@a) + @b from","CONCAT(@a,@b) from"
+googlebigquery,"CONCAT(@a)+@b) as","CONCAT(@a,@b)) as"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"CONCAT(@a)+@b)@d,","CONCAT(@a,@b))@d,"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"CONCAT(@a) + @b)","CONCAT(@a,@b))"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"CONCAT(@a) + @b;","CONCAT(@a,@b);"
+googlebigquery,"+@a,@b+'@c'","+@a,CONCAT(@b,'@c')"
+googlebigquery,",(@a+@b+'@c'",",(@a+CONCAT(@b,'@c')"
+googlebigquery,",(@a+'@b'",",(CONCAT(@a,'@b')"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"(@a,@b+'@c'","(@a,CONCAT(@b,'@c')"
+googlebigquery,",@a+@b+'@c'",",@a+CONCAT(@b,'@c')"
+googlebigquery,"+(@a+'@b'","+(CONCAT(@a,'@b')"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"(@a+@b+'@c'","(@a+CONCAT(@b,'@c')"
+googlebigquery,"+select @a+'@b'","+select CONCAT(@a,'@b')"
+googlebigquery,"select @a+@b+'@c'","select @a+CONCAT(@b,'@c')"
+googlebigquery,"+@a+'@b'","+CONCAT(@a,'@b')"
+googlebigquery,"select (@a+'@b'","select (CONCAT(@a,'@b')"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"(select @a+'@b'","(select CONCAT(@a,'@b')"
+googlebigquery,"(@a+'@b'","(CONCAT(@a,'@b')"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,",@a,@b+'@c'",",@a,CONCAT(@b,'@c')"
+googlebigquery,",select @a+'@b'",",select CONCAT(@a,'@b')"
+googlebigquery,"select @a,@b+'@c'","select @a,CONCAT(@b,'@c')"
+googlebigquery,",@a+'@b'",",CONCAT(@a,'@b')"
+googlebigquery,"select @a+'@b'","select CONCAT(@a,'@b')"
+googlebigquery,"+@a,@b+CONCAT(@c)","+@a,CONCAT(@b,@c)"
+googlebigquery,",(@a+@b+CONCAT(@c)",",(@a+CONCAT(@b,@c)"
+googlebigquery,",(@a+CONCAT(@b)",",(CONCAT(@a,@b)"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"(@a,@b+CONCAT(@c)","(@a,CONCAT(@b,@c)"
+googlebigquery,",@a+@b+CONCAT(@c)",",@a+CONCAT(@b,@c)"
+googlebigquery,"+(@a+CONCAT(@b)","+(CONCAT(@a,@b)"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"(@a+@b+CONCAT(@c)","(@a+CONCAT(@b,@c)"
+googlebigquery,"+select @a+CONCAT(@b)","+select CONCAT(@a,@b)"
+googlebigquery,"select @a+@b+CONCAT(@c)","select @a+CONCAT(@b,@c)"
+googlebigquery,"+@a+CONCAT(@b)","+CONCAT(@a,@b)"
+googlebigquery,"select (@a+CONCAT(@b)","select (CONCAT(@a,@b)"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,"(select @a+CONCAT(@c)","(select CONCAT(@a,@b)"
+googlebigquery,"(@a+CONCAT(@b)","(CONCAT(@a,@b)"
+googlebigquery,"(CONCAT(@a))","CONCAT(@a)"
+googlebigquery,",@a,@b+CONCAT(@c)",",@a,CONCAT(@b,@c)"
+googlebigquery,",select @a+CONCAT(@b)",",select CONCAT(@a,@b)"
+googlebigquery,"select @a,@b+CONCAT(@c)","select @a,CONCAT(@b,@c)"
+googlebigquery,",@a+CONCAT(@b)",",CONCAT(@a,@b)"
+googlebigquery,"select @a+CONCAT(@b)","select CONCAT(@a,@b)"
+googlebigquery,"#",""
+googlebigquery,"select @a;","#standardSQL\n select @a;"
+googlebigquery,"insert @a;","#standardSQL\n insert @a;"
+googlebigquery,"update @a;","#standardSQL\n update @a;"
+googlebigquery,"create @a;","#standardSQL\n create @a;"
+googlebigquery,"drop @a;","#standardSQL\n drop @a;"
+googlebigquery,"delete @a;","#standardSQL\n delete @a;"
+googlebigquery,"with @a;","#standardSQL\n with @a;"

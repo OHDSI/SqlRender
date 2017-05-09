@@ -145,3 +145,23 @@ test_that("If-then-else: Nested IN evaluates to false", {
   expect_equal(sql, "false")
 })
 
+test_that("Backslash in parameter is handled correctly", {
+  sql <- renderSql("SELECT * FROM table WHERE name = '@name';", name = "NA\\joe")$sql
+  expect_equal(sql, "SELECT * FROM table WHERE name = 'NA\\joe';")
+})
+
+
+test_that("If-then-else: error on bad boolean logic syntax", {
+  # Note there's only one equals sign:
+  expect_error(renderSql("{true = true} ? {true} : {false}")$sql)
+})
+
+test_that("rendering: warning on parameter name mismatch", {
+  # Note wrong parameter name:
+  expect_warning(renderSql("SELECT * FROM @my_table", a_table = "x")$sql)
+})
+
+test_that("rendering: no problem when not providing parameters", {
+  # Note wrong parameter name:
+  expect_equal(renderSql("SELECT * FROM @my_table")$sql, "SELECT * FROM @my_table")
+})

@@ -19,13 +19,13 @@ test_that("renderSqlFile", {
 })
 
 test_that("translateSqlFile", {
-  sql1 <- "SELECT DATEADD(dd,observation_period_start_date,1) FROM observation_period"
+  sql1 <- "SELECT DATEADD(dd,1,observation_period_start_date) FROM observation_period"
   writeSql(sql1, "test1.sql")
   translateSqlFile("test1.sql", "test2.sql", targetDialect = "postgresql")
   sql2 <- readSql("test2.sql")
   file.remove("test1.sql")
   file.remove("test2.sql")
-  expect_equal(sql2, "SELECT (1 + observation_period_start_date) FROM observation_period")
+  expect_equal(sql2, "SELECT (observation_period_start_date + 1*INTERVAL'1 day') FROM observation_period")
 })
 
 test_that("snakeCaseToCamelCase", {

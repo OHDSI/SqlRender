@@ -1,4 +1,20 @@
+/*******************************************************************************
+ * Copyright 2017 Observational Health Data Sciences and Informatics
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package org.ohdsi.sql;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -29,7 +45,7 @@ public class StringUtils {
 		public int		start;
 		public int		end;
 		public String	text;
-		public boolean inQuotes = false;
+		public boolean	inQuotes	= false;
 
 		public Token(Token other) {
 			start = other.start;
@@ -75,7 +91,9 @@ public class StringUtils {
 					tokens.add(token);
 				}
 				if (ch == '-' && cursor < sql.length() && sql.charAt(cursor + 1) == '-') {
-					commentType1 = true;
+					// Exception: comments that are hints are still considered tokens:
+					if (sql.length() - cursor < 6 || !sql.substring(cursor + 2, cursor + 6).equals("hint"))
+						commentType1 = true;
 				} else if (ch == '/' && cursor < sql.length() && sql.charAt(cursor + 1) == '*') {
 					commentType2 = true;
 				} else if (!Character.isWhitespace(ch)) {
@@ -97,7 +115,7 @@ public class StringUtils {
 			}
 		}
 
-		if (cursor > start) {
+		if (cursor > start && !commentType1 && !commentType2) {
 			Token token = new Token();
 			token.start = start;
 			token.end = cursor;
@@ -141,7 +159,7 @@ public class StringUtils {
 		result.add(string.substring(startpos, i));
 		return result;
 	}
-	
+
 	public static String join(Collection<?> s, String delimiter) {
 		StringBuilder result = new StringBuilder();
 		Iterator<?> iter = s.iterator();

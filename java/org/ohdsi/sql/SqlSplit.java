@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2017 Observational Health Data Sciences and Informatics
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package org.ohdsi.sql;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +35,7 @@ public class SqlSplit {
 		int start = 0;
 		int cursor;
 		boolean quote = false;
+		boolean bracket = false;
 		String quoteText = "";
 		for (cursor = start; cursor < tokens.size(); cursor++) {
 			StringUtils.Token token = tokens.get(cursor);
@@ -27,9 +43,14 @@ public class SqlSplit {
 				if (token.text.equals(quoteText)) {
 					quote = false;
 				}
+			} else if (bracket) {
+				if (token.text.equals("]"))
+					bracket = false;
 			} else if (token.text.equals("'") || token.text.equals("\"")) {
 				quote = true;
 				quoteText = token.text;
+			} else if (token.text.equals("[")) {
+					bracket = true;
 			} else if (token.text.equals("begin") || token.text.equals("case")) {
 				nestStack.push(token.text);
 			} else if (token.text.equals("end") && (cursor == tokens.size() - 1 || !tokens.get(cursor + 1).text.equals("if"))) {

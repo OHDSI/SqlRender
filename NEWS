@@ -1,0 +1,52 @@
+SqlRender v1.3.7 (Release date: 2017-05-03)
+===========================================
+
+Changes: 
+
+1. Added translation rules for ISNUMERIC and LOG(@expression, @base)
+
+
+Bugfixes:
+
+1. Fixed bug when trying to split SQL where reserved word 'end' is used as a field name.
+2. Fixes for Impala translations.
+3. Fixed translation issues for Oracle involving 'FROM DUAL'.
+4. Added workaround for Oracle bug for intervals greater than 99 days.
+5. Fixed bug when trying to split SQL where last line has comment but no EOL.
+
+
+SqlRender v1.3.0 (Release date: 2017-03-24)
+===========================================
+
+Changes: 
+
+1. Added ability to use regular expression in translation patterns. This allowed SELECT TOP n to be translated.
+2. Deprecated sourceDialect argument.
+3. Added translation for CONCAT function with >2 arguments to Oracle (which only allows 2 arguments)
+4. Added hints for translation optimation to massive parallel platforms like RedShift
+5. Throw warnings when translateSql is called with variable names that are not in the SQL
+6. Throw warnings when table names are too long for Oracle
+
+
+Bugfixes:
+
+1. Fixed translation for date functions so they will now work properly with datetime fields as well.
+2. Now throwing error when boolean logic cannot be parsed (instead of assuming result is TRUE)
+
+
+SqlRender v1.2.0 (Release date: 2017-01-12)
+===========================================
+
+Changes: 
+
+1. Added support for Impala
+
+Bugfixes:
+
+1. Fixed translation for DATEFROMPARTS for RedShift
+
+
+SqlRender v1.1.7 (Release date: 2016-08-15)
+===========================================
+
+Changes: initial submission to CRAN

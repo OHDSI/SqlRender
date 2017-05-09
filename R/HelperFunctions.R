@@ -1,6 +1,6 @@
 # @file HelperFunctions.R
 #
-# Copyright 2016 Observational Health Data Sciences and Informatics
+# Copyright 2017 Observational Health Data Sciences and Informatics
 #
 # This file is part of SqlRender
 # 
@@ -109,7 +109,7 @@ renderSqlFile <- function(sourceFile, targetFile, ...) {
 #'
 #' @param sourceFile         The source SQL file
 #' @param targetFile         The target SQL file
-#' @param sourceDialect      The source dialect. Currently, only 'sql server' for Microsoft SQL Server
+#' @param sourceDialect      Deprecated: The source dialect. Currently, only 'sql server' for Microsoft SQL Server
 #'                           is supported
 #' @param targetDialect      The target dialect. Currently 'oracle', 'postgresql', and 'redshift' are
 #'                           supported
@@ -124,11 +124,14 @@ renderSqlFile <- function(sourceFile, targetFile, ...) {
 #' @export
 translateSqlFile <- function(sourceFile,
                              targetFile,
-                             sourceDialect = "sql server",
-                             targetDialect = "oracle",
+                             sourceDialect,
+                             targetDialect,
                              oracleTempSchema = NULL) {
+  if (!missing(sourceDialect))
+    warning("sourceDialect argument is deprecated in the translateSqlFile function in SqlRender. Please update your code")
+  
   sql <- readSql(sourceFile)
-  sql <- translateSql(sql, sourceDialect, targetDialect, oracleTempSchema = oracleTempSchema)$sql
+  sql <- translateSql(sql = sql, targetDialect = targetDialect, oracleTempSchema = oracleTempSchema)$sql
   writeSql(sql, targetFile)
 }
 
@@ -179,12 +182,12 @@ loadRenderTranslateSql <- function(sqlFilename,
                              package = packageName)
   }
   parameterizedSql <- readChar(pathToSql, file.info(pathToSql)$size)
-
+  
   renderedSql <- renderSql(parameterizedSql[1], ...)$sql
-
+  
   if (mustTranslate)
-    renderedSql <- translateSql(renderedSql, "sql server", dbms, oracleTempSchema)$sql
-
+    renderedSql <- translateSql(sql = renderedSql, targetDialect = dbms, oracleTempSchema = oracleTempSchema)$sql
+  
   renderedSql
 }
 
@@ -212,7 +215,7 @@ snakeCaseToCamelCase <- function(string) {
   for (number in 0:9) {
     string <- gsub(paste("_", number, sep = ""), number, string)
   }
-
+  
   string
 }
 
@@ -273,7 +276,7 @@ createRWrapperForSql <- function(sqlFilename,
       rFilename <- paste(substr(sqlFilename, 1, periodIndex), "R", sep = "")
     }
   }
-
+  
   pathToSql <- system.file(paste("sql/", "sql_server", sep = ""),
                            sqlFilename,
                            package = packageName)
@@ -287,7 +290,7 @@ createRWrapperForSql <- function(sqlFilename,
   } else {
     stop("Could not find SQL file")
   }
-
+  
   hasTempTables <- any(gregexpr("\\#", parameterizedSql)[[1]] != -1)
   hits <- gregexpr("\\{DEFAULT @[^}]*\\}", parameterizedSql)
   hits <- cbind(hits[[1]], attr(hits[[1]], "match.length"))
@@ -315,10 +318,10 @@ createRWrapperForSql <- function(sqlFilename,
     if (any(definitions[, 1] == databaseParameter))
       databaseParameters <- rbind(databaseParameters,
                                   definitions[definitions$sqlParameter == databaseParameter,
-                                  ])
+                                              ])
   }
   functionDefinitions <- definitions[!(definitions$sqlParameter %in% databaseParameters$sqlParameter), ]
-
+  
   lines <- c()
   if (createRoxygenTemplate) {
     lines <- c(lines, "#' Todo: add title")
@@ -347,12 +350,12 @@ createRWrapperForSql <- function(sqlFilename,
   for (i in 1:nrow(functionDefinitions)) {
     if (i == nrow(functionDefinitions))
       end <- ") {" else end <- ","
-    lines <- c(lines, paste("                         ",
-                            functionDefinitions$rParameter[i],
-                            " = ",
-                            functionDefinitions$value[i],
-                            end,
-                            sep = ""))
+      lines <- c(lines, paste("                         ",
+                              functionDefinitions$rParameter[i],
+                              " = ",
+                              functionDefinitions$value[i],
+                              end,
+                              sep = ""))
   }
   for (databaseParameter in databaseParameters$rParameter) {
     lines <- c(lines, paste("  ",
@@ -364,7 +367,7 @@ createRWrapperForSql <- function(sqlFilename,
   }
   lines <- c(lines,
              paste("  renderedSql <- SqlRender::loadRenderTranslateSql(\"", sqlFilename, "\",",
-                          sep = ""))
+                   sep = ""))
   lines <- c(lines, paste("              packageName = \"", packageName, "\",", sep = ""))
   lines <- c(lines, "              dbms = connectionDetails$dbms,")
   if (hasTempTables)
@@ -372,12 +375,12 @@ createRWrapperForSql <- function(sqlFilename,
   for (i in 1:nrow(definitions)) {
     if (i == nrow(definitions))
       end <- ")" else end <- ","
-    lines <- c(lines, paste("              ",
-                            definitions$sqlParameter[i],
-                            " = ",
-                            definitions$rParameter[i],
-                            end,
-                            sep = ""))
+      lines <- c(lines, paste("              ",
+                              definitions$sqlParameter[i],
+                              " = ",
+                              definitions$rParameter[i],
+                              end,
+                              sep = ""))
   }
   lines <- c(lines, "  conn <- DatabaseConnector::connect(connectionDetails)")
   lines <- c(lines, "")

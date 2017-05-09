@@ -10,8 +10,8 @@ output:
     number_sections: yes
     toc: yes
 vignette: >
-  %\VignetteIndexEntry{Using SqlRender}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Using SqlRender}
   %\VignetteEncoding{UTF-8}    
 ---
 
@@ -27,15 +27,6 @@ knitr::opts_chunk$set(
 # Introduction
 
 This vignette describes how one could use the SqlRender R package. 
-
-# Installation instructions
-SqlRender is maintained in a [Github repository](https://github.com/OHDSI/SqlRender). It can be downloaded and installed from within R using the `devtools` package:
-
-```{r tidy=TRUE,eval=FALSE}
-install.packages("devtools")
-library("devtools")
-install_github("ohdsi/SqlRender")
-```
 
 # SQL parameterization
 One of the main functions of the package is to support parameterization of SQL. Often, small variations of SQL need to be generated based on some parameters. SqlRender offers a simple markup syntax inside the SQL code to allow parameterization. Rendering the SQL based on parameter values is done using the `renderSql()` function.
@@ -107,7 +98,7 @@ SQL for one platform (e.g. Microsoft SQL Server) will not always execute on othe
 
 A first limitation is that **the starting dialect has to be SQL Server**. The reason for this is that this dialect is in general the most specific. For example, the number of days between two dates in SQL Server has to be computed using the DATEDIFF function: `DATEDIFF(dd,a,b)`. In other languages one can simply subtract the two dates: `b-a`. Since you'd need to know a and b are dates, it is not possible to go from other languages to SQL Server, only the other way around.
 
-A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, **Microsoft PDW (Parallel Data Warehouse)**, with some support for **Amazon Redhift**.
+A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, **Microsoft PDW (Parallel Data Warehouse)**, **Impala**, **Netezza**, and **Amazon Redhift**.
 
 A third limitation is that only a limited set of translation rules have currently been implemented, although adding them to the [list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) should not be hard.
 
@@ -126,6 +117,8 @@ The `targetDialect` parameter can have the following values:
   - "postgresql"
   - "pdw"
   - "redshift"
+  - "impala"
+  - "netezza"
   - "sql server" (no translation)
 
 ## Functions and structures supported by translateSql
@@ -133,7 +126,7 @@ The `targetDialect` parameter can have the following values:
 These SQL Server functions have been tested and were found to be translated correctly to the various dialects:
 
 ```{r echo=FALSE}
-funs <- c("ABS", "ACOS", "ASIN", "ATAN", "AVG", "CAST", "CEILING", "CHARINDEX", "CONCAT", "COS", "COUNT", "COUNT_BIG", "DATEADD", "DATEDIFF", "DATEFROMPARTS", "DATETIMEFROMPARTS", "DAY", "EOMONTH", "EXP", "FLOOR", "GETDATE", "HASHBYTES**", "ISNULL", "LEFT", "LEN", "LOG", "LOG10", "LOWER", "LTRIM", "MAX", "MIN", "MONTH", "NEWID*", "PI", "POWER", "RAND*", "RANK", "RIGHT", "ROUND", "ROW_NUMBER", "RTRIM", "SIN", "SQRT", "SQUARE", "STDEV", "SUM", "TAN", "UPPER", "VAR", "YEAR", "", "")
+funs <- c("ABS", "ACOS", "ASIN", "ATAN", "AVG", "CAST", "CEILING", "CHARINDEX", "CONCAT", "COS", "COUNT", "COUNT_BIG", "DATEADD", "DATEDIFF", "DATEFROMPARTS", "DATETIMEFROMPARTS", "DAY", "EOMONTH", "EXP", "FLOOR", "GETDATE", "HASHBYTES**", "ISNULL", "ISNUMERIC", "LEFT", "LEN", "LOG", "LOG10", "LOWER", "LTRIM", "MAX", "MIN", "MONTH", "NEWID*", "PI", "POWER", "RAND*", "RANK", "RIGHT", "ROUND", "ROW_NUMBER", "RTRIM", "SIN", "SQRT", "SQUARE", "STDEV", "SUM", "TAN", "UPPER", "VAR", "YEAR", "")
 
 
 knitr::kable(matrix(funs, ncol = 4), col.names = rep("Function",4), caption = "Functions supported by translateSql")
@@ -151,6 +144,8 @@ SELECT * FROM table;                                        -- Simple selects
 SELECT * FROM table_1 INNER JOIN table_2 ON a = b;          -- Selects with joins 
 
 SELECT * FROM (SELECT * FROM table_1) tmp WHERE a = b;      -- Nested queries
+
+SELECT TOP 10 * FROM table;                                 -- Limiting to top rows
 
 SELECT * INTO new_table FROM table;                         -- Selecting into a new table
 
@@ -187,7 +182,7 @@ SELECT * FROM a EXCEPT SELECT * FROM b                      -- EXCEPT
 String concatenation is one area where SQL Server is less specific than other dialects. In SQL Server, one would write `SELECT first_name + ' ' + last_name AS full_name FROM table`, but this should be `SELECT first_name || ' ' || last_name AS full_name FROM table` in PostgreSQL and Oracle. SqlRender tries to guess when values that are being concatenated are strings. In the example above, because we have an explicit string (the space surrounded by single quotation marks), the translation will be correct. However, if the query had been `SELECT first_name + last_name AS full_name FROM table`, SqlRender would have had no clue the two fields were strings, and would incorrectly leave the plus sign. Another clue that a value is a string is an explicit cast to VARCHAR, so `SELECT last_name + CAST(age AS VARCHAR(3)) AS full_name FROM table` would also be translated correctly. To avoid ambiguity altogether, it is probable best to use the ```CONCAT()``` function to concatenate two or more strings.
 
 ## Temp tables
-Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In Postgres, PDW and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. This is why, in Oracle, SqlRender will try to emulate temp tables by
+Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In Postgres, PDW, RedShift and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. This is why, in Oracle, SqlRender will try to emulate temp tables by
 
 1. Adding a random string to the table name so tables from different users will not conflict.
 2. Allowing the user to specify the schema where the temp tables will be created. 
@@ -242,6 +237,17 @@ or
 
 ```sql
 SELECT * FROM #temp WHERE CAST(txt AS INT) = 1;
+```
+
+## Case sensitivity in string comparisons
+Some DBMS platforms such as SQL Server always perform string comparisons in a case-insensitive way, while others such as PostgreSQL are always case sensitive. It is therefore recommended to always assume case-sensitive comparisons, and to explicitly make comparisons case-insensitive when unsure about the case. For example, instead of 
+
+```sql
+SELECT * FROM concept WHERE concep_class_id = 'Clinical Finding'
+```
+it is preferred to use
+```sql
+SELECT * FROM concept WHERE LOWER(concep_class_id) = 'clinical finding'
 ```
 
 ## Schemas and databases
@@ -301,6 +307,27 @@ This will be correctly translated to all dialects, and the selection will be the
 ```sql
 GRANT EXECUTE ON DBMS_CRYPTO TO <user>;
 ```
+
+## Optimization for massively parallel processing
+Both PDW and RedShift are massively parallel processing platforms, meaning they consist of many nodes that work together. In such an environment, significant increases in performance can be achieved by finetuning the SQL for these platforms. Probably most importantly, developers can specify the way data is distributed over the nodes. Ideally, data in a node only needs to be combined with data in the same node. For example, if I have two tables with the field `person_id`, I would like all records with the same person ID to be on the same node, so a join on `person_id` can be performed locally without exchanging data between nodes. 
+
+SQL Server SQL, our source dialect, does not allow for these optimizations, so we've introduced the notion of hints. In the following example, a hint is provided on which field should be used for the distribution of data across nodes:
+
+```sql
+--HINT DISTRIBUTE_ON_KEY(person_id)
+SELECT * INTO one_table FROM other_table;
+```
+
+which will translate into the following on PDW:
+
+```sql
+--HINT DISTRIBUTE_ON_KEY(person_id)
+IF XACT_STATE() = 1 COMMIT; 
+CREATE TABLE one_table WITH (DISTRIBUTION = HASH(person_id)) AS
+SELECT * FROM other_table;
+```
+
+The hint should be formatted as shown above, and directly precede the statement where the table is created. 
 
 # Debugging parameterized SQL
 Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL. Two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:

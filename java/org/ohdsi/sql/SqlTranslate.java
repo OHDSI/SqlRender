@@ -1,4 +1,19 @@
-
+/*******************************************************************************
+ * Copyright 2017 Observational Health Data Sciences and Informatics
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package org.ohdsi.sql;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -19,14 +34,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SqlTranslate {
-	public static int							SESSION_ID_LENGTH					= 8;
-	private static Map<String, List<String[]>>	sourceTargetToReplacementPatterns	= null;
-	private static ReentrantLock				lock								= new ReentrantLock();
-	private static Random						random								= new Random();
-	private static String						globalSessionId						= null;
+	public static int							SESSION_ID_LENGTH				= 8;
+	public static int							MAX_ORACLE_TABLE_NAME_LENGTH	= 30;
+	private static Map<String, List<String[]>>	targetToReplacementPatterns		= null;
+	private static ReentrantLock				lock							= new ReentrantLock();
+	private static Random						random							= new Random();
+	private static String						globalSessionId					= null;
+	private static String						SOURCE_DIALECT					= "sql server";
 
 	private static class Block extends StringUtils.Token {
 		public boolean	isVariable;
+		public String	regEx;
 
 		public Block(StringUtils.Token other) {
 			super(other);
@@ -46,12 +64,36 @@ public class SqlTranslate {
 		List<Block> blocks = new ArrayList<Block>();
 		for (int i = 0; i < tokens.size(); i++) {
 			Block block = new Block(tokens.get(i));
-			if (block.text.length() > 1 && block.text.charAt(0) == '@')
+			if (block.text.length() > 2 && block.text.charAt(0) == '@') {
 				block.isVariable = true;
+			}
+			if (block.text.equals("@@") && i < tokens.size() - 2 && tokens.get(i + 1).text.equals("(")) {
+				// Its a regex variable. Rejoin subsequent tokens
+				boolean escape = false;
+				int nesting = 0;
+				for (int j = i + 2; j < tokens.size(); j++) {
+					if (tokens.get(j).text.equals("\\"))
+						escape = !escape;
+					else if (!escape && tokens.get(j).text.equals("("))
+						nesting++;
+					else if (!escape && tokens.get(j).text.equals(")")) {
+						if (nesting == 0) {
+							block.text = "@@" + tokens.get(j + 1).text;
+							block.regEx = pattern.substring(tokens.get(i + 1).end, tokens.get(j).start);
+							block.end = tokens.get(j + 1).end;
+							block.isVariable = true;
+							i = j + 1;
+							break;
+						}
+						nesting--;
+					}
+				}
+			}
 			blocks.add(block);
 		}
-		if (blocks.get(0).isVariable || blocks.get(blocks.size() - 1).isVariable) {
-			throw new RuntimeException("Error in search pattern: pattern cannot start or end with a variable: " + pattern);
+		if ((blocks.get(0).isVariable && blocks.get(0).regEx == null)
+				|| (blocks.get(blocks.size() - 1).isVariable && blocks.get(blocks.size() - 1).regEx == null)) {
+			throw new RuntimeException("Error in search pattern: pattern cannot start or end with a non-regex variable: " + pattern);
 		}
 		return blocks;
 	}
@@ -67,17 +109,48 @@ public class SqlTranslate {
 		for (int cursor = startToken; cursor < tokens.size(); cursor++) {
 			StringUtils.Token token = tokens.get(cursor);
 			if (parsedPattern.get(matchCount).isVariable) {
-				if (nestStack.size() == 0 && token.text.equals(parsedPattern.get(matchCount + 1).text)) {
-					matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(varStart, token.start));
-					matchCount += 2;
-					if (matchCount == parsedPattern.size()) {
-						matchedPattern.end = token.end;
-						return matchedPattern;
-					} else if (parsedPattern.get(matchCount).isVariable) {
-						varStart = token.end;
+				if (parsedPattern.get(matchCount).regEx != null && (matchCount == parsedPattern.size() - 1 || parsedPattern.get(matchCount + 1).isVariable)) {
+					// Regex variable at end of pattern, or has another variable following it
+					Pattern pattern = Pattern.compile(parsedPattern.get(matchCount).regEx, Pattern.CASE_INSENSITIVE);
+					Matcher matcher = pattern.matcher(sql.substring(token.start));
+					if (matcher.find() && matcher.start() == 0) {
+						if (matchCount == 0) {
+							matchedPattern.start = token.start;
+							matchedPattern.startToken = cursor;
+						}
+						matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(token.start, token.start + matcher.end()));
+						matchCount++;
+						if (matchCount == parsedPattern.size()) {
+							matchedPattern.end = token.start + matcher.end();
+							return matchedPattern;
+						} else if (parsedPattern.get(matchCount).isVariable) {
+							varStart = token.start + matcher.end();
+						}
+						// Fast forward cursor to after matched patterns:
+						while (cursor < tokens.size() && tokens.get(cursor).start < token.start + matcher.end())
+							cursor++;
+					} else {
+						matchCount = 0;
 					}
-					if (token.text.equals("'") || token.text.equals("'"))
-						inPatternQuote = !inPatternQuote;
+				} else if (nestStack.size() == 0 && matchCount < parsedPattern.size() - 1 && token.text.equals(parsedPattern.get(matchCount + 1).text)) {
+					// Found the token after the variable
+					if (parsedPattern.get(matchCount).regEx != null && !matches(parsedPattern.get(matchCount).regEx, sql.substring(varStart, token.start))) {
+						// Content didn't match regex
+						matchCount = 0;
+						cursor = matchedPattern.startToken;
+					} else {
+						// No regex or matched regex
+						matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(varStart, token.start));
+						matchCount += 2;
+						if (matchCount == parsedPattern.size()) {
+							matchedPattern.end = token.end;
+							return matchedPattern;
+						} else if (parsedPattern.get(matchCount).isVariable) {
+							varStart = (cursor < tokens.size() - 1)?tokens.get(cursor+1).start:-1;
+						}
+						if (token.text.equals("'") || token.text.equals("'"))
+							inPatternQuote = !inPatternQuote;
+					}
 				} else if (nestStack.size() == 0 && !inPatternQuote && (token.text.equals(";") || token.text.equals(")"))) { // Not allowed to span multiple SQL
 					// statements or outside of nesting
 					matchCount = 0;
@@ -108,7 +181,7 @@ public class SqlTranslate {
 						matchedPattern.end = token.end;
 						return matchedPattern;
 					} else if (parsedPattern.get(matchCount).isVariable) {
-						varStart = token.end;
+						varStart = (cursor < tokens.size() - 1)?tokens.get(cursor+1).start:-1;
 					}
 					if (token.text.equals("'") || token.text.equals("\""))
 						inPatternQuote = !inPatternQuote;
@@ -124,6 +197,12 @@ public class SqlTranslate {
 		}
 		matchedPattern.start = -1;
 		return matchedPattern;
+	}
+
+	private static boolean matches(String regex, String string) {
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(string);
+		return (matcher.matches());
 	}
 
 	private static String searchAndReplace(String sql, List<Block> parsedPattern, String replacePattern) {
@@ -373,8 +452,22 @@ public class SqlTranslate {
 	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
 	 * @return The translated SQL
 	 */
+	@Deprecated
 	public static String translateSql(String sql, String sourceDialect, String targetDialect) {
 		return translateSql(sql, sourceDialect, targetDialect, null, null);
+	}
+
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @return The translated SQL
+	 */
+	public static String translateSql(String sql, String targetDialect) {
+		return translateSql(sql, targetDialect, null, null);
 	}
 
 	/**
@@ -395,8 +488,9 @@ public class SqlTranslate {
 	 *            name is prefixed to the temp table name).
 	 * @return The translated SQL
 	 */
+	@Deprecated
 	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId, String oracleTempSchema) {
-		return translateSql(sql, sourceDialect, targetDialect, sessionId, oracleTempSchema, null);
+		return translateSql(sql, targetDialect, sessionId, oracleTempSchema);
 	}
 
 	/**
@@ -404,8 +498,28 @@ public class SqlTranslate {
 	 * 
 	 * @param sql
 	 *            The SQL to be translated
-	 * @param sourceDialect
+	 * @param SOURCE_DIALECT
 	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @param sessionId
+	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
+	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
+	 *            calls to translateSql.
+	 * @param oracleTempSchema
+	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
+	 *            name is prefixed to the temp table name).
+	 * @return The translated SQL
+	 */
+	public static String translateSql(String sql, String targetDialect, String sessionId, String oracleTempSchema) {
+		return translateSqlWithPath(sql, targetDialect, sessionId, oracleTempSchema, null);
+	}
+
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
 	 * @param targetDialect
 	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
 	 * @param sessionId
@@ -419,8 +533,7 @@ public class SqlTranslate {
 	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
 	 * @return The translated SQL
 	 */
-	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId, String oracleTempSchema,
-			String pathToReplacementPatterns) {
+	public static String translateSqlWithPath(String sql, String targetDialect, String sessionId, String oracleTempSchema, String pathToReplacementPatterns) {
 		ensurePatternsAreLoaded(pathToReplacementPatterns);
 		if (sessionId == null) {
 			if (globalSessionId == null)
@@ -434,17 +547,17 @@ public class SqlTranslate {
 		else
 			oracleTempPrefix = oracleTempSchema + ".";
 
-		List<String[]> replacementPatterns = sourceTargetToReplacementPatterns.get(sourceDialect + "\t" + targetDialect);
+		List<String[]> replacementPatterns = targetToReplacementPatterns.get(targetDialect);
 		if (replacementPatterns == null) {
-			if (sourceDialect.equals(targetDialect))
+			if (SOURCE_DIALECT.equals(targetDialect))
 				return sql;
 			else {
 				Set<String> allowedDialects = new HashSet<String>();
-				allowedDialects.add(sourceDialect);
-				for (String sourceTarget : sourceTargetToReplacementPatterns.keySet())
-					if (sourceTarget.split("\t")[0].equals(sourceDialect))
+				allowedDialects.add(SOURCE_DIALECT);
+				for (String sourceTarget : targetToReplacementPatterns.keySet())
+					if (sourceTarget.split("\t")[0].equals(SOURCE_DIALECT))
 						allowedDialects.add(sourceTarget.split("\t")[1]);
-				throw new RuntimeException("Don't know how to translate from " + sourceDialect + " to " + targetDialect + ". Valid target dialects are "
+				throw new RuntimeException("Don't know how to translate from " + SOURCE_DIALECT + " to " + targetDialect + ". Valid target dialects are "
 						+ StringUtils.join(allowedDialects, ", "));
 			}
 		} else
@@ -491,20 +604,19 @@ public class SqlTranslate {
 	}
 
 	private static void ensurePatternsAreLoaded(String pathToReplacementPatterns) {
-		if (sourceTargetToReplacementPatterns != null)
+		if (targetToReplacementPatterns != null)
 			return;
 		else {
 			lock.lock();
-			if (sourceTargetToReplacementPatterns == null) { // Could have been loaded before acquiring the lock
+			if (targetToReplacementPatterns == null) { // Could have been loaded before acquiring the lock
 				try {
 					InputStream inputStream;
 					if (pathToReplacementPatterns == null) // Use CSV file in JAR
-						// inputStream = SqlTranslate.class.getResourceAsStream("replacementPatterns.csv");
 						inputStream = SqlTranslate.class.getResourceAsStream("/inst/csv/replacementPatterns.csv");
 					else
 						inputStream = new FileInputStream(pathToReplacementPatterns);
 					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-					sourceTargetToReplacementPatterns = new HashMap<String, List<String[]>>();
+					targetToReplacementPatterns = new HashMap<String, List<String[]>>();
 					String line;
 					boolean first = true;
 					while ((line = bufferedReader.readLine()) != null) {
@@ -513,13 +625,13 @@ public class SqlTranslate {
 							continue;
 						}
 						List<String> row = line2columns(line);
-						String sourceTarget = row.get(0) + "\t" + row.get(1);
-						List<String[]> replacementPatterns = sourceTargetToReplacementPatterns.get(sourceTarget);
+						String target = row.get(0);
+						List<String[]> replacementPatterns = targetToReplacementPatterns.get(target);
 						if (replacementPatterns == null) {
 							replacementPatterns = new ArrayList<String[]>();
-							sourceTargetToReplacementPatterns.put(sourceTarget, replacementPatterns);
+							targetToReplacementPatterns.put(target, replacementPatterns);
 						}
-						replacementPatterns.add(new String[] { row.get(2).replaceAll("@", "@@"), row.get(3).replaceAll("@", "@@") });
+						replacementPatterns.add(new String[] { row.get(1).replaceAll("@", "@@"), row.get(2).replaceAll("@", "@@") });
 					}
 				} catch (UnsupportedEncodingException e) {
 					System.err.println("Computer does not support UTF-8 encoding");
@@ -530,5 +642,47 @@ public class SqlTranslate {
 			}
 			lock.unlock();
 		}
+	}
+
+	public static String[] check(String sql, String targetDialect) {
+		List<String> warnings = new ArrayList<String>();
+
+		// temp table names:
+		Pattern pattern = Pattern.compile("#[0-9a-zA-Z_]+");
+		Matcher matcher = pattern.matcher(sql);
+		Set<String> longTempNames = new HashSet<String>();
+		while (matcher.find())
+			if (matcher.group().length() > MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH - 1)
+				longTempNames.add(matcher.group());
+
+		for (String longName : longTempNames)
+			warnings.add("Temp table name '" + longName + "' is too long. Temp table names should be shorter than "
+					+ (MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH) + " characters to prevent Oracle from crashing.");
+
+		// normal table names:
+		pattern = Pattern.compile("(create|drop|truncate)\\s+table +[0-9a-zA-Z_]+");
+		matcher = pattern.matcher(sql.toLowerCase());
+		Set<String> longNames = new HashSet<String>();
+		while (matcher.find()) {
+			String name = sql.substring(matcher.start() + matcher.group().lastIndexOf(" "), matcher.end());
+			if (name.length() > MAX_ORACLE_TABLE_NAME_LENGTH && !longTempNames.contains("#" + name))
+				longNames.add(name);
+		}
+		for (String longName : longNames)
+			warnings.add("Table name '" + longName + "' is too long. Table names should be shorter than " + MAX_ORACLE_TABLE_NAME_LENGTH
+					+ " characters to prevent Oracle from crashing.");
+
+		return warnings.toArray(new String[warnings.size()]);
+	}
+	
+	/**
+	 * Forces the replacement patterns to be loaded from the specified path. Useful for debugging.
+	 * 
+	 * @param pathToReplacementPatterns
+	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
+	 */
+	public static void setReplacementPatterns(String pathToReplacementPatterns) {
+		targetToReplacementPatterns = null;
+		ensurePatternsAreLoaded(pathToReplacementPatterns);
 	}
 }

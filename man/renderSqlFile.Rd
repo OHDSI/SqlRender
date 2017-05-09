@@ -30,4 +30,3 @@ pattern is used to turn on or off blocks of SQL code.} }
 renderSqlFile("myParamStatement.sql", "myRenderedStatement.sql", a = "myTable")
 }
 }
-
