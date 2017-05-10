@@ -1398,6 +1398,13 @@ test_that("translateSQL sql server -> RedShift CONCAT", {
   expect_equal_ignore_spaces(sql, "SELECT CONCAT(p1,CONCAT(p2,CONCAT(p3,CONCAT(p4,CONCAT(p5,CONCAT(p6,p7)))))) FROM table")
 })
 
+test_that("translateSQL sql server -> RedShift CONCAT", {
+  sql <- translateSql(
+    "SELECT CONCAT('Condition occurrence record observed during long_term_days on or prior to cohort index:  ', CAST((p1.covariate_id-101)/1000 AS VARCHAR), '-', CASE WHEN c1.concept_name IS NOT NULL THEN c1.concept_name ELSE 'Unknown invalid concept' END) FROM table", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CONCAT('Condition occurrence record observed during long_term_days on or prior to cohort index:  ',CONCAT(CAST((p1.covariate_id-101)/1000 AS VARCHAR),CONCAT('-',CASE WHEN c1.concept_name IS NOT NULL THEN c1.concept_name ELSE 'Unknown invalid concept' END))) FROM table")
+})
+
 test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id", {
   sql <- translateSql(
     "WITH a AS b SELECT person_id, col1, col2 INTO #table FROM person;", 
