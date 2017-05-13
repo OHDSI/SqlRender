@@ -232,6 +232,8 @@ public class SqlTranslate {
 			List<Block> parsedPattern = parseSearchPattern(pair[0]);
 			sql = searchAndReplace(sql, parsedPattern, pair[1]);
 		}
+		System.out.println(sql);
+		System.out.println(sql.toLowerCase();
 		return sql.toLowerCase();
 	}
 
