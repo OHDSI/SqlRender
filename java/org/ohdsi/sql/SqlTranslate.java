@@ -233,7 +233,7 @@ public class SqlTranslate {
 			sql = searchAndReplace(sql, parsedPattern, pair[1]);
 		}
 		System.out.println(sql);
-		System.out.println(sql.toLowerCase();
+		System.out.println(sql.toLowerCase());
 		return sql.toLowerCase();
 	}
 
