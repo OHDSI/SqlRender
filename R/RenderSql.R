@@ -110,7 +110,7 @@ translateSql <- function(sql = "",
     warning(message)
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(sql, targetDialect, rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
-  list(originalSql = sql, sql = translatedSql)
+  list(originalSql = sql, sql = tolower(translatedSql))
 }
 
 #' @title

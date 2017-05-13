@@ -225,7 +225,7 @@ public class SqlTranslate {
 			List<Block> parsedPattern = parseSearchPattern(pair[0]);
 			sql = searchAndReplace(sql, parsedPattern, pair[1]);
 		}
-		return sql.toLowerCase(Locale.ENGLISH);
+		return sql;
 	}
 
 	//<hajar>
