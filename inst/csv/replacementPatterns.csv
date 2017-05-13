@@ -447,7 +447,6 @@ bigquery,",@a+CONCAT(@b)",",CONCAT(@a,@b)"
 bigquery,"select @a+CONCAT(@b)","select CONCAT(@a,@b)"
 bigquery,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
 bigquery,CAST(@a AS varchar(@b)),CAST(@a AS STRING)
-bigquery,FLOAT,FLOAT64
 bigquery,"WITH @a (@b) AS (SELECT @c)","WITH @a AS\n(SELECT @c)"
 bigquery,",@a (@b) AS (SELECT @c)",", @a AS\n(SELECT @c)"
 bigquery,"WITH @a INTO #@b FROM","INTO #@b WITH @a FROM"
