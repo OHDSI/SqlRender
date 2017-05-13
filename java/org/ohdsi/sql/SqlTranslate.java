@@ -232,8 +232,7 @@ public class SqlTranslate {
 			List<Block> parsedPattern = parseSearchPattern(pair[0]);
 			sql = searchAndReplace(sql, parsedPattern, pair[1]);
 		}
-		sql = sql.toLowerCase();
-		return sql;
+		return sql.toLowerCase();
 	}
 
 	//<hajar>
