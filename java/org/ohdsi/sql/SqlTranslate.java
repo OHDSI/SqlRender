@@ -225,7 +225,6 @@ public class SqlTranslate {
 		//<hajar>
 		//sql=preprocess(sql);
 		//</hajar>
-		sql = sql.toLowerCase();
 		for (int i = 0; i < replacementPatterns.size(); i++) {
 			String[] pair = replacementPatterns.get(i).clone();
 			pair[1] = pair[1].replace("%session_id%", sessionId);
@@ -233,7 +232,8 @@ public class SqlTranslate {
 			List<Block> parsedPattern = parseSearchPattern(pair[0]);
 			sql = searchAndReplace(sql, parsedPattern, pair[1]);
 		}
-		return sql;
+		String lowerCaseSql = sql.toLowerCase();
+		return lowerCaseSql;
 	}
 
 	//<hajar>
