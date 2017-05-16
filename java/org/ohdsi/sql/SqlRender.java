@@ -313,7 +313,7 @@ public class SqlRender {
 	}
 
 	private static String removeDefaults(String string) {
-		return string.replaceAll("\\{DEFAULT[^}]*\\}", "");
+		return string.replaceAll("\\{DEFAULT[^}]*\\}\\s*\n?", "");
 	}
 
 	private static String parseIfThenElse(String str) {
