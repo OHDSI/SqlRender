@@ -26,3 +26,16 @@ test_that("splitSql split with case end at the end", {
   expect_equal(sql,
                c("SELECT CASE WHEN x=1 THEN 0 ELSE 1 END FROM a GROUP BY CASE WHEN x=1 THEN 0 ELSE 1 END"))
 })
+
+
+test_that("splitSql split with reserved word 'end' as field name", {
+  sql <- splitSql("INSERT INTO CDM_CPRD_TESTING_RAW.dbo.hes_linkage_coverage (data_source, start, [end]) VALUES ('hes', '1990-01-01', '2014-12-31');")
+  expect_equal(sql,
+               c("INSERT INTO CDM_CPRD_TESTING_RAW.dbo.hes_linkage_coverage (data_source, start, [end]) VALUES ('hes', '1990-01-01', '2014-12-31')"))
+})
+
+test_that("splitSql split with last line containing comment and having no EOL", {
+  sql <- splitSql("SELECT * FROM table;\n-- end")
+  expect_equal(sql,
+               c("SELECT * FROM table"))
+})

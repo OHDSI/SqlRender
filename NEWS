@@ -1,3 +1,20 @@
+SqlRender v1.3.7 (Release date: 2017-05-03)
+===========================================
+
+Changes: 
+
+1. Added translation rules for ISNUMERIC and LOG(@expression, @base)
+
+
+Bugfixes:
+
+1. Fixed bug when trying to split SQL where reserved word 'end' is used as a field name.
+2. Fixes for Impala translations.
+3. Fixed translation issues for Oracle involving 'FROM DUAL'.
+4. Added workaround for Oracle bug for intervals greater than 99 days.
+5. Fixed bug when trying to split SQL where last line has comment but no EOL.
+
+
 SqlRender v1.3.0 (Release date: 2017-03-24)
 ===========================================
 
