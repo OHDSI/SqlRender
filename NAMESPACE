@@ -2,7 +2,7 @@
 
 export(camelCaseToSnakeCase)
 export(createRWrapperForSql)
-export(launchDeveloperApp)
+export(launchSqlDeveloper)
 export(loadRenderTranslateSql)
 export(readSql)
 export(renderSql)
