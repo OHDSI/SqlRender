@@ -129,6 +129,7 @@ public class SqlTranslate {
 						// Fast forward cursor to after matched patterns:
 						while (cursor < tokens.size() && tokens.get(cursor).start < token.start + matcher.end())
 							cursor++;
+						cursor--;
 					} else {
 						matchCount = 0;
 					}
