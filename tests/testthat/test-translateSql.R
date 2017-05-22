@@ -1405,6 +1405,9 @@ test_that("translateSQL sql server -> RedShift CONCAT", {
   expect_equal_ignore_spaces(sql, "SELECT CONCAT('Condition occurrence record observed during long_term_days on or prior to cohort index:  ',CONCAT(CAST((p1.covariate_id-101)/1000 AS VARCHAR),CONCAT('-',CASE WHEN c1.concept_name IS NOT NULL THEN c1.concept_name ELSE 'Unknown invalid concept' END))) FROM table")
 })
 
+
+
+
 test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id", {
   sql <- translateSql(
     "WITH a AS b SELECT person_id, col1, col2 INTO #table FROM person;", 
@@ -1413,12 +1416,52 @@ test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id", {
   "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
-test_that("translateSQL sql server -> RedShift CTA WITH CTE person_id", {
+test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id at the end", {
+  sql <- translateSql(
+    "WITH a AS b SELECT col1, col2, person_id INTO #table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  col1, col2, person_id\nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id", {
   sql <- translateSql(
     "WITH a AS b SELECT person_id, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
   "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias", {
+  sql <- translateSql(
+    "WITH a AS b SELECT person_id as dist, col1, col2 INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias at the end", {
+  sql <- translateSql(
+    "WITH a AS b SELECT col1, col2, person_id as dist INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias (no 'as')", {
+  sql <- translateSql(
+    "WITH a AS b SELECT col1, person_id dist, col2 INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, person_id dist, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias (no 'as') at the end", {
+  sql <- translateSql(
+    "WITH a AS b SELECT col1, col2, person_id dist INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS TEMP person_id", {
@@ -1435,6 +1478,38 @@ test_that("translateSQL sql server -> RedShift CTAS person_id", {
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
   "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS person_id with alias", {
+  sql <- translateSql(
+    "SELECT person_id as dist, col1, col2 INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS person_id with alias at the end", {
+  sql <- translateSql(
+    "SELECT col1, col2, person_id as dist INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as')", {
+  sql <- translateSql(
+    "SELECT person_id dist, col1, col2 INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n  person_id dist, col1, col2 \nFROM\n person;")
+})
+
+test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as') at the end", {
+  sql <- translateSql(
+    "SELECT col1, col2, person_id dist INTO table FROM person;", 
+    sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n col1, col2, person_id dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CREATE TABLE person_id", {
