@@ -73,6 +73,13 @@ library(devtools)
 install_github("ohdsi/SqlRender")
 ```
 
+Once installed, you can try out SqlRender in a Shiny app that comes with the package:
+
+```r
+library(SqlRender)
+launchSqlRenderDeveloper()
+```
+
 ## Java library
 You can fetch the JAR file in the inst/java folder of this repository, or use Maven:
 

@@ -20,6 +20,13 @@
 # @author Martijn Schuemie
 # @author Marc Suchard
 
+#' SqlRender
+#'
+#' @docType package
+#' @name SqlRender
+#' @importFrom utils install.packages menu
+NULL
+
 .onLoad <- function(libname, pkgname) {
   rJava::.jpackage(pkgname, lib.loc = libname)
 }
