@@ -545,13 +545,13 @@ test_that("translateSQL sql server -> pdw hint distribute_on_key", {
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
                       targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE  #my_table  DISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE  #my_table DISTKEY(row_id)\nSORTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
  targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE (row_id INT) DISTKEY(row_id);")
+ expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE (row_id INT) DISTKEY(row_id)\nSORTKEY(row_id);")
 })
 
 test_that("translateSql: warning on temp table name that is too long", {
@@ -1413,7 +1413,7 @@ test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id", {
     "WITH a AS b SELECT person_id, col1, col2 INTO #table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+  "CREATE TABLE  #table \nDISTKEY(person_id)\nSORTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id at the end", {
@@ -1421,7 +1421,7 @@ test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id at t
     "WITH a AS b SELECT col1, col2, person_id INTO #table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  col1, col2, person_id\nFROM\n person;")
+  "CREATE TABLE  #table \nDISTKEY(person_id)\nSORTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  col1, col2, person_id\nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id", {
@@ -1429,7 +1429,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id", {
     "WITH a AS b SELECT person_id, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(person_id)\nSORTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias", {
@@ -1437,7 +1437,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alia
     "WITH a AS b SELECT person_id as dist, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(dist)\nSORTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias at the end", {
@@ -1445,7 +1445,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alia
     "WITH a AS b SELECT col1, col2, person_id as dist INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(dist)\nSORTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias (no 'as')", {
@@ -1453,7 +1453,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alia
     "WITH a AS b SELECT col1, person_id dist, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, person_id dist, col2 \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(dist)\nSORTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, person_id dist, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias (no 'as') at the end", {
@@ -1461,7 +1461,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alia
     "WITH a AS b SELECT col1, col2, person_id dist INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id dist \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(dist)\nSORTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS TEMP person_id", {
@@ -1469,7 +1469,7 @@ test_that("translateSQL sql server -> RedShift CTAS TEMP person_id", {
     "SELECT person_id, col1, col2 INTO #table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+  "CREATE TABLE  #table \nDISTKEY(person_id)\nSORTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id", {
@@ -1477,7 +1477,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id", {
     "SELECT person_id, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(person_id)\nSORTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id with alias", {
@@ -1485,7 +1485,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id with alias", {
     "SELECT person_id as dist, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(dist)\nSORTKEY(dist)\nAS\nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id with alias at the end", {
@@ -1493,7 +1493,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id with alias at the 
     "SELECT col1, col2, person_id as dist INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(dist)\nSORTKEY(dist)\nAS\nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as')", {
@@ -1501,7 +1501,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as
     "SELECT person_id dist, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n  person_id dist, col1, col2 \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(dist)\nSORTKEY(dist)\nAS\nSELECT\n  person_id dist, col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as') at the end", {
@@ -1509,7 +1509,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as
     "SELECT col1, col2, person_id dist INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n col1, col2, person_id dist \nFROM\n person;")
+  "CREATE TABLE  table \nDISTKEY(dist)\nSORTKEY(dist)\nAS\nSELECT\n col1, col2, person_id dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CREATE TABLE person_id", {
@@ -1517,7 +1517,7 @@ test_that("translateSQL sql server -> RedShift CREATE TABLE person_id", {
     "CREATE TABLE [dbo].[drug_era] ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL);", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  [dbo].[drug_era]  ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL)\nDISTKEY(person_id);")
+  "CREATE TABLE  [dbo].[drug_era]  ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL)\nDISTKEY(person_id)\nSORTKEY(person_id);")
 })
 
 test_that("translateSQL sql server -> PDW CREATE TABLE person_id", {
@@ -1691,7 +1691,8 @@ test_that("translateSQL sql server -> RedShift CREATE TABLE IF NOT EXISTS with h
     "count_value bigint,",
     "last_update_time TIMESTAMP",
     ")",
-    "DISTKEY(analysis_id);",
+    "DISTKEY(analysis_id)",
+    "SORTKEY(analysis_id);",
     sep = "\n"))
 })
 
