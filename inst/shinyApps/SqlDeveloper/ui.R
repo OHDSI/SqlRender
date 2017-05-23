@@ -1,56 +1,31 @@
-
 library(shiny)
 library(shinydashboard)
-
 source("widgets.R")
 
 dashboardPage(
   dashboardHeader(title = "SqlRender Developer"),
   dashboardSidebar(
-    h4("File name"),
-    textOutput("fileName"),
     sidebarMenu(
-      sidebarSearchForm(textId = "searchText", buttonId = "searchButton",
-                        label = "Search..."),
-     
-      menuItem("File", 
-               menuSubItemFileInput("open", "Open"),
-               menuSubItemActionButton("save", "Save"),
-               menuSubItemDownloadLink("saveAs", "Save as"),
-               menuSubItem("Open new tab", href = ""),
-               menuSubItemCopyToClipboard("target", "Copy to clipboard")
-               
-      ),
-      downloadLink("downloadData", "Download")
+      menuItemFileInput("open", "Open file"),
+      menuItemDownloadLink("save", "Save"),
+      menuItem("Open new tab", href = "", icon = shiny::icon("plus-square")),
+      menuItemCopyTextAreaToClipboard("source", "Copy source to clipboard"),
+      menuItemCopyDivToClipboard("target", "Copy target to clipboard")
     )
   ),
   dashboardBody(
-    tags$head(
-      HTML("<script src = \"clipboard.min.js\"></script>"),
-      HTML("<link href = \"styles/github.css\" rel=\"stylesheet\" />"),
-      HTML("<script src = \"highlight.pack.js\"></script>"),
-      HTML("<script>hljs.initHighlightingOnLoad();</script>"),
-      HTML("<script type = \"text/javascript\" language = \"javascript\">
-           $(document).ready(function() {
-           
-           $(document).on('shiny:value', function(event) {
-           if (event.target.id === 'target') {
-           event.target.innerHTML = hljs.highlight('sql', event.value, true).value;
-           event.preventDefault();
-           }
-           });
-           
-           });
-           </script>")
-    ),
     fluidRow(
       column(width = 9, 
              box(
-               title = "OHDSI SQL", width = NULL, status = "primary",
+               title = "Source: OHDSI SQL", width = NULL, status = "primary",
                textAreaInput("source", NULL, width = "100%", height = "300px")
              ), 
              box(
-               title = "Rendered translation", width = NULL,
+               title = "Target: Rendered translation", width = NULL,
+               # tags$table(width = "100%",
+               #            tags$tr(
+               #              tags$td(align = "left", actionButton("renderTranslate", "Render and translate")),
+               #              tags$td(align = "right", checkboxInput("continuous", "Auto render and translate")))),
                pre(textOutput("target"))
              )
       ),
