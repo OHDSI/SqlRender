@@ -1727,3 +1727,8 @@ test_that("RedShift Prevent 'Divide by zero' error", {
   expect_equal_ignore_spaces(sql, 
     "select m.range_high, m.value_as_number FROM cdm.MEASUREMENT WHERE range_high > 0.0000 AND (value_as_number / NULLIF(range_high, 0)) > 1.0000;")
 })
+
+test_that("RedShift XOR operator", {
+  sql <- translateSql("select a ^ b from c where a = 1;", sourceDialect = "sql server", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select a # b from c where a = 1;")
+})
