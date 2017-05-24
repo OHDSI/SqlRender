@@ -288,9 +288,56 @@ public class SqlTranslate {
 		return sql;
 	}
 
+	private static String matchBigQueryGroupBy(String sql) {
+		List<Block> list_item_pattern = parseSearchPattern(", @@a," );
+		List<Block> select_statement_pattern = parseSearchPattern("select @@a from @@b group by @@c;");
+		// TODO handle ) as end
+		// Iterates select statements
+		MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
+		while (select_statement_match.start != -1) {
+			final String select_list = "," + select_statement_match.variableToValue.get("@@a") + ",";
+			final String group_by = "," + select_statement_match.variableToValue.get("@@c") + ",";
+			String replacement_group_by = "";
+
+			// Iterates expressions in the GROUP BY
+			MatchedPattern group_by_expr_match = search(group_by, list_item_pattern, 0);
+			while (group_by_expr_match.start != -1) {
+				final String group_by_expr = group_by_expr_match.variableToValue.get("@@a");
+				final List<Block> group_by_expr_pattern = parseSearchPattern(group_by_expr);
+				int i = 1;
+
+				// Searches the SELECT list for an element matching the current GROUP BY expression
+				MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0);
+				for (; select_expr_match.start != -1; ++i) {
+					final String select_expr = select_expr_match.variableToValue.get("@@a");
+					final MatchedPattern groupby_in_select_match = search(select_expr, group_by_expr_pattern, 0);
+					if (groupby_in_select_match.start != -1) {
+						break;
+					}
+					select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
+				}
+				if (select_expr_match.start != -1) {
+					replacement_group_by = replacement_group_by + ", " + i;
+				} else {
+					replacement_group_by = replacement_group_by + group_by_expr.substring(1);
+				}
+				group_by_expr_match = search(group_by, list_item_pattern,
+						group_by_expr_match.startToken + group_by_expr_pattern.size());
+			}
+			sql = sql.substring(0, select_statement_match.start)
+					+ "select " + select_statement_match.variableToValue.get("@@a")
+					+ " from " + select_statement_match.variableToValue.get("@@b")
+					+ " group by " + replacement_group_by.substring(1) + ";"
+					+ sql.substring(select_statement_match.end, sql.length());
+			select_statement_match = search(sql, select_statement_pattern, select_statement_match.startToken + 1);
+		}
+		return sql;
+	}
+
 	private static String translateBigQuery(String sql) {
 		sql = aliasBigQueryCommonTableExpressions(sql);
-		sql = flattenBigQueryGroupBy(sql);
+		//sql = flattenBigQueryGroupBy(sql);
+		sql = matchBigQueryGroupBy(sql);
 		return sql;
 	}
 
