@@ -210,7 +210,87 @@ public class SqlTranslate {
 				delta = 0;
 			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + delta);
 		}
+		return sql;
+	}
 
+	private static String aliasBigQueryCommonTableExpressions(String sql) {
+		List<Block> cte_pattern = parseSearchPattern("@@(with|,)p @@a (@@b) as (select @@c from @@d)");
+		MatchedPattern cte_match = search(sql, cte_pattern, 0);
+		while (cte_match.start != -1) {
+			final String with_list = "," + cte_match.variableToValue.get("@@b") + ",";
+			final String select_list = "," + cte_match.variableToValue.get("@@c") + ",";
+			String replacement_select_list = "";
+			MatchedPattern with_match = search(with_list, parseSearchPattern(", @@a ,"), 0);
+			MatchedPattern select_match = search(select_list, parseSearchPattern(", @@a ,"), 0);
+			while (with_match.start != -1) {
+				if (select_match.start == -1) {
+					break;
+				}
+				final String with_expr = with_match.variableToValue.get("@@a");
+				String select_expr = "," + select_match.variableToValue.get("@@a") + ",";
+				final MatchedPattern select_alias = search(select_expr, parseSearchPattern(", @@a as @@b ,"), 0);
+				if (select_alias.start != -1) {
+					final String alias = select_alias.variableToValue.get("@@b");
+					if (alias.trim().equalsIgnoreCase(with_expr.trim())) {
+						select_expr = select_expr.substring(0, select_expr.length() - 1);
+					} else {
+						select_expr = "," + select_alias.variableToValue.get("@@a") + " as " + with_expr;
+					}
+				} else {
+					select_expr = select_expr.substring(0, select_expr.length() - 1) + " as " + with_expr;
+				}
+				replacement_select_list = replacement_select_list + select_expr;
+				with_match = search(with_list, parseSearchPattern(", @@a ,"), with_match.startToken + 1);
+				select_match = search(select_list, parseSearchPattern(", @@a ,"), select_match.startToken + 1);
+			}
+
+			sql = sql.substring(0, cte_match.start)
+					+ cte_match.variableToValue.get("@@p")
+					+ cte_match.variableToValue.get("@@a") + " as (select "
+					+ replacement_select_list.substring(1, replacement_select_list.length())
+					+ " from " + cte_match.variableToValue.get("@@d") + ")"
+					+ sql.substring(cte_match.end, sql.length());
+			cte_match = search(sql, cte_pattern, cte_match.startToken + 1);
+		}
+		return sql;
+	}
+
+	private static String flattenBigQueryGroupBy(String sql) {
+		List<Block> parsedPattern = parseSearchPattern("group by @@a;");
+		// TODO handle ) as end
+		MatchedPattern matchedPattern = search(sql, parsedPattern, 0);
+		while (matchedPattern.start != -1) {
+			String last_group_by = null;
+			String next_group_by = "," + matchedPattern.variableToValue.get("@@a") + ",";
+			do {
+				last_group_by = next_group_by;
+				final String[][] replacement_patterns = {
+						{"dateadd(@@a,@@b)", "@@b"},
+						{"datediff(@@a,@@b)", "@@b"},
+						{", @@([a-z]+)f(@@a)", ", @@a"},
+						{", (@@a)", ", @@a"},
+						{", @@a - @@b,", ", @@a, @@b,"},
+						{", @@a / @@b,", ", @@a, @@b,"},
+						{", @@([0-9]+)c", ""},
+						{"+", ","},
+						{"*", ","},
+				};
+				for (int i = 0; i < replacement_patterns.length; ++i) {
+					next_group_by = searchAndReplace(next_group_by, parseSearchPattern(replacement_patterns[i][0]),
+							replacement_patterns[i][1]);
+				}
+			} while (!next_group_by.equalsIgnoreCase(last_group_by));
+			sql = sql.substring(0, matchedPattern.start) + " group by "
+					+ next_group_by.substring(1, next_group_by.length() - 1) + ";"
+					+ sql.substring(matchedPattern.end, sql.length());
+			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + 1);
+		}
+		return sql;
+	}
+
+	private static String translateBigQuery(String sql) {
+		sql = aliasBigQueryCommonTableExpressions(sql);
+		sql = flattenBigQueryGroupBy(sql);
 		return sql;
 	}
 
@@ -554,6 +634,9 @@ public class SqlTranslate {
 						+ StringUtils.join(allowedDialects, ", "));
 			}
 		} else
+			if (targetDialect.equalsIgnoreCase("bigquery")) {
+				sql = translateBigQuery(sql);
+			}
 			return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
 	}
 
@@ -624,7 +707,12 @@ public class SqlTranslate {
 							replacementPatterns = new ArrayList<String[]>();
 							targetToReplacementPatterns.put(target, replacementPatterns);
 						}
-						replacementPatterns.add(new String[] { row.get(1).replaceAll("@", "@@"), row.get(2).replaceAll("@", "@@") });
+						if (row.size() == 3) {
+							replacementPatterns.add(new String[]{row.get(1).replaceAll("@", "@@"),
+									row.get(2).replaceAll("@", "@@")});
+						} else {
+							System.err.println("Bad row: " + row);
+						}
 					}
 				} catch (UnsupportedEncodingException e) {
 					System.err.println("Computer does not support UTF-8 encoding");
