@@ -1,4 +1,3 @@
-require(SqlRender)
 library("testthat")
 
 expect_equal_ignore_spaces <- function(string1, string2) {

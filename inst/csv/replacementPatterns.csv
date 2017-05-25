@@ -442,20 +442,16 @@ bigquery,",select @a+CONCAT(@b)",",select CONCAT(@a,@b)"
 bigquery,"select @a,@b+CONCAT(@c)","select @a,CONCAT(@b,@c)"
 bigquery,",@a+CONCAT(@b)",",CONCAT(@a,@b)"
 bigquery,"select @a+CONCAT(@b)","select CONCAT(@a,@b)"
--bigquery,,------------------------
 bigquery,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
 bigquery,CAST(@a AS varchar(@b)),CAST(@a AS STRING)
 bigquery,"WITH @a INTO #@b FROM","INTO #@b WITH @a FROM"
 bigquery,"SELECT @a INTO #@b FROM","INTO #@b SELECT @a FROM"
 bigquery,#,temp.
--bigquery,,------------------------
 bigquery,"LEFT(@str,@chars)","SUBSTR(@str,0,@chars)"
 bigquery,"RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
--bigquery,,------------------------
 bigquery,"cast(@a as float)","cast(@a as float64)"
 bigquery,"cast(@a as bigint)","cast(@a as int64)"
 bigquery,date(@a),cast(@a as date)
--bigquery,,------------------------
 bigquery,"cast(concat(@a) as date)","parse_date(concat(upper('%Y'),'%m%d'), concat(@a))"
 bigquery,"YEAR(@date)","EXTRACT(YEAR from @date)"
 bigquery,"MONTH(@date)","EXTRACT(MONTH from @date)"
@@ -463,4 +459,3 @@ bigquery,"DAY(@date)","EXTRACT(DAY from @date)"
 bigquery,"union select","union distinct select"
 bigquery,SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c;,SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2;
 bigquery,(SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c),(SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2)
-

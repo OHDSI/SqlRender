@@ -12,15 +12,11 @@ public class TestSqlRender {
 		//String path = "/Users/myl/mylSqlRender/SqlRender/inst/csv/replacementPatterns.csv";
 		String path = "inst/csv/replacementPatterns.csv";
 		//String sourceSql = "SELECT TOP 10 * FROM my_table WHERE a = b;";
-		String sourceSql = "insert into ohdsi.ACHILLES_results (analysis_id, stratum_1, stratum_2, count_value)\n" +
-				"select 1802 as analysis_id,   \n" +
-				"\tCAST(m.measurement_concept_id AS VARCHAR(255)) as stratum_1,\n" +
-				"\tCAST(YEAR(measurement_date)*100 + month(measurement_date) AS VARCHAR(255)) as stratum_2,\n" +
-				"\tCOUNT_BIG(distinct PERSON_ID) as count_value\n" +
-				"from\n" +
-				"\tohdsi.measurement m\n" +
-				"group by m.measurement_concept_id, \n" +
-				"\tYEAR(measurement_date)*100 + month(measurement_date);";
+		String sourceSql = "select 101 as analysis_id,   CAST(year(op1.index_date) - p1.YEAR_OF_BIRTH AS VARCHAR(255)) as stratum_1, COUNT_BIG(p1.person_id) as count_value\n" +
+				"from ohdsi.PERSON p1\n" +
+				"        inner join (select person_id, MIN(observation_period_start_date) as index_date from ohdsi.OBSERVATION_PERIOD group by PERSON_ID) op1\n" +
+				"        on p1.PERSON_ID = op1.PERSON_ID\n" +
+				"group by year(op1.index_date) - p1.YEAR_OF_BIRTH;";
 		String sql;
 		sql = SqlTranslate.translateSqlWithPath(sourceSql, "bigquery", null, null, path);
 		System.out.println(sql.toLowerCase());

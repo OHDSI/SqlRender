@@ -21,7 +21,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -255,39 +262,6 @@ public class SqlTranslate {
 		return sql;
 	}
 
-	private static String flattenBigQueryGroupBy(String sql) {
-		List<Block> parsedPattern = parseSearchPattern("group by @@a;");
-		// TODO handle ) as end
-		MatchedPattern matchedPattern = search(sql, parsedPattern, 0);
-		while (matchedPattern.start != -1) {
-			String last_group_by = null;
-			String next_group_by = "," + matchedPattern.variableToValue.get("@@a") + ",";
-			do {
-				last_group_by = next_group_by;
-				final String[][] replacement_patterns = {
-						{"dateadd(@@a,@@b)", "@@b"},
-						{"datediff(@@a,@@b)", "@@b"},
-						{", @@([a-z]+)f(@@a)", ", @@a"},
-						{", (@@a)", ", @@a"},
-						{", @@a - @@b,", ", @@a, @@b,"},
-						{", @@a / @@b,", ", @@a, @@b,"},
-						{", @@([0-9]+)c", ""},
-						{"+", ","},
-						{"*", ","},
-				};
-				for (int i = 0; i < replacement_patterns.length; ++i) {
-					next_group_by = searchAndReplace(next_group_by, parseSearchPattern(replacement_patterns[i][0]),
-							replacement_patterns[i][1]);
-				}
-			} while (!next_group_by.equalsIgnoreCase(last_group_by));
-			sql = sql.substring(0, matchedPattern.start) + " group by "
-					+ next_group_by.substring(1, next_group_by.length() - 1) + ";"
-					+ sql.substring(matchedPattern.end, sql.length());
-			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + 1);
-		}
-		return sql;
-	}
-
 	private static String matchBigQueryGroupBy(String sql) {
 		List<Block> list_item_pattern = parseSearchPattern(", @@a," );
 		List<Block> select_statement_pattern = parseSearchPattern("select @@a from @@b group by @@c;");
@@ -336,15 +310,11 @@ public class SqlTranslate {
 
 	private static String translateBigQuery(String sql) {
 		sql = aliasBigQueryCommonTableExpressions(sql);
-		//sql = flattenBigQueryGroupBy(sql);
 		sql = matchBigQueryGroupBy(sql);
 		return sql;
 	}
 
 	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId, String oracleTempPrefix) {
-		//<hajar>
-		//sql=preprocess(sql);
-		//</hajar>
 		for (int i = 0; i < replacementPatterns.size(); i++) {
 			String[] pair = replacementPatterns.get(i).clone();
 			pair[1] = pair[1].replace("%session_id%", sessionId);
@@ -354,212 +324,6 @@ public class SqlTranslate {
 		}
 		return sql;
 	}
-
-	//<hajar>
-	public static String preprocess(String sql)
-	{
-		String lowercaseSql = sql.toLowerCase();	
-		String markCast=lowercaseSql.replaceAll("(cast\\(.* as .*char\\))","'#$1#'");
-		//String markCast=lowercaseSql.replaceAll("(cast\\(.* as .*char.*\\))","'#$1#'"); --- has problem for varchar(n)
-		String withoutSpaceSql=removeSpaces(markCast);
-		
-		//general while  "\\(*\\w+\\)*\\+\\'" name +'
-		String results4=withoutSpaceSql;
-		while(checkForMatches(results4.replaceAll("\\s+",""), "\\(*\\w+\\)*\\+\\(*\\'")!=-1 || checkForMatches(results4.replaceAll("\\s+",""), "\\'\\)*\\+\\(*\\w+\\)*")!=-1){
-
-		withoutSpaceSql=results4;
-		//checks for "'+" patterns in sql
-		String results1="";
-		while(true)
-		{
-			withoutSpaceSql=removeSpaces(withoutSpaceSql);
-			
-			if(withoutSpaceSql.contains("'+")){
-				int startIndex=withoutSpaceSql.indexOf("'+");
-				results1+=withoutSpaceSql.substring(0,startIndex+2);
-				
-				List<StringUtils.Token> tokens = StringUtils.tokenizeSql(withoutSpaceSql.substring(startIndex+2));
-				
-				int index=0;
-				while(tokens.get(index).text.equals("(")) index++;
-				
-				if(!tokens.get(index).text.equals("'"))
-				{
-					tokens.get(index).text="'#"+tokens.get(index).text+"#'";
-				}
-				
-				withoutSpaceSql="";
-				for(StringUtils.Token element: tokens)
-				{
-					withoutSpaceSql+=element.text+' ';
-					
-				}	
-			}
-			else
-			{
-				results1+=withoutSpaceSql;
-				break;
-			}
-		}
-		//checks for "+'" in sql
-		withoutSpaceSql=results1;
-		String results2="";
-		while(true)
-		{
-			withoutSpaceSql=removeSpaces(withoutSpaceSql);
-			
-			if(withoutSpaceSql.contains("+'")){
-				int startIndex=withoutSpaceSql.indexOf("+'");
-				results2=withoutSpaceSql.substring(startIndex)+results2;
-				
-				List<StringUtils.Token> tokens = StringUtils.tokenizeSql(withoutSpaceSql.substring(0,startIndex));
-				
-				int index=tokens.size()-1;
-				while(tokens.get(index).text.equals("(")) index--;
-				
-				if(!tokens.get(index).text.equals("'"))
-				{
-					tokens.get(index).text="'#"+tokens.get(index).text+"#'";
-				}
-				
-				withoutSpaceSql="";
-				for(StringUtils.Token element: tokens)
-				{
-					withoutSpaceSql+=element.text+' ';
-					
-				}	
-			}
-			else
-			{
-				results2=withoutSpaceSql+results2;
-				break;
-			}
-		}
-		//checks for "'\\)*\\+" patterns in sql
-		withoutSpaceSql=results2;
-		String results3="";
-		while(true)
-		{
-			withoutSpaceSql=removeSpaces(withoutSpaceSql);
-	
-			if (checkForMatches(withoutSpaceSql,"\\'\\)+\\+")!=-1){
-				int startIndex= checkForMatches(withoutSpaceSql,"\\'\\)+\\+");
-				
-				//skip paranthesis
-				String temp=withoutSpaceSql.substring(startIndex+1);
-				for(char c:temp.toCharArray()){
-					if(c==')')
-						startIndex++;
-					else
-						break;
-					
-				}
-				
-				
-				results3+=withoutSpaceSql.substring(0,startIndex+2); //maybe +1
-				
-				List<StringUtils.Token> tokens = StringUtils.tokenizeSql(withoutSpaceSql.substring(startIndex+2));
-				
-				int index=0;
-				while(tokens.get(index).text.equals("(")) index++;
-				
-				if(!tokens.get(index).text.equals("'"))
-				{
-					tokens.get(index).text="'#"+tokens.get(index).text+"#'";
-				}
-				
-				withoutSpaceSql="";
-				for(StringUtils.Token element: tokens)
-				{
-					withoutSpaceSql+=element.text+' ';
-					
-				}	
-			}
-			else
-			{
-				results3+=withoutSpaceSql;
-				break;
-			}
-		}
-		
-		//checks for "\\+\\(*\\'" patterns in sql
-		withoutSpaceSql=results3;
-		results4="";
-		while(true)
-		{
-			withoutSpaceSql=removeSpaces(withoutSpaceSql);
-			
-			if(checkForMatches(withoutSpaceSql, "\\+\\(*\\'")!=-1){
-				int startIndex= checkForMatches(withoutSpaceSql, "\\+\\(*\\'"); //check for correctness
-				
-				
-				//skip paranthesis
-				String temp=withoutSpaceSql.substring(startIndex);
-				for(char c:temp.toCharArray()){
-					if(c=='(')
-						startIndex--;
-					else
-						break;
-					
-				}
-				
-				
-				results4=withoutSpaceSql.substring(startIndex)+results4;
-				
-				List<StringUtils.Token> tokens = StringUtils.tokenizeSql(withoutSpaceSql.substring(0,startIndex));
-				
-				int index=tokens.size()-1;
-				while(tokens.get(index).text.equals("(")) index--;
-				
-				if(!tokens.get(index).text.equals("'"))
-				{
-					System.out.println(tokens.get(index).text);
-					tokens.get(index).text="'#"+tokens.get(index).text+"#'";
-				}
-				
-				withoutSpaceSql="";
-				for(StringUtils.Token element: tokens)
-				{
-					withoutSpaceSql+=element.text+' ';
-					
-				}	
-			}
-			else
-			{
-				results4=withoutSpaceSql+results4;
-				break;
-			}
-		}
-
-		} 
-		return results4;
-		
-	}
-	private static String removeSpaces(String s){
-		
-		String witoutSpaceSql=s.replaceAll("\\+\\s+'","+'");
-		witoutSpaceSql=witoutSpaceSql.replaceAll("'\\s+\\+","'+");
-		witoutSpaceSql=witoutSpaceSql.replaceAll("\\(\\s+\\(","((");
-		witoutSpaceSql=witoutSpaceSql.replaceAll("\\)\\s+\\)","))");			
-		witoutSpaceSql=witoutSpaceSql.replaceAll("'\\s+\\)","')");
-		witoutSpaceSql=witoutSpaceSql.replaceAll("\\(\\s+'","('");
-		witoutSpaceSql=witoutSpaceSql.replaceAll("\\)\\s+\\+",")+");
-		witoutSpaceSql=witoutSpaceSql.replaceAll("\\+\\s+\\(","+(");
-		return witoutSpaceSql;
-	}
-	
-	private static int checkForMatches(String input, String pattern){
-		
-		Pattern p = Pattern.compile(pattern);
-		Matcher m = p.matcher(input);
-		if (m.find()){	
-			return m.start();
-		}
-		
-		return -1;
-	}
-	
-	//</hajar>
 
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
