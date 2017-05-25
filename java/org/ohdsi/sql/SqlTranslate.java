@@ -518,12 +518,7 @@ public class SqlTranslate {
 							replacementPatterns = new ArrayList<String[]>();
 							targetToReplacementPatterns.put(target, replacementPatterns);
 						}
-						if (row.size() == 3) {
-							replacementPatterns.add(new String[]{row.get(1).replaceAll("@", "@@"),
-									row.get(2).replaceAll("@", "@@")});
-						} else {
-							System.err.println("Bad row: " + row);
-						}
+						replacementPatterns.add(new String[] { row.get(1).replaceAll("@", "@@"), row.get(2).replaceAll("@", "@@") });
 					}
 				} catch (UnsupportedEncodingException e) {
 					System.err.println("Computer does not support UTF-8 encoding");
