@@ -220,13 +220,24 @@ public class SqlTranslate {
 		return sql;
 	}
 
+	/**
+	 * Removes named column lists from common table expressions and replaces them with aliases on the
+	 * select list elements.
+	 *
+	 * @param sql - the query to transform
+	 * @return the query after transformation
+	 */
 	private static String aliasBigQueryCommonTableExpressions(String sql) {
 		List<Block> cte_pattern = parseSearchPattern("@@(with|,)p @@a (@@b) as (select @@c from @@d)");
 		MatchedPattern cte_match = search(sql, cte_pattern, 0);
+
+		// Iterates over common table expressions with column lists
 		while (cte_match.start != -1) {
 			final String with_list = "," + cte_match.variableToValue.get("@@b") + ",";
 			final String select_list = "," + cte_match.variableToValue.get("@@c") + ",";
 			String replacement_select_list = "";
+
+			// Iterates the common table expression column list and the SELECT list in parallel
 			MatchedPattern with_match = search(with_list, parseSearchPattern(", @@a ,"), 0);
 			MatchedPattern select_match = search(select_list, parseSearchPattern(", @@a ,"), 0);
 			while (with_match.start != -1) {
@@ -239,11 +250,14 @@ public class SqlTranslate {
 				if (select_alias.start != -1) {
 					final String alias = select_alias.variableToValue.get("@@b");
 					if (alias.trim().equalsIgnoreCase(with_expr.trim())) {
+						// SELECT list alias already matches the column list
 						select_expr = select_expr.substring(0, select_expr.length() - 1);
 					} else {
+						// SELECT list exists but is different than the column list.  Replace it
 						select_expr = "," + select_alias.variableToValue.get("@@a") + " as " + with_expr;
 					}
 				} else {
+					// No existing SELECT list alias.  Add one
 					select_expr = select_expr.substring(0, select_expr.length() - 1) + " as " + with_expr;
 				}
 				replacement_select_list = replacement_select_list + select_expr;
@@ -262,11 +276,17 @@ public class SqlTranslate {
 		return sql;
 	}
 
+	/**
+	 * Finds complex expressions in the GROUP BY and replaces them with references to matching select list expressions.
+	 *
+	 * @param sql - the query to transform
+	 * @return the query with GROUP BY elements replaced
+	 */
 	private static String matchBigQueryGroupBy(String sql) {
 		List<Block> list_item_pattern = parseSearchPattern(", @@a," );
 		List<Block> select_statement_pattern = parseSearchPattern("select @@a from @@b group by @@c;");
-		// TODO handle ) as end
-		// Iterates select statements
+
+		// Iterates SELECT statements
 		MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
 		while (select_statement_match.start != -1) {
 			final String select_list = "," + select_statement_match.variableToValue.get("@@a") + ",";
@@ -291,8 +311,10 @@ public class SqlTranslate {
 					select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
 				}
 				if (select_expr_match.start != -1) {
+					// Found a matching SELECT list element.  Replace the GROUP BY element with an index
 					replacement_group_by = replacement_group_by + ", " + i;
 				} else {
+					// Keep the current GROUP BY element without replacement
 					replacement_group_by = replacement_group_by + group_by_expr.substring(1);
 				}
 				group_by_expr_match = search(group_by, list_item_pattern,
