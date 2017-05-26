@@ -707,13 +707,13 @@ test_that("translateSQL sql server -> bigquery complex group by", {
 test_that("translateSQL sql server -> bigquery DATEDIFF", {
  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "SELECT DATE_DIFF(cast(drug_era_end_date as date), cast(drug_era_start_date as date), DAY) FROM drug_era;")
+ expect_equal_ignore_spaces(sql, "select DATE_DIFF(cast(drug_era_end_date as date), cast(drug_era_start_date as date), DAY) from drug_era;")
 })
 
 test_that("translateSQL sql server -> bigquery DATEADD", {
  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "SELECT DATE_ADD(cast(drug_era_end_date as date), interval 30 DAY) FROM drug_era;")
+ expect_equal_ignore_spaces(sql, "select DATE_ADD(cast(drug_era_end_date as date), interval 30 DAY) from drug_era;")
 })
 
 test_that("translateSQL sql server -> bigquery DROP TABLE IF EXISTS", {
@@ -743,7 +743,7 @@ test_that("translateSQL sql server -> bigquery select into", {
 test_that("translateSQL sql server -> bigquery LEFT, RIGHT", {
  sql <- translateSql("select LEFT(a, 20), RIGHT(b, 30) FROM t;",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select SUBSTR(a, 0, 20), SUBSTR(b, -30) FROM t;")
+ expect_equal_ignore_spaces(sql, "select SUBSTR(a, 0, 20), SUBSTR(b, -30) from t;")
 })
 
 test_that("translateSQL sql server -> bigquery cast float", {
@@ -767,7 +767,7 @@ test_that("translateSQL sql server -> bigquery cast date", {
 test_that("translateSQL sql server -> bigquery cast string as date", {
  sql <- translateSql("cast(concat(a,b) as date)",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "parse_date(concat(upper('%Y'),'%m%d'), concat(a,b))")
+ expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d'), concat(a,b))")
 })
 
 test_that("translateSQL sql server -> bigquery extract year", {

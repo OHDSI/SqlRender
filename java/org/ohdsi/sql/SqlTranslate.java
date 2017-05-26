@@ -309,6 +309,7 @@ public class SqlTranslate {
 	}
 
 	private static String translateBigQuery(String sql) {
+		sql = sql.toLowerCase();
 		sql = aliasBigQueryCommonTableExpressions(sql);
 		sql = matchBigQueryGroupBy(sql);
 		return sql;
