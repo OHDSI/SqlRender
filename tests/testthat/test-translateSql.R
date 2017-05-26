@@ -716,6 +716,48 @@ test_that("translateSQL sql server -> bigquery DATEADD", {
  expect_equal_ignore_spaces(sql, "select DATE_ADD(cast(drug_era_end_date as date), interval 30 DAY) from drug_era;")
 })
 
+test_that("translateSQL sql server -> bigquery GETDATE", {
+ sql <- translateSql("GETDATE()",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "CURRENT_DATE()")
+})
+
+test_that("translateSQL sql server -> bigquery STDEV", {
+ sql <- translateSql("stdev(x)",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "STDDEV(x)")
+})
+
+test_that("translateSQL sql server -> bigquery LEN", {
+ sql <- translateSql("len('abc')",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "LENGTH('abc')")
+})
+
+test_that("translateSQL sql server -> bigquery COUNT_BIG", {
+ sql <- translateSql("COUNT_BIG(x)",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "COUNT(x)")
+})
+
+test_that("translateSQL sql server -> bigquery CAST :string", {
+ sql <- translateSql("select cast(x as:string)",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select CAST(x as string)")
+})
+
+test_that("translateSQL sql server -> bigquery CAST :integer", {
+ sql <- translateSql("select cast(x as:integer)",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select CAST(x as int64)")
+})
+
+test_that("translateSQL sql server -> bigquery CAST :float", {
+ sql <- translateSql("select cast(x as:float)",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select CAST(x as float64)")
+})
+
 test_that("translateSQL sql server -> bigquery DROP TABLE IF EXISTS", {
  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
  targetDialect = "bigquery")$sql
