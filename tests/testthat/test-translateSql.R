@@ -809,7 +809,7 @@ test_that("translateSQL sql server -> bigquery cast date", {
 test_that("translateSQL sql server -> bigquery cast string as date", {
  sql <- translateSql("cast(concat(a,b) as date)",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d'), concat(a,b))")
+ expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d', concat(a,b))")
 })
 
 test_that("translateSQL sql server -> bigquery extract year", {
