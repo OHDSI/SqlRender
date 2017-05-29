@@ -3,8 +3,10 @@ Type: Package
 Title: Rendering Parameterized SQL and Translation to Dialects
 Version: 1.4.0
 Date: 2017-05-29
-Author: Martijn J. Schuemie [aut, cre],
-    Marc A. Suchard [aut],
+Authors@R: c(
+    person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
+    person("Marc", "Suchard", role = c("aut"))
+    )
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: A rendering tool for parameterized SQL that also translates into
     different SQL dialects.  These dialects include Sql Server, Oracle, 

@@ -16,3 +16,4 @@ bin/
 SqlRender.iml
 license_header_stub.txt
 target/
+docs
