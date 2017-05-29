@@ -217,7 +217,123 @@ public class SqlTranslate {
 				delta = 0;
 			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + delta);
 		}
+		return sql;
+	}
 
+	/**
+	 * Removes named column lists from common table expressions and replaces them with aliases on the
+	 * select list elements.
+	 *
+	 * @param sql - the query to transform
+	 * @return the query after transformation
+	 */
+	private static String aliasBigQueryCommonTableExpressions(String sql) {
+		List<Block> cte_pattern = parseSearchPattern("@@(with|,)p @@a (@@b) as (select @@c from @@d)");
+		MatchedPattern cte_match = search(sql, cte_pattern, 0);
+
+		// Iterates over common table expressions with column lists
+		while (cte_match.start != -1) {
+			final String with_list = "," + cte_match.variableToValue.get("@@b") + ",";
+			final String select_list = "," + cte_match.variableToValue.get("@@c") + ",";
+			String replacement_select_list = "";
+
+			// Iterates the common table expression column list and the SELECT list in parallel
+			MatchedPattern with_match = search(with_list, parseSearchPattern(", @@a ,"), 0);
+			MatchedPattern select_match = search(select_list, parseSearchPattern(", @@a ,"), 0);
+			while (with_match.start != -1) {
+				if (select_match.start == -1) {
+					break;
+				}
+				final String with_expr = with_match.variableToValue.get("@@a");
+				String select_expr = "," + select_match.variableToValue.get("@@a") + ",";
+				final MatchedPattern select_alias = search(select_expr, parseSearchPattern(", @@a as @@b ,"), 0);
+				if (select_alias.start != -1) {
+					final String alias = select_alias.variableToValue.get("@@b");
+					if (alias.trim().equalsIgnoreCase(with_expr.trim())) {
+						// SELECT list alias already matches the column list
+						select_expr = select_expr.substring(0, select_expr.length() - 1);
+					} else {
+						// SELECT list exists but is different than the column list.  Replace it
+						select_expr = "," + select_alias.variableToValue.get("@@a") + " as " + with_expr;
+					}
+				} else {
+					// No existing SELECT list alias.  Add one
+					select_expr = select_expr.substring(0, select_expr.length() - 1) + " as " + with_expr;
+				}
+				replacement_select_list = replacement_select_list + select_expr;
+				with_match = search(with_list, parseSearchPattern(", @@a ,"), with_match.startToken + 1);
+				select_match = search(select_list, parseSearchPattern(", @@a ,"), select_match.startToken + 1);
+			}
+
+			sql = sql.substring(0, cte_match.start)
+					+ cte_match.variableToValue.get("@@p")
+					+ cte_match.variableToValue.get("@@a") + " as (select "
+					+ replacement_select_list.substring(1, replacement_select_list.length())
+					+ " from " + cte_match.variableToValue.get("@@d") + ")"
+					+ sql.substring(cte_match.end, sql.length());
+			cte_match = search(sql, cte_pattern, cte_match.startToken + 1);
+		}
+		return sql;
+	}
+
+	/**
+	 * Finds complex expressions in the GROUP BY and replaces them with references to matching select list expressions.
+	 *
+	 * @param sql - the query to transform
+	 * @return the query with GROUP BY elements replaced
+	 */
+	private static String matchBigQueryGroupBy(String sql) {
+		List<Block> list_item_pattern = parseSearchPattern(", @@a," );
+		List<Block> select_statement_pattern = parseSearchPattern("select @@a from @@b group by @@c;");
+
+		// Iterates SELECT statements
+		MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
+		while (select_statement_match.start != -1) {
+			final String select_list = "," + select_statement_match.variableToValue.get("@@a") + ",";
+			final String group_by = "," + select_statement_match.variableToValue.get("@@c") + ",";
+			String replacement_group_by = "";
+
+			// Iterates expressions in the GROUP BY
+			MatchedPattern group_by_expr_match = search(group_by, list_item_pattern, 0);
+			while (group_by_expr_match.start != -1) {
+				final String group_by_expr = group_by_expr_match.variableToValue.get("@@a");
+				final List<Block> group_by_expr_pattern = parseSearchPattern(group_by_expr);
+				int i = 1;
+
+				// Searches the SELECT list for an element matching the current GROUP BY expression
+				MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0);
+				for (; select_expr_match.start != -1; ++i) {
+					final String select_expr = select_expr_match.variableToValue.get("@@a");
+					final MatchedPattern groupby_in_select_match = search(select_expr, group_by_expr_pattern, 0);
+					if (groupby_in_select_match.start != -1) {
+						break;
+					}
+					select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
+				}
+				if (select_expr_match.start != -1) {
+					// Found a matching SELECT list element.  Replace the GROUP BY element with an index
+					replacement_group_by = replacement_group_by + ", " + i;
+				} else {
+					// Keep the current GROUP BY element without replacement
+					replacement_group_by = replacement_group_by + group_by_expr.substring(1);
+				}
+				group_by_expr_match = search(group_by, list_item_pattern,
+						group_by_expr_match.startToken + group_by_expr_pattern.size());
+			}
+			sql = sql.substring(0, select_statement_match.start)
+					+ "select " + select_statement_match.variableToValue.get("@@a")
+					+ " from " + select_statement_match.variableToValue.get("@@b")
+					+ " group by " + replacement_group_by.substring(1) + ";"
+					+ sql.substring(select_statement_match.end, sql.length());
+			select_statement_match = search(sql, select_statement_pattern, select_statement_match.startToken + 1);
+		}
+		return sql;
+	}
+
+	private static String translateBigQuery(String sql) {
+		sql = sql.toLowerCase();
+		sql = aliasBigQueryCommonTableExpressions(sql);
+		sql = matchBigQueryGroupBy(sql);
 		return sql;
 	}
 
@@ -352,6 +468,9 @@ public class SqlTranslate {
 						+ StringUtils.join(allowedDialects, ", "));
 			}
 		} else
+			if (targetDialect.equalsIgnoreCase("bigquery")) {
+				sql = translateBigQuery(sql);
+			}
 			return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
 	}
 

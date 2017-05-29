@@ -342,3 +342,37 @@ netezza,#,
 netezza,"LEFT(@variable,@b)","STRLEFT(@variable,@b)"
 netezza,"RIGHT(@variable,@b)","STRRIGHT(@variable,@b)"
 netezza,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
+bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
+bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
+bigquery,"DATEADD(d,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
+bigquery,"DATEADD(dd,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
+bigquery,"DATEADD(day,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
+bigquery,"DATEADD(m,@months,@date)","DATE_ADD(cast(@date as date), interval @months MONTH)"
+bigquery,"DATEADD(mm,@months,@date)","DATE_ADD(cast(@date as date), interval @months MONTH)"
+bigquery,"DATEADD(month,@months,@date)","DATE_ADD(cast(@date as date), interval @months MONTH)"
+bigquery,"GETDATE()","CURRENT_DATE()"
+bigquery,"STDEV(@a)","STDDEV(@a)"
+bigquery,"HASHBYTES('MD5',@a)","SHA1(@a)"
+bigquery,"LEN(@a)","LENGTH(@a)"
+bigquery,"COUNT_BIG(@a)","COUNT(@a)"
+bigquery,"CAST(@a as:string)","CAST(@a as string)"
+bigquery,"CAST(@a as:integer)","CAST(@a as int64)"
+bigquery,"CAST(@a as:float)","CAST(@a as float64)"
+bigquery,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+bigquery,CAST(@a AS varchar(@b)),CAST(@a AS STRING)
+bigquery,"WITH @a INTO #@b FROM","INTO #@b WITH @a FROM"
+bigquery,"SELECT @a INTO #@b FROM","INTO #@b SELECT @a FROM"
+bigquery,#,temp.
+bigquery,"LEFT(@str,@chars)","SUBSTR(@str,0,@chars)"
+bigquery,"RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
+bigquery,"cast(@a as float)","cast(@a as float64)"
+bigquery,"cast(@a as bigint)","cast(@a as int64)"
+bigquery,date(@a),cast(@a as date)
+bigquery,"cast(concat(@a) as date)","parse_date('%Y%m%d', concat(@a))"
+bigquery,"YEAR(@date)","EXTRACT(YEAR from @date)"
+bigquery,"MONTH(@date)","EXTRACT(MONTH from @date)"
+bigquery,"DAY(@date)","EXTRACT(DAY from @date)"
+bigquery,"union select","union distinct select"
+bigquery,SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c;,SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2;
+bigquery,(SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c),(SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2)
