@@ -545,13 +545,13 @@ test_that("translateSQL sql server -> pdw hint distribute_on_key", {
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
                       targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE  #my_table  DISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE  #my_table\nDISTKEY(row_id)\nAS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
- sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
+ sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE my_table (row_id INT);",
  targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE (row_id INT) DISTKEY(row_id);")
+ expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE my_table (row_id INT)\nDISTKEY(row_id);")
 })
 
 test_that("translateSql: warning on temp table name that is too long", {
@@ -1731,3 +1731,60 @@ test_that("RedShift XOR operator", {
   sql <- translateSql("select a ^ b from c where a = 1;", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "select a # b from c where a = 1;")
 })
+
+test_that("translateSQL sql server -> redshift hint DISTKEY + SORTKEY on CTAS + CTE", {
+  sql <- translateSql(
+    "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(COMPOUND:start_date)\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT * INTO #my_table FROM cte;",
+    targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(COMPOUND:start_date)\nCREATE TABLE #my_table\nDISTKEY(row_id)\nCOMPOUND SORTKEY(start_date)\nAS\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT\n * \nFROM\n cte;")
+})
+
+test_that("translateSQL sql server -> redshift hint SORTKEY on CTAS + CTE", {
+  sql <- translateSql(
+    "--HINT SORT_ON_KEY(COMPOUND:start_date)\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT * INTO #my_table FROM cte;",
+    targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "--HINT SORT_ON_KEY(COMPOUND:start_date)\nCREATE TABLE #my_table\nCOMPOUND SORTKEY(start_date)\nAS\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT\n * \nFROM\n cte;")
+})
+
+test_that("translateSQL sql server -> redshift hint DISTKEY + SORTKEY on CTAS", {
+  sql <- translateSql(
+    "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(:start_date, end_date)\nSELECT * INTO #my_table FROM other_table;",
+    targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(:start_date, end_date)\nCREATE TABLE #my_table\nDISTKEY(row_id)\nSORTKEY(start_date, end_date)\nAS\nSELECT\n*\nFROM\n other_table;")
+})
+
+test_that("translateSQL sql server -> redshift hint SORTKEY on CTAS", {
+  sql <- translateSql(
+    "--HINT SORT_ON_KEY(:start_date, end_date)\nSELECT * INTO #my_table FROM other_table;",
+    targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, 
+    "--HINT SORT_ON_KEY(:start_date, end_date)\nCREATE TABLE #my_table\nSORTKEY(start_date, end_date)\nAS\nSELECT\n * \nFROM\n other_table;")
+})
+
+test_that("translateSQL sql server -> redshift hint DISTKEY + SORTKEY on CREATE TABLE", {
+ sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date);",
+ targetDialect = "redshift")$sql
+ expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date)\nDISTKEY(row_id)\nINTERLEAVED SORTKEY(start_date);")
+})
+
+test_that("translateSQL sql server -> redshift hint SORTKEY on CREATE TABLE", {
+ sql <- translateSql("--HINT SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date);",
+ targetDialect = "redshift")$sql
+ expect_equal_ignore_spaces(sql, "--HINT SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date)\n\nINTERLEAVED SORTKEY(start_date);")
+})
+
+test_that("translateSQL sql server -> pdw hint DISTKEY + SORTKEY on CREATE TABLE", {
+ sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nCREATE TABLE my_table (row_id INT, start_date DATE);",
+ targetDialect = "pdw")$sql
+ expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE my_table (row_id INT, start_date DATE)\nWITH (DISTRIBUTION = HASH(row_id));")
+})
+
+test_that("translateSQL sql server -> pdw hint DISTKEY + SORTKEY on CTAS", {
+ sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nSELECT * INTO #my_table FROM other_table;",
+ targetDialect = "pdw")$sql
+ expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
+})
+
