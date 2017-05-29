@@ -114,8 +114,8 @@ java -jar SqlRender.jar ?
 
 Getting Involved
 =============
-* Vignette: [Using SqlRender](https://raw.githubusercontent.com/OHDSI/SqlRender/master/inst/doc/UsingSqlRender.pdf)
-* Package manual: [SqlRender manual](https://raw.githubusercontent.com/OHDSI/SqlRender/master/extras/SqlRender.pdf) 
+* Vignette: [Using SqlRender](http://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html)
+* Package manual: [SqlRender manual](http://ohdsi.github.io/SqlRender/reference/index.html) 
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
