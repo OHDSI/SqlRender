@@ -72,7 +72,3 @@ after_success:
   # Rebuild docker container
   - curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/broadsea-methodslibrary/trigger/f0b51cec-4027-4781-9383-4b38b42dd4f5/
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy.sh
-  
-env:
-  global:
-    secure: eUCnclALTsNc8+oOVS8qeSkD8CcYwAPfq759YG/WYXHpTgWDtjCAeHBARWmELHxkGDromzT+lNL3gnbs0WfqD+Nm0prAO7tjPIVKRe4h8zDHwLgZyPQSv17YwwNQZknEPWDrP18BpGqrKCDl8qYsL80+6QVqBs1FczZI7taSfB0=

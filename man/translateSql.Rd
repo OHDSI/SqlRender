@@ -10,7 +10,7 @@ translateSql(sql = "", targetDialect, oracleTempSchema = NULL,
 \arguments{
 \item{sql}{The SQL to be translated}
 
-\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", and
+\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
 "redshift" are supported}
 
 \item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle or Impala.}
