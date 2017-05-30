@@ -297,25 +297,29 @@ public class SqlTranslate {
 			MatchedPattern group_by_expr_match = search(group_by, list_item_pattern, 0);
 			while (group_by_expr_match.start != -1) {
 				final String group_by_expr = group_by_expr_match.variableToValue.get("@@a");
+
 				final List<Block> group_by_expr_pattern = parseSearchPattern(group_by_expr);
 				int i = 1;
 
 				// Searches the SELECT list for an element matching the current GROUP BY expression
-				MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0);
-				for (; select_expr_match.start != -1; ++i) {
-					final String select_expr = select_expr_match.variableToValue.get("@@a");
-					final MatchedPattern groupby_in_select_match = search(select_expr, group_by_expr_pattern, 0);
-					if (groupby_in_select_match.start != -1) {
-						break;
+				boolean found = false;
+				if (group_by_expr_pattern.size() > 1) {
+					for (MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0); select_expr_match.start != -1; ++i) {
+						final String select_expr = select_expr_match.variableToValue.get("@@a");
+						final MatchedPattern groupby_in_select_match = search(select_expr, group_by_expr_pattern, 0);
+						if (groupby_in_select_match.start != -1) {
+							found = true;
+							break;
+						}
+						select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
 					}
-					select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
 				}
-				if (select_expr_match.start != -1) {
+				if (found) {
 					// Found a matching SELECT list element.  Replace the GROUP BY element with an index
 					replacement_group_by = replacement_group_by + ", " + i;
 				} else {
 					// Keep the current GROUP BY element without replacement
-					replacement_group_by = replacement_group_by + group_by_expr.substring(1);
+					replacement_group_by = replacement_group_by + "," + group_by_expr;
 				}
 				group_by_expr_match = search(group_by, list_item_pattern,
 						group_by_expr_match.startToken + group_by_expr_pattern.size());

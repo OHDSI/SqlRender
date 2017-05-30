@@ -11,7 +11,7 @@ public class TestSqlRender {
 //		System.out.println(sql);	
 		String path = "inst/csv/replacementPatterns.csv";
 		//String sourceSql = "SELECT TOP 10 * FROM my_table WHERE a = b;";
-		String sourceSql = "select 'ach_'+CAST(analysis_id as VARCHAR) + ':GlobalCnt' as measure_id from t;";
+		String sourceSql = "select 'ach_'+CAST(a+b as VARCHAR) + ':GlobalCnt' as measure_id from t group by a+b;";
 		String sql;
 		sql = SqlTranslate.translateSqlWithPath(sourceSql, "bigquery", null, null, path);
 		System.out.println(sql);		
