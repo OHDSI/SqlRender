@@ -330,10 +330,101 @@ public class SqlTranslate {
 		return sql;
 	}
 
+	/**
+	 * Decides if a select list expression is a string concatenation.
+	 *
+	 * @param select_expr - the expression evaluate
+	 * @return true if the expression is a string concatenation
+	 */
+	private static boolean selectListExpressionIsStringConcat(String select_expr) {
+		final String[] concat_exprs = {
+				"^ '@@a' +",
+				"^ cast(@@a as varchar) +"};
+		for (int i=0; i < concat_exprs.length; ++i) {
+			MatchedPattern concat_match = search("^" + select_expr, parseSearchPattern(concat_exprs[i]), 0);
+			if (concat_match.start != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Converts a string concatenation expression to use CONCAT() rather than +
+	 *
+	 * @param select_expr - the expression to transform
+	 * @return the transformed expression
+	 */
+	private static String replaceStringConcatenations(String select_expr) {
+		select_expr = "+" + select_expr + "+";
+		String alias = "";
+		MatchedPattern alias_match = search(select_expr, parseSearchPattern("+ @@a as @@b +"), 0);
+		if (alias_match.start != -1) {
+			select_expr = "+" + alias_match.variableToValue.get("@@a") + "+";
+			alias = " as " + alias_match.variableToValue.get("@@b");
+		}
+
+		List<Block> concat_pattern = parseSearchPattern("+ @@a + @@b +");
+		while (true) {
+			MatchedPattern concat_match = search(select_expr, concat_pattern, 0);
+			if (concat_match.start == -1) {
+				break;
+			}
+			String suffix = "";
+			if (concat_match.end < select_expr.length()) {
+				suffix = select_expr.substring(concat_match.end + 1);
+			}
+			select_expr = "+concat(" + concat_match.variableToValue.get("@@a")
+					+ ", " + concat_match.variableToValue.get("@@b") + ")+" + suffix;
+		}
+		return select_expr.substring(1, select_expr.length() - 1) + alias;
+	}
+
+	/**
+	 * Converts string concatenations using the + operator to CONCAT() calls.
+	 *
+	 * @param sql - the query to transform
+	 * @return the query with string concatenations converted
+	 */
+	private static String convertBigQueryConcats(String sql) {
+		List<Block> list_item_pattern = parseSearchPattern(", @@a," );
+		List<Block> select_statement_pattern = parseSearchPattern("select @@a from");
+
+		// Iterates SELECT statements
+		MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
+		while (select_statement_match.start != -1) {
+			final String select_list = "," + select_statement_match.variableToValue.get("@@a") + ",";
+			String replacement_select_list = "";
+
+			// Iterates elements of the select list
+			MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0);
+			while (select_expr_match.start != -1) {
+				final String select_expr = select_expr_match.variableToValue.get("@@a");
+
+				// Replace all string concatenations
+				String replacement_select_expr = select_expr;
+				if (selectListExpressionIsStringConcat(select_expr)) {
+					replacement_select_expr = replaceStringConcatenations(replacement_select_expr);
+				}
+
+				replacement_select_list = replacement_select_list + "," + replacement_select_expr;
+				select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
+			}
+			sql = sql.substring(0, select_statement_match.start)
+					+ "select " + replacement_select_list.substring(1) + " from "
+					+ sql.substring(select_statement_match.end, sql.length());
+			select_statement_match = search(sql, select_statement_pattern, select_statement_match.startToken + 1);
+		}
+		return sql;
+	}
+
+
+
 	private static String translateBigQuery(String sql) {
 		sql = sql.toLowerCase();
 		sql = aliasBigQueryCommonTableExpressions(sql);
 		sql = matchBigQueryGroupBy(sql);
+		sql = convertBigQueryConcats(sql);
 		return sql;
 	}
 

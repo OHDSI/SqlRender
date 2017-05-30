@@ -368,6 +368,7 @@ bigquery,"LEFT(@str,@chars)","SUBSTR(@str,0,@chars)"
 bigquery,"RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
 bigquery,"cast(@a as float)","cast(@a as float64)"
 bigquery,"cast(@a as bigint)","cast(@a as int64)"
+bigquery,"cast(@a as varchar)","cast(@a as string)"
 bigquery,date(@a),cast(@a as date)
 bigquery,"cast(concat(@a) as date)","parse_date('%Y%m%d', concat(@a))"
 bigquery,"YEAR(@date)","EXTRACT(YEAR from @date)"

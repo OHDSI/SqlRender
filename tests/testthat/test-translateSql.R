@@ -752,6 +752,12 @@ test_that("translateSQL sql server -> bigquery CAST :integer", {
  expect_equal_ignore_spaces(sql, "select CAST(x as int64)")
 })
 
+test_that("translateSQL sql server -> bigquery CAST varchar", {
+ sql <- translateSql("select cast(x as varchar)",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select cast(x as string)")
+})
+
 test_that("translateSQL sql server -> bigquery CAST :float", {
  sql <- translateSql("select cast(x as:float)",
  targetDialect = "bigquery")$sql

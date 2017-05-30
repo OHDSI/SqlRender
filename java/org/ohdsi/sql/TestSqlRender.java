@@ -10,9 +10,10 @@ public class TestSqlRender {
 //		sql = SqlRender.renderSql(sql, new String[]{"name", "a"}, new String[]{"NA\\joe", "true"});
 //		System.out.println(sql);	
 		String path = "inst/csv/replacementPatterns.csv";
-		String sourceSql = "SELECT TOP 10 * FROM my_table WHERE a = b;";
+		//String sourceSql = "SELECT TOP 10 * FROM my_table WHERE a = b;";
+		String sourceSql = "select 'ach_'+CAST(analysis_id as VARCHAR) + ':GlobalCnt' as measure_id from t;";
 		String sql;
-		sql = SqlTranslate.translateSqlWithPath(sourceSql, "postgresql", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sourceSql, "bigquery", null, null, path);
 		System.out.println(sql);		
 //		
 //		sql = SqlTranslate.translateSqlWithPath(sourceSql, "oracle", null, null, path);
