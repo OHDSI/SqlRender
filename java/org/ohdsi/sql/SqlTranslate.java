@@ -21,14 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -227,7 +220,7 @@ public class SqlTranslate {
 	 * @param sql - the query to transform
 	 * @return the query after transformation
 	 */
-	private static String aliasBigQueryCommonTableExpressions(String sql) {
+	private static String bigQueryAliasCommonTableExpressions(String sql) {
 		List<Block> cte_pattern = parseSearchPattern("@@(with|,)p @@a (@@b) as (select @@c from @@d)");
 		MatchedPattern cte_match = search(sql, cte_pattern, 0);
 
@@ -277,60 +270,68 @@ public class SqlTranslate {
 	}
 
 	/**
+	 * Checks if an expression contains an aggregate function
+	 *
+	 * @param select_expr - the expression to check
+	 * @return true if the expression contains an aggregate
+	 */
+	private static boolean bigqueryExprContainsAggregate(String select_expr) {
+		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(select_expr);
+		List<String> aggregates = Arrays.asList("min", "max", "sum", "count", "count_big", "avg", "stdev", "var");
+		for (StringUtils.Token token : tokens) {
+			if (aggregates.contains(token.text.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Finds complex expressions in the GROUP BY and replaces them with references to matching select list expressions.
 	 *
 	 * @param sql - the query to transform
+	 * @param select_pattern - the pattern to use to find the SELECTs
+	 * @param terminator - the terminating character for the select pattern
 	 * @return the query with GROUP BY elements replaced
 	 */
-	private static String matchBigQueryGroupBy(String sql) {
+	private static String bigqueryReplaceGroupByWithPattern(String sql, String select_pattern, String terminator) {
 		List<Block> list_item_pattern = parseSearchPattern(", @@a," );
-		List<Block> select_statement_pattern = parseSearchPattern("select @@a from @@b group by @@c;");
+		List<Block> select_statement_pattern = parseSearchPattern(select_pattern);
 
 		// Iterates SELECT statements
 		MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
 		while (select_statement_match.start != -1) {
 			final String select_list = "," + select_statement_match.variableToValue.get("@@a") + ",";
-			final String group_by = "," + select_statement_match.variableToValue.get("@@c") + ",";
 			String replacement_group_by = "";
 
-			// Iterates expressions in the GROUP BY
-			MatchedPattern group_by_expr_match = search(group_by, list_item_pattern, 0);
-			while (group_by_expr_match.start != -1) {
-				final String group_by_expr = group_by_expr_match.variableToValue.get("@@a");
-
-				final List<Block> group_by_expr_pattern = parseSearchPattern(group_by_expr);
-				int i = 1;
-
-				// Searches the SELECT list for an element matching the current GROUP BY expression
-				boolean found = false;
-				if (group_by_expr_pattern.size() > 1) {
-					for (MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0); select_expr_match.start != -1; ++i) {
-						final String select_expr = select_expr_match.variableToValue.get("@@a");
-						final MatchedPattern groupby_in_select_match = search(select_expr, group_by_expr_pattern, 0);
-						if (groupby_in_select_match.start != -1) {
-							found = true;
-							break;
-						}
-						select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
-					}
+			// Iterates the SELECT list and checks for aggregate functions
+			MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0);
+			for (int i = 1; select_expr_match.start != -1; ++i) {
+				final String select_expr = select_expr_match.variableToValue.get("@@a");
+				if (!bigqueryExprContainsAggregate(select_expr)) {
+					replacement_group_by = replacement_group_by + "," + i;
 				}
-				if (found) {
-					// Found a matching SELECT list element.  Replace the GROUP BY element with an index
-					replacement_group_by = replacement_group_by + ", " + i;
-				} else {
-					// Keep the current GROUP BY element without replacement
-					replacement_group_by = replacement_group_by + "," + group_by_expr;
-				}
-				group_by_expr_match = search(group_by, list_item_pattern,
-						group_by_expr_match.startToken + group_by_expr_pattern.size());
+				select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
 			}
 			sql = sql.substring(0, select_statement_match.start)
 					+ "select " + select_statement_match.variableToValue.get("@@a")
 					+ " from " + select_statement_match.variableToValue.get("@@b")
-					+ " group by " + replacement_group_by.substring(1) + ";"
+					+ " group by " + replacement_group_by.substring(1) + terminator
 					+ sql.substring(select_statement_match.end, sql.length());
 			select_statement_match = search(sql, select_statement_pattern, select_statement_match.startToken + 1);
 		}
+		return sql;
+	}
+
+	/**
+	 * Finds complex expressions in the GROUP BY and replaces them with references to matching select list expressions.
+	 *
+	 * @param sql - the query to transform
+	 * @return the query with GROUP BY elements replaced
+	 */
+	private static String bigqueryReplaceGroupBy(String sql) {
+		sql = bigqueryReplaceGroupByWithPattern(sql, "select @@a from @@b group by @@c;", ";");
+		sql = bigqueryReplaceGroupByWithPattern(sql, "select @@a from @@b group by @@c)", ")");
 		return sql;
 	}
 
@@ -340,7 +341,7 @@ public class SqlTranslate {
 	 * @param select_expr - the expression evaluate
 	 * @return true if the expression is a string concatenation
 	 */
-	private static boolean selectListExpressionIsStringConcat(String select_expr) {
+	private static boolean bigQueryExprIsStringConcat(String select_expr) {
 		final String[] concat_exprs = {
 				"^ '@@a' +",
 				"^ cast(@@a as varchar) +"};
@@ -359,7 +360,7 @@ public class SqlTranslate {
 	 * @param select_expr - the expression to transform
 	 * @return the transformed expression
 	 */
-	private static String replaceStringConcatenations(String select_expr) {
+	private static String bigQueryReplaceStringConcatenations(String select_expr) {
 		select_expr = "+" + select_expr + "+";
 		String alias = "";
 		MatchedPattern alias_match = search(select_expr, parseSearchPattern("+ @@a as @@b +"), 0);
@@ -390,7 +391,7 @@ public class SqlTranslate {
 	 * @param sql - the query to transform
 	 * @return the query with string concatenations converted
 	 */
-	private static String convertBigQueryConcats(String sql) {
+	private static String bigQueryConvertConcats(String sql) {
 		List<Block> list_item_pattern = parseSearchPattern(", @@a," );
 		List<Block> select_statement_pattern = parseSearchPattern("select @@a from");
 
@@ -407,8 +408,8 @@ public class SqlTranslate {
 
 				// Replace all string concatenations
 				String replacement_select_expr = select_expr;
-				if (selectListExpressionIsStringConcat(select_expr)) {
-					replacement_select_expr = replaceStringConcatenations(replacement_select_expr);
+				if (bigQueryExprIsStringConcat(select_expr)) {
+					replacement_select_expr = bigQueryReplaceStringConcatenations(replacement_select_expr);
 				}
 
 				replacement_select_list = replacement_select_list + "," + replacement_select_expr;
@@ -422,13 +423,17 @@ public class SqlTranslate {
 		return sql;
 	}
 
-
-
+	/**
+	 * BigQuery specific translations
+	 *
+	 * @param sql - the query to translate
+	 * @return the query after translation
+	 */
 	private static String translateBigQuery(String sql) {
 		sql = sql.toLowerCase();
-		sql = aliasBigQueryCommonTableExpressions(sql);
-		sql = matchBigQueryGroupBy(sql);
-		sql = convertBigQueryConcats(sql);
+		sql = bigQueryAliasCommonTableExpressions(sql);
+		sql = bigqueryReplaceGroupBy(sql);
+		sql = bigQueryConvertConcats(sql);
 		return sql;
 	}
 

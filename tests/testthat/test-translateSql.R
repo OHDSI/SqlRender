@@ -686,22 +686,22 @@ test_that("translateSQL sql server -> bigquery common table expression column li
  expect_equal_ignore_spaces(sql, "with cte1 as (select 2), cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
 })
 
-test_that("translateSQL sql server -> bigquery complex group by", {
- sql <- translateSql("select f(a) from t group by f(a);",
+test_that("translateSQL sql server -> bigquery group by", {
+ sql <- translateSql("select f(a), count(*) from t group by f(a);",
  targetDialect = "bigquery")$sql
  expect_equal_ignore_spaces(sql, "select f(a) from t group by 1;")
 })
 
-test_that("translateSQL sql server -> bigquery complex group by", {
- sql <- translateSql("select 100, cast(a+b as string) from t group by a+b;",
+test_that("translateSQL sql server -> bigquery group by", {
+ sql <- translateSql("select 100, sum(x), cast(a+b as string) from t group by a+b;",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, cast(a+b as string) from t group by 2;")
+ expect_equal_ignore_spaces(sql, "select 100, cast(a+b as string) from t group by 1, 3;")
 })
 
-test_that("translateSQL sql server -> bigquery simple group by", {
- sql <- translateSql("select 100, cast(a+b as string) from t group by a, b;",
+test_that("translateSQL sql server -> bigquery nexted group by", {
+ sql <- translateSql("select * from (select 100, cast(a+b as string), max(x) from t group by a, b) dt;",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, cast(a+b as string) from t group by a, b;")
+ expect_equal_ignore_spaces(sql, "select * from (select 100, cast(a+b as string), max(x) from t group by 1, 2) dt;")
 })
 
 test_that("translateSQL sql server -> bigquery complex group by", {
@@ -820,6 +820,12 @@ test_that("translateSQL sql server -> bigquery cast float", {
 
 test_that("translateSQL sql server -> bigquery cast bigint", {
  sql <- translateSql("cast(a as bigint)",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "cast(a as int64)")
+})
+
+test_that("translateSQL sql server -> bigquery cast int", {
+ sql <- translateSql("cast(a as int)",
  targetDialect = "bigquery")$sql
  expect_equal_ignore_spaces(sql, "cast(a as int64)")
 })
