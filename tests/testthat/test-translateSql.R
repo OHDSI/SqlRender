@@ -744,6 +744,12 @@ test_that("translateSQL sql server -> bigquery CONCAT isnull", {
  expect_equal_ignore_spaces(sql, "select concat(IFNULL(a,'b'), c) from  t;")
 })
 
+test_that("translateSQL sql server -> bigquery CONCAT case", {
+ sql <- translateSql("select case when x like '1' then 'a' when x like '2' then 'b' else 'c' end + c from t;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select concat(case when x like '1' then 'a' when x like '2' then 'b' else 'c' end, c ) from  t;")
+})
+
 test_that("translateSQL sql server -> bigquery CONCAT with alias", {
  sql <- translateSql("select 'a' + b AS concept_path from t;",
                      targetDialect = "bigquery")$sql
