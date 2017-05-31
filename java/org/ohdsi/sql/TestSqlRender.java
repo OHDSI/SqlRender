@@ -10,10 +10,9 @@ public class TestSqlRender {
 //		sql = SqlRender.renderSql(sql, new String[]{"name", "a"}, new String[]{"NA\\joe", "true"});
 //		System.out.println(sql);	
 		String path = "inst/csv/replacementPatterns.csv";
-		//String sourceSql = "SELECT TOP 10 * FROM my_table WHERE a = b;";
-		String sourceSql = "select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by floor(date_diff(a, b, day)/30);";
+		String sourceSql = "SELECT TOP 10 * FROM my_table WHERE a = b;";
 		String sql;
-		sql = SqlTranslate.translateSqlWithPath(sourceSql, "bigquery", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sourceSql, "postgresql", null, null, path);
 		System.out.println(sql);		
 //		
 //		sql = SqlTranslate.translateSqlWithPath(sourceSql, "oracle", null, null, path);
