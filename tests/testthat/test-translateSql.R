@@ -907,9 +907,9 @@ test_that("translateSQL sql server -> bigquery bracketed intersect distinct", {
 })
 
 test_that("translateSQL sql server -> bigquery ifnull", {
- sql <- translateSql("(SELECT ifnull(x,y) from t;",
+ sql <- translateSql("SELECT ifnull(x,y) from t;",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select isnull(x,y) from t;")
+ expect_equal_ignore_spaces(sql, "select ISNULL(x,y) from t;")
 })
 
 # For debugging: force reload of patterns:
