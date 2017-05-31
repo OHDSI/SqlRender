@@ -738,6 +738,18 @@ test_that("translateSQL sql server -> bigquery CONCAT leading cast", {
  expect_equal_ignore_spaces(sql, "select concat(concat(cast(a as string), b), c) from t;")
 })
 
+test_that("translateSQL sql server -> bigquery CONCAT non-leading string", {
+ sql <- translateSql("select a + 'b' + c from t;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select concat(concat(a, 'b'), c) from t;")
+})
+
+test_that("translateSQL sql server -> bigquery CONCAT non-leading cast", {
+ sql <- translateSql("select a + b + cast(c as varchar) from t;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select concat(concat(a, b), cast(c as string)) from t;")
+})
+
 test_that("translateSQL sql server -> bigquery DATEDIFF", {
  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                      targetDialect = "bigquery")$sql
@@ -892,6 +904,12 @@ test_that("translateSQL sql server -> bigquery bracketed intersect distinct", {
  sql <- translateSql("(SELECT DISTINCT a FROM t INTERSECT SELECT DISTINCT a FROM s)",
                      targetDialect = "bigquery")$sql
  expect_equal_ignore_spaces(sql, "(SELECT t1.a FROM (SELECT DISTINCT a FROM t UNION ALL SELECT DISTINCT a FROM s) AS t1 GROUP BY a HAVING COUNT(*) >= 2)")
+})
+
+test_that("translateSQL sql server -> bigquery ifnull", {
+ sql <- translateSql("(SELECT ifnull(x,y) from t;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select isnull(x,y) from t;")
 })
 
 # For debugging: force reload of patterns:
