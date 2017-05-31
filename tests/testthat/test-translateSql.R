@@ -744,6 +744,18 @@ test_that("translateSQL sql server -> bigquery CONCAT isnull", {
  expect_equal_ignore_spaces(sql, "select concat(IFNULL(a,'b'), c) from  t;")
 })
 
+test_that("translateSQL sql server -> bigquery CONCAT with alias", {
+ sql <- translateSql("select 'a' + b AS concept_path from t;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select concat('a' , b ) as concept_path from  t;")
+})
+
+test_that("translateSQL sql server -> bigquery CONCAT with alias but no AS", {
+ sql <- translateSql("select 'a' + b concept_path from t;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select concat('a' , b ) concept_path from  t;")
+})
+
 test_that("translateSQL sql server -> bigquery DATEDIFF", {
  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                      targetDialect = "bigquery")$sql

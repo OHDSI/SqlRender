@@ -409,12 +409,22 @@ public class SqlTranslate {
 	private static String bigQueryReplaceStringConcatsInExpr(String select_expr) {
 		select_expr = "+" + select_expr + "+";
 
-		// Finds the AS alias at the end of the expression
+		// Finds the alias at the end of the expression
 		String alias = "";
 		MatchedPattern alias_match = search(select_expr, parseSearchPattern("+ @@a as @@b +"), 0);
 		if (alias_match.start != -1) {
 			select_expr = "+" + alias_match.variableToValue.get("@@a") + "+";
 			alias = " as " + alias_match.variableToValue.get("@@b");
+		} else {
+			List<StringUtils.Token> tokens = StringUtils.tokenizeSql(select_expr);
+			StringUtils.Token possible_alias = tokens.get(tokens.size() - 2);  // token before the final +
+			String preceding_token = tokens.get(tokens.size() - 3).text;
+			if (possible_alias.isIdentifier()
+					&& !preceding_token.equalsIgnoreCase(".")
+					&& !preceding_token.equalsIgnoreCase("+")) {
+				select_expr = select_expr.substring(0, possible_alias.start) + "+";
+				alias = " " + possible_alias.text;
+			}
 		}
 
 		// Repeatedly replace + with CONCAT until there are none left
