@@ -738,10 +738,10 @@ test_that("translateSQL sql server -> bigquery CONCAT leading cast", {
  expect_equal_ignore_spaces(sql, "select concat(concat(cast(a as string), b), c) from t;")
 })
 
-test_that("translateSQL sql server -> bigquery CONCAT ifnull", {
- sql <- translateSql("select ifnull(a, 'b') + c from t;",
+test_that("translateSQL sql server -> bigquery CONCAT isnull", {
+ sql <- translateSql("select isnull(a, 'b') + c from t;",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(ISNULL(a,'b'), c) from  t;")
+ expect_equal_ignore_spaces(sql, "select concat(IFNULL(a,'b'), c) from  t;")
 })
 
 test_that("translateSQL sql server -> bigquery DATEDIFF", {
@@ -900,10 +900,10 @@ test_that("translateSQL sql server -> bigquery bracketed intersect distinct", {
  expect_equal_ignore_spaces(sql, "(SELECT t1.a FROM (SELECT DISTINCT a FROM t UNION ALL SELECT DISTINCT a FROM s) AS t1 GROUP BY a HAVING COUNT(*) >= 2)")
 })
 
-test_that("translateSQL sql server -> bigquery ifnull", {
- sql <- translateSql("SELECT ifnull(x,y) from t;",
+test_that("translateSQL sql server -> bigquery isnull", {
+ sql <- translateSql("SELECT isnull(x,y) from t;",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select ISNULL(x,y) from t;")
+ expect_equal_ignore_spaces(sql, "select IFNULL(x,y) from t;")
 })
 
 # For debugging: force reload of patterns:

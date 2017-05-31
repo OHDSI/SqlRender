@@ -390,7 +390,7 @@ public class SqlTranslate {
 		final String[] concat_exprs = {
 				"^ '@@a' +",
 				"^ cast(@@a as varchar) +",
-				"^ ifnull(@@a, '@@b') +"};
+				"^ isnull(@@a, '@@b') +"};
 		for (int i = 0; i < concat_exprs.length; ++i) {
 			MatchedPattern concat_match = search("^" + select_expr, parseSearchPattern(concat_exprs[i]), 0);
 			if (concat_match.start != -1) {
