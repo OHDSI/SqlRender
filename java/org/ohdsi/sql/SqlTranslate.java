@@ -277,7 +277,7 @@ public class SqlTranslate {
 	 */
 	private static boolean bigQueryExprContainsAggregate(String select_expr) {
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(select_expr);
-		List<String> aggregates = Arrays.asList("min", "max", "sum", "count", "count_big", "avg", "stdev", "var");
+		List<String> aggregates = Arrays.asList("min", "max", "sum", "count", "count_big", "avg", "stdev", "var", "row_number");
 		for (int i = 0; i < tokens.size(); ++i) {
 			if (aggregates.contains(tokens.get(i).text.toLowerCase()) &&
 					i < (tokens.size() - 1) && tokens.get(i+1).text.equals("(")) {
