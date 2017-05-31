@@ -472,13 +472,29 @@ public class SqlTranslate {
 	}
 
 	/**
+	 * Lower cases everything but string literals
+	 *
+	 * @param sql - the query to translate
+	 * @return the query after translation
+	 */
+	private static String bigQueryLowerCase(String sql) {
+		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(sql);
+		for (StringUtils.Token token : tokens) {
+			if (!token.inQuotes) {
+				sql = sql.substring(0, token.start) + token.text.toLowerCase() + sql.substring(token.end);
+			}
+		}
+		return sql;
+	}
+
+	/**
 	 * bigQuery specific translations
 	 *
 	 * @param sql - the query to translate
 	 * @return the query after translation
 	 */
 	private static String translatebigQuery(String sql) {
-		sql = sql.toLowerCase();
+		sql = bigQueryLowerCase(sql);
 		sql = bigQueryAliasCommonTableExpressions(sql);
 		sql = bigQueryReplaceGroupBy(sql);
 		sql = bigQueryReplaceStringConcatsInStatement(sql);
