@@ -11,13 +11,7 @@ public class TestSqlRender {
 //		System.out.println(sql);	
 		String path = "inst/csv/replacementPatterns.csv";
 		//String sourceSql = "SELECT TOP 10 * FROM my_table WHERE a = b;";
-		String sourceSql = "insert into ohdsi.ACHILLES_results_derived (stratum_1,statistic_value,measure_id)    \n" +
-				"select decade as stratum_1,temp_cnt as statistic_value,\n" +
-				"'Death:byDecade:SafePatientCnt' as measure_id\n" +
-				"from\n" +
-				"   (select left(stratum_1,3) as decade,sum(count_value) as temp_cnt from  ohdsi.achilles_results where analysis_id = 504  group by left(stratum_1,3)\n" +
-				"   )a\n" +
-				"where temp_cnt >= 11;";
+		String sourceSql = "select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by floor(date_diff(a, b, day)/30);";
 		String sql;
 		sql = SqlTranslate.translateSqlWithPath(sourceSql, "bigquery", null, null, path);
 		System.out.println(sql);		

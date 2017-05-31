@@ -686,19 +686,31 @@ test_that("translateSQL sql server -> bigquery common table expression column li
  expect_equal_ignore_spaces(sql, "with cte1 as (select 2), cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
 })
 
-test_that("translateSQL sql server -> bigquery group by", {
+test_that("translateSQL sql server -> bigquery group by function", {
  sql <- translateSql("select f(a), count(*) from t group by f(a);",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select f(a) from t group by 1;")
+ expect_equal_ignore_spaces(sql, "select f(a), count(*) from t group by 1;")
 })
 
-test_that("translateSQL sql server -> bigquery group by", {
+test_that("translateSQL sql server -> bigquery group by addition", {
  sql <- translateSql("select 100, sum(x), cast(a+b as string) from t group by a+b;",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, cast(a+b as string) from t group by 1, 3;")
+ expect_equal_ignore_spaces(sql, "select 100, sum(x), cast(a+b as string) from t group by 1, 3;")
 })
 
-test_that("translateSQL sql server -> bigquery nexted group by", {
+test_that("translateSQL sql server -> bigquery column ref groupby", {
+ sql <- translateSql("select 100, sum(x), cast(a+b as string) from t group by t.a, t.b;",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select 100, sum(x), cast(a+b as string) from t group by t.a, t.b;")
+})
+
+test_that("translateSQL sql server -> bigquery group by aggregate name without call", {
+ sql <- translateSql("select 100, sum(x), concat('count = ', c) from t group by a+b;",
+ targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select 100, sum(x), concat('count = ', c) from t group by 1, 3;")
+})
+
+test_that("translateSQL sql server -> bigquery nested group by", {
  sql <- translateSql("select * from (select 100, cast(a+b as string), max(x) from t group by a, b) dt;",
  targetDialect = "bigquery")$sql
  expect_equal_ignore_spaces(sql, "select * from (select 100, cast(a+b as string), max(x) from t group by 1, 2) dt;")
@@ -707,7 +719,7 @@ test_that("translateSQL sql server -> bigquery nexted group by", {
 test_that("translateSQL sql server -> bigquery complex group by", {
  sql <- translateSql("select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by floor(date_diff(a, b, day)/30);",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by 3;")
+ expect_equal_ignore_spaces(sql, "select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by 1,2,3,4;")
 })
 
 test_that("translateSQL sql server -> bigquery CONCAT leading string", {
@@ -719,7 +731,7 @@ test_that("translateSQL sql server -> bigquery CONCAT leading string", {
 test_that("translateSQL sql server -> bigquery CONCAT leading cast", {
  sql <- translateSql("select cast(a as varchar) + b + c from t;",
  targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(concat(cast(a as varchar), b), c) from t;")
+ expect_equal_ignore_spaces(sql, "select concat(concat(cast(a as string), b), c) from t;")
 })
 
 test_that("translateSQL sql server -> bigquery DATEDIFF", {

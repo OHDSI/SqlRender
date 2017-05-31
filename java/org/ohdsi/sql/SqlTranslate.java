@@ -275,15 +275,52 @@ public class SqlTranslate {
 	 * @param select_expr - the expression to check
 	 * @return true if the expression contains an aggregate
 	 */
-	private static boolean bigqueryExprContainsAggregate(String select_expr) {
+	private static boolean bigQueryExprContainsAggregate(String select_expr) {
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(select_expr);
 		List<String> aggregates = Arrays.asList("min", "max", "sum", "count", "count_big", "avg", "stdev", "var");
-		for (StringUtils.Token token : tokens) {
-			if (aggregates.contains(token.text.toLowerCase())) {
+		for (int i = 0; i < tokens.size(); ++i) {
+			if (aggregates.contains(tokens.get(i).text.toLowerCase()) &&
+					i < (tokens.size() - 1) && tokens.get(i+1).text.equals("(")) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks if a GROUP BY clause is all column references
+	 *
+	 * @param group_by - the clause to check
+	 * @return true if the clause is all column references
+	 */
+	private static boolean bigQueryGroupByIsOnlyColumnReferences(String group_by) {
+		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(group_by);
+		for (int i = 0; i < tokens.size(); ++i) {
+			switch (i % 4) {
+				case 0:
+					break;
+				case 1:
+					if (!tokens.get(i).text.equals(".")) return false;
+					break;
+				case 2:
+					break;
+				case 3:
+					if (!tokens.get(i).text.equals(",")) return false;
+					break;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Finds the start token for matching if the next match should not overlap the previous match
+	 *
+	 * @param match - the last match
+	 * @param expr - the string that match was found in
+	 * @return the start token to pass to search()
+	 */
+	private static int nextNonoverlappingStartToken(MatchedPattern match, String expr) {
+		return match.startToken + StringUtils.tokenizeSql(expr.substring(match.start, match.end)).size() - 1;
 	}
 
 	/**
@@ -294,54 +331,62 @@ public class SqlTranslate {
 	 * @param terminator - the terminating character for the select pattern
 	 * @return the query with GROUP BY elements replaced
 	 */
-	private static String bigqueryReplaceGroupByWithPattern(String sql, String select_pattern, String terminator) {
+	private static String bigQueryReplaceGroupByWithPattern(String sql, String select_pattern, String terminator) {
 		List<Block> list_item_pattern = parseSearchPattern(", @@a," );
 		List<Block> select_statement_pattern = parseSearchPattern(select_pattern);
 
 		// Iterates SELECT statements
-		MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
-		while (select_statement_match.start != -1) {
+		for (MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
+			 select_statement_match.start != -1;
+			 select_statement_match = search(sql, select_statement_pattern, select_statement_match.startToken + 1)) {
 			final String select_list = "," + select_statement_match.variableToValue.get("@@a") + ",";
+
+			// Skips replacing the GROUP BY if it is all column references.
+			final String group_by = select_statement_match.variableToValue.get("@@c");
+			if (bigQueryGroupByIsOnlyColumnReferences(group_by)) {
+				continue;
+			}
+
 			String replacement_group_by = "";
 
 			// Iterates the SELECT list and checks for aggregate functions
 			MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0);
 			for (int i = 1; select_expr_match.start != -1; ++i) {
 				final String select_expr = select_expr_match.variableToValue.get("@@a");
-				if (!bigqueryExprContainsAggregate(select_expr)) {
+				if (!bigQueryExprContainsAggregate(select_expr)) {
 					replacement_group_by = replacement_group_by + "," + i;
 				}
-				select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
+				select_expr_match = search(select_list, list_item_pattern, nextNonoverlappingStartToken(select_expr_match, select_list));
 			}
 			sql = sql.substring(0, select_statement_match.start)
 					+ "select " + select_statement_match.variableToValue.get("@@a")
 					+ " from " + select_statement_match.variableToValue.get("@@b")
 					+ " group by " + replacement_group_by.substring(1) + terminator
 					+ sql.substring(select_statement_match.end, sql.length());
-			select_statement_match = search(sql, select_statement_pattern, select_statement_match.startToken + 1);
 		}
 		return sql;
 	}
 
 	/**
-	 * Finds complex expressions in the GROUP BY and replaces them with references to matching select list expressions.
+	 * Replaces the GROUP BY clause with index references to the SELECT list
 	 *
 	 * @param sql - the query to transform
 	 * @return the query with GROUP BY elements replaced
 	 */
-	private static String bigqueryReplaceGroupBy(String sql) {
-		sql = bigqueryReplaceGroupByWithPattern(sql, "select @@a from @@b group by @@c;", ";");
-		sql = bigqueryReplaceGroupByWithPattern(sql, "select @@a from @@b group by @@c)", ")");
+	private static String bigQueryReplaceGroupBy(String sql) {
+		sql = bigQueryReplaceGroupByWithPattern(sql, "select @@a from @@b group by @@c;", ";");
+		sql = bigQueryReplaceGroupByWithPattern(sql, "select @@a from @@b group by @@c)", ")");
 		return sql;
 	}
 
 	/**
 	 * Decides if a select list expression is a string concatenation.
 	 *
-	 * @param select_expr - the expression evaluate
+	 * @param select_expr - the expression to evaluate
 	 * @return true if the expression is a string concatenation
 	 */
 	private static boolean bigQueryExprIsStringConcat(String select_expr) {
+		// Additional patterns can be added to this list to heuristically recognize string concatenation expressions
 		final String[] concat_exprs = {
 				"^ '@@a' +",
 				"^ cast(@@a as varchar) +"};
@@ -360,8 +405,10 @@ public class SqlTranslate {
 	 * @param select_expr - the expression to transform
 	 * @return the transformed expression
 	 */
-	private static String bigQueryReplaceStringConcatenations(String select_expr) {
+	private static String bigQueryReplaceStringConcatsInExpr(String select_expr) {
 		select_expr = "+" + select_expr + "+";
+
+		// Finds the AS alias at the end of the expression
 		String alias = "";
 		MatchedPattern alias_match = search(select_expr, parseSearchPattern("+ @@a as @@b +"), 0);
 		if (alias_match.start != -1) {
@@ -369,6 +416,7 @@ public class SqlTranslate {
 			alias = " as " + alias_match.variableToValue.get("@@b");
 		}
 
+		// Repeatedly replace + with CONCAT until there are none left
 		List<Block> concat_pattern = parseSearchPattern("+ @@a + @@b +");
 		while (true) {
 			MatchedPattern concat_match = search(select_expr, concat_pattern, 0);
@@ -391,49 +439,49 @@ public class SqlTranslate {
 	 * @param sql - the query to transform
 	 * @return the query with string concatenations converted
 	 */
-	private static String bigQueryConvertConcats(String sql) {
+	private static String bigQueryReplaceStringConcatsInStatement(String sql) {
 		List<Block> list_item_pattern = parseSearchPattern(", @@a," );
 		List<Block> select_statement_pattern = parseSearchPattern("select @@a from");
 
 		// Iterates SELECT statements
-		MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
-		while (select_statement_match.start != -1) {
+		for (MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
+			 select_statement_match.start != -1;
+			 select_statement_match = search(sql, select_statement_pattern, select_statement_match.startToken + 1)) {
 			final String select_list = "," + select_statement_match.variableToValue.get("@@a") + ",";
 			String replacement_select_list = "";
 
 			// Iterates elements of the select list
-			MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0);
-			while (select_expr_match.start != -1) {
+			for (MatchedPattern select_expr_match = search(select_list, list_item_pattern, 0);
+				 select_expr_match.start != -1;
+				 select_expr_match = search(select_list, list_item_pattern, nextNonoverlappingStartToken(select_expr_match, select_list))) {
 				final String select_expr = select_expr_match.variableToValue.get("@@a");
 
 				// Replace all string concatenations
 				String replacement_select_expr = select_expr;
 				if (bigQueryExprIsStringConcat(select_expr)) {
-					replacement_select_expr = bigQueryReplaceStringConcatenations(replacement_select_expr);
+					replacement_select_expr = bigQueryReplaceStringConcatsInExpr(replacement_select_expr);
 				}
 
 				replacement_select_list = replacement_select_list + "," + replacement_select_expr;
-				select_expr_match = search(select_list, list_item_pattern, select_expr_match.startToken + 1);
 			}
 			sql = sql.substring(0, select_statement_match.start)
 					+ "select " + replacement_select_list.substring(1) + " from "
 					+ sql.substring(select_statement_match.end, sql.length());
-			select_statement_match = search(sql, select_statement_pattern, select_statement_match.startToken + 1);
 		}
 		return sql;
 	}
 
 	/**
-	 * BigQuery specific translations
+	 * bigQuery specific translations
 	 *
 	 * @param sql - the query to translate
 	 * @return the query after translation
 	 */
-	private static String translateBigQuery(String sql) {
+	private static String translatebigQuery(String sql) {
 		sql = sql.toLowerCase();
 		sql = bigQueryAliasCommonTableExpressions(sql);
-		sql = bigqueryReplaceGroupBy(sql);
-		sql = bigQueryConvertConcats(sql);
+		sql = bigQueryReplaceGroupBy(sql);
+		sql = bigQueryReplaceStringConcatsInStatement(sql);
 		return sql;
 	}
 
@@ -568,8 +616,8 @@ public class SqlTranslate {
 						+ StringUtils.join(allowedDialects, ", "));
 			}
 		} else
-			if (targetDialect.equalsIgnoreCase("bigquery")) {
-				sql = translateBigQuery(sql);
+			if (targetDialect.equalsIgnoreCase("bigQuery")) {
+				sql = translatebigQuery(sql);
 			}
 			return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
 	}
