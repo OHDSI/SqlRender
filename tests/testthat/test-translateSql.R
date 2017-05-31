@@ -738,16 +738,10 @@ test_that("translateSQL sql server -> bigquery CONCAT leading cast", {
  expect_equal_ignore_spaces(sql, "select concat(concat(cast(a as string), b), c) from t;")
 })
 
-test_that("translateSQL sql server -> bigquery CONCAT non-leading string", {
- sql <- translateSql("select a + 'b' + c from t;",
+test_that("translateSQL sql server -> bigquery CONCAT ifnull", {
+ sql <- translateSql("select ifnull(a, 'b') + c from t;",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(concat(a, 'b'), c) from t;")
-})
-
-test_that("translateSQL sql server -> bigquery CONCAT non-leading cast", {
- sql <- translateSql("select a + b + cast(c as varchar) from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(concat(a, b), cast(c as string)) from t;")
+ expect_equal_ignore_spaces(sql, "select concat(ISNULL(a,'b'), c) from  t;")
 })
 
 test_that("translateSQL sql server -> bigquery DATEDIFF", {
