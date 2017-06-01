@@ -55,6 +55,16 @@ public class StringUtils {
 
 		public Token() {
 		};
+
+		public boolean isIdentifier() {
+			for (int i = 0; i < text.length(); ++i) {
+				char ch = text.charAt(i);
+				if (!Character.isLetterOrDigit(ch) && ch != '_') {
+					return false;
+				}
+			}
+			return true;
+		}
 	};
 
 	/**

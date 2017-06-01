@@ -368,6 +368,8 @@ bigquery,"LEFT(@str,@chars)","SUBSTR(@str,0,@chars)"
 bigquery,"RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
 bigquery,"cast(@a as float)","cast(@a as float64)"
 bigquery,"cast(@a as bigint)","cast(@a as int64)"
+bigquery,"cast(@a as int)","cast(@a as int64)"
+bigquery,"cast(@a as varchar)","cast(@a as string)"
 bigquery,date(@a),cast(@a as date)
 bigquery,"cast(concat(@a) as date)","parse_date('%Y%m%d', concat(@a))"
 bigquery,"YEAR(@date)","EXTRACT(YEAR from @date)"
@@ -376,3 +378,4 @@ bigquery,"DAY(@date)","EXTRACT(DAY from @date)"
 bigquery,"union select","union distinct select"
 bigquery,SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c;,SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2;
 bigquery,(SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c),(SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2)
+bigquery,"ISNULL(@a,@b)","IFNULL(@a,@b)"
