@@ -391,7 +391,8 @@ public class SqlTranslate {
 				"^ '@@a' +",
 				"^ cast(@@a as varchar) +",
 				"^ isnull(@@a, '@@b') +",
-		        "^ case @@a then '@@b' @@c end +"};
+		        "^ case @@a then '@@b' @@c end +",
+		        "^ @@a + '@@b'"};
 		for (int i = 0; i < concat_exprs.length; ++i) {
 			MatchedPattern concat_match = search("^" + select_expr, parseSearchPattern(concat_exprs[i]), 0);
 			if (concat_match.start != -1) {
