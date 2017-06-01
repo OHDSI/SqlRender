@@ -684,7 +684,7 @@ test_that("translateSQL sql server -> bigquery common table expression column li
  expect_equal_ignore_spaces(sql, "with cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
 })
 
-test_that("translateSQL sql server -> bigquery common table expression column list", {
+test_that("translateSQL sql server -> bigquery multiple common table expression column list", {
  sql <- translateSql("with cte1 as (select 2), cte(x, y, z) as (select c1, c2 as y, c3 as r from t) select x, y, z from cte;",
                      targetDialect = "bigquery")$sql
  expect_equal_ignore_spaces(sql, "with cte1 as (select 2), cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
