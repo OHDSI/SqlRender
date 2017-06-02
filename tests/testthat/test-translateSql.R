@@ -675,7 +675,7 @@ test_that("translateSQL sql server -> redshift ISNUMERIC", {
 test_that("translateSQL sql server -> bigquery lowercase all but strings", {
  sql <- translateSql("SELECT X.Y, 'Mixed Case String' FROM \"MixedCaseTableName.T\" GROUP BY X.Y",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select x.y, 'Mixed Case String' from \"MixedCaseTableName.T\" group by x.y")
+ expect_equal_ignore_spaces(sql, "select x.y, 'Mixed Case String' from \"MixedCaseTableName.T\" group by x.y ")
 })
 
 test_that("translateSQL sql server -> bigquery common table expression column list", {
@@ -712,6 +712,12 @@ test_that("translateSQL sql server -> bigquery group by without match", {
  sql <- translateSql("select 100, sum(x), concat('count = ', c) from t group by a+b;",
                      targetDialect = "bigquery")$sql
  expect_equal_ignore_spaces(sql, "select 100, sum(x), concat('count = ', c) from t group by a + b;")
+})
+
+test_that("translateSQL sql server -> bigquery group by without final semicolon", {
+ sql <- translateSql("select f(a) from t group by f(a)",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select f(a) from t group by 1 ")
 })
 
 test_that("translateSQL sql server -> bigquery order by", {

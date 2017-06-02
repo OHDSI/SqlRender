@@ -458,9 +458,14 @@ public class SqlTranslate {
 	 * @return the query with GROUP BY elements replaced
 	 */
 	private static String bigQueryConvertSelectListReferences(String sql, String select_pattern, CommaListIterator.ListType list_type) {
-		List<Block> select_statement_pattern = parseSearchPattern(select_pattern);
+		boolean added_semicolon = false;
+		if (select_pattern.substring(select_pattern.length() - 1).equals(";")) {
+			sql = sql + ";";
+			added_semicolon = true;
+		}
 
 		// Iterates SELECT statements
+		List<Block> select_statement_pattern = parseSearchPattern(select_pattern);
 		for (MatchedPattern select_statement_match = search(sql, select_statement_pattern, 0);
 			   select_statement_match.start != -1;
 			   select_statement_match = search(sql, select_statement_pattern, select_statement_match.startToken + 1)) {
@@ -518,6 +523,9 @@ public class SqlTranslate {
 				}
 			}
 			sql += suffix;
+		}
+		if (added_semicolon) {
+			sql = sql.substring(0, sql.length() - 1);
 		}
 		return sql;
 	}
