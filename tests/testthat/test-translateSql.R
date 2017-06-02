@@ -714,6 +714,12 @@ test_that("translateSQL sql server -> bigquery group by without match", {
  expect_equal_ignore_spaces(sql, "select 100, sum(x), concat('count = ', c) from t group by a + b;")
 })
 
+test_that("translateSQL sql server -> bigquery order by", {
+ sql <- translateSql("select f(a) from t group by f(a) order by f(a);",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select f(a) from t group by 1 order by 1;")
+})
+
 test_that("translateSQL sql server -> bigquery nested group by", {
  sql <- translateSql("select * from (select 100, cast(a+b as string), max(x) from t group by a+b) dt;",
                      targetDialect = "bigquery")$sql

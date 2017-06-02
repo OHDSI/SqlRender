@@ -387,8 +387,8 @@ public class SqlTranslate {
 			final StringUtils.Token last_token = tokens.get(tokens.size() - 1);
 			if (last_token.text.equalsIgnoreCase("asc")
 					|| last_token.text.equalsIgnoreCase("desc")) {
-				expressionPrefix = GetFullExpression().substring(0, last_token.start);
-				expressionSuffix = last_token.text;
+				expressionPrefix = GetFullExpression().substring(0, last_token.start - 1);
+				expressionSuffix = " " + last_token.text;
 			}
 		}
 
@@ -469,15 +469,14 @@ public class SqlTranslate {
 			String replacement_list = "";
 
 			// Iterates the list to replace
-			for (CommaListIterator list_to_replace_iter = new CommaListIterator(list_to_replace, list_type);
-					!list_to_replace_iter.IsDone();
-					list_to_replace_iter.Next()) {
+			CommaListIterator list_to_replace_iter = new CommaListIterator(list_to_replace, list_type);
+			for (; !list_to_replace_iter.IsDone(); list_to_replace_iter.Next()) {
 				final String list_expr = list_to_replace_iter.GetExpressionPrefix();
 				final String list_expr_suffix = list_to_replace_iter.GetExpressionSuffix();
 				List<Block> list_expr_pattern = parseSearchPattern(list_expr);
 				if (list_to_replace_iter.IsSingleColumnReference()) {
 					// Copy single column references directly
-					replacement_list = replacement_list + "," + list_expr + list_expr_suffix;
+					replacement_list = replacement_list + ", " + list_expr + list_expr_suffix;
 				} else {
 					// Iterates the SELECT list searching for a matching expression
 					CommaListIterator select_list_iter = new CommaListIterator(select_list, CommaListIterator.ListType.SELECT);
@@ -486,7 +485,7 @@ public class SqlTranslate {
 						final String select_expr = select_list_iter.GetExpressionPrefix();
 						if (search(select_expr, list_expr_pattern, 0).start != -1) {
 							found = true;
-							replacement_list = replacement_list + "," + i + list_expr_suffix;
+							replacement_list = replacement_list + ", " + i + list_expr_suffix;
 							break;
 						}
 					}
@@ -495,8 +494,11 @@ public class SqlTranslate {
 						replacement_list = replacement_list + ", " + list_expr + list_expr_suffix;
 					}
 				}
-				replacement_list = list_to_replace_iter.GetListPrefix() + replacement_list + list_to_replace_iter.GetListSuffix();
 			}
+			replacement_list = list_to_replace_iter.GetListPrefix()
+					+ replacement_list.substring(1)
+					+ list_to_replace_iter.GetListSuffix();
+
 			// Copies everything from the match except for the replacement list
 			final String suffix = sql.substring(select_statement_match.end);
 			sql = sql.substring(0, select_statement_match.start);
@@ -507,7 +509,7 @@ public class SqlTranslate {
 				Block block = select_statement_pattern.get(i);
 				if (block.isVariable) {
 					if (block.text.equals("@@r")) {
-						sql += replacement_list.substring(1);
+						sql += replacement_list;
 					} else {
 						sql += select_statement_match.variableToValue.get(block.text);
 					}
@@ -594,13 +596,15 @@ public class SqlTranslate {
 				if (bigQueryExprIsStringConcat(replacement_select_expr)) {
 					replacement_select_expr = bigQueryReplaceStringConcatsInExpr(replacement_select_expr);
 				}
-				replacement_select_list += "," + replacement_select_expr;
+				replacement_select_list += ", " + replacement_select_expr;
 				final String alias = select_list_iter.GetExpressionSuffix();
 				if (alias.length() > 0) {
 					replacement_select_list += "as " + alias;
 				}
 			}
-			replacement_select_list = select_list_iter.GetListPrefix() + replacement_select_list.substring(1) + select_list_iter.GetListSuffix();
+			replacement_select_list = select_list_iter.GetListPrefix()
+					+ replacement_select_list.substring(1)
+					+ select_list_iter.GetListSuffix();
 
 			sql = sql.substring(0, select_statement_match.start)
 					+ "select " + replacement_select_list + " from "
@@ -636,6 +640,8 @@ public class SqlTranslate {
 		sql = bigQueryAliasCommonTableExpressions(sql);
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@r;", CommaListIterator.ListType.GROUP_BY);
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@r)", CommaListIterator.ListType.GROUP_BY);
+		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@c order by @@r;",
+				CommaListIterator.ListType.ORDER_BY);
 		sql = bigQueryReplaceStringConcatsInStatement(sql);
 		return sql;
 	}
