@@ -675,7 +675,7 @@ test_that("translateSQL sql server -> redshift ISNUMERIC", {
 test_that("translateSQL sql server -> bigquery lowercase all but strings", {
  sql <- translateSql("SELECT X.Y, 'Mixed Case String' FROM \"MixedCaseTableName.T\" GROUP BY X.Y",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select x.y, 'Mixed Case String' from \"MixedCaseTableName.T\" group by x.y")
+ expect_equal_ignore_spaces(sql, "select x.y, 'Mixed Case String' from \"MixedCaseTableName.T\" group by x.y ")
 })
 
 test_that("translateSQL sql server -> bigquery common table expression column list", {
@@ -684,7 +684,7 @@ test_that("translateSQL sql server -> bigquery common table expression column li
  expect_equal_ignore_spaces(sql, "with cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
 })
 
-test_that("translateSQL sql server -> bigquery common table expression column list", {
+test_that("translateSQL sql server -> bigquery multiple common table expression column list", {
  sql <- translateSql("with cte1 as (select 2), cte(x, y, z) as (select c1, c2 as y, c3 as r from t) select x, y, z from cte;",
                      targetDialect = "bigquery")$sql
  expect_equal_ignore_spaces(sql, "with cte1 as (select 2), cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
@@ -699,7 +699,7 @@ test_that("translateSQL sql server -> bigquery group by function", {
 test_that("translateSQL sql server -> bigquery group by addition", {
  sql <- translateSql("select 100, sum(x), cast(a+b as string) from t group by a+b;",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, sum(x), cast(a+b as string) from t group by 1, 3;")
+ expect_equal_ignore_spaces(sql, "select 100, sum(x), cast(a+b as string) from t group by 3;")
 })
 
 test_that("translateSQL sql server -> bigquery column ref groupby", {
@@ -708,22 +708,46 @@ test_that("translateSQL sql server -> bigquery column ref groupby", {
  expect_equal_ignore_spaces(sql, "select 100, sum(x), cast(a+b as string) from t group by t.a, t.b;")
 })
 
-test_that("translateSQL sql server -> bigquery group by aggregate name without call", {
+test_that("translateSQL sql server -> bigquery group by without match", {
  sql <- translateSql("select 100, sum(x), concat('count = ', c) from t group by a+b;",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, sum(x), concat('count = ', c) from t group by 1, 3;")
+ expect_equal_ignore_spaces(sql, "select 100, sum(x), concat('count = ', c) from t group by a + b;")
+})
+
+test_that("translateSQL sql server -> bigquery group by without final semicolon", {
+ sql <- translateSql("select f(a) from t group by f(a)",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select f(a) from t group by 1 ")
+})
+
+test_that("translateSQL sql server -> bigquery order by", {
+ sql <- translateSql("select f(a) from t group by f(a) order by f(a);",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select f(a) from t group by 1 order by 1;")
 })
 
 test_that("translateSQL sql server -> bigquery nested group by", {
- sql <- translateSql("select * from (select 100, cast(a+b as string), max(x) from t group by a, b) dt;",
+ sql <- translateSql("select * from (select 100, cast(a+b as string), max(x) from t group by a+b) dt;",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select * from (select 100, cast(a+b as string), max(x) from t group by 1, 2) dt;")
+ expect_equal_ignore_spaces(sql, "select * from (select 100, cast(a+b as string), max(x) from t group by 2) dt;")
 })
 
 test_that("translateSQL sql server -> bigquery complex group by", {
  sql <- translateSql("select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by floor(date_diff(a, b, day)/30);",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by 1,2,3,4;")
+ expect_equal_ignore_spaces(sql, "select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by 3;")
+})
+
+test_that("translateSQL sql server -> bigquery column references", {
+ sql <- translateSql("select concat(t.a, t.b) from t group by t.a, t.b;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select concat(t.a, t.b) from t group by t.a, t.b;")
+})
+
+test_that("translateSQL sql server -> bigquery mixed column references", {
+ sql <- translateSql("select concat(t.a, t.b), x+y+z from t group by t.a, t.b, x+y+z;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select concat(t.a, t.b), x+y+z from t group by t.a, t.b, 2;")
 })
 
 test_that("translateSQL sql server -> bigquery CONCAT leading string", {
@@ -765,7 +789,7 @@ test_that("translateSQL sql server -> bigquery CONCAT with alias", {
 test_that("translateSQL sql server -> bigquery CONCAT with alias but no AS", {
  sql <- translateSql("select 'a' + b concept_path from t;",
                      targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat('a' , b ) concept_path from  t;")
+ expect_equal_ignore_spaces(sql, "select concat('a' , b ) as concept_path from  t;")
 })
 
 test_that("translateSQL sql server -> bigquery DATEDIFF", {
