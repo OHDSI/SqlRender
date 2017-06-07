@@ -20,6 +20,7 @@ Imports:
 Suggests:
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    formatR
 LazyData: false
 RoxygenNote: 6.0.1
