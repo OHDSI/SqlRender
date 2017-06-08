@@ -39,3 +39,18 @@ test_that("splitSql split with last line containing comment and having no EOL", 
   expect_equal(sql,
                c("SELECT * FROM table"))
 })
+
+test_that("splitSql split with hint at start", {
+  sql <- splitSql("--HINT DISTRIBUTE_ON_KEY(analysis_id)\nCREATE TABLE results.achilles_results_dist")
+  expect_equal(sql,
+               c("--HINT DISTRIBUTE_ON_KEY(analysis_id)\nCREATE TABLE results.achilles_results_dist"))
+})
+
+test_that("splitSql split with hint in second statement", {
+  sql <- splitSql("DROP TABLE blah;\n--HINT DISTRIBUTE_ON_KEY(analysis_id)\nCREATE TABLE results.achilles_results_dist;")
+  expect_equal(sql[1],
+               c("DROP TABLE blah"))
+  expect_equal(sql[2],
+               c("--HINT DISTRIBUTE_ON_KEY(analysis_id)\nCREATE TABLE results.achilles_results_dist"))
+})
+
