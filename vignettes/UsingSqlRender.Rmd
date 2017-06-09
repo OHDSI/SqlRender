@@ -127,14 +127,13 @@ The `targetDialect` parameter can have the following values:
 These SQL Server functions have been tested and were found to be translated correctly to the various dialects:
 
 ```{r echo=FALSE}
-funs <- c("ABS", "ACOS", "ASIN", "ATAN", "AVG", "CAST", "CEILING", "CHARINDEX", "CONCAT", "COS", "COUNT", "COUNT_BIG", "DATEADD", "DATEDIFF", "DATEFROMPARTS", "DATETIMEFROMPARTS", "DAY", "EOMONTH", "EXP", "FLOOR", "GETDATE", "HASHBYTES**", "ISNULL", "ISNUMERIC", "LEFT", "LEN", "LOG", "LOG10", "LOWER", "LTRIM", "MAX", "MIN", "MONTH", "NEWID*", "PI", "POWER", "RAND*", "RANK", "RIGHT", "ROUND", "ROW_NUMBER", "RTRIM", "SIN", "SQRT", "SQUARE", "STDEV", "SUM", "TAN", "UPPER", "VAR", "YEAR", "")
+funs <- c("ABS", "ACOS", "ASIN", "ATAN", "AVG", "CAST", "CEILING", "CHARINDEX", "CONCAT", "COS", "COUNT", "COUNT_BIG", "DATEADD", "DATEDIFF", "DATEFROMPARTS", "DATETIMEFROMPARTS", "DAY", "EOMONTH", "EXP", "FLOOR", "GETDATE", "HASHBYTES*", "ISNULL", "ISNUMERIC", "LEFT", "LEN", "LOG", "LOG10", "LOWER", "LTRIM", "MAX", "MIN", "MONTH", "NEWID", "PI", "POWER", "RAND", "RANK", "RIGHT", "ROUND", "ROW_NUMBER", "RTRIM", "SIN", "SQRT", "SQUARE", "STDEV", "SUM", "TAN", "UPPER", "VAR", "YEAR", "")
 
 
 knitr::kable(matrix(funs, ncol = 4), col.names = rep("Function",4), caption = "Functions supported by translateSql")
 ```
 
-\* Not supported on PDW
-** Requires special priviliges on Oracle
+* Requires special priviliges on Oracle
 
 
 Similarly, many SQL syntax structures are supported. Here is a non-exhaustive lists of things that we know will translate well:
@@ -282,32 +281,6 @@ foo("cdm_data.dbo", "sql server")
 foo("cdm_data", "postgresql")
 ```
 
-## Random selection
-Sometimes one needs to select a random set of rows from a table. One way to achieve this is to sort the table by a random number, and pick the top n. For example, in SQL Server one could use this code:
-
-```sql
-SELECT column FROM 
-   (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp 
-WHERE rn <= 1
-```
-
-SqlRender will translate this correctly to the supported dialects, except Microsoft PDW which does not support random number generation. Another disadvantage of this approach is that the selection is truly random and will be different every time, making the process non-reproducible.
-
-Another option is to sort the table using the hash of a value in the table. For example, on SQL Server:
-
-```sql
-SELECT column FROM 
-   (SELECT column, 
-       ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) AS rn 
-    FROM table) tmp 
-WHERE rn <= 1
-```
-
-This will be correctly translated to all dialects, and the selection will be the same every time. However, this solution has the disadvantage that the MD5 hash function on Oracle requires special privileges to be granted to the user, and these can only be granted by the **sys** user (not the **system** user):
-
-```sql
-GRANT EXECUTE ON DBMS_CRYPTO TO <user>;
-```
 
 ## Optimization for massively parallel processing
 Both PDW and RedShift are massively parallel processing platforms, meaning they consist of many nodes that work together. In such an environment, significant increases in performance can be achieved by finetuning the SQL for these platforms. Probably most importantly, developers can specify the way data is distributed over the nodes. Ideally, data in a node only needs to be combined with data in the same node. For example, if I have two tables with the field `person_id`, I would like all records with the same person ID to be on the same node, so a join on `person_id` can be performed locally without exchanging data between nodes. 
@@ -328,7 +301,21 @@ CREATE TABLE one_table WITH (DISTRIBUTION = HASH(person_id)) AS
 SELECT * FROM other_table;
 ```
 
-The hint should be formatted as shown above, and directly precede the statement where the table is created. 
+Another tuning parameter is the key to sort a table on. This can be also be specified in a hint:
+
+```sql
+--HINT SORT_ON_KEY(INTERLEAVED:start_date)
+CREATE TABLE cdm.my_table (row_id INT, start_date);
+```
+
+translates to the following on RedShift:
+```sql
+--HINT SORT_ON_KEY(INTERLEAVED:start_date)
+CREATE TABLE cdm.my_table (row_id INT, start_date)
+INTERLEAVED SORTKEY(start_date);
+```
+
+The hints should be formatted exactly as shown above, and directly precede the statement where the table is created. 
 
 # Debugging parameterized SQL
 Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL. Two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:

@@ -57,7 +57,7 @@
       <h1>Using SqlRender</h1>
                         <h4 class="author">Martijn J. Schuemie</h4>
             
-            <h4 class="date">2017-05-29</h4>
+            <h4 class="date">2017-06-09</h4>
           </div>
 
     
@@ -204,12 +204,12 @@
 <tr class="even">
 <td align="left">CHARINDEX</td>
 <td align="left">GETDATE</td>
-<td align="left">NEWID*</td>
+<td align="left">NEWID</td>
 <td align="left">SUM</td>
 </tr>
 <tr class="odd">
 <td align="left">CONCAT</td>
-<td align="left">HASHBYTES**</td>
+<td align="left">HASHBYTES*</td>
 <td align="left">PI</td>
 <td align="left">TAN</td>
 </tr>
@@ -222,7 +222,7 @@
 <tr class="odd">
 <td align="left">COUNT</td>
 <td align="left">ISNUMERIC</td>
-<td align="left">RAND*</td>
+<td align="left">RAND</td>
 <td align="left">VAR</td>
 </tr>
 <tr class="even">
@@ -239,7 +239,9 @@
 </tr>
 </tbody>
 </table>
-<p>* Not supported on PDW ** Requires special priviliges on Oracle</p>
+<ul>
+<li>Requires special priviliges on Oracle</li>
+</ul>
 <p>Similarly, many SQL syntax structures are supported. Here is a non-exhaustive lists of things that we know will translate well:</p>
 <div class="sourceCode"><pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="kw">table</span>;                                        <span class="co">-- Simple selects</span>
 
@@ -294,7 +296,7 @@
 <p>For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT * FROM #children;"</span>
 <span class="kw"><a href="../reference/translateSql.html">translateSql</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>, <span class="dt">oracleTempSchema =</span> <span class="st">"temp_schema"</span>)$sql</code></pre></div>
-<pre><code>#&gt; [1] "SELECT *  FROM temp_schema.fdlpbvj7children ;"</code></pre>
+<pre><code>#&gt; [1] "SELECT *  FROM temp_schema.z0lw31dnchildren ;"</code></pre>
 <p>Note that the user will need to have write privileges on <code>temp_schema</code>.</p>
 <p>Also note that because Oracle has a limit on table names of 30 characters, <strong>temp table names are only allowed to be at most 22 characters long</strong> because else the name will become too long after appending the session ID.</p>
 <p>Futhermore, remember that temp tables are not automatically dropped on Oracle, so you will need to explicitly <code>TRUNCATE</code> and <code>DROP</code> all temp tables once you’re done with them to prevent orphan tables accumulating in the Oracle temp schema.</p>
@@ -353,23 +355,6 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">foo</span>(<span class="st">"cdm_data"</span>, <span class="st">"postgresql"</span>)</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM cdm_data.person; SET search_path TO cdm_data; SELECT * FROM person;"</code></pre>
 </div>
-<div id="random-selection" class="section level2">
-<h2 class="hasAnchor">
-<a href="#random-selection" class="anchor"></a>Random selection</h2>
-<p>Sometimes one needs to select a random set of rows from a table. One way to achieve this is to sort the table by a random number, and pick the top n. For example, in SQL Server one could use this code:</p>
-<div class="sourceCode"><pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> <span class="kw">column</span> <span class="kw">FROM</span> 
-   (<span class="kw">SELECT</span> <span class="kw">column</span>, <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">ORDER</span> <span class="kw">BY</span> RAND()) <span class="kw">AS</span> rn <span class="kw">FROM</span> <span class="kw">table</span>) tmp 
-<span class="kw">WHERE</span> rn &lt;= <span class="dv">1</span></code></pre></div>
-<p>SqlRender will translate this correctly to the supported dialects, except Microsoft PDW which does not support random number generation. Another disadvantage of this approach is that the selection is truly random and will be different every time, making the process non-reproducible.</p>
-<p>Another option is to sort the table using the hash of a value in the table. For example, on SQL Server:</p>
-<div class="sourceCode"><pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> <span class="kw">column</span> <span class="kw">FROM</span> 
-   (<span class="kw">SELECT</span> <span class="kw">column</span>, 
-       <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">ORDER</span> <span class="kw">BY</span> HASHBYTES(<span class="st">'MD5'</span>,<span class="fu">CAST</span>(person_id <span class="kw">AS</span> <span class="dt">varchar</span>))) <span class="kw">AS</span> rn 
-    <span class="kw">FROM</span> <span class="kw">table</span>) tmp 
-<span class="kw">WHERE</span> rn &lt;= <span class="dv">1</span></code></pre></div>
-<p>This will be correctly translated to all dialects, and the selection will be the same every time. However, this solution has the disadvantage that the MD5 hash function on Oracle requires special privileges to be granted to the user, and these can only be granted by the <strong>sys</strong> user (not the <strong>system</strong> user):</p>
-<div class="sourceCode"><pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">GRANT</span> <span class="kw">EXECUTE</span> <span class="kw">ON</span> DBMS_CRYPTO <span class="kw">TO</span> &lt;user&gt;;</code></pre></div>
-</div>
 <div id="optimization-for-massively-parallel-processing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#optimization-for-massively-parallel-processing" class="anchor"></a>Optimization for massively parallel processing</h2>
@@ -382,7 +367,14 @@
 <span class="kw">IF</span> XACT_STATE() = <span class="dv">1</span> <span class="kw">COMMIT</span>; 
 <span class="kw">CREATE</span> <span class="kw">TABLE</span> one_table <span class="kw">WITH</span> (DISTRIBUTION = <span class="kw">HASH</span>(person_id)) <span class="kw">AS</span>
 <span class="kw">SELECT</span> * <span class="kw">FROM</span> other_table;</code></pre></div>
-<p>The hint should be formatted as shown above, and directly precede the statement where the table is created.</p>
+<p>Another tuning parameter is the key to sort a table on. This can be also be specified in a hint:</p>
+<div class="sourceCode"><pre class="sourceCode sql"><code class="sourceCode sql"><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span>
+<span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date);</code></pre></div>
+<p>translates to the following on RedShift:</p>
+<div class="sourceCode"><pre class="sourceCode sql"><code class="sourceCode sql"><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span>
+<span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date)
+INTERLEAVED SORTKEY(start_date);</code></pre></div>
+<p>The hints should be formatted exactly as shown above, and directly precede the statement where the table is created.</p>
 </div>
 </div>
 <div id="debugging-parameterized-sql" class="section level1">
@@ -453,7 +445,6 @@ test &lt;-<span class="st"> </span>function(connectionDetails, <span class="dt">
       <li><a href="#implicit-casts">Implicit casts</a></li>
       <li><a href="#case-sensitivity-in-string-comparisons">Case sensitivity in string comparisons</a></li>
       <li><a href="#schemas-and-databases">Schemas and databases</a></li>
-      <li><a href="#random-selection">Random selection</a></li>
       <li><a href="#optimization-for-massively-parallel-processing">Optimization for massively parallel processing</a></li>
       </ul>
 </li>
