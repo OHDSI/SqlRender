@@ -1,14 +1,16 @@
 Package: SqlRender
 Type: Package
 Title: Rendering Parameterized SQL and Translation to Dialects
-Version: 1.4.0
-Date: 2017-05-23
-Author: Martijn J. Schuemie [aut, cre],
-    Marc A. Suchard [aut],
+Version: 1.4.2
+Date: 2017-06-09
+Authors@R: c(
+    person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
+    person("Marc", "Suchard", role = c("aut"))
+    )
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: A rendering tool for parameterized SQL that also translates into
     different SQL dialects.  These dialects include Sql Server, Oracle, 
-    PostgreSql, Amazon RedShift, and Microsoft PDW.
+    PostgreSql, Amazon RedShift, Impala, IBM Netezza, Google BigQuery, and Microsoft PDW.
 License: Apache License 2.0
 VignetteBuilder: knitr
 URL: https://github.com/OHDSI/SqlRender
@@ -20,6 +22,7 @@ Suggests:
     knitr,
     rmarkdown,
     shiny,
-    shinydashboard
+    shinydashboard,
+    formatR
 LazyData: false
 RoxygenNote: 6.0.1

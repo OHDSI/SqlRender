@@ -12,7 +12,7 @@ Features
 - Supports a simple markup syntax for making SQL parameterized, and renders parameterized SQL (containing the markup syntax) to executable SQL
 - The syntax supports defining default parameter values
 - The syntax supports if-then-else structures
-- Has functions for translating SQL from one dialect (Microsoft SQL Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift, Microsoft PDW)
+- Has functions for translating SQL from one dialect (Microsoft SQL Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift, Impala, IBM Netezza, Google BigQuery, and Microsoft PDW)
 - Can be used as R package, Java library, or as stand-alone executable through a command-line interface
 
 Examples
@@ -121,8 +121,8 @@ java -jar SqlRender.jar ?
 
 Getting Involved
 =============
-* Vignette: [Using SqlRender](https://raw.githubusercontent.com/OHDSI/SqlRender/master/inst/doc/UsingSqlRender.pdf)
-* Package manual: [SqlRender manual](https://raw.githubusercontent.com/OHDSI/SqlRender/master/extras/SqlRender.pdf) 
+* Vignette: [Using SqlRender](http://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html)
+* Package manual: [SqlRender manual](http://ohdsi.github.io/SqlRender/reference/index.html) 
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 

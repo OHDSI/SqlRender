@@ -55,6 +55,16 @@ public class StringUtils {
 
 		public Token() {
 		};
+
+		public boolean isIdentifier() {
+			for (int i = 0; i < text.length(); ++i) {
+				char ch = text.charAt(i);
+				if (!Character.isLetterOrDigit(ch) && ch != '_') {
+					return false;
+				}
+			}
+			return true;
+		}
 	};
 
 	/**
@@ -90,10 +100,9 @@ public class StringUtils {
 					token.inQuotes = inSingleQuotes || inDoubleQuotes;
 					tokens.add(token);
 				}
-				if (ch == '-' && cursor < sql.length() && sql.charAt(cursor + 1) == '-') {
-					// Exception: comments that are hints are still considered tokens:
-					if (sql.length() - cursor < 6 || !sql.substring(cursor + 2, cursor + 6).equals("hint"))
-						commentType1 = true;
+				if (ch == '-' && cursor < sql.length() && sql.charAt(cursor + 1) == '-'
+						&& (sql.length() - cursor < 6 || !sql.substring(cursor + 2, cursor + 6).equals("hint"))) {
+					commentType1 = true;
 				} else if (ch == '/' && cursor < sql.length() && sql.charAt(cursor + 1) == '*') {
 					commentType2 = true;
 				} else if (!Character.isWhitespace(ch)) {

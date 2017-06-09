@@ -42,7 +42,7 @@ public class SqlTranslate {
 	private static String						globalSessionId					= null;
 	private static String						SOURCE_DIALECT					= "sql server";
 
-	private static class Block extends StringUtils.Token {
+	protected static class Block extends StringUtils.Token {
 		public boolean	isVariable;
 		public String	regEx;
 
@@ -52,14 +52,14 @@ public class SqlTranslate {
 		}
 	}
 
-	private static class MatchedPattern {
+	protected static class MatchedPattern {
 		public int					start;
 		public int					end;
 		public int					startToken;
 		public Map<String, String>	variableToValue	= new HashMap<String, String>();
 	}
 
-	private static List<Block> parseSearchPattern(String pattern) {
+	protected static List<Block> parseSearchPattern(String pattern) {
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(pattern.toLowerCase());
 		List<Block> blocks = new ArrayList<Block>();
 		for (int i = 0; i < tokens.size(); i++) {
@@ -98,7 +98,7 @@ public class SqlTranslate {
 		return blocks;
 	}
 
-	private static MatchedPattern search(String sql, List<Block> parsedPattern, int startToken) {
+	protected static MatchedPattern search(String sql, List<Block> parsedPattern, int startToken) {
 		String lowercaseSql = sql.toLowerCase();
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(lowercaseSql);
 		int matchCount = 0;
@@ -129,6 +129,7 @@ public class SqlTranslate {
 						// Fast forward cursor to after matched patterns:
 						while (cursor < tokens.size() && tokens.get(cursor).start < token.start + matcher.end())
 							cursor++;
+						cursor--;
 					} else {
 						matchCount = 0;
 					}
@@ -146,7 +147,7 @@ public class SqlTranslate {
 							matchedPattern.end = token.end;
 							return matchedPattern;
 						} else if (parsedPattern.get(matchCount).isVariable) {
-							varStart = (cursor < tokens.size() - 1)?tokens.get(cursor+1).start:-1;
+							varStart = (cursor < tokens.size() - 1) ? tokens.get(cursor + 1).start : -1;
 						}
 						if (token.text.equals("'") || token.text.equals("'"))
 							inPatternQuote = !inPatternQuote;
@@ -181,7 +182,7 @@ public class SqlTranslate {
 						matchedPattern.end = token.end;
 						return matchedPattern;
 					} else if (parsedPattern.get(matchCount).isVariable) {
-						varStart = (cursor < tokens.size() - 1)?tokens.get(cursor+1).start:-1;
+						varStart = (cursor < tokens.size() - 1) ? tokens.get(cursor + 1).start : -1;
 					}
 					if (token.text.equals("'") || token.text.equals("\""))
 						inPatternQuote = !inPatternQuote;
@@ -217,7 +218,6 @@ public class SqlTranslate {
 				delta = 0;
 			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + delta);
 		}
-
 		return sql;
 	}
 
@@ -351,8 +351,9 @@ public class SqlTranslate {
 				throw new RuntimeException("Don't know how to translate from " + SOURCE_DIALECT + " to " + targetDialect + ". Valid target dialects are "
 						+ StringUtils.join(allowedDialects, ", "));
 			}
-		} else
-			return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
+		} else if (targetDialect.equalsIgnoreCase("bigQuery")) 
+			sql = BigQueryTranslate.translatebigQuery(sql);
+		return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
 	}
 
 	private static void validateSessionId(String sessionId) {
@@ -465,7 +466,7 @@ public class SqlTranslate {
 
 		return warnings.toArray(new String[warnings.size()]);
 	}
-	
+
 	/**
 	 * Forces the replacement patterns to be loaded from the specified path. Useful for debugging.
 	 * 
