@@ -318,7 +318,17 @@ INTERLEAVED SORTKEY(start_date);
 The hints should be formatted exactly as shown above, and directly precede the statement where the table is created. 
 
 # Debugging parameterized SQL
-Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL. Two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
+Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL. 
+
+A Shiny app is included in the SqlRender package for interactively editing source SQL and generating rendered and translated SQL. The app can be started using:
+
+```{r tidy=TRUE,eval=FALSE}
+launchSqlRenderDeveloper()
+```
+
+Which will open the default browser with the app.
+
+In addition, two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
 
 ```{r tidy=TRUE,eval=FALSE}
 translateSqlFile("parameterizedSql.txt","renderedSql.txt")

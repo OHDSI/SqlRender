@@ -94,13 +94,13 @@
 <p>For some or all parameters, it might make sense to define default values that will be used unless the user specifies another value. This can be done using the <code>{DEFAULT @parameter = value}</code> syntax:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"</span>
 <span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql)$sql</code></pre></div>
-<pre><code>#&gt; [1] " SELECT * FROM table WHERE id = 1;"</code></pre>
+<pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 1;"</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">a =</span> <span class="dv">2</span>)$sql</code></pre></div>
-<pre><code>#&gt; [1] " SELECT * FROM table WHERE id = 2;"</code></pre>
+<pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 2;"</code></pre>
 <p>Defaults for multiple variables can be defined:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"</span>
 <span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql)$sql</code></pre></div>
-<pre><code>#&gt; [1] "  SELECT * FROM my_table WHERE id = 1;"</code></pre>
+<pre><code>#&gt; [1] "SELECT * FROM my_table WHERE id = 1;"</code></pre>
 </div>
 <div id="if-then-else" class="section level2">
 <h2 class="hasAnchor">
@@ -296,7 +296,7 @@
 <p>For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT * FROM #children;"</span>
 <span class="kw"><a href="../reference/translateSql.html">translateSql</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>, <span class="dt">oracleTempSchema =</span> <span class="st">"temp_schema"</span>)$sql</code></pre></div>
-<pre><code>#&gt; [1] "SELECT *  FROM temp_schema.z0lw31dnchildren ;"</code></pre>
+<pre><code>#&gt; [1] "SELECT *  FROM temp_schema.kp8f8g5fchildren ;"</code></pre>
 <p>Note that the user will need to have write privileges on <code>temp_schema</code>.</p>
 <p>Also note that because Oracle has a limit on table names of 30 characters, <strong>temp table names are only allowed to be at most 22 characters long</strong> because else the name will become too long after appending the session ID.</p>
 <p>Futhermore, remember that temp tables are not automatically dropped on Oracle, so you will need to explicitly <code>TRUNCATE</code> and <code>DROP</code> all temp tables once you’re done with them to prevent orphan tables accumulating in the Oracle temp schema.</p>
@@ -380,7 +380,11 @@ INTERLEAVED SORTKEY(start_date);</code></pre></div>
 <div id="debugging-parameterized-sql" class="section level1">
 <h1 class="hasAnchor">
 <a href="#debugging-parameterized-sql" class="anchor"></a>Debugging parameterized SQL</h1>
-<p>Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL. Two functions have been developed to aid the debugging process: <code><a href="../reference/renderSqlFile.html">renderSqlFile()</a></code> and <code><a href="../reference/translateSqlFile.html">translateSqlFile()</a></code>. These can be used to read SQL from file, render or translate it, and write it back to file. For example:</p>
+<p>Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL.</p>
+<p>A Shiny app is included in the SqlRender package for interactively editing source SQL and generating rendered and translated SQL. The app can be started using:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span>()</code></pre></div>
+<p>Which will open the default browser with the app.</p>
+<p>In addition, two functions have been developed to aid the debugging process: <code><a href="../reference/renderSqlFile.html">renderSqlFile()</a></code> and <code><a href="../reference/translateSqlFile.html">translateSqlFile()</a></code>. These can be used to read SQL from file, render or translate it, and write it back to file. For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/translateSqlFile.html">translateSqlFile</a></span>(<span class="st">"parameterizedSql.txt"</span>, <span class="st">"renderedSql.txt"</span>)</code></pre></div>
 <p>will render the file, using the default parameter values specified in the SQL. What works well for us is editing in the parameterized file, (re)running the command above, and have the rendered SQL file open in a SQL client for testing. Any problems reported by the server can be dealt with in the source SQL, and can quickly be re-rendered.</p>
 </div>
