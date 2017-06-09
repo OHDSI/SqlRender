@@ -154,23 +154,68 @@ postgresql,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 postgresql,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 postgresql,#,
 postgresql,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+postgresql,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
+redshift,"WHERE @where (@a / @b)","WHERE @where (@a / NULLIF(@b, 0))"
 redshift,"ROUND(@a,@b)","ROUND(CAST(@a AS FLOAT),@b)"
+redshift,"ROUND(@expression,@length,@trunc)","case when @trunc = 0 then ROUND(@expression,@length) else TRUNC(@expression,@length) end"
 redshift,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
-redshift,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
-redshift,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
-redshift,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
-redshift,"DATEADD(d,@days,@date)",(@date + @days*INTERVAL'1 day')
-redshift,"DATEADD(dd,@days,@date)",(@date + @days*INTERVAL'1 day')
-redshift,"DATEADD(day,@days,@date)",(@date + @days*INTERVAL'1 day')
-redshift,"DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"
-redshift,"DATEADD(mm,@months,@date)","ADD_MONTHS(@date, @months)"
-redshift,"DATEADD(month,@months,@date)","ADD_MONTHS(@date, @months)"
-redshift,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12*@months)"
-redshift,"DATEADD(yyyy,@years,@date)","ADD_MONTHS(@date, 12*@months)"
-redshift,"DATEADD(year,@years,@date)","ADD_MONTHS(@date, 12*@months)"
-redshift,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
-redshift,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
-redshift,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+redshift,"DATEADD(dd,@days,@date)","DATEADD(day,@days,@date)"
+redshift,"DATEADD(m,@months,@date)","DATEADD(month,@months,@date)"
+redshift,"DATEADD(mm,@months,@date)","DATEADD(month,@months,@date)"
+redshift,"DATEADD(yyyy,@years,@date)","DATEADD(year,@years,@date)"
+redshift,"DATEADD(yy,@years,@date)","DATEADD(year,@years,@date)"
+redshift,"DATEADD(qq,@n,@date)","DATEADD(quarter,@n,@date)"
+redshift,"DATEADD(q,@n,@date)","DATEADD(quarter,@n,@date)"
+redshift,"DATEADD(wk,@n,@date)","DATEADD(week,@n,@date)"
+redshift,"DATEADD(ww,@n,@date)","DATEADD(week,@n,@date)"
+redshift,"DATEADD(hh,@n,@date)","DATEADD(hour,@n,@date)"
+redshift,"DATEADD(mi,@n,@date)","DATEADD(minute,@n,@date)"
+redshift,"DATEADD(n,@n,@date)","DATEADD(minute,@n,@date)"
+redshift,"DATEADD(ss,@n,@date)","DATEADD(second,@n,@date)"
+redshift,"DATEADD(mcs,@n,@date)","DATEADD(microsecond,@n,@date)"
+redshift,"DATEADD(@part,@n,@date)","DATEADD(@part,CAST(@n as int),@date)"
+redshift,"DATEDIFF(dd,@start,@end)","DATEDIFF(day,@start,@end)"
+redshift,"DATEDIFF(m,@start,@end)","DATEDIFF(month,@start,@end)"
+redshift,"DATEDIFF(mm,@start,@end)","DATEDIFF(month,@start,@end)"
+redshift,"DATEDIFF(yyyy,@start,@end)","DATEDIFF(year,@start,@end)"
+redshift,"DATEDIFF(yy,@start,@end)","DATEDIFF(year,@start,@end)"
+redshift,"DATEDIFF(qq,@start,@end)","DATEDIFF(quarter,@start,@end)"
+redshift,"DATEDIFF(q,@start,@end)","DATEDIFF(quarter,@start,@end)"
+redshift,"DATEDIFF(wk,@start,@end)","DATEDIFF(week,@start,@end)"
+redshift,"DATEDIFF(ww,@start,@end)","DATEDIFF(week,@start,@end)"
+redshift,"DATEDIFF(hh,@start,@end)","DATEDIFF(hour,@start,@end)"
+redshift,"DATEDIFF(mi,@start,@end)","DATEDIFF(minute,@start,@end)"
+redshift,"DATEDIFF(n,@start,@end)","DATEDIFF(minute,@start,@end)"
+redshift,"DATEDIFF(ss,@start,@end)","DATEDIFF(second,@start,@end)"
+redshift,"DATEDIFF(mcs,@start,@end)","DATEDIFF(microsecond,@start,@end)"
+redshift,"DATEDIFF_BIG(dd,@start,@end)","DATEDIFF(day,@start,@end)"
+redshift,"DATEDIFF_BIG(m,@start,@end)","DATEDIFF(month,@start,@end)"
+redshift,"DATEDIFF_BIG(mm,@start,@end)","DATEDIFF(month,@start,@end)"
+redshift,"DATEDIFF_BIG(yyyy,@start,@end)","DATEDIFF(year,@start,@end)"
+redshift,"DATEDIFF_BIG(yy,@start,@end)","DATEDIFF(year,@start,@end)"
+redshift,"DATEDIFF_BIG(qq,@start,@end)","DATEDIFF(quarter,@start,@end)"
+redshift,"DATEDIFF_BIG(q,@start,@end)","DATEDIFF(quarter,@start,@end)"
+redshift,"DATEDIFF_BIG(wk,@start,@end)","DATEDIFF(week,@start,@end)"
+redshift,"DATEDIFF_BIG(ww,@start,@end)","DATEDIFF(week,@start,@end)"
+redshift,"DATEDIFF_BIG(hh,@start,@end)","DATEDIFF(hour,@start,@end)"
+redshift,"DATEDIFF_BIG(mi,@start,@end)","DATEDIFF(minute,@start,@end)"
+redshift,"DATEDIFF_BIG(n,@start,@end)","DATEDIFF(minute,@start,@end)"
+redshift,"DATEDIFF_BIG(ss,@start,@end)","DATEDIFF(second,@start,@end)"
+redshift,"DATEDIFF_BIG(mcs,@start,@end)","DATEDIFF(microsecond,@start,@end)"
+redshift,"DATEPART(dd,@date)","DATEPART(day,@date)"
+redshift,"DATEPART(m,@date)","DATEPART(month,@date)"
+redshift,"DATEPART(mm,@date)","DATEPART(month,@date)"
+redshift,"DATEPART(yyyy,@date)","DATEPART(year,@date)"
+redshift,"DATEPART(yy,@date)","DATEPART(year,@date)"
+redshift,"DATEPART(qq,@date)","DATEPART(quarter,@date)"
+redshift,"DATEPART(q,@date)","DATEPART(quarter,@date)"
+redshift,"DATEPART(wk,@date)","DATEPART(week,@date)"
+redshift,"DATEPART(ww,@date)","DATEPART(week,@date)"
+redshift,"DATEPART(hh,@date)","DATEPART(hour,@date)"
+redshift,"DATEPART(mi,@date)","DATEPART(minute,@date)"
+redshift,"DATEPART(n,@date)","DATEPART(minute,@date)"
+redshift,"DATEPART(ss,@date)","DATEPART(second,@date)"
+redshift,"DATEPART(mcs,@date)","DATEPART(microsecond,@date)"
 redshift,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
 redshift,GETDATE(),CURRENT_DATE
 redshift,+ '@a',|| '@a'
@@ -179,10 +224,13 @@ redshift,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
 redshift,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
 redshift,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
 redshift,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
-redshift,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), ' YYYY- MM- DD')"
+redshift,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000FM')||'-'||TO_CHAR(@month,'00FM')||'-'||TO_CHAR(@day,'00FM'), 'YYYY-MM-DD')"
+redshift,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","CAST(TO_CHAR(@year,'0000FM')||'-'||TO_CHAR(@month,'00FM')||'-'||TO_CHAR(@day,'00FM')||' '||TO_CHAR(@hour,'00FM')||':'||TO_CHAR(@minute,'00FM')||':'||TO_CHAR(@second,'00FM')||'.'||TO_CHAR(@ms,'000FM') as TIMESTAMP)"
 redshift,YEAR(@date),EXTRACT(YEAR FROM @date)
 redshift,MONTH(@date),EXTRACT(MONTH FROM @date)
 redshift,DAY(@date),EXTRACT(DAY FROM @date)
+redshift,EOMONTH(@date),LAST_DAY(@date)
+redshift,VAR(@a),VARIANCE(@a)
 redshift,STDEV(@a),STDDEV(@a)
 redshift,RAND(),RANDOM()
 redshift,"HASHBYTES('MD5',@a)",MD5(@a)
@@ -191,49 +239,110 @@ redshift,"LOG(@expression,@base)",(LN(CAST((@expression) AS REAL))/LN(CAST((@bas
 redshift,LOG(@expression),LN(CAST((@expression) AS REAL))
 redshift,LOG10(@expression),LOG(CAST((@expression) AS REAL))
 redshift,"ISNULL(@a,@b)","COALESCE(@a,@b)"
-redshift,ISNUMERIC(@a),(@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$')
 redshift,COUNT_BIG(@a),COUNT(@a)
+redshift,SQUARE(@a),((@a) * (@a))
+redshift,TEXT,VARCHAR(max)
+redshift,NTEXT,VARCHAR(max)
+redshift,NEWID(),MD5(RANDOM()::TEXT || GETDATE()::TEXT)
 redshift,USE @schema;,SET search_path TO @schema;
 redshift,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 redshift,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
-redshift,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+redshift,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS #@table;"
 redshift,.dbo.,.
-redshift,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE #@table (@definition),HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TEMP TABLE @table (@definition) DISTKEY(@key)
-redshift,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
-redshift,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE @table (@definition);,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @table (@definition) DISTKEY(@key);
-redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO #@d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TEMP TABLE @d DISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d DISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-redshift,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-redshift,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO #@b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TEMP TABLE @b DISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
-redshift,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
-redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @b DISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
-redshift,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
-redshift,SELECT @a INTO #@b;,CREATE TEMP TABLE @b AS\nSELECT\n@a;
-redshift,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+redshift,"HINT DISTRIBUTE_ON_KEY(@key) @hint CREATE TABLE @table (@definition);",HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @table (@definition)\nDISTKEY(@key);
+redshift,"HINT @hint SORT_ON_KEY(@type:@key) CREATE TABLE @table (@definition) @options;",HINT @hint SORT_ON_KEY(@type:@key)\nCREATE TABLE @table (@definition)\n@options\n@type SORTKEY(@key);
+redshift,"CREATE TABLE @table (@a1 person_id @a2);",CREATE TABLE @table (@a1 person_id @a2)\nDISTKEY(person_id);
+redshift,"CREATE TABLE @table (@a1 subject_id @a2);",CREATE TABLE @table (@a1 subject_id @a2)\nDISTKEY(subject_id);
+redshift,"CREATE TABLE @table (@a1 analysis_id @a2);",CREATE TABLE @table (@a1 analysis_id @a2)\nDISTKEY(analysis_id);
+redshift,"CREATE TABLE @table (@definition);",CREATE TABLE @table (@definition)\nDISTSTYLE ALL;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,HINT SORT_ON_KEY(@type:@sortkey) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @d\n@type SORTKEY(@sortkey)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @d\nDISTKEY(@key)\n@type SORTKEY(@sortkey)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c1 person_id as @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 person_id as @key @c2\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c1 person_id @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 person_id @key @c2\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c1 person_id @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(person_id)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 person_id @c2\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c1 subject_id as @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 subject_id as @key @c2\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c1 subject_id @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 subject_id @key @c2\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c1 subject_id @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(subject_id)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 subject_id @c2\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c1 analysis_id as @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 analysis_id as @key @c2\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c1 analysis_id @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 analysis_id @key @c2\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c1 analysis_id @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(analysis_id)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 analysis_id @c2\nFROM\n@e;
+redshift,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d DISTSTYLE ALL\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c\nFROM\n@e;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,HINT SORT_ON_KEY(@type:@sortkey) SELECT @a INTO @b FROM @c;,HINT SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @b\n@type SORTKEY(@sortkey)\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @b\nDISTKEY(@key)\n@type SORTKEY(@sortkey)\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,SELECT @a1 person_id as @(\w+\b)key @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a1 person_id as @key @a2\nFROM\n@c;
+redshift,SELECT @a1 person_id @(\w+\b)key @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a1 person_id @key @a2\nFROM\n@c;
+redshift,SELECT @a1 person_id @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(person_id)\nAS\nSELECT\n@a1 person_id @a2\nFROM\n@c;
+redshift,SELECT @a1 subject_id as @(\w+\b)key @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a1 subject_id as @key @a2\nFROM\n@c;
+redshift,SELECT @a1 subject_id @(\w+\b)key @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a1 subject_id @key @a2\nFROM\n@c;
+redshift,SELECT @a1 subject_id @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(subject_id)\nAS\nSELECT\n@a1 subject_id @a2\nFROM\n@c;
+redshift,SELECT @a1 analysis_id as @(\w+\b)key @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a1 analysis_id as @key @a2\nFROM\n@c;
+redshift,SELECT @a1 analysis_id @(\w+\b)key @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a1 analysis_id @key @a2\nFROM\n@c;
+redshift,SELECT @a1 analysis_id @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(analysis_id)\nAS\nSELECT\n@a1 analysis_id @a2\nFROM\n@c;
+redshift,SELECT @a INTO @b FROM @c;,CREATE TABLE @b DISTSTYLE ALL\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,SELECT @a INTO @b;,CREATE TABLE @b DISTSTYLE ALL\nAS\nSELECT\n@a;
+redshift,[ person_id ],[person_id]
+redshift,[ subject_id ],[subject_id]
+redshift,[ analysis_id ],[analysis_id]
 redshift,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 redshift,DATETIME,TIMESTAMP
-redshift,#,
-redshift,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+redshift,SELECT DISTINCT TOP @([0-9]+)rows,SELECT TOP @rows DISTINCT
+redshift,BIT,BOOLEAN
+redshift,MONEY,"DECIMAL(19, 4)"
+redshift,SMALLMONEY,"DECIMAL(10, 4)"
+redshift,TINYINT,SMALLINT
+redshift,FLOAT(@s),FLOAT
+redshift,DATETIME2(@p),TIMESTAMP
+redshift,DATETIME2,TIMESTAMP
+redshift,DATETIME,TIMESTAMP
+redshift,DATETIMEOFFSET(@p),TIMESTAMPTZ
+redshift,DATETIMEOFFSET,TIMESTAMPTZ
+redshift,SMALLDATETIME,TIMESTAMP
+redshift,UNIQUEIDENTIFIER,CHAR(36)
+redshift,STDEVP(@a),STDDEV_POP(@a)
+redshift,VARP(@a),VAR_POP(@a)
+redshift,"DATETIME2FROMPARTS(@year,@month,@day,@hour,@minute,@seconds,0,0)","CAST(TO_CHAR(@year,'0000FM')||'-'||TO_CHAR(@month,'00FM')||'-'||TO_CHAR(@day,'00FM')||' '||TO_CHAR(@hour,'00FM')||':'||TO_CHAR(@minute,'00FM')||':'||TO_CHAR(@seconds,'00FM') as TIMESTAMP)"
+redshift,"DATETIME2FROMPARTS(@year,@month,@day,@hour,@minute,@seconds,@fractions,@precision)","CAST(TO_CHAR(@year,'0000FM')||'-'||TO_CHAR(@month,'00FM')||'-'||TO_CHAR(@day,'00FM')||' '||TO_CHAR(@hour,'00FM')||':'||TO_CHAR(@minute,'00FM')||':'||TO_CHAR(@seconds,'00FM')||'.'||TO_CHAR(@fractions,repeat('0', @precision) || 'FM') as TIMESTAMP)"
+redshift,"DATETIMEOFFSETFROMPARTS (@year,@month,@day,@hour,@minute,@seconds,0,@h_offset,@m_offset,0 )","CAST(TO_CHAR(@year,'0000FM')||'-'||TO_CHAR(@month,'00FM')||'-'||TO_CHAR(@day,'00FM')||' '||TO_CHAR(@hour,'00FM')||':'||TO_CHAR(@minute,'00FM')||':'||TO_CHAR(@seconds,'00FM')||case when @h_offset >= 0 then '+' else '-' end ||TO_CHAR(ABS(@h_offset),'00FM')||':'||TO_CHAR(ABS(@m_offset),'00FM') as TIMESTAMPTZ)"
+redshift,"DATETIMEOFFSETFROMPARTS (@year,@month,@day,@hour,@minute,@seconds,@fractions,@h_offset,@m_offset,@precision )","CAST(TO_CHAR(@year,'0000FM')||'-'||TO_CHAR(@month,'00FM')||'-'||TO_CHAR(@day,'00FM')||' '||TO_CHAR(@hour,'00FM')||':'||TO_CHAR(@minute,'00FM')||':'||TO_CHAR(@seconds,'00FM')||'.'||TO_CHAR(@fractions,repeat('0',@precision) || 'FM')||case when @h_offset >= 0 then '+' else '-' end ||TO_CHAR(ABS(@h_offset),'00FM')||':'||TO_CHAR(ABS(@m_offset),'00FM') as TIMESTAMPTZ)"
+redshift,GETUTCDATE(),CURRENT_TIMESTAMP
+redshift,"SMALLDATETIMEFROMPARTS(@year,@month,@day,@hour,@minute )","CAST(TO_CHAR(@year,'0000FM')||'-'||TO_CHAR(@month,'00FM')||'-'||TO_CHAR(@day,'00FM')||' '||TO_CHAR(@hour,'00FM')||':'||TO_CHAR(@minute,'00FM') as TIMESTAMP)"
+redshift,SYSUTCDATETIME(),CURRENT_TIMESTAMP
+redshift,"TODATETIMEOFFSET(@expression,@timezone)","CAST(TO_CHAR(CAST(@expression as TIMESTAMP), 'YYYY-MM-DD HH24:MI:SS.US') ||@timezone as TIMESTAMPTZ)"
+redshift,"ATN2(@a,@b)","ATAN2(@a,@b)"
+redshift,"CHARINDEX(@expression,@in,@start)","case when CHARINDEX(@expression, SUBSTRING(@in,@start)) > 0 then (CHARINDEX(@expression, SUBSTRING(@in,@start)) +@start - 1) else 0 end"
+redshift,QUOTENAME(@a),QUOTE_IDENT(@a)
+redshift,"SPACE(@n)","REPEAT(' ',@n)"
+redshift,"STUFF(@expression,@start,@length,@replace)","SUBSTRING(@expression, 0,@start)||@replace||SUBSTRING(@expression,@start +@length)"
+redshift,"CONCAT(@a,@b,@tail)","CONCAT(@a,CONCAT(@b,@tail))"
+redshift,"ISDATE(@s)","REGEXP_INSTR(@s, '^(\\d{4}[/\-]?[01]\\d[/\-]?[0123]\\d)([ T]([0-1][0-9]|[2][0-3]):([0-5][0-9])(:[0-5][0-9](.\\d+)?)?)?$')"
+redshift,"ISNUMERIC(@s)","REGEXP_INSTR(@s, '^[\-\+]?(\\d*\\.)?\\d+([Ee][\-\+]?\\d+)?$')"
+redshift,"PATINDEX(@pattern,@expression)","REGEXP_INSTR(@expression, case when LEFT(@pattern,1)<>'%' and RIGHT(@pattern,1)='%' then '^' else '' end||TRIM('%' FROM REPLACE(@pattern,'_','.'))||case when LEFT(@pattern,1)='%' and RIGHT(@pattern,1)<>'%' then '$' else '' end)"
+redshift,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
+redshift,^,#
 pdw,VARCHAR(MAX),VARCHAR(1000)
-pdw,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+pdw,HINT DISTRIBUTE_ON_KEY(@key) @hint WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 pdw,"WITH @a AS @b SELECT @c1 subject_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(subject_id))\nAS\nWITH @a AS @b SELECT\n@c1 subject_id, @c2\nFROM\n@e;"
 pdw,"WITH @a AS @b SELECT @c1 person_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(person_id))\nAS\nWITH @a AS @b SELECT\n@c1 person_id, @c2\nFROM\n@e;"
 pdw,"WITH @a AS @b SELECT @c1 analysis_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nWITH @a AS @b SELECT\n@c1 analysis_id, @c2\nFROM\n@e;"
 pdw,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d WITH (DISTRIBUTION = REPLICATE)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-pdw,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @b WITH (DISTRIBUTION = HASH(@key))\nAS\nSELECT\n@a\nFROM\n@c;
+pdw,HINT DISTRIBUTE_ON_KEY(@key) @hint SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @b WITH (DISTRIBUTION = HASH(@key))\nAS\nSELECT\n@a\nFROM\n@c;
 pdw,"SELECT @a1 subject_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(subject_id))\nAS\nSELECT\n@a1 subject_id, @a2\nFROM\n@c;"
 pdw,"SELECT @a1 person_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(person_id))\nAS\nSELECT\n@a1 person_id, @a2\nFROM\n@c;"
 pdw,"SELECT @a1 analysis_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n@a1 analysis_id, @a2\nFROM\n@c;"
 pdw,SELECT @a INTO @b FROM @c;,CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a\nFROM\n@c;
 pdw,SELECT @a INTO @b;,CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a;
 pdw,CREATE TABLE #@a WITH (DISTRIBUTION = @b) AS,"CREATE TABLE #@a WITH (LOCATION = USER_DB, DISTRIBUTION = @b) AS"
-pdw,HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE @table (@definition);,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = HASH(@key));
+pdw,HINT DISTRIBUTE_ON_KEY(@key) @hint CREATE TABLE @table (@definition);,HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = HASH(@key));
 pdw,CREATE TABLE @table (@definition_part1 subject_id @definition_part2);,CREATE TABLE @table (@definition_part1 subject_id @definition_part2)\nWITH (DISTRIBUTION = HASH(subject_id));
 pdw,CREATE TABLE @table (@definition_part1 person_id @definition_part2);,CREATE TABLE @table (@definition_part1 person_id @definition_part2)\nWITH (DISTRIBUTION = HASH(person_id));
 pdw,CREATE TABLE @table (@definition_part1 analysis_id @definition_part2);,CREATE TABLE @table (@definition_part1 analysis_id @definition_part2)\nWITH (DISTRIBUTION = HASH(analysis_id));
 pdw,CREATE TABLE @table (@definition);,CREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = REPLICATE);
 pdw,CREATE TABLE #@table (@definition) WITH (DISTRIBUTION = @distribution);,"CREATE TABLE #@table (@definition)\nWITH (LOCATION = USER_DB, DISTRIBUTION = @distribution);"
+pdw,[ person_id ],[person_id]
+pdw,[ subject_id ],[subject_id]
+pdw,[ analysis_id ],[analysis_id]
 pdw,TRUNCATE TABLE ,IF XACT_STATE() = 1 COMMIT; TR*NC*T* TABLE 
 pdw,DROP TABLE ,IF XACT_STATE() = 1 COMMIT; DR*P TABLE 
 pdw,CREATE TABLE ,IF XACT_STATE() = 1 COMMIT; CR**T* TABLE 
