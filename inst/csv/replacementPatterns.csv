@@ -155,7 +155,6 @@ postgresql,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 postgresql,#,
 postgresql,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 postgresql,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
-redshift,"WHERE @where (@a / @b)","WHERE @where (@a / NULLIF(@b, 0))"
 redshift,"ROUND(@a,@b)","ROUND(CAST(@a AS FLOAT),@b)"
 redshift,"ROUND(@expression,@length,@trunc)","case when @trunc = 0 then ROUND(@expression,@length) else TRUNC(@expression,@length) end"
 redshift,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
