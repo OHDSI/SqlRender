@@ -942,6 +942,12 @@ test_that("translateSQL sql server -> bigquery isnull", {
  expect_equal_ignore_spaces(sql, "select IFNULL(x,y) from t;")
 })
 
+test_that("translateSQL sql server -> bigquery unquote aliases", {
+ sql <- translateSql("SELECT a as \"b\" from t;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select a as b from t;")
+})
+
 # For debugging: force reload of patterns:
 # rJava::J("org.ohdsi.sql.SqlTranslate")$setReplacementPatterns("inst/csv/replacementPatterns.csv")
 
