@@ -36,7 +36,7 @@ public class BigQueryTranslate {
 		private String						listSuffix;
 
 		public enum ListType {
-			SELECT, GROUP_BY, ORDER_BY, WITH_COLUMNS
+			SELECT, GROUP_BY, ORDER_BY, WITH_COLUMNS, IN
 		}
 
 		public CommaListIterator(String expression_list, ListType list_type) {
@@ -108,6 +108,9 @@ public class BigQueryTranslate {
 				case WITH_COLUMNS:
 					// empty
 					break;
+				case IN:
+					// empty
+					break;
 			}
 		}
 
@@ -155,6 +158,9 @@ public class BigQueryTranslate {
 					splitOrderElement();
 					break;
 				case WITH_COLUMNS:
+					// empty
+					break;
+				case IN:
 					// empty
 					break;
 			}
@@ -412,8 +418,7 @@ public class BigQueryTranslate {
 	/**
 	 * Lower cases everything but string literals
 	 *
-	 * @param sql
-	 *            - the query to translate
+	 * @param sql - the query to translate
 	 * @return the query after translation
 	 */
 	private static String bigQueryLowerCase(String sql) {
@@ -423,6 +428,56 @@ public class BigQueryTranslate {
 				sql = sql.substring(0, token.start) + token.text.toLowerCase() + sql.substring(token.end);
 			}
 		}
+		return sql;
+	}
+
+	/**
+	 * Removes quotes from IN lists elements where the lhs ends with "_id" and the elements are all digits
+	 *
+	 * @param sql - the query to translate
+	 * @return the query after translation
+	 */
+	private static String bigQueryUnquoteIdInLists(String sql) {
+		List<Block> in_list_pattern = SqlTranslate.parseSearchPattern("in (@@i)");
+		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(sql);
+
+		// Iterates SELECT statements
+		for (MatchedPattern in_list_match = SqlTranslate.search(sql, in_list_pattern,
+				0); in_list_match.start != -1; in_list_match = SqlTranslate.search(sql, in_list_pattern,
+				in_list_match.startToken + 1)) {
+			final String in_list = in_list_match.variableToValue.get("@@i");
+
+			// Checks if the lhs is an identifier ending with "_id"
+			if (in_list_match.startToken <=0) {
+				continue;
+			}
+			final StringUtils.Token lhs_token = tokens.get(in_list_match.startToken - 1);
+			if (!lhs_token.isIdentifier()) {
+				continue;
+			}
+			if (!lhs_token.text.toLowerCase().endsWith("_id")) {
+				continue;
+			}
+
+			// Iterates elements of the IN list
+			CommaListIterator in_list_iter = new CommaListIterator(in_list, CommaListIterator.ListType.IN);
+			for (; !in_list_iter.IsDone(); in_list_iter.Next()) {
+				final String expr = in_list_iter.GetFullExpression();
+				if (expr.charAt(0) != '\'' || expr.charAt(expr.length() - 1) != '\'') {
+					return sql;
+				}
+				for (int i = 1; i < expr.length() - 1; ++i) {
+					if (!Character.isDigit(expr.charAt(i))) {
+						return sql;
+					}
+				}
+			}
+			final String replacement_in_list = in_list.replaceAll("\'", "");
+			sql = sql.substring(0, in_list_match.start)
+					+ " in (" + replacement_in_list + ")"
+					+ sql.substring(in_list_match.end, sql.length());
+		}
+
 		return sql;
 	}
 
@@ -440,6 +495,7 @@ public class BigQueryTranslate {
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@r)", CommaListIterator.ListType.GROUP_BY);
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@c order by @@r;", CommaListIterator.ListType.ORDER_BY);
 		sql = bigQueryReplaceStringConcatsInStatement(sql);
+		sql = bigQueryUnquoteIdInLists(sql);
 		return sql;
 	}
 }
