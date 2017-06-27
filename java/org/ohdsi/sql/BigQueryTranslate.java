@@ -257,11 +257,8 @@ public class BigQueryTranslate {
 	 * @return the query with GROUP BY elements replaced
 	 */
 	private static String bigQueryConvertSelectListReferences(String sql, String select_pattern, CommaListIterator.ListType list_type) {
-		boolean added_semicolon = false;
-		if (select_pattern.substring(select_pattern.length() - 1).equals(";")) {
-			sql = sql + ";";
-			added_semicolon = true;
-		}
+		// Adds semi-colon in case there isn't one already
+		sql = sql + ";";
 
 		// Iterates SELECT statements
 		List<Block> select_statement_pattern = SqlTranslate.parseSearchPattern(select_pattern);
@@ -321,9 +318,9 @@ public class BigQueryTranslate {
 			}
 			sql += suffix;
 		}
-		if (added_semicolon) {
-			sql = sql.substring(0, sql.length() - 1);
-		}
+
+		// Removes semi-colon added at the beginning
+		sql = sql.substring(0, sql.length() - 1);
 		return sql;
 	}
 
