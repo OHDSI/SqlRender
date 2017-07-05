@@ -8,6 +8,11 @@ expect_equal_ignore_spaces <- function(string1, string2) {
   expect_equal(string1, string2)
 }
 
+expect_match_ignore_spaces <- function(string1, regexp) {
+ string1 <- gsub(" +", " ", string1)
+ expect_match(string1, regexp)
+}
+
 test_that("translateSQL sql server -> Oracle DATEDIFF", {
  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
  targetDialect = "oracle")$sql
@@ -431,13 +436,13 @@ test_that("translateSQL sql server -> Impala RIGHT functions", {
 test_that("translateSQL sql server -> Impala DELETE FROM", {
  sql <- translateSql("delete from ACHILLES_results;",
  targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "/* DELETE FROM ACHILLES_results; */")
+ expect_equal_ignore_spaces(sql, "TRUNCATE TABLE ACHILLES_results;")
 })
 
 test_that("translateSQL sql server -> Impala DELETE FROM WHERE", {
  sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
  targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "/* DELETE FROM ACHILLES_results where analysis_id IN (1, 2, 3); */")
+ expect_match_ignore_spaces(sql, "CREATE TABLE \\w+tmp AS SELECT \\* FROM ACHILLES_results WHERE NOT\\(analysis_id IN \\(1, 2, 3\\)\\); INSERT OVERWRITE TABLE ACHILLES_results SELECT \\* from \\w+tmp; DROP TABLE \\w+tmp;")
 })
 
 test_that("translateSQL sql server -> Impala location reserved word", {
