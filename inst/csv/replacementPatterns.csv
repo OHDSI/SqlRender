@@ -388,6 +388,7 @@ impala,YEAR(@date),YEAR(CAST(@date AS DATE))
 impala,CAST(@a AS DATE),"CASE TYPEOF(@a) WHEN 'TIMESTAMP' THEN CAST(@a AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(@a AS STRING), 1, 4), SUBSTR(CAST(@a AS STRING), 5, 2), SUBSTR(CAST(@a AS STRING), 7, 2)), 'UTC') END"
 impala,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 impala,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+impala,(SELECT @a UNION SELECT @b) ORDER BY,SELECT * FROM\n(SELECT @a\nUNION\nSELECT @b)\nAS t1 ORDER BY
 impala,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 impala,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 impala,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
@@ -401,6 +402,19 @@ impala,#,%temp_prefix%%session_id%
 impala,<hash><hash>,##
 impala,.location,.`location`
 impala,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+impala,BIGINT NOT NULL,BIGINT
+impala,BOOLEAN NOT NULL,BOOLEAN
+impala,CHAR NOT NULL,CHAR
+impala,DECIMAL NOT NULL,DECIMAL
+impala,DOUBLE NOT NULL,DOUBLE
+impala,FLOAT NOT NULL,FLOAT
+impala,INT NOT NULL,INT
+impala,REAL NOT NULL,REAL
+impala,SMALLINT NOT NULL,SMALLINT
+impala,STRING NOT NULL,STRING
+impala,TIMESTAMP NOT NULL,TIMESTAMP
+impala,TINYINT NOT NULL,TINYINT
+impala,VARCHAR(@a) NOT NULL,VARCHAR(@a)
 netezza,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 netezza,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
 netezza,CAST(@a AS INT),CAST(@a AS INTEGER)
