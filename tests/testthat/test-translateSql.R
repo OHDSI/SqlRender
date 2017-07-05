@@ -942,6 +942,30 @@ test_that("translateSQL sql server -> bigquery isnull", {
  expect_equal_ignore_spaces(sql, "select IFNULL(x,y) from t;")
 })
 
+test_that("translateSQL sql server -> bigquery unquote aliases", {
+ sql <- translateSql("SELECT a as \"b\" from t;",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select a as b from t;")
+})
+
+test_that("translateSQL sql server -> bigquery non-id in list", {
+ sql <- translateSql("select * from t where x in ('333','22','1')",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select * from t where x in ('333','22','1')")
+})
+
+test_that("translateSQL sql server -> bigquery non-integer in lists", {
+ sql <- translateSql("select * from t where x_id in ('333','22','1a')",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select * from t where x_id in ('333','22','1a')")
+})
+
+test_that("translateSQL sql server -> bigquery unquote id in lists", {
+ sql <- translateSql("select * from t where x_id in ('333','22','1')",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select * from t where x_id in (333,22,1)")
+})
+
 # For debugging: force reload of patterns:
 # rJava::J("org.ohdsi.sql.SqlTranslate")$setReplacementPatterns("inst/csv/replacementPatterns.csv")
 
