@@ -415,6 +415,13 @@ test_that("translateSQL sql server -> Impala DROP TABLE IF EXISTS", {
  "DROP TABLE IF EXISTS cohort;")
 })
 
+test_that("translateSQL sql server -> Impala UNION ORDER BY", {
+ sql <- translateSql("(SELECT a FROM b UNION SELECT a FROM c) ORDER BY a",
+ targetDialect = "impala")$sql
+ expect_equal_ignore_spaces(sql,
+ "SELECT * FROM \n ( SELECT a FROM b \n UNION \n SELECT a FROM c ) \n AS t1 ORDER BY a")
+})
+
 test_that("translateSQL sql server -> Impala RIGHT functions", {
  sql <- translateSql("SELECT RIGHT(x,4);",
  targetDialect = "impala")$sql
@@ -437,6 +444,18 @@ test_that("translateSQL sql server -> Impala location reserved word", {
  sql <- translateSql("select count(1) from omop_cdm.location;",
  targetDialect = "impala")$sql
  expect_equal_ignore_spaces(sql, "select count(1) from omop_cdm.`location`;")
+})
+
+test_that("translateSQL sql server -> Impala CREATE TABLE with NOT NULL", {
+ sql <- translateSql("CREATE TABLE a (c1 BIGINT NOT NULL, c2 BOOLEAN NOT NULL, c3 CHAR NOT NULL, c4 DECIMAL NOT NULL, c5 DOUBLE NOT NULL, c6 FLOAT NOT NULL, c7 INT NOT NULL, c8 REAL NOT NULL, c9 SMALLINT NOT NULL, c10 STRING NOT NULL, c11 TIMESTAMP NOT NULL, c12 TINYINT NOT NULL, c13 VARCHAR(10) NOT NULL)",
+ targetDialect = "impala")$sql
+ expect_equal_ignore_spaces(sql, "CREATE TABLE a (c1 BIGINT, c2 BOOLEAN, c3 CHAR, c4 DECIMAL, c5 DOUBLE, c6 FLOAT, c7 INT, c8 REAL, c9 SMALLINT, c10 STRING, c11 TIMESTAMP, c12 TINYINT, c13 VARCHAR(10))")
+})
+
+test_that("translateSQL sql server -> Impala clause with NOT NULL", {
+ sql <- translateSql("SELECT * FROM x WHERE y IS NOT NULL",
+ targetDialect = "impala")$sql
+ expect_equal_ignore_spaces(sql, "SELECT * FROM x WHERE y IS NOT NULL")
 })
 
 
