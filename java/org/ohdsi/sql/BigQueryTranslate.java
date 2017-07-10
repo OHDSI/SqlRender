@@ -221,8 +221,8 @@ public class BigQueryTranslate {
 	 *            - the query to transform
 	 * @return the query after transformation
 	 */
-	private static String bigQueryAliasCommonTableExpressions(String sql) {
-		List<Block> cte_pattern = SqlTranslate.parseSearchPattern("@@(with|,)p @@a (@@b) as (select @@c from @@d)");
+	private static String bigQueryAliasCommonTableExpressions(String sql, String pattern, String prefix) {
+		List<Block> cte_pattern = SqlTranslate.parseSearchPattern(pattern);
 
 		// Iterates over common table expressions with column lists
 		for (MatchedPattern cte_match = SqlTranslate.search(sql, cte_pattern, 0); cte_match.start != -1; cte_match = SqlTranslate.search(sql, cte_pattern,
@@ -245,7 +245,7 @@ public class BigQueryTranslate {
 			}
 			replacement_select_list = select_list_iter.GetListPrefix() + replacement_select_list + select_list_iter.GetListSuffix();
 
-			sql = sql.substring(0, cte_match.start) + cte_match.variableToValue.get("@@p") + cte_match.variableToValue.get("@@a") + " as (select "
+			sql = sql.substring(0, cte_match.start) + prefix + cte_match.variableToValue.get("@@a") + " as (select "
 					+ replacement_select_list.substring(1) + " from " + cte_match.variableToValue.get("@@d") + ")" + sql.substring(cte_match.end);
 		}
 		return sql;
@@ -490,7 +490,8 @@ public class BigQueryTranslate {
 	 */
 	public static String translatebigQuery(String sql) {
 		sql = bigQueryLowerCase(sql);
-		sql = bigQueryAliasCommonTableExpressions(sql);
+		sql = bigQueryAliasCommonTableExpressions(sql, "with @@a (@@b) as (select @@c from @@d)", "with ");
+		sql = bigQueryAliasCommonTableExpressions(sql, ", @@a (@@b) as (select @@c from @@d)", ", ");
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@r;", CommaListIterator.ListType.GROUP_BY);
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@r)", CommaListIterator.ListType.GROUP_BY);
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@c order by @@r;", CommaListIterator.ListType.ORDER_BY);
