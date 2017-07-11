@@ -1823,3 +1823,14 @@ test_that("translateSQL sql server -> pdw hint DISTKEY + SORTKEY on CTAS", {
  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
 })
 
+test_that("translateSQL sql server -> redshift CONVERT to DATE", {
+ sql <- translateSql("select CONVERT(DATE, start_date) from my_table;",
+ targetDialect = "redshift")$sql
+ expect_equal_ignore_spaces(sql, "select CAST(start_date as DATE) from my_table;")
+})
+
+test_that("translateSQL sql server -> redshift CONVERT to TIMESTAMPTZ", {
+ sql <- translateSql("select CONVERT(TIMESTAMPTZ, start_date) from my_table;",
+ targetDialect = "redshift")$sql
+ expect_equal_ignore_spaces(sql, "select CONVERT(TIMESTAMP WITH TIME ZONE, start_date) from my_table;")
+})
