@@ -38,7 +38,7 @@ public class TestBigQuery {
 		String path = "inst/csv/replacementPatterns.csv";
 		String sourceSql;
 		try {
-			sourceSql = readFile("/Users/myl/achilles-scripts/output-heel-rendered.sql");
+			sourceSql = readFile("../achilles-scripts/output-heel-rendered.sql");
 		} catch (IOException e) {
 			throw e;
 		}
