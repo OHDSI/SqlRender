@@ -8,6 +8,11 @@ expect_equal_ignore_spaces <- function(string1, string2) {
   expect_equal(string1, string2)
 }
 
+expect_match_ignore_spaces <- function(string1, regexp) {
+ string1 <- gsub(" +", " ", string1)
+ expect_match(string1, regexp)
+}
+
 test_that("translateSQL sql server -> Oracle DATEDIFF", {
  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
  targetDialect = "oracle")$sql
@@ -431,13 +436,13 @@ test_that("translateSQL sql server -> Impala RIGHT functions", {
 test_that("translateSQL sql server -> Impala DELETE FROM", {
  sql <- translateSql("delete from ACHILLES_results;",
  targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "/* DELETE FROM ACHILLES_results; */")
+ expect_equal_ignore_spaces(sql, "TRUNCATE TABLE ACHILLES_results;")
 })
 
 test_that("translateSQL sql server -> Impala DELETE FROM WHERE", {
  sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
  targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "/* DELETE FROM ACHILLES_results where analysis_id IN (1, 2, 3); */")
+ expect_match_ignore_spaces(sql, "CREATE TABLE \\w+tmp AS SELECT \\* FROM ACHILLES_results WHERE NOT\\(analysis_id IN \\(1, 2, 3\\)\\); INSERT OVERWRITE TABLE ACHILLES_results SELECT \\* from \\w+tmp; DROP TABLE \\w+tmp;")
 })
 
 test_that("translateSQL sql server -> Impala location reserved word", {
@@ -1823,3 +1828,14 @@ test_that("translateSQL sql server -> pdw hint DISTKEY + SORTKEY on CTAS", {
  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
 })
 
+test_that("translateSQL sql server -> redshift CONVERT to DATE", {
+ sql <- translateSql("select CONVERT(DATE, start_date) from my_table;",
+ targetDialect = "redshift")$sql
+ expect_equal_ignore_spaces(sql, "select CAST(start_date as DATE) from my_table;")
+})
+
+test_that("translateSQL sql server -> redshift CONVERT to TIMESTAMPTZ", {
+ sql <- translateSql("select CONVERT(TIMESTAMPTZ, start_date) from my_table;",
+ targetDialect = "redshift")$sql
+ expect_equal_ignore_spaces(sql, "select CONVERT(TIMESTAMP WITH TIME ZONE, start_date) from my_table;")
+})
