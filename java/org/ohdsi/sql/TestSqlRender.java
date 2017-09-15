@@ -4,11 +4,9 @@ public class TestSqlRender {
 
 	public static void main(String[] args) {
 
-		/*
 		String sql = "--HINT DISTRIBUTE_ON_KEY(analysis_id)\nCREATE TABLE results.achilles_results_dist";
 		for (String part : SqlSplit.splitSql(sql))
 			System.out.println(part);
-			*/
 		
 //		Pattern pattern = Pattern.compile("^((?!FROM).)*$");
 //		System.out.println(pattern.matcher("SELECT * blaat b;").matches());
