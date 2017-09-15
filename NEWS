@@ -1,3 +1,18 @@
+SqlRender v1.4.3 (Release date: 2017-09-15)
+===========================================
+
+Changes: 
+
+1. Added a Shiny app for developing parameterized SQL, and view how this would be rendered and translated into the various supported dialects.
+2. Added support for Google BigQuery.
+3. Added many more rules for Amazon RedShift, including support for optimization hints.
+4. Added rules for DELETE FROM translation for Impala.
+
+Bugfixes:
+
+1. Fixed issue when splitting SQL containing hints.
+
+
 SqlRender v1.3.7 (Release date: 2017-05-03)
 ===========================================
 
