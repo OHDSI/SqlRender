@@ -1,10 +1,10 @@
-This update has five bugfixes and adds some new translation rules (see NEWS)
+This update has one bugfix, adds more translation, and adds a Shiny app (see NEWS)
 
 ---
 
 ## Test environments
-* Ubuntu 12.04.5 LTS (Travis), R 3.2.5
-* Windows 7, R 3.4.0
+* Ubuntu 14.04.5 LTS (Travis), R 3.4.1
+* Windows 7, R 3.4.1
 
 ## R CMD check results
 
