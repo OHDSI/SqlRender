@@ -35,16 +35,22 @@ public class TestBigQuery {
 //		String sql = "SELECT * FROM table {@a = true} ?  {WHERE name = '@name'};";
 //		sql = SqlRender.renderSql(sql, new String[]{"name", "a"}, new String[]{"NA\\joe", "true"});
 //		System.out.println(sql);
-		String path = "inst/csv/replacementPatterns.csv";
+
 		String sourceSql;
+		String path = "inst/csv/replacementPatterns.csv";
+		/*
 		try {
 			sourceSql = readFile("../achilles-scripts/output-heel-rendered.sql");
 		} catch (IOException e) {
 			throw e;
 		}
+		*/
+		sourceSql = "select coalesce(x, 0), coalesce(12, y) from t;";
+
 		String translated_sql;
 		translated_sql = SqlTranslate.translateSqlWithPath(sourceSql, "bigquery", null, null, path);
 		System.out.println(translated_sql);
+
 //		
 //		sql = SqlTranslate.translateSqlWithPath(sourceSql, "oracle", null, null, path);
 //		System.out.println(sql);

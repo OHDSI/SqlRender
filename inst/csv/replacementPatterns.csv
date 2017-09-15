@@ -503,3 +503,5 @@ bigquery,SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c;,SELECT
 bigquery,(SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c),(SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2)
 bigquery,"ISNULL(@a,@b)","IFNULL(@a,@b)"
 bigquery,as \" @a \",as @a
+bigquery,"coalesce(@([0-9]+)a, @b)","coalesce(@a, cast(@b as int64))"
+bigquery,"coalesce(@a, @([0-9]+)b)","coalesce(cast(@a as int64), @b)"
