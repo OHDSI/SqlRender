@@ -29,10 +29,25 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="/index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
 </li>
 <li>
-  <a href="articles/index.html">Articles</a>
+  <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/UsingSqlRender.html">Using SqlRender</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -79,11 +94,11 @@
 <h1 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h1>
 <p>This exampe shows the use of parameters, as well as SqlRender’s {if} ? {then} : {else} syntax:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/renderSql.html">renderSql</a></span>(<span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, <span class="dt">a =</span> <span class="st">"my_table"</span>, <span class="dt">b =</span> <span class="st">"my_schema"</span>)$sql</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/renderSql.html">renderSql</a></span>(<span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, <span class="dt">a =</span> <span class="st">"my_table"</span>, <span class="dt">b =</span> <span class="st">"my_schema"</span>)<span class="op">$</span>sql</code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; USE my_schema;"</code></pre>
 <p>subsequently running this code</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/translateSql.html">translateSql</a></span>(sql, <span class="st">"sql server"</span>, <span class="st">"oracle"</span>)$sql</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/translateSql.html">translateSql</a></span>(sql, <span class="st">"sql server"</span>, <span class="st">"oracle"</span>)<span class="op">$</span>sql</code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; ALTER SESSION SET current_schema =  my_schema;"</code></pre>
 </div>
