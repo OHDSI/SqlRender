@@ -505,3 +505,4 @@ bigquery,"ISNULL(@a,@b)","IFNULL(@a,@b)"
 bigquery,as \" @a \",as @a
 bigquery,"coalesce(@([0-9]+)a, @b)","coalesce(@a, cast(@b as int64))"
 bigquery,"coalesce(@a, @([0-9]+)b)","coalesce(cast(@a as int64), @b)"
+bigquery,"cast(@a as decimal(@b))","cast(@a as float64)"
