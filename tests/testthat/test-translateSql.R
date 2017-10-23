@@ -996,6 +996,12 @@ test_that("translateSQL sql server -> bigquery cast int in coalesce", {
  expect_equal_ignore_spaces(sql, "select coalesce(cast(x as int64), 0), coalesce(12, cast(y as int64)) from  t")
 })
 
+test_that("translateSQL sql server -> bigquery cast decimal", {
+ sql <- translateSql("select cast(x as decimal(18,4)) from t",
+                     targetDialect = "bigquery")$sql
+ expect_equal_ignore_spaces(sql, "select cast(x as float64) from t")
+})
+
 # For debugging: force reload of patterns:
 # rJava::J("org.ohdsi.sql.SqlTranslate")$setReplacementPatterns("inst/csv/replacementPatterns.csv")
 
