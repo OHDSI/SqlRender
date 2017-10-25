@@ -65,6 +65,10 @@ oracle,FROM @a FROM DUAL,FROM @a
 oracle,FROM @a FROM DUAL,FROM @a
 oracle,FROM @a FROM DUAL,FROM @a
 oracle,FROM @a FROM DUAL,FROM @a
+oracle,SELECT @a CASE @b COUNT(@c) @d END @e;,SELECT @a CASE @b COUNT(@c) @d END @e GROUP BY 1;
+oracle,(SELECT @a CASE @b COUNT(@c) @d END @e),(SELECT @a CASE @b COUNT(@c) @d END @e GROUP BY 1)
+oracle,GROUP BY @a GROUP BY 1,GROUP BY @a
+oracle,GROUP BY @a GROUP BY 1,GROUP BY @a
 oracle,YEAR(@date),EXTRACT(YEAR FROM @date)
 oracle,MONTH(@date),EXTRACT(MONTH FROM @date)
 oracle,DAY(@date),EXTRACT(DAY FROM @date)

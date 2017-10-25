@@ -1,5 +1,8 @@
 library("testthat")
 
+# For debugging: force reload of patterns:
+# rJava::J("org.ohdsi.sql.SqlTranslate")$setReplacementPatterns("inst/csv/replacementPatterns.csv")
+
 expect_equal_ignore_spaces <- function(string1, string2) {
   string1 <- gsub("([;()'+-/|*\n])", " \\1 ", string1)
   string2 <- gsub("([;()'+-/|*\n])", " \\1 ", string2)
@@ -1002,9 +1005,6 @@ test_that("translateSQL sql server -> bigquery cast decimal", {
  expect_equal_ignore_spaces(sql, "select cast(x as float64) from t")
 })
 
-# For debugging: force reload of patterns:
-# rJava::J("org.ohdsi.sql.SqlTranslate")$setReplacementPatterns("inst/csv/replacementPatterns.csv")
-
 test_that("translateSQL sql server -> RedShift DATEADD dd", {
   sql <- translateSql("SELECT DATEADD(dd, 30, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "SELECT DATEADD(day, CAST(30 as int), drug_era_end_date) FROM drug_era;")
@@ -1851,3 +1851,16 @@ test_that("translateSQL sql server -> redshift CONVERT to TIMESTAMPTZ", {
  targetDialect = "redshift")$sql
  expect_equal_ignore_spaces(sql, "select CONVERT(TIMESTAMP WITH TIME ZONE, start_date) from my_table;")
 })
+
+test_that("translateSQL sql server -> oracle add group by when case count", {
+  sql <- translateSql("SELECT CASE COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1) END AS stat FROM my_table;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT  CASE  COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1)  END AS stat  FROM my_table  GROUP BY 1;")
+})
+
+test_that("translateSQL sql server -> oracle don't add group by when case count but already group by", {
+  sql <- translateSql("SELECT CASE COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1) END AS stat FROM my_table GROUP BY y;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT  CASE  COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1)  END AS stat  FROM my_table GROUP BY y  ;")
+})
+
