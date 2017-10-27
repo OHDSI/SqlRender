@@ -164,6 +164,8 @@ redshift,"OVER (PARTITION BY @a ORDER BY @b ASC)","OVER (PARTITION BY @a ORDER B
 redshift,"OVER (PARTITION BY @a ORDER BY @([^~]+)b)","OVER (PARTITION BY @a ORDER BY @b ASC ROWS UNBOUNDED PRECEDING)"
 redshift,"D~ESC","DESC"
 redshift,"A~SC","ASC"
+redshift,"ROW_NUMBER() OVER (PARTITION BY @a ORDER BY @b ASC ROWS UNBOUNDED PRECEDING)","ROW_NUMBER() OVER (PARTITION BY @a ORDER BY @b ASC)"
+redshift,"ROW_NUMBER() OVER (PARTITION BY @a ORDER BY @b DESC ROWS UNBOUNDED PRECEDING)","ROW_NUMBER() OVER (PARTITION BY @a ORDER BY @b DESC)"
 redshift,"ROUND(@a,@b)","ROUND(CAST(@a AS FLOAT),@b)"
 redshift,"ROUND(@expression,@length,@trunc)","case when @trunc = 0 then ROUND(@expression,@length) else TRUNC(@expression,@length) end"
 redshift,"DATEADD(dd,@days,@date)","DATEADD(day,@days,@date)"
