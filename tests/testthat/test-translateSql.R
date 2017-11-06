@@ -1865,12 +1865,6 @@ test_that("translateSQL sql server -> oracle don't add group by when case count 
 })
 
 test_that("translateSQL sql server -> Redshift partition window function sorted descending", {
-  sql <- translateSql("select sum(count(person_id)) over (partition by procedure_concept_id order by prc_cnt desc) as count_value", 
-                      targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (PARTITION BY procedure_concept_id  ORDER BY prc_cnt  DESC ROWS UNBOUNDED PRECEDING) as count_value")
-})
-
-test_that("translateSQL sql server -> Redshift partition window function sorted descending", {
   sql <- translateSql("select sum(count(person_id)) over (PARTITION BY procedure_concept_id order by prc_cnt desc) as count_value", 
                       targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (PARTITION BY procedure_concept_id  ORDER BY prc_cnt  DESC ROWS UNBOUNDED PRECEDING) as count_value")
@@ -2001,6 +1995,5 @@ test_that("translateSQL sql server -> Redshift window function NTILE no sort spe
                       targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "select NTILE(4) OVER (procedure_concept_id ORDER BY prc_cnt) as num")
 })
-
 
 
