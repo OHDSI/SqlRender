@@ -1,3 +1,14 @@
+SqlRender v1.4.6 (Release date: 2017-11-06)
+===========================================
+
+Changes: 
+
+1. Bigquery support for mismatched string and int arguments in coalesce.
+2. Translate decimal to float for BigQuery.
+3. Created rules to add dummy 'group by' for Oracle statements combining 'case' and 'count' to prevent Oracle from crashing.
+4. Adding 'UNBOUNDED PRECEDING' to RedShift windowing functions.
+
+
 SqlRender v1.4.3 (Release date: 2017-09-15)
 ===========================================
 
