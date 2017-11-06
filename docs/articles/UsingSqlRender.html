@@ -29,7 +29,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -72,7 +72,7 @@
       <h1>Using SqlRender</h1>
                         <h4 class="author">Martijn J. Schuemie</h4>
             
-            <h4 class="date">2017-09-18</h4>
+            <h4 class="date">2017-11-06</h4>
           </div>
 
     
@@ -92,15 +92,15 @@
 <a href="#substituting-parameter-values" class="anchor"></a>Substituting parameter values</h2>
 <p>The <code>@</code> character can be used to indicate parameter names that need to be exchange for actual parameter values when rendering. In the following example, a variable called <code>a</code> is mentioned in the SQL. In the call to the renderSql function the value of this parameter is defined:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT * FROM table WHERE id = @a;"</span>
-<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">a =</span> <span class="dv">123</span>)<span class="op">$</span>sql</code></pre></div>
+<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">a =</span> <span class="dv">123</span>)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 123;"</code></pre>
 <p>Note that, unlike the parameterization offered by most database management systems, it is just as easy to parameterize table or field names as values:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT * FROM @x WHERE id = @a;"</span>
-<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="st">"my_table"</span>, <span class="dt">a =</span> <span class="dv">123</span>)<span class="op">$</span>sql</code></pre></div>
+<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="st">"my_table"</span>, <span class="dt">a =</span> <span class="dv">123</span>)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM my_table WHERE id = 123;"</code></pre>
 <p>The parameter values can be numbers, strings, booleans, as well as vectors, which are converted to comma-delimited lists:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT * FROM table WHERE id IN (@a);"</span>
-<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">a =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))<span class="op">$</span>sql</code></pre></div>
+<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">a =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id IN (1,2,3);"</code></pre>
 </div>
 <div id="default-parameter-values" class="section level2">
@@ -108,13 +108,13 @@
 <a href="#default-parameter-values" class="anchor"></a>Default parameter values</h2>
 <p>For some or all parameters, it might make sense to define default values that will be used unless the user specifies another value. This can be done using the <code>{DEFAULT @parameter = value}</code> syntax:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"</span>
-<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql)<span class="op">$</span>sql</code></pre></div>
+<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 1;"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">a =</span> <span class="dv">2</span>)<span class="op">$</span>sql</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">a =</span> <span class="dv">2</span>)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 2;"</code></pre>
 <p>Defaults for multiple variables can be defined:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"</span>
-<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql)<span class="op">$</span>sql</code></pre></div>
+<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM my_table WHERE id = 1;"</code></pre>
 </div>
 <div id="if-then-else" class="section level2">
@@ -122,19 +122,19 @@
 <a href="#if-then-else" class="anchor"></a>If-then-else</h2>
 <p>Sometimes blocks of codes need to be turned on or off based on the values of one or more parameters. This is done using the <code>{Condition} ? {if true} : {if false}</code> syntax. If the <em>condition</em> evaluates to true or 1, the <em>if true</em> block is used, else the <em>if false</em> block is shown (if present).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT * FROM table {@x} ? {WHERE id = 1}"</span>
-<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="ot">FALSE</span>)<span class="op">$</span>sql</code></pre></div>
+<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="ot">FALSE</span>)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table "</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="ot">TRUE</span>)<span class="op">$</span>sql</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="ot">TRUE</span>)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 1"</code></pre>
 <p>Simple comparisons are also supported:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT * FROM table {@x == 1} ? {WHERE id = 1};"</span>
-<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="dv">1</span>)<span class="op">$</span>sql</code></pre></div>
+<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="dv">1</span>)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 1;"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="dv">2</span>)<span class="op">$</span>sql</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="dv">2</span>)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table ;"</code></pre>
 <p>As well as the <code>IN</code> operator:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1}; "</span>
-<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="dv">2</span>)<span class="op">$</span>sql</code></pre></div>
+<span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="dv">2</span>)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 1; "</code></pre>
 </div>
 </div>
@@ -148,7 +148,7 @@
 <p>A last limitation is that not all functions supported in one dialect have an equivalent in other dialects.</p>
 <p>Below an example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT DATEDIFF(dd,a,b) FROM table; "</span>
-<span class="kw"><a href="../reference/translateSql.html">translateSql</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>)<span class="op">$</span>sql</code></pre></div>
+<span class="kw"><a href="../reference/translateSql.html">translateSql</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>)$sql</code></pre></div>
 <pre><code>#&gt; [1] "SELECT (CAST(b AS DATE) - CAST(a AS DATE))  FROM table ; "</code></pre>
 <p>The <code>targetDialect</code> parameter can have the following values:</p>
 <ul>
@@ -310,8 +310,8 @@
 </ol>
 <p>For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> "SELECT * FROM #children;"</span>
-<span class="kw"><a href="../reference/translateSql.html">translateSql</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>, <span class="dt">oracleTempSchema =</span> <span class="st">"temp_schema"</span>)<span class="op">$</span>sql</code></pre></div>
-<pre><code>#&gt; [1] "SELECT *  FROM temp_schema.vxdxtk7zchildren ;"</code></pre>
+<span class="kw"><a href="../reference/translateSql.html">translateSql</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>, <span class="dt">oracleTempSchema =</span> <span class="st">"temp_schema"</span>)$sql</code></pre></div>
+<pre><code>#&gt; [1] "SELECT *  FROM temp_schema.wei85df1children ;"</code></pre>
 <p>Note that the user will need to have write privileges on <code>temp_schema</code>.</p>
 <p>Also note that because Oracle has a limit on table names of 30 characters, <strong>temp table names are only allowed to be at most 22 characters long</strong> because else the name will become too long after appending the session ID.</p>
 <p>Futhermore, remember that temp tables are not automatically dropped on Oracle, so you will need to explicitly <code>TRUNCATE</code> and <code>DROP</code> all temp tables once you’re done with them to prevent orphan tables accumulating in the Oracle temp schema.</p>
@@ -358,11 +358,11 @@
 <span class="kw">USE</span> @database;
 <span class="kw">SELECT</span> * <span class="kw">FROM</span> person</code></pre></div>
 <p>we can set <code>database = "cdm_data"</code> and the other called <code>databaseSchema = "cdm_data.dbo"</code>. On platforms other than SQL Server, the two variables will hold the same value and only on SQL Server will they be different. Within an R function, it is even possible to derive one variable from the other, so the user of your function would need to specify only one value:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">foo &lt;-<span class="st"> </span><span class="cf">function</span>(databaseSchema, dbms) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">foo &lt;-<span class="st"> </span>function(databaseSchema, dbms) {
     database &lt;-<span class="st"> </span><span class="kw">strsplit</span>(databaseSchema, <span class="st">"</span><span class="ch">\\</span><span class="st">."</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>]
     sql &lt;-<span class="st"> "SELECT * FROM @databaseSchema.person; USE @database; SELECT * FROM person;"</span>
-    sql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">databaseSchema =</span> databaseSchema, <span class="dt">database =</span> database)<span class="op">$</span>sql
-    sql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/translateSql.html">translateSql</a></span>(sql, <span class="dt">targetDialect =</span> dbms)<span class="op">$</span>sql
+    sql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">databaseSchema =</span> databaseSchema, <span class="dt">database =</span> database)$sql
+    sql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/translateSql.html">translateSql</a></span>(sql, <span class="dt">targetDialect =</span> dbms)$sql
     <span class="kw">return</span>(sql)
 }
 <span class="kw">foo</span>(<span class="st">"cdm_data.dbo"</span>, <span class="st">"sql server"</span>)</code></pre></div>
@@ -427,9 +427,9 @@ INTERLEAVED SORTKEY(start_date);</code></pre></div>
 <span class="co">#' @param selectedValue</span>
 <span class="co">#'</span>
 <span class="co">#' @export</span>
-test &lt;-<span class="st"> </span><span class="cf">function</span>(connectionDetails, <span class="dt">selectedValue =</span> <span class="dv">1</span>) {
+test &lt;-<span class="st"> </span>function(connectionDetails, <span class="dt">selectedValue =</span> <span class="dv">1</span>) {
     renderedSql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql</a></span>(<span class="st">"test.txt"</span>, <span class="dt">packageName =</span> <span class="st">"myPackage"</span>, 
-        <span class="dt">dbms =</span> connectionDetails<span class="op">$</span>dbms, <span class="dt">selected_value =</span> selectedValue)
+        <span class="dt">dbms =</span> connectionDetails$dbms, <span class="dt">selected_value =</span> selectedValue)
     conn &lt;-<span class="st"> </span><span class="kw">connect</span>(connectionDetails)
     
     <span class="kw">writeLines</span>(<span class="st">"Executing multiple queries. This could take a while"</span>)
