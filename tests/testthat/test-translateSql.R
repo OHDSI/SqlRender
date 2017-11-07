@@ -12,255 +12,255 @@ expect_equal_ignore_spaces <- function(string1, string2) {
 }
 
 expect_match_ignore_spaces <- function(string1, regexp) {
- string1 <- gsub(" +", " ", string1)
- expect_match(string1, regexp)
+  string1 <- gsub(" +", " ", string1)
+  expect_match(string1, regexp)
 }
 
 test_that("translateSQL sql server -> Oracle DATEDIFF", {
- sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
+  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
 })
 
 
 test_that("translateSQL sql server -> Oracle DATEADD", {
- sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'day')) FROM drug_era;")
+  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'day')) FROM drug_era;")
 })
 
 test_that("translateSQL sql server -> Oracle USE", {
- sql <- translateSql("USE vocabulary;", targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "ALTER SESSION SET current_schema = vocabulary;")
+  sql <- translateSql("USE vocabulary;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "ALTER SESSION SET current_schema = vocabulary;")
 })
 
 test_that("translateSQL sql server -> Oracle DROP TABLE IF EXISTS", {
- sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "BEGIN\n EXECUTE IMMEDIATE 'TRUNCATE TABLE cohort';\n EXECUTE IMMEDIATE 'DROP TABLE cohort';\nEXCEPTION\n WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;")
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "BEGIN\n EXECUTE IMMEDIATE 'TRUNCATE TABLE cohort';\n EXECUTE IMMEDIATE 'DROP TABLE cohort';\nEXCEPTION\n WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;")
 })
 
 
 test_that("translateSQL sql server -> Oracle CAST(AS DATE)", {
- sql <- translateSql("CAST('20000101' AS DATE);",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "CAST('20000101' AS DATE);")
+  sql <- translateSql("CAST('20000101' AS DATE);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "CAST('20000101' AS DATE);")
 })
 
 test_that("translateSQL sql server -> Oracle CONVERT(AS DATE)", {
- sql <- translateSql("CONVERT(DATE, '20000101');",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'yyyymmdd');")
+  sql <- translateSql("CONVERT(DATE, '20000101');",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'yyyymmdd');")
 })
 
 test_that("translateSQL sql server -> Oracle concatenate string operator", {
- sql <- translateSql("select distinct cast(cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01' as date) as obs_year;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT distinct cast(TO_CHAR(EXTRACT(YEAR FROM observation_period_start_date) ) || '01' || '01' as date) as obs_year FROM DUAL;")
+  sql <- translateSql("select distinct cast(cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01' as date) as obs_year;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT distinct cast(TO_CHAR(EXTRACT(YEAR FROM observation_period_start_date) ) || '01' || '01' as date) as obs_year FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle RIGHT functions", {
- sql <- translateSql("select RIGHT(x,4);",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x,-4) FROM DUAL;")
+  sql <- translateSql("select RIGHT(x,4);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x,-4) FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle complex query", {
- sql <- translateSql("select CAST(CAST(YEAR(x) AS VARCHAR(12)) + RIGHT('0'+MONTH(x),2) + '01' AS DATE);",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT CAST(TO_CHAR(EXTRACT(YEAR FROM x)  ) || SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' AS DATE) FROM DUAL;")
+  sql <- translateSql("select CAST(CAST(YEAR(x) AS VARCHAR(12)) + RIGHT('0'+MONTH(x),2) + '01' AS DATE);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT CAST(TO_CHAR(EXTRACT(YEAR FROM x)  ) || SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' AS DATE) FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle '+' in quote", {
- sql <- translateSql("select '+';", targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT '+' FROM DUAL;")
+  sql <- translateSql("select '+';", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT '+' FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> PostgreSQL USE", {
- sql <- translateSql("USE vocabulary;",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "SET search_path TO vocabulary;")
+  sql <- translateSql("USE vocabulary;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SET search_path TO vocabulary;")
 })
 
 test_that("translateSQL sql server -> PostgreSQL string concat", {
- sql <- translateSql("'x' + b ( 'x' + b)",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "'x' || b ( 'x' || b)")
+  sql <- translateSql("'x' + b ( 'x' + b)",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "'x' || b ( 'x' || b)")
 })
 
 test_that("translateSQL sql server -> PostgreSQL string concat", {
- sql <- translateSql("a + ';b'", targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "a || ';b'")
+  sql <- translateSql("a + ';b'", targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "a || ';b'")
 })
 
 test_that("translateSQL sql server -> PostgreSQL string concat", {
- sql <- translateSql("a + ';('", targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "a || ';('")
+  sql <- translateSql("a + ';('", targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "a || ';('")
 })
 
 
 test_that("translateSQL sql server -> PostgreSQL add month", {
- sql <- translateSql("DATEADD(mm,1,date)",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "(date + 1*INTERVAL'1 month')")
+  sql <- translateSql("DATEADD(mm,1,date)",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "(date + 1*INTERVAL'1 month')")
 })
 
 test_that("translateSQL sql server -> Oracle multiple inserts in one statement", {
- sql <- translateSql("INSERT INTO my_table (key,value) VALUES (1,0),(2,0),(3,1)",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "INSERT ALL\nINTO my_table   (key,value) VALUES (1,0)\n INTO my_table  (key,value) VALUES (2,0)\n)\n INTO my_table   (key,value) VALUES (3,1)\nSELECT * FROM dual")
+  sql <- translateSql("INSERT INTO my_table (key,value) VALUES (1,0),(2,0),(3,1)",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "INSERT ALL\nINTO my_table   (key,value) VALUES (1,0)\n INTO my_table  (key,value) VALUES (2,0)\n)\n INTO my_table   (key,value) VALUES (3,1)\nSELECT * FROM dual")
 })
 
 test_that("translateSQL sql server -> RedShift VARCHAR(MAX)", {
- sql <- translateSql("VARCHAR(MAX)", targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "VARCHAR(MAX)")
+  sql <- translateSql("VARCHAR(MAX)", targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "VARCHAR(MAX)")
 })
 
 test_that("translateSQL sql server -> Postgres WITH SELECT", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
 })
 
 test_that("translateSQL sql server -> Postgres WITH SELECT INTO", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql,
- "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql,
+                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
 })
 
 test_that("translateSQL sql server -> Postgres WITH SELECT INTO without FROM", {
- sql <- translateSql("SELECT c INTO d;",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "CREATE TABLE d AS\nSELECT\nc ;")
+  sql <- translateSql("SELECT c INTO d;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE d AS\nSELECT\nc ;")
 })
 
 
 test_that("translateSQL sql server -> Postgres WITH INSERT INTO SELECT", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;")
 })
 
 test_that("translateSQL sql server -> Oracle WITH SELECT", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
 })
 
 test_that("translateSQL sql server -> Oracle WITH SELECT INTO", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
 })
 
 test_that("translateSQL sql server -> Oracle WITH INSERT INTO SELECT", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "INSERT INTO c (d int)  WITH cte1 AS (SELECT a FROM b)  SELECT e FROM cte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "INSERT INTO c (d int)  WITH cte1 AS (SELECT a FROM b)  SELECT e FROM cte1;")
 })
 
 test_that("translateSQL sql server -> PDW WITH SELECT INTO", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE d WITH (DISTRIBUTION = REPLICATE)\nAS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE d WITH (DISTRIBUTION = REPLICATE)\nAS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
 })
 
 test_that("translateSQL sql server -> PDW WITH SELECT INTO temp table", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO #d FROM cte1;",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #d   WITH (LOCATION = USER_DB, DISTRIBUTION = REPLICATE) AS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO #d FROM cte1;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE  #d   WITH (LOCATION = USER_DB, DISTRIBUTION = REPLICATE) AS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
 })
 
 test_that("translateSQL sql server -> PDW create temp table", {
- sql <- translateSql("CREATE TABLE #a (x int);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE #a (x int)\nWITH (LOCATION = USER_DB, DISTRIBUTION = REPLICATE);")
+  sql <- translateSql("CREATE TABLE #a (x int);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE #a (x int)\nWITH (LOCATION = USER_DB, DISTRIBUTION = REPLICATE);")
 })
 
 test_that("translateSQL sql server -> PDW create temp table with person_id", {
- sql <- translateSql("CREATE TABLE #a (person_id int);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE #a ( person_id int)\nWITH (LOCATION = USER_DB, DISTRIBUTION = HASH(person_id));")
+  sql <- translateSql("CREATE TABLE #a (person_id int);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE #a ( person_id int)\nWITH (LOCATION = USER_DB, DISTRIBUTION = HASH(person_id));")
 })
 
 test_that("translateSQL sql server -> PDW create temp table with subject_id", {
- sql <- translateSql("CREATE TABLE #a (subject_id int);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE #a ( subject_id int)\nWITH (LOCATION = USER_DB, DISTRIBUTION = HASH(subject_id));")
+  sql <- translateSql("CREATE TABLE #a (subject_id int);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE #a ( subject_id int)\nWITH (LOCATION = USER_DB, DISTRIBUTION = HASH(subject_id));")
 })
 
 test_that("translateSQL sql server -> PDW create temp table with analysis_id", {
- sql <- translateSql("CREATE TABLE #a (analysis_id int);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE #a ( analysis_id int)\nWITH (LOCATION = USER_DB, DISTRIBUTION = HASH(analysis_id));")
+  sql <- translateSql("CREATE TABLE #a (analysis_id int);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE #a ( analysis_id int)\nWITH (LOCATION = USER_DB, DISTRIBUTION = HASH(analysis_id));")
 })
 
 test_that("translateSQL sql server -> PDW create permanent table", {
- sql <- translateSql("CREATE TABLE a (x int);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a (x int)\nWITH (DISTRIBUTION = REPLICATE);")
+  sql <- translateSql("CREATE TABLE a (x int);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a (x int)\nWITH (DISTRIBUTION = REPLICATE);")
 })
 
 test_that("translateSQL sql server -> PDW create permanent table with person_id", {
- sql <- translateSql("CREATE TABLE a (person_id int);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a ( person_id int)\nWITH (DISTRIBUTION = HASH(person_id));")
+  sql <- translateSql("CREATE TABLE a (person_id int);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a ( person_id int)\nWITH (DISTRIBUTION = HASH(person_id));")
 })
 
 test_that("translateSQL sql server -> PDW create permanent table with subject_id", {
- sql <- translateSql("CREATE TABLE a (subject_id int);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a ( subject_id int)\nWITH (DISTRIBUTION = HASH(subject_id));")
+  sql <- translateSql("CREATE TABLE a (subject_id int);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a ( subject_id int)\nWITH (DISTRIBUTION = HASH(subject_id));")
 })
 
 test_that("translateSQL sql server -> PDW create permanent table with analysis_id", {
- sql <- translateSql("CREATE TABLE a (analysis_id int);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a ( analysis_id int)\nWITH (DISTRIBUTION = HASH(analysis_id));")
+  sql <- translateSql("CREATE TABLE a (analysis_id int);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a ( analysis_id int)\nWITH (DISTRIBUTION = HASH(analysis_id));")
 })
 
 test_that("translateSQL sql server -> PDW select into permanent table", {
- sql <- translateSql("SELECT a INTO b FROM c WHERE a = 1;",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n a \nFROM\n c WHERE a = 1;")
+  sql <- translateSql("SELECT a INTO b FROM c WHERE a = 1;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n a \nFROM\n c WHERE a = 1;")
 })
 
 test_that("translateSQL sql server -> PDW select into permanent table with person_id", {
- sql <- translateSql("SELECT a, person_id, b INTO b FROM c WHERE a = 1;",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE b WITH (DISTRIBUTION = HASH(person_id))\nAS\nSELECT\n a, person_id, b \nFROM\n c WHERE a = 1;")
+  sql <- translateSql("SELECT a, person_id, b INTO b FROM c WHERE a = 1;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE b WITH (DISTRIBUTION = HASH(person_id))\nAS\nSELECT\n a, person_id, b \nFROM\n c WHERE a = 1;")
 })
 
 test_that("translateSQL sql server -> PDW select into permanent table with analysis_id", {
- sql <- translateSql("SELECT a, analysis_id, b INTO b FROM c WHERE a = 1;",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "IF XACT_STATE() = 1 COMMIT; CREATE TABLE b WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n a, analysis_id, b \nFROM\n c WHERE a = 1;")
+  sql <- translateSql("SELECT a, analysis_id, b INTO b FROM c WHERE a = 1;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE b WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n a, analysis_id, b \nFROM\n c WHERE a = 1;")
 })
 
 test_that("translateSQL sql server -> Postgres create table if not exists", {
- sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS cohort\n (cohort_definition_id INT);")
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS cohort\n (cohort_definition_id INT);")
 })
 
 test_that("translateSQL sql server -> Redshift create table if not exists", {
@@ -270,302 +270,302 @@ test_that("translateSQL sql server -> Redshift create table if not exists", {
 })
 
 test_that("translateSQL sql server -> Oracle create table if not exists", {
- sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "BEGIN\n EXECUTE IMMEDIATE 'CREATE TABLE cohort\n (cohort_definition_id INT)';\nEXCEPTION\n WHEN OTHERS THEN\n IF SQLCODE != -955 THEN\n RAISE;\n END IF;\nEND;")
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "BEGIN\n EXECUTE IMMEDIATE 'CREATE TABLE cohort\n (cohort_definition_id INT)';\nEXCEPTION\n WHEN OTHERS THEN\n IF SQLCODE != -955 THEN\n RAISE;\n END IF;\nEND;")
 })
 
 test_that("translateSQL sql server -> Oracle datefromparts", {
- sql <- translateSql("SELECT DATEFROMPARTS(year,month,day) FROM table",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT TO_DATE(TO_CHAR(year,'0000')||'-'||TO_CHAR(month,'00')||'-'||TO_CHAR(day,'00'), 'YYYY-MM-DD') FROM table")
+  sql <- translateSql("SELECT DATEFROMPARTS(year,month,day) FROM table",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT TO_DATE(TO_CHAR(year,'0000')||'-'||TO_CHAR(month,'00')||'-'||TO_CHAR(day,'00'), 'YYYY-MM-DD') FROM table")
 })
 
 test_that("translateSQL sql server -> redshift datefromparts", {
   sql <- translateSql("SELECT DATEFROMPARTS(year,month,day) FROM table",
                       targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql,
-               "SELECT TO_DATE(TO_CHAR(year,'0000FM')||'-'||TO_CHAR(month,'00FM')||'-'||TO_CHAR(day,'00FM'), 'YYYY-MM-DD') FROM table")
+                             "SELECT TO_DATE(TO_CHAR(year,'0000FM')||'-'||TO_CHAR(month,'00FM')||'-'||TO_CHAR(day,'00FM'), 'YYYY-MM-DD') FROM table")
 })
 
 
 test_that("translateSQL sql server -> Oracle datetime to timestamp", {
- sql <- translateSql("CREATE TABLE x (a DATETIME)",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "CREATE TABLE x (a TIMESTAMP)")
+  sql <- translateSql("CREATE TABLE x (a DATETIME)",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE x (a TIMESTAMP)")
 })
 
 test_that("translateSQL sql server -> Oracle select random row", {
- sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY DBMS_RANDOM.VALUE) AS rn FROM table ) tmp WHERE rn <= 1")
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY DBMS_RANDOM.VALUE) AS rn FROM table ) tmp WHERE rn <= 1")
 })
 
 test_that("translateSQL sql server -> Postgres select random row", {
- sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn FROM table) tmp WHERE rn <= 1")
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn FROM table) tmp WHERE rn <= 1")
 })
 
 test_that("translateSQL sql server -> Redshift select random row", {
- sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn FROM table) tmp WHERE rn <= 1")
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn FROM table) tmp WHERE rn <= 1")
 })
 
 test_that("translateSQL sql server -> Oracle select random row using hash", {
- sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY DBMS_CRYPTO.HASH(TO_CHAR(person_id ),2)) tmp WHERE rn <= 1")
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY DBMS_CRYPTO.HASH(TO_CHAR(person_id ),2)) tmp WHERE rn <= 1")
 })
 
 test_that("translateSQL sql server -> Postgres select random row using hash", {
- sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY MD5(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY MD5(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
 })
 
 test_that("translateSQL sql server -> Redshift select random row using hash", {
- sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY MD5(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
+  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY MD5(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
 })
 
 test_that("translateSQL sql server -> PDW cte with preceding 'with' in quotes", {
- sql <- translateSql("insert into x (a) values ('with'); with cte (a) as(select a from b) select a INTO #c from cte;",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql,
- "insert into x (a) values ('with'); IF XACT_STATE() = 1 COMMIT; CREATE TABLE #c WITH (LOCATION = USER_DB, DISTRIBUTION = REPLICATE) AS\nWITH cte (a) AS (select a from b) SELECT\n a \nFROM\n cte;")
+  sql <- translateSql("insert into x (a) values ('with'); with cte (a) as(select a from b) select a INTO #c from cte;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql,
+                             "insert into x (a) values ('with'); IF XACT_STATE() = 1 COMMIT; CREATE TABLE #c WITH (LOCATION = USER_DB, DISTRIBUTION = REPLICATE) AS\nWITH cte (a) AS (select a from b) SELECT\n a \nFROM\n cte;")
 })
 
 test_that("translateSQL sql server throws error when invalid target is given", {
- expect_error(translateSql("iSELECT * FROM a;", targetDialect = "pwd")$sql)
+  expect_error(translateSql("iSELECT * FROM a;", targetDialect = "pwd")$sql)
 })
 
 
 test_that("translateSQL select into issue for pdw", {
- sql <- "SELECT @c1 INTO table FROM @c2 WHERE a = 1;"
- sql <- translateSql(sql, targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE table WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n @c1 \nFROM\n @c2 WHERE a = 1;")
+  sql <- "SELECT @c1 INTO table FROM @c2 WHERE a = 1;"
+  sql <- translateSql(sql, targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE table WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n @c1 \nFROM\n @c2 WHERE a = 1;")
 })
 
 
 
 test_that("translateSQL ## issue on oracle", {
- sql <- "SELECT a FROM c##blah.table;"
- sql <- translateSql(sql, targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT a FROM c##blah.table;")
+  sql <- "SELECT a FROM c##blah.table;"
+  sql <- translateSql(sql, targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a FROM c##blah.table;")
 })
 
 # Impala tests
 
 test_that("translateSQL sql server -> Impala USE", {
- sql <- translateSql("USE vocabulary;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "USE vocabulary;")
+  sql <- translateSql("USE vocabulary;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "USE vocabulary;")
 })
 
 test_that("translateSQL sql server -> Impala CAST(AS DATE)", {
- sql <- translateSql("CAST('20000101' AS DATE);",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "CASE TYPEOF('20000101' ) WHEN 'TIMESTAMP' THEN CAST('20000101'  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST('20000101'  AS STRING), 1, 4), SUBSTR(CAST('20000101'  AS STRING), 5, 2), SUBSTR(CAST('20000101'  AS STRING), 7, 2)), 'UTC') END;")
+  sql <- translateSql("CAST('20000101' AS DATE);",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "CASE TYPEOF('20000101' ) WHEN 'TIMESTAMP' THEN CAST('20000101'  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST('20000101'  AS STRING), 1, 4), SUBSTR(CAST('20000101'  AS STRING), 5, 2), SUBSTR(CAST('20000101'  AS STRING), 7, 2)), 'UTC') END;")
 })
 
 test_that("translateSQL sql server -> Impala DATEDIFF", {
- sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, CASE TYPEOF(drug_era_start_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_start_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_start_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_start_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_start_date  AS STRING), 7, 2)), 'UTC') END) FROM drug_era;")
+  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, CASE TYPEOF(drug_era_start_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_start_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_start_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_start_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_start_date  AS STRING), 7, 2)), 'UTC') END) FROM drug_era;")
 })
 
 test_that("translateSQL sql server -> Impala DATEADD", {
- sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "SELECT DATE_ADD(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, 30) FROM drug_era;")
+  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "SELECT DATE_ADD(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, 30) FROM drug_era;")
 })
 
 test_that("translateSQL sql server -> Impala WITH SELECT", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
 })
 
 test_that("translateSQL sql server -> Impala WITH SELECT INTO", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql,
- "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql,
+                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;")
 })
 
 test_that("translateSQL sql server -> Impala WITH SELECT INTO without FROM", {
- sql <- translateSql("SELECT c INTO d;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "CREATE TABLE d AS\nSELECT\n c;")
+  sql <- translateSql("SELECT c INTO d;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE d AS\nSELECT\n c;")
 })
 
 test_that("translateSQL sql server -> Impala create table if not exists", {
- sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS cohort\n (cohort_definition_id INT);")
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS cohort\n (cohort_definition_id INT);")
 })
 
 test_that("translateSQL sql server -> Impala DROP TABLE IF EXISTS", {
- sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql,
- "DROP TABLE IF EXISTS cohort;")
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql,
+                             "DROP TABLE IF EXISTS cohort;")
 })
 
 test_that("translateSQL sql server -> Impala UNION ORDER BY", {
- sql <- translateSql("(SELECT a FROM b UNION SELECT a FROM c) ORDER BY a",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql,
- "SELECT * FROM \n ( SELECT a FROM b \n UNION \n SELECT a FROM c ) \n AS t1 ORDER BY a")
+  sql <- translateSql("(SELECT a FROM b UNION SELECT a FROM c) ORDER BY a",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql,
+                             "SELECT * FROM \n ( SELECT a FROM b \n UNION \n SELECT a FROM c ) \n AS t1 ORDER BY a")
 })
 
 test_that("translateSQL sql server -> Impala RIGHT functions", {
- sql <- translateSql("SELECT RIGHT(x,4);",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x,-4);")
+  sql <- translateSql("SELECT RIGHT(x,4);",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x,-4);")
 })
 
 test_that("translateSQL sql server -> Impala DELETE FROM", {
- sql <- translateSql("delete from ACHILLES_results;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "TRUNCATE TABLE ACHILLES_results;")
+  sql <- translateSql("delete from ACHILLES_results;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "TRUNCATE TABLE ACHILLES_results;")
 })
 
 test_that("translateSQL sql server -> Impala DELETE FROM WHERE", {
- sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
- targetDialect = "impala")$sql
- expect_match_ignore_spaces(sql, "CREATE TABLE \\w+tmp AS SELECT \\* FROM ACHILLES_results WHERE NOT\\(analysis_id IN \\(1, 2, 3\\)\\); INSERT OVERWRITE TABLE ACHILLES_results SELECT \\* from \\w+tmp; DROP TABLE \\w+tmp;")
+  sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
+                      targetDialect = "impala")$sql
+  expect_match_ignore_spaces(sql, "CREATE TABLE \\w+tmp AS SELECT \\* FROM ACHILLES_results WHERE NOT\\(analysis_id IN \\(1, 2, 3\\)\\); INSERT OVERWRITE TABLE ACHILLES_results SELECT \\* from \\w+tmp; DROP TABLE \\w+tmp;")
 })
 
 test_that("translateSQL sql server -> Impala location reserved word", {
- sql <- translateSql("select count(1) from omop_cdm.location;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "select count(1) from omop_cdm.`location`;")
+  sql <- translateSql("select count(1) from omop_cdm.location;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "select count(1) from omop_cdm.`location`;")
 })
 
 test_that("translateSQL sql server -> Impala CREATE TABLE with NOT NULL", {
- sql <- translateSql("CREATE TABLE a (c1 BIGINT NOT NULL, c2 BOOLEAN NOT NULL, c3 CHAR NOT NULL, c4 DECIMAL NOT NULL, c5 DOUBLE NOT NULL, c6 FLOAT NOT NULL, c7 INT NOT NULL, c8 REAL NOT NULL, c9 SMALLINT NOT NULL, c10 STRING NOT NULL, c11 TIMESTAMP NOT NULL, c12 TINYINT NOT NULL, c13 VARCHAR(10) NOT NULL)",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "CREATE TABLE a (c1 BIGINT, c2 BOOLEAN, c3 CHAR, c4 DECIMAL, c5 DOUBLE, c6 FLOAT, c7 INT, c8 REAL, c9 SMALLINT, c10 STRING, c11 TIMESTAMP, c12 TINYINT, c13 VARCHAR(10))")
+  sql <- translateSql("CREATE TABLE a (c1 BIGINT NOT NULL, c2 BOOLEAN NOT NULL, c3 CHAR NOT NULL, c4 DECIMAL NOT NULL, c5 DOUBLE NOT NULL, c6 FLOAT NOT NULL, c7 INT NOT NULL, c8 REAL NOT NULL, c9 SMALLINT NOT NULL, c10 STRING NOT NULL, c11 TIMESTAMP NOT NULL, c12 TINYINT NOT NULL, c13 VARCHAR(10) NOT NULL)",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE a (c1 BIGINT, c2 BOOLEAN, c3 CHAR, c4 DECIMAL, c5 DOUBLE, c6 FLOAT, c7 INT, c8 REAL, c9 SMALLINT, c10 STRING, c11 TIMESTAMP, c12 TINYINT, c13 VARCHAR(10))")
 })
 
 test_that("translateSQL sql server -> Impala clause with NOT NULL", {
- sql <- translateSql("SELECT * FROM x WHERE y IS NOT NULL",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "SELECT * FROM x WHERE y IS NOT NULL")
+  sql <- translateSql("SELECT * FROM x WHERE y IS NOT NULL",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "SELECT * FROM x WHERE y IS NOT NULL")
 })
 
 
 # Netezza tests
 
 test_that("translateSQL sql server -> Netezza CAST(AS DATE)", {
- sql <- translateSql("CAST('20000101' AS DATE);",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql, "TO_DATE('20000101' , 'yyyymmdd');")
+  sql <- translateSql("CAST('20000101' AS DATE);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "TO_DATE('20000101' , 'yyyymmdd');")
 })
 
 test_that("translateSQL sql server -> Netezza DATEDIFF", {
- sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql, "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
+  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
 })
 
 test_that("translateSQL sql server -> Netezza DATEADD", {
- sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql, "SELECT (drug_era_end_date + 30) FROM drug_era;")
+  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "SELECT (drug_era_end_date + 30) FROM drug_era;")
 })
 
 test_that("translateSQL sql server -> Netezza WITH SELECT", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
 })
 
 test_that("translateSQL sql server -> Netezza WITH SELECT INTO", {
- sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql,
- "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;")
+  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;")
 })
 
 test_that("translateSQL sql server -> Netezza DROP TABLE IF EXISTS", {
- sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql,
- "DROP TABLE cohort IF EXISTS;")
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "DROP TABLE cohort IF EXISTS;")
 })
 
 test_that("translateSQL sql server -> Netezza RIGHT functions", {
- sql <- translateSql("SELECT RIGHT(x,4);",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql, "SELECT STRRIGHT(x,4);")
+  sql <- translateSql("SELECT RIGHT(x,4);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "SELECT STRRIGHT(x,4);")
 })
 
 test_that("translateSQL sql server -> Netezza DELETE FROM WHERE", {
- sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql, "delete from ACHILLES_results where analysis_id IN (1, 2, 3);")
+  sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "delete from ACHILLES_results where analysis_id IN (1, 2, 3);")
 })
 
 test_that("translateSQL sql server -> Netezza CAST AS VARCHAR", {
- sql <- translateSql("CAST(person_id AS VARCHAR);",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql, "CAST(person_id AS VARCHAR(1000));")
+  sql <- translateSql("CAST(person_id AS VARCHAR);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "CAST(person_id AS VARCHAR(1000));")
 })
 
 test_that("translateSQL sql server -> PostgreSql TOP", {
- sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
+  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
 })
 
 test_that("translateSQL sql server -> Oracle TOP", {
- sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b AND ROWNUM <= 10; ")
+  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b AND ROWNUM <= 10; ")
 })
 
 test_that("translateSQL sql server -> impala TOP", {
- sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
- targetDialect = "impala")$sql
- expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
+  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
 })
 
 test_that("translateSQL sql server -> redshift TOP", {
- sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
- targetDialect = "netezza")$sql
- expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
+  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
 })
 
 test_that("translateSQL sql server -> postgres date to varchar", {
- sql <- translateSql("SELECT CONVERT(VARCHAR,start_date,112) FROM table;",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "SELECT TO_CHAR(start_date, 'YYYYMMDD') FROM table;")
+  sql <- translateSql("SELECT CONVERT(VARCHAR,start_date,112) FROM table;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT TO_CHAR(start_date, 'YYYYMMDD') FROM table;")
 })
 
 
 test_that("translateSQL sql server -> pdw hint distribute_on_key", {
- sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> pdw hint distribute_on_key", {
- sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE (row_id INT)\nWITH (DISTRIBUTION = HASH(row_id));")
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE(row_id INT);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE (row_id INT)\nWITH (DISTRIBUTION = HASH(row_id));")
 })
 
 
@@ -576,90 +576,90 @@ test_that("translateSQL sql server -> redshift hint distribute_on_key", {
 })
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
- sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE my_table (row_id INT);",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE my_table (row_id INT)\nDISTKEY(row_id);")
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE my_table (row_id INT);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE my_table (row_id INT)\nDISTKEY(row_id);")
 })
 
 test_that("translateSql: warning on temp table name that is too long", {
- expect_warning(translateSql("SELECT * FROM #abcdefghijklmnopqrstuvwxyz", "pdw")$sql)
+  expect_warning(translateSql("SELECT * FROM #abcdefghijklmnopqrstuvwxyz", "pdw")$sql)
 })
 
 test_that("translateSql: warning on table name that is too long", {
- expect_warning(translateSql("DROP TABLE abcdefghijklmnopqrstuvwxyz123456789", "pdw")$sql)
+  expect_warning(translateSql("DROP TABLE abcdefghijklmnopqrstuvwxyz123456789", "pdw")$sql)
 })
 
 
 test_that("translateSQL sql server -> oracle concat", {
- sql <- translateSql("SELECT CONCAT(a,\" , \",c,d,e) FROM x;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT CONCAT(a, CONCAT(\" , \", CONCAT( c, CONCAT( d, e)))) FROM x;")
+  sql <- translateSql("SELECT CONCAT(a,\" , \",c,d,e) FROM x;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT CONCAT(a, CONCAT(\" , \", CONCAT( c, CONCAT( d, e)))) FROM x;")
 })
 
 test_that("translateSQL sql server -> oracle natural log", {
- sql <- translateSql("SELECT LOG(number) FROM table",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT LOG(2.718281828459,number) FROM table")
+  sql <- translateSql("SELECT LOG(number) FROM table",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT LOG(2.718281828459,number) FROM table")
 })
 
 test_that("translateSQL sql server -> oracle log base 10", {
- sql <- translateSql("SELECT LOG10(number) FROM table;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT LOG(10,number) FROM table;")
+  sql <- translateSql("SELECT LOG10(number) FROM table;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT LOG(10,number) FROM table;")
 })
 
 test_that("translateSQL sql server -> oracle log any base", {
- sql <- translateSql("SELECT LOG(number, base) FROM table",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT LOG( base,number) FROM table")
+  sql <- translateSql("SELECT LOG(number, base) FROM table",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT LOG( base,number) FROM table")
 })
 
 test_that("translateSQL sql server -> redshift natural log", {
- sql <- translateSql("SELECT LOG(number) FROM table",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "SELECT LN(CAST((number) AS REAL)) FROM table")
+  sql <- translateSql("SELECT LOG(number) FROM table",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT LN(CAST((number) AS REAL)) FROM table")
 })
 
 test_that("translateSQL sql server -> redshift log base 10", {
- sql <- translateSql("SELECT LOG10(number) FROM table;",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "SELECT LOG(CAST((number) AS REAL)) FROM table;")
+  sql <- translateSql("SELECT LOG10(number) FROM table;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT LOG(CAST((number) AS REAL)) FROM table;")
 })
 
 test_that("translateSQL sql server -> redshift log any base", {
- sql <- translateSql("SELECT LOG(number, base) FROM table",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "SELECT (LN(CAST((number) AS REAL))/LN(CAST(( base) AS REAL))) FROM table")
+  sql <- translateSql("SELECT LOG(number, base) FROM table",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "SELECT (LN(CAST((number) AS REAL))/LN(CAST(( base) AS REAL))) FROM table")
 })
 
 test_that("translateSQL sql server -> postgresql natural log", {
- sql <- translateSql("SELECT LOG(number) FROM table",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "SELECT LN(CAST((number) AS REAL)) FROM table")
+  sql <- translateSql("SELECT LOG(number) FROM table",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT LN(CAST((number) AS REAL)) FROM table")
 })
 
 test_that("translateSQL sql server -> postgresql log base 10", {
- sql <- translateSql("SELECT LOG10(number) FROM table;",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "SELECT LOG(10,CAST((number) AS NUMERIC)) FROM table;")
+  sql <- translateSql("SELECT LOG10(number) FROM table;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT LOG(10,CAST((number) AS NUMERIC)) FROM table;")
 })
 
 test_that("translateSQL sql server -> postgresql log any base", {
- sql <- translateSql("SELECT LOG(number, base) FROM table",
- targetDialect = "postgresql")$sql
- expect_equal_ignore_spaces(sql, "SELECT LOG(CAST(( base) AS NUMERIC),CAST((number) AS NUMERIC)) FROM table")
+  sql <- translateSql("SELECT LOG(number, base) FROM table",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT LOG(CAST(( base) AS NUMERIC),CAST((number) AS NUMERIC)) FROM table")
 })
 
 test_that("translateSQL sql server -> oracle union 1", {
- sql <- translateSql("SELECT * FROM table1 WHERE a = 1 UNION SELECT * FROM table2 WHERE a = 1;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT * FROM table1 WHERE a = 1 UNION SELECT * FROM table2 WHERE a = 1;")
+  sql <- translateSql("SELECT * FROM table1 WHERE a = 1 UNION SELECT * FROM table2 WHERE a = 1;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT * FROM table1 WHERE a = 1 UNION SELECT * FROM table2 WHERE a = 1;")
 })
 
 test_that("translateSQL sql server -> oracle union 2", {
- sql <- translateSql("SELECT * FROM table1 UNION SELECT * FROM table2 WHERE a = 1;",
- targetDialect = "oracle")$sql
- expect_equal_ignore_spaces(sql, "SELECT * FROM table1 UNION SELECT * FROM table2 WHERE a = 1;")
+  sql <- translateSql("SELECT * FROM table1 UNION SELECT * FROM table2 WHERE a = 1;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT * FROM table1 UNION SELECT * FROM table2 WHERE a = 1;")
 })
 
 test_that("translateSQL sql server -> oracle from dual", {
@@ -688,321 +688,321 @@ test_that("translateSQL sql server -> postgres ISNUMERIC", {
 })
 
 test_that("translateSQL sql server -> bigquery lowercase all but strings", {
- sql <- translateSql("SELECT X.Y, 'Mixed Case String' FROM \"MixedCaseTableName.T\" GROUP BY X.Y",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select x.y, 'Mixed Case String' from \"MixedCaseTableName.T\" group by x.y ")
+  sql <- translateSql("SELECT X.Y, 'Mixed Case String' FROM \"MixedCaseTableName.T\" GROUP BY X.Y",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select x.y, 'Mixed Case String' from \"MixedCaseTableName.T\" group by x.y ")
 })
 
 test_that("translateSQL sql server -> bigquery common table expression column list", {
- sql <- translateSql("with cte(x, y, z) as (select c1, c2 as y, c3 as r from t) select x, y, z from cte;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "with cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
+  sql <- translateSql("with cte(x, y, z) as (select c1, c2 as y, c3 as r from t) select x, y, z from cte;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "with cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
 })
 
 test_that("translateSQL sql server -> bigquery multiple common table expression column list", {
- sql <- translateSql("with cte1 as (select 2), cte(x, y, z) as (select c1, c2 as y, c3 as r from t) select x, y, z from cte;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "with cte1 as (select 2), cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
+  sql <- translateSql("with cte1 as (select 2), cte(x, y, z) as (select c1, c2 as y, c3 as r from t) select x, y, z from cte;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "with cte1 as (select 2), cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
 })
 
 test_that("translateSQL sql server -> bigquery group by function", {
- sql <- translateSql("select f(a), count(*) from t group by f(a);",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select f(a), count(*) from t group by 1;")
+  sql <- translateSql("select f(a), count(*) from t group by f(a);",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select f(a), count(*) from t group by 1;")
 })
 
 test_that("translateSQL sql server -> bigquery group by addition", {
- sql <- translateSql("select 100, sum(x), cast(a+b as string) from t group by a+b;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, sum(x), cast(a+b as string) from t group by 3;")
+  sql <- translateSql("select 100, sum(x), cast(a+b as string) from t group by a+b;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select 100, sum(x), cast(a+b as string) from t group by 3;")
 })
 
 test_that("translateSQL sql server -> bigquery column ref groupby", {
- sql <- translateSql("select 100, sum(x), cast(a+b as string) from t group by t.a, t.b;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, sum(x), cast(a+b as string) from t group by t.a, t.b;")
+  sql <- translateSql("select 100, sum(x), cast(a+b as string) from t group by t.a, t.b;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select 100, sum(x), cast(a+b as string) from t group by t.a, t.b;")
 })
 
 test_that("translateSQL sql server -> bigquery group by without match", {
- sql <- translateSql("select 100, sum(x), concat('count = ', c) from t group by a+b;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, sum(x), concat('count = ', c) from t group by a + b;")
+  sql <- translateSql("select 100, sum(x), concat('count = ', c) from t group by a+b;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select 100, sum(x), concat('count = ', c) from t group by a + b;")
 })
 
 test_that("translateSQL sql server -> bigquery group by without final semicolon", {
- sql <- translateSql("select f(a) from t group by f(a)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select f(a) from t group by 1 ")
+  sql <- translateSql("select f(a) from t group by f(a)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select f(a) from t group by 1 ")
 })
 
 test_that("translateSQL sql server -> bigquery order by", {
- sql <- translateSql("select f(a) from t group by f(a) order by f(a);",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select f(a) from t group by 1 order by 1;")
+  sql <- translateSql("select f(a) from t group by f(a) order by f(a);",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select f(a) from t group by 1 order by 1;")
 })
 
 test_that("translateSQL sql server -> bigquery nested group by", {
- sql <- translateSql("select * from (select 100, cast(a+b as string), max(x) from t group by a+b) dt;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select * from (select 100, cast(a+b as string), max(x) from t group by 2) dt;")
+  sql <- translateSql("select * from (select 100, cast(a+b as string), max(x) from t group by a+b) dt;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select * from (select 100, cast(a+b as string), max(x) from t group by 2) dt;")
 })
 
 test_that("translateSQL sql server -> bigquery complex group by", {
- sql <- translateSql("select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by floor(date_diff(a, b, day)/30);",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by 3;")
+  sql <- translateSql("select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by floor(date_diff(a, b, day)/30);",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by 3;")
 })
 
 test_that("translateSQL sql server -> bigquery column references", {
- sql <- translateSql("select concat(t.a, t.b) from t group by t.a, t.b;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(t.a, t.b) from t group by t.a, t.b;")
+  sql <- translateSql("select concat(t.a, t.b) from t group by t.a, t.b;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select concat(t.a, t.b) from t group by t.a, t.b;")
 })
 
 test_that("translateSQL sql server -> bigquery mixed column references", {
- sql <- translateSql("select concat(t.a, t.b), x+y+z from t group by t.a, t.b, x+y+z;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(t.a, t.b), x+y+z from t group by t.a, t.b, 2;")
+  sql <- translateSql("select concat(t.a, t.b), x+y+z from t group by t.a, t.b, x+y+z;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select concat(t.a, t.b), x+y+z from t group by t.a, t.b, 2;")
 })
 
 test_that("translateSQL sql server -> bigquery CONCAT leading string", {
- sql <- translateSql("select 'a' + b + c from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(concat('a', b), c) from t;")
+  sql <- translateSql("select 'a' + b + c from t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select concat(concat('a', b), c) from t;")
 })
 
 test_that("translateSQL sql server -> bigquery CONCAT leading cast", {
- sql <- translateSql("select cast(a as varchar) + b + c from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(concat(cast(a as string), b), c) from t;")
+  sql <- translateSql("select cast(a as varchar) + b + c from t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select concat(concat(cast(a as string), b), c) from t;")
 })
 
 test_that("translateSQL sql server -> bigquery CONCAT leading isnull", {
- sql <- translateSql("select isnull(a, 'b') + c from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(IFNULL(a,'b'), c) from  t;")
+  sql <- translateSql("select isnull(a, 'b') + c from t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select concat(IFNULL(a,'b'), c) from  t;")
 })
 
 test_that("translateSQL sql server -> bigquery CONCAT leading case", {
- sql <- translateSql("select case when x like '1' then 'a' when x like '2' then 'b' else 'c' end + c from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(case when x like '1' then 'a' when x like '2' then 'b' else 'c' end, c ) from  t;")
+  sql <- translateSql("select case when x like '1' then 'a' when x like '2' then 'b' else 'c' end + c from t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select concat(case when x like '1' then 'a' when x like '2' then 'b' else 'c' end, c ) from  t;")
 })
 
 test_that("translateSQL sql server -> bigquery CONCAT second string", {
- sql <- translateSql("select a.b + 'c' from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat(a.b , 'c') from  t;")
+  sql <- translateSql("select a.b + 'c' from t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select concat(a.b , 'c') from  t;")
 })
 
 test_that("translateSQL sql server -> bigquery CONCAT with alias", {
- sql <- translateSql("select 'a' + b AS concept_path from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat('a' , b ) as concept_path from  t;")
+  sql <- translateSql("select 'a' + b AS concept_path from t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select concat('a' , b ) as concept_path from  t;")
 })
 
 test_that("translateSQL sql server -> bigquery CONCAT with alias but no AS", {
- sql <- translateSql("select 'a' + b concept_path from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select concat('a' , b ) as concept_path from  t;")
+  sql <- translateSql("select 'a' + b concept_path from t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select concat('a' , b ) as concept_path from  t;")
 })
 
 test_that("translateSQL sql server -> bigquery DATEDIFF", {
- sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select DATE_DIFF(cast(drug_era_end_date as date), cast(drug_era_start_date as date), DAY) from drug_era;")
+  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select DATE_DIFF(cast(drug_era_end_date as date), cast(drug_era_start_date as date), DAY) from drug_era;")
 })
 
 test_that("translateSQL sql server -> bigquery DATEADD", {
- sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select DATE_ADD(cast(drug_era_end_date as date), interval 30 DAY) from drug_era;")
+  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select DATE_ADD(cast(drug_era_end_date as date), interval 30 DAY) from drug_era;")
 })
 
 test_that("translateSQL sql server -> bigquery GETDATE", {
- sql <- translateSql("GETDATE()",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "CURRENT_DATE()")
+  sql <- translateSql("GETDATE()",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "CURRENT_DATE()")
 })
 
 test_that("translateSQL sql server -> bigquery STDEV", {
- sql <- translateSql("stdev(x)",
- targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "STDDEV(x)")
+  sql <- translateSql("stdev(x)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "STDDEV(x)")
 })
 
 test_that("translateSQL sql server -> bigquery LEN", {
- sql <- translateSql("len('abc')",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "LENGTH('abc')")
+  sql <- translateSql("len('abc')",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "LENGTH('abc')")
 })
 
 test_that("translateSQL sql server -> bigquery COUNT_BIG", {
- sql <- translateSql("COUNT_BIG(x)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "COUNT(x)")
+  sql <- translateSql("COUNT_BIG(x)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "COUNT(x)")
 })
 
 test_that("translateSQL sql server -> bigquery CAST :string", {
- sql <- translateSql("select cast(x as:string)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select CAST(x as string)")
+  sql <- translateSql("select cast(x as:string)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select CAST(x as string)")
 })
 
 test_that("translateSQL sql server -> bigquery CAST :integer", {
- sql <- translateSql("select cast(x as:integer)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select CAST(x as int64)")
+  sql <- translateSql("select cast(x as:integer)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select CAST(x as int64)")
 })
 
 test_that("translateSQL sql server -> bigquery CAST varchar", {
- sql <- translateSql("select cast(x as varchar)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select cast(x as string)")
+  sql <- translateSql("select cast(x as varchar)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select cast(x as string)")
 })
 
 test_that("translateSQL sql server -> bigquery CAST :float", {
- sql <- translateSql("select cast(x as:float)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select CAST(x as float64)")
+  sql <- translateSql("select cast(x as:float)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select CAST(x as float64)")
 })
 
 test_that("translateSQL sql server -> bigquery DROP TABLE IF EXISTS", {
- sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS cohort;")
+  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS cohort;")
 })
 
 test_that("translateSQL sql server -> bigquery CAST string", {
- sql <- translateSql("CAST(x AS VARCHAR(255))",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "CAST(x AS STRING)")
+  sql <- translateSql("CAST(x AS VARCHAR(255))",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "CAST(x AS STRING)")
 })
 
 test_that("translateSQL sql server -> bigquery common table expression select into", {
- sql <- translateSql("WITH cte as (select 1) select * INTO #t FROM t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "INTO temp.t WITH cte as (select 1) select * FROM t;")
+  sql <- translateSql("WITH cte as (select 1) select * INTO #t FROM t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "INTO temp.t WITH cte as (select 1) select * FROM t;")
 })
 
 test_that("translateSQL sql server -> bigquery select into", {
- sql <- translateSql("select * INTO #t FROM t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "INTO temp.t SELECT * FROM t;")
+  sql <- translateSql("select * INTO #t FROM t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "INTO temp.t SELECT * FROM t;")
 })
 
 test_that("translateSQL sql server -> bigquery LEFT, RIGHT", {
- sql <- translateSql("select LEFT(a, 20), RIGHT(b, 30) FROM t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select SUBSTR(a, 0, 20), SUBSTR(b, -30) from t;")
+  sql <- translateSql("select LEFT(a, 20), RIGHT(b, 30) FROM t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select SUBSTR(a, 0, 20), SUBSTR(b, -30) from t;")
 })
 
 test_that("translateSQL sql server -> bigquery cast float", {
- sql <- translateSql("cast(a as float)",
- targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "cast(a as float64)")
+  sql <- translateSql("cast(a as float)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "cast(a as float64)")
 })
 
 test_that("translateSQL sql server -> bigquery cast bigint", {
- sql <- translateSql("cast(a as bigint)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "cast(a as int64)")
+  sql <- translateSql("cast(a as bigint)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "cast(a as int64)")
 })
 
 test_that("translateSQL sql server -> bigquery cast int", {
- sql <- translateSql("cast(a as int)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "cast(a as int64)")
+  sql <- translateSql("cast(a as int)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "cast(a as int64)")
 })
 
 test_that("translateSQL sql server -> bigquery cast date", {
- sql <- translateSql("date(d)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "cast(d as date)")
+  sql <- translateSql("date(d)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "cast(d as date)")
 })
 
 test_that("translateSQL sql server -> bigquery cast string as date", {
- sql <- translateSql("cast(concat(a,b) as date)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d', concat(a,b))")
+  sql <- translateSql("cast(concat(a,b) as date)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d', concat(a,b))")
 })
 
 test_that("translateSQL sql server -> bigquery extract year", {
- sql <- translateSql("year(d)",
- targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "EXTRACT(YEAR from d)")
+  sql <- translateSql("year(d)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "EXTRACT(YEAR from d)")
 })
 
 test_that("translateSQL sql server -> bigquery extract month", {
- sql <- translateSql("month(d)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "EXTRACT(MONTH from d)")
+  sql <- translateSql("month(d)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "EXTRACT(MONTH from d)")
 })
 
 test_that("translateSQL sql server -> bigquery extract day", {
- sql <- translateSql("day(d)",
- targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "EXTRACT(DAY from d)")
+  sql <- translateSql("day(d)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "EXTRACT(DAY from d)")
 })
 
 test_that("translateSQL sql server -> bigquery union distinct", {
- sql <- translateSql("select 1 as x union select 2;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select 1 as x union distinct select 2;")
+  sql <- translateSql("select 1 as x union select 2;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select 1 as x union distinct select 2;")
 })
 
 test_that("translateSQL sql server -> bigquery intersect distinct", {
- sql <- translateSql("SELECT DISTINCT a FROM t INTERSECT SELECT DISTINCT a FROM s;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "SELECT t1.a FROM (SELECT DISTINCT a FROM t UNION ALL SELECT DISTINCT a FROM s) AS t1 GROUP BY a HAVING COUNT(*) >= 2;")
+  sql <- translateSql("SELECT DISTINCT a FROM t INTERSECT SELECT DISTINCT a FROM s;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "SELECT t1.a FROM (SELECT DISTINCT a FROM t UNION ALL SELECT DISTINCT a FROM s) AS t1 GROUP BY a HAVING COUNT(*) >= 2;")
 })
 
 test_that("translateSQL sql server -> bigquery bracketed intersect distinct", {
- sql <- translateSql("(SELECT DISTINCT a FROM t INTERSECT SELECT DISTINCT a FROM s)",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "(SELECT t1.a FROM (SELECT DISTINCT a FROM t UNION ALL SELECT DISTINCT a FROM s) AS t1 GROUP BY a HAVING COUNT(*) >= 2)")
+  sql <- translateSql("(SELECT DISTINCT a FROM t INTERSECT SELECT DISTINCT a FROM s)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "(SELECT t1.a FROM (SELECT DISTINCT a FROM t UNION ALL SELECT DISTINCT a FROM s) AS t1 GROUP BY a HAVING COUNT(*) >= 2)")
 })
 
 test_that("translateSQL sql server -> bigquery isnull", {
- sql <- translateSql("SELECT isnull(x,y) from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select IFNULL(x,y) from t;")
+  sql <- translateSql("SELECT isnull(x,y) from t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select IFNULL(x,y) from t;")
 })
 
 test_that("translateSQL sql server -> bigquery unquote aliases", {
- sql <- translateSql("SELECT a as \"b\" from t;",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select a as b from t;")
+  sql <- translateSql("SELECT a as \"b\" from t;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select a as b from t;")
 })
 
 test_that("translateSQL sql server -> bigquery non-id in list", {
- sql <- translateSql("select * from t where x in ('333','22','1')",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select * from t where x in ('333','22','1')")
+  sql <- translateSql("select * from t where x in ('333','22','1')",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select * from t where x in ('333','22','1')")
 })
 
 test_that("translateSQL sql server -> bigquery non-integer in lists", {
- sql <- translateSql("select * from t where x_id in ('333','22','1a')",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select * from t where x_id in ('333','22','1a')")
+  sql <- translateSql("select * from t where x_id in ('333','22','1a')",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select * from t where x_id in ('333','22','1a')")
 })
 
 test_that("translateSQL sql server -> bigquery unquote id in lists", {
- sql <- translateSql("select * from t where x_id in ('333','22','1')",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select * from t where x_id in (333,22,1)")
+  sql <- translateSql("select * from t where x_id in ('333','22','1')",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select * from t where x_id in (333,22,1)")
 })
 
 test_that("translateSQL sql server -> bigquery cast int in coalesce", {
- sql <- translateSql("select coalesce(x, 0), coalesce(12, y) from t",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select coalesce(cast(x as int64), 0), coalesce(12, cast(y as int64)) from  t")
+  sql <- translateSql("select coalesce(x, 0), coalesce(12, y) from t",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select coalesce(cast(x as int64), 0), coalesce(12, cast(y as int64)) from  t")
 })
 
 test_that("translateSQL sql server -> bigquery cast decimal", {
- sql <- translateSql("select cast(x as decimal(18,4)) from t",
-                     targetDialect = "bigquery")$sql
- expect_equal_ignore_spaces(sql, "select cast(x as float64) from t")
+  sql <- translateSql("select cast(x as decimal(18,4)) from t",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select cast(x as float64) from t")
 })
 
 test_that("translateSQL sql server -> RedShift DATEADD dd", {
@@ -1473,7 +1473,7 @@ test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id", {
     "WITH a AS b SELECT person_id, col1, col2 INTO #table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+                             "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id at the end", {
@@ -1481,7 +1481,7 @@ test_that("translateSQL sql server -> RedShift CTAS TEMP WITH CTE person_id at t
     "WITH a AS b SELECT col1, col2, person_id INTO #table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  col1, col2, person_id\nFROM\n person;")
+                             "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  col1, col2, person_id\nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id", {
@@ -1489,7 +1489,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id", {
     "WITH a AS b SELECT person_id, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias", {
@@ -1497,7 +1497,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alia
     "WITH a AS b SELECT person_id as dist, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias at the end", {
@@ -1505,7 +1505,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alia
     "WITH a AS b SELECT col1, col2, person_id as dist INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias (no 'as')", {
@@ -1513,7 +1513,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alia
     "WITH a AS b SELECT col1, person_id dist, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, person_id dist, col2 \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, person_id dist, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alias (no 'as') at the end", {
@@ -1521,7 +1521,7 @@ test_that("translateSQL sql server -> RedShift CTAS WITH CTE person_id with alia
     "WITH a AS b SELECT col1, col2, person_id dist INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id dist \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(dist)\nAS\nWITH\n a \nAS\n b \nSELECT\n col1, col2, person_id dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS TEMP person_id", {
@@ -1529,7 +1529,7 @@ test_that("translateSQL sql server -> RedShift CTAS TEMP person_id", {
     "SELECT person_id, col1, col2 INTO #table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+                             "CREATE TABLE  #table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id", {
@@ -1537,7 +1537,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id", {
     "SELECT person_id, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(person_id)\nAS\nSELECT\n  person_id , col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id with alias", {
@@ -1545,7 +1545,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id with alias", {
     "SELECT person_id as dist, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n  person_id as dist, col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id with alias at the end", {
@@ -1553,7 +1553,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id with alias at the 
     "SELECT col1, col2, person_id as dist INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n col1, col2, person_id as dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as')", {
@@ -1561,7 +1561,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as
     "SELECT person_id dist, col1, col2 INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n  person_id dist, col1, col2 \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n  person_id dist, col1, col2 \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as') at the end", {
@@ -1569,7 +1569,7 @@ test_that("translateSQL sql server -> RedShift CTAS person_id with alias (no 'as
     "SELECT col1, col2, person_id dist INTO table FROM person;", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n col1, col2, person_id dist \nFROM\n person;")
+                             "CREATE TABLE  table \nDISTKEY(dist)\nAS\nSELECT\n col1, col2, person_id dist \nFROM\n person;")
 })
 
 test_that("translateSQL sql server -> RedShift CREATE TABLE person_id", {
@@ -1577,7 +1577,7 @@ test_that("translateSQL sql server -> RedShift CREATE TABLE person_id", {
     "CREATE TABLE [dbo].[drug_era] ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL);", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-  "CREATE TABLE  [dbo].[drug_era]  ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL)\nDISTKEY(person_id);")
+                             "CREATE TABLE  [dbo].[drug_era]  ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL)\nDISTKEY(person_id);")
 })
 
 test_that("translateSQL sql server -> PDW CREATE TABLE person_id", {
@@ -1585,7 +1585,7 @@ test_that("translateSQL sql server -> PDW CREATE TABLE person_id", {
     "CREATE TABLE [dbo].[drug_era] ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL);", 
     sourceDialect = "sql server", targetDialect = "pdw")$sql
   expect_equal_ignore_spaces(sql, 
-  "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   [dbo].[drug_era]  ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL)\nWITH (DISTRIBUTION = HASH(person_id));")
+                             "IF XACT_STATE() = 1 COMMIT; CREATE TABLE   [dbo].[drug_era]  ([drug_era_id] bigint NOT NULL, [person_id] bigint NOT NULL, [drug_concept_id] bigint NOT NULL, [drug_era_start_date] date NOT NULL, [drug_era_end_date] date NOT NULL, [drug_exposure_count] int NULL, [gap_days] int NULL)\nWITH (DISTRIBUTION = HASH(person_id));")
 })
 
 test_that("translateSQL sql server -> RedShift ISDATE", {
@@ -1593,7 +1593,7 @@ test_that("translateSQL sql server -> RedShift ISDATE", {
     "SELECT * FROM table WHERE ISDATE(col) = 1", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "SELECT * FROM table WHERE REGEXP_INSTR(col, '^(\\\\d{4}[/\\-]?[01]\\\\d[/\\-]?[0123]\\\\d)([ T]([0-1][0-9]|[2][0-3]):([0-5][0-9])(:[0-5][0-9](.\\\\d+)?)?)?$') = 1")
+                             "SELECT * FROM table WHERE REGEXP_INSTR(col, '^(\\\\d{4}[/\\-]?[01]\\\\d[/\\-]?[0123]\\\\d)([ T]([0-1][0-9]|[2][0-3]):([0-5][0-9])(:[0-5][0-9](.\\\\d+)?)?)?$') = 1")
 })
 
 test_that("translateSQL sql server -> RedShift ISNUMERIC", {
@@ -1601,7 +1601,7 @@ test_that("translateSQL sql server -> RedShift ISNUMERIC", {
     "SELECT * FROM table WHERE ISNUMERIC(col) = 1", 
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "SELECT * FROM table WHERE REGEXP_INSTR(col, '^[\\-\\+]?(\\\\d*\\\\.)?\\\\d+([Ee][\\-\\+]?\\\\d+)?$') = 1")
+                             "SELECT * FROM table WHERE REGEXP_INSTR(col, '^[\\-\\+]?(\\\\d*\\\\.)?\\\\d+([Ee][\\-\\+]?\\\\d+)?$') = 1")
 })
 
 test_that("translateSQL sql server -> RedShift PATINDEX", {
@@ -1609,7 +1609,7 @@ test_that("translateSQL sql server -> RedShift PATINDEX", {
     "SELECT PATINDEX(pattern,expression) FROM table;",
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "SELECT REGEXP_INSTR(expression, case when LEFT(pattern,1)<>'%' and RIGHT(pattern,1)='%' then '^' else '' end||TRIM('%' FROM REPLACE(pattern,'_','.'))||case when LEFT(pattern,1)='%' and RIGHT(pattern,1)<>'%' then '$' else '' end) FROM table;")
+                             "SELECT REGEXP_INSTR(expression, case when LEFT(pattern,1)<>'%' and RIGHT(pattern,1)='%' then '^' else '' end||TRIM('%' FROM REPLACE(pattern,'_','.'))||case when LEFT(pattern,1)='%' and RIGHT(pattern,1)<>'%' then '$' else '' end) FROM table;")
 })
 
 test_that("translateSQL sql server -> RedShift SELECT INTO temp table with CTE and default hashing (DISTSTYLE ALL)", {
@@ -1695,7 +1695,7 @@ test_that("translateSQL sql server -> RedShift SELECT value INTO temp table with
     "SELECT a INTO #table;",
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "CREATE TABLE  #table DISTSTYLE ALL\nAS\nSELECT\n a ;")
+                             "CREATE TABLE  #table DISTSTYLE ALL\nAS\nSELECT\n a ;")
 })
 
 test_that("translateSQL sql server -> RedShift SELECT value INTO permanent table with default hashing (DISTSTYLE ALL)", {
@@ -1703,7 +1703,7 @@ test_that("translateSQL sql server -> RedShift SELECT value INTO permanent table
     "SELECT a INTO table;",
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "CREATE TABLE  table DISTSTYLE ALL\nAS\nSELECT\n a ;")
+                             "CREATE TABLE  table DISTSTYLE ALL\nAS\nSELECT\n a ;")
 })
 
 test_that("translateSQL sql server -> RedShift create temp table with default hashing (DISTSTYLE ALL)", {
@@ -1711,7 +1711,7 @@ test_that("translateSQL sql server -> RedShift create temp table with default ha
     "CREATE TABLE #table (id int not null, col varchar(max));",
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "CREATE TABLE  #table  (id int not null, col varchar(max))\nDISTSTYLE ALL;")
+                             "CREATE TABLE  #table  (id int not null, col varchar(max))\nDISTSTYLE ALL;")
 })
 
 test_that("translateSQL sql server -> RedShift create permanent table with default hashing (DISTSTYLE ALL)", {
@@ -1719,7 +1719,7 @@ test_that("translateSQL sql server -> RedShift create permanent table with defau
     "CREATE TABLE table (id int not null, col varchar(max));",
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "CREATE TABLE  table  (id int not null, col varchar(max))\nDISTSTYLE ALL;")
+                             "CREATE TABLE  table  (id int not null, col varchar(max))\nDISTSTYLE ALL;")
 })
 
 test_that("translateSQL sql server -> RedShift CREATE TABLE IF NOT EXISTS with hashing", {
@@ -1760,7 +1760,7 @@ test_that("translateSQL sql server -> RedShift DISTINCT + TOP", {
     "SELECT DISTINCT TOP 100 * FROM table WHERE a = b;",
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "SELECT TOP 100 DISTINCT * FROM table WHERE a = b;")
+                             "SELECT TOP 100 DISTINCT * FROM table WHERE a = b;")
 })
 
 test_that("RedShift String literal within CTE should be explicitly casted to character type", {
@@ -1768,7 +1768,7 @@ test_that("RedShift String literal within CTE should be explicitly casted to cha
     "WITH expression AS(SELECT 'my literal' literal, col1, CAST('other literal' as VARCHAR(MAX)), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;",
     sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "WITH  expression  AS (SELECT CAST('my literal' as TEXT) literal, col1, CAST('other literal' as VARCHAR(MAX)), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;")
+                             "WITH  expression  AS (SELECT CAST('my literal' as TEXT) literal, col1, CAST('other literal' as VARCHAR(MAX)), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;")
 })
 
 test_that("Postgres String literal within CTE should be explicitly casted to character type", {
@@ -1776,7 +1776,7 @@ test_that("Postgres String literal within CTE should be explicitly casted to cha
     "WITH expression AS(SELECT 'my literal', col1, CAST('other literal' as VARCHAR(MAX)), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;",
     sourceDialect = "sql server", targetDialect = "postgresql")$sql
   expect_equal_ignore_spaces(sql, 
-    "WITH  expression  AS (SELECT CAST('my literal' as TEXT), col1, CAST('other literal' as TEXT), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;")
+                             "WITH  expression  AS (SELECT CAST('my literal' as TEXT), col1, CAST('other literal' as TEXT), col2 FROM table WHERE a = b) SELECT * FROM expression ORDER BY 1, 2, 3, 4;")
 })
 
 test_that("RedShift XOR operator", {
@@ -1789,7 +1789,7 @@ test_that("translateSQL sql server -> redshift hint DISTKEY + SORTKEY on CTAS + 
     "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(COMPOUND:start_date)\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT * INTO #my_table FROM cte;",
     targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(COMPOUND:start_date)\nCREATE TABLE #my_table\nDISTKEY(row_id)\nCOMPOUND SORTKEY(start_date)\nAS\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT\n * \nFROM\n cte;")
+                             "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(COMPOUND:start_date)\nCREATE TABLE #my_table\nDISTKEY(row_id)\nCOMPOUND SORTKEY(start_date)\nAS\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT\n * \nFROM\n cte;")
 })
 
 test_that("translateSQL sql server -> redshift hint SORTKEY on CTAS + CTE", {
@@ -1797,7 +1797,7 @@ test_that("translateSQL sql server -> redshift hint SORTKEY on CTAS + CTE", {
     "--HINT SORT_ON_KEY(COMPOUND:start_date)\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT * INTO #my_table FROM cte;",
     targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "--HINT SORT_ON_KEY(COMPOUND:start_date)\nCREATE TABLE #my_table\nCOMPOUND SORTKEY(start_date)\nAS\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT\n * \nFROM\n cte;")
+                             "--HINT SORT_ON_KEY(COMPOUND:start_date)\nCREATE TABLE #my_table\nCOMPOUND SORTKEY(start_date)\nAS\nWITH cte(row_id, start_date) AS (select * from basetable)\nSELECT\n * \nFROM\n cte;")
 })
 
 test_that("translateSQL sql server -> redshift hint DISTKEY + SORTKEY on CTAS", {
@@ -1805,7 +1805,7 @@ test_that("translateSQL sql server -> redshift hint DISTKEY + SORTKEY on CTAS", 
     "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(:start_date, end_date)\nSELECT * INTO #my_table FROM other_table;",
     targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(:start_date, end_date)\nCREATE TABLE #my_table\nDISTKEY(row_id)\nSORTKEY(start_date, end_date)\nAS\nSELECT\n*\nFROM\n other_table;")
+                             "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(:start_date, end_date)\nCREATE TABLE #my_table\nDISTKEY(row_id)\nSORTKEY(start_date, end_date)\nAS\nSELECT\n*\nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> redshift hint SORTKEY on CTAS", {
@@ -1813,43 +1813,43 @@ test_that("translateSQL sql server -> redshift hint SORTKEY on CTAS", {
     "--HINT SORT_ON_KEY(:start_date, end_date)\nSELECT * INTO #my_table FROM other_table;",
     targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, 
-    "--HINT SORT_ON_KEY(:start_date, end_date)\nCREATE TABLE #my_table\nSORTKEY(start_date, end_date)\nAS\nSELECT\n * \nFROM\n other_table;")
+                             "--HINT SORT_ON_KEY(:start_date, end_date)\nCREATE TABLE #my_table\nSORTKEY(start_date, end_date)\nAS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> redshift hint DISTKEY + SORTKEY on CREATE TABLE", {
- sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date);",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date)\nDISTKEY(row_id)\nINTERLEAVED SORTKEY(start_date);")
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date)\nDISTKEY(row_id)\nINTERLEAVED SORTKEY(start_date);")
 })
 
 test_that("translateSQL sql server -> redshift hint SORTKEY on CREATE TABLE", {
- sql <- translateSql("--HINT SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date);",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "--HINT SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date)\n\nINTERLEAVED SORTKEY(start_date);")
+  sql <- translateSql("--HINT SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "--HINT SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date)\n\nINTERLEAVED SORTKEY(start_date);")
 })
 
 test_that("translateSQL sql server -> pdw hint DISTKEY + SORTKEY on CREATE TABLE", {
- sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nCREATE TABLE my_table (row_id INT, start_date DATE);",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE my_table (row_id INT, start_date DATE)\nWITH (DISTRIBUTION = HASH(row_id));")
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nCREATE TABLE my_table (row_id INT, start_date DATE);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE my_table (row_id INT, start_date DATE)\nWITH (DISTRIBUTION = HASH(row_id));")
 })
 
 test_that("translateSQL sql server -> pdw hint DISTKEY + SORTKEY on CTAS", {
- sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nSELECT * INTO #my_table FROM other_table;",
- targetDialect = "pdw")$sql
- expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nSELECT * INTO #my_table FROM other_table;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translateSQL sql server -> redshift CONVERT to DATE", {
- sql <- translateSql("select CONVERT(DATE, start_date) from my_table;",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "select CAST(start_date as DATE) from my_table;")
+  sql <- translateSql("select CONVERT(DATE, start_date) from my_table;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select CAST(start_date as DATE) from my_table;")
 })
 
 test_that("translateSQL sql server -> redshift CONVERT to TIMESTAMPTZ", {
- sql <- translateSql("select CONVERT(TIMESTAMPTZ, start_date) from my_table;",
- targetDialect = "redshift")$sql
- expect_equal_ignore_spaces(sql, "select CONVERT(TIMESTAMP WITH TIME ZONE, start_date) from my_table;")
+  sql <- translateSql("select CONVERT(TIMESTAMPTZ, start_date) from my_table;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select CONVERT(TIMESTAMP WITH TIME ZONE, start_date) from my_table;")
 })
 
 test_that("translateSQL sql server -> oracle add group by when case count", {
@@ -1865,20 +1865,135 @@ test_that("translateSQL sql server -> oracle don't add group by when case count 
 })
 
 test_that("translateSQL sql server -> Redshift partition window function sorted descending", {
-  sql <- translateSql("select sum(count(person_id)) over (partition by procedure_concept_id order by prc_cnt desc) as count_value", 
+  sql <- translateSql("select sum(count(person_id)) over (PARTITION BY procedure_concept_id order by prc_cnt desc) as count_value", 
                       targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (PARTITION BY procedure_concept_id  ORDER BY prc_cnt  DESC ROWS UNBOUNDED PRECEDING) as count_value")
 })
 
 test_that("translateSQL sql server -> Redshift partition window function sorted ascending", {
-  sql <- translateSql("select sum(count(person_id)) over (partition by procedure_concept_id order by prc_cnt asc) as count_value", 
+  sql <- translateSql("select sum(count(person_id)) over (PARTITION BY procedure_concept_id order by prc_cnt asc) as count_value", 
                       targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (PARTITION BY procedure_concept_id  ORDER BY prc_cnt  ASC ROWS UNBOUNDED PRECEDING) as count_value")
 })
 
 test_that("translateSQL sql server -> Redshift partition window function no sort specified", {
-  sql <- translateSql("select sum(count(person_id)) over (partition by procedure_concept_id order by prc_cnt) as count_value", 
+  sql <- translateSql("select sum(count(person_id)) over (PARTITION BY procedure_concept_id order by prc_cnt) as count_value", 
                       targetDialect = "redshift")$sql
-  expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (PARTITION BY procedure_concept_id  ORDER BY prc_cnt  ASC ROWS UNBOUNDED PRECEDING) as count_value")
+  expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (PARTITION BY procedure_concept_id  ORDER BY prc_cnt  ROWS UNBOUNDED PRECEDING) as count_value")
 })
+
+test_that("translateSQL sql server -> Redshift partition window function ROW_NUMBER no sort specified", {
+  sql <- translateSql("select ROW_NUMBER() over (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select ROW_NUMBER() OVER (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift partition window function CUME_DIST no sort specified", {
+  sql <- translateSql("select CUME_DIST() over (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select CUME_DIST() OVER (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift partition window function DENSE_RANK no sort specified", {
+  sql <- translateSql("select DENSE_RANK() over (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select DENSE_RANK() OVER (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift partition window function PERCENT_RANK no sort specified", {
+  sql <- translateSql("select PERCENT_RANK() over (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select PERCENT_RANK() OVER (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift partition window function RANK no sort specified", {
+  sql <- translateSql("select RANK() over (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select RANK() OVER (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift partition window function LAG no sort specified", {
+  sql <- translateSql("select LAG(mycol) over (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select LAG(mycol) OVER (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift partition window function LEAD no sort specified", {
+  sql <- translateSql("select LEAD(mycol) over (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select LEAD(mycol) OVER (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift partition window function NTILE no sort specified", {
+  sql <- translateSql("select NTILE(4) over (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select NTILE(4) OVER (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift window function sorted descending without partition by clause", {
+  sql <- translateSql("select sum(count(person_id)) over (order by prc_cnt desc) as count_value", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (ORDER BY prc_cnt  DESC ROWS UNBOUNDED PRECEDING) as count_value")
+})
+
+test_that("translateSQL sql server -> Redshift window function sorted ascending without partition by clause", {
+  sql <- translateSql("select sum(count(person_id)) over (order by prc_cnt asc) as count_value", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (ORDER BY prc_cnt  ASC ROWS UNBOUNDED PRECEDING) as count_value")
+})
+
+test_that("translateSQL sql server -> Redshift window function no sort specified without partition by clause", {
+  sql <- translateSql("select sum(count(person_id)) over (order by prc_cnt) as count_value", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (ORDER BY prc_cnt ROWS UNBOUNDED PRECEDING) as count_value")
+})
+
+test_that("translateSQL sql server -> Redshift window function ROW_NUMBER no sort specified without PARTITION BY clause", {
+  sql <- translateSql("select ROW_NUMBER() over (procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select ROW_NUMBER() OVER (procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift window function CUME_DIST no sort specified without PARTITION BY clause", {
+  sql <- translateSql("select CUME_DIST() over (procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select CUME_DIST() OVER (procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift window function DENSE_RANK no sort specified without PARTITION BY clause", {
+  sql <- translateSql("select DENSE_RANK() over (procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select DENSE_RANK() OVER (procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift window function PERCENT_RANK no sort specified without PARTITION BY clause", {
+  sql <- translateSql("select PERCENT_RANK() over (procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select PERCENT_RANK() OVER (procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift window function RANK no sort specified without PARTITION BY clause", {
+  sql <- translateSql("select RANK() over (procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select RANK() OVER (procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift window function LAG no sort specified without PARTITION BY clause", {
+  sql <- translateSql("select LAG(mycol) over (procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select LAG(mycol) OVER (procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift window function LEAD no sort specified without PARTITION BY clause", {
+  sql <- translateSql("select LEAD(mycol) over (procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select LEAD(mycol) OVER (procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
+test_that("translateSQL sql server -> Redshift window function NTILE no sort specified without PARTITION BY clause", {
+  sql <- translateSql("select NTILE(4) over (procedure_concept_id ORDER BY prc_cnt) as num", 
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select NTILE(4) OVER (procedure_concept_id ORDER BY prc_cnt) as num")
+})
+
 
