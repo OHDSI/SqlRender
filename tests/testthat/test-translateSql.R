@@ -1882,6 +1882,12 @@ test_that("translateSQL sql server -> Redshift partition window function no sort
   expect_equal_ignore_spaces(sql, "select sum(count(person_id)) OVER (PARTITION BY procedure_concept_id  ORDER BY prc_cnt  ROWS UNBOUNDED PRECEDING) as count_value")
 })
 
+test_that("translateSQL sql server -> Redshift partition window function with specified frame", {
+  sql <- translateSql("select MAX(start_ordinal) OVER (PARTITION BY groupid ORDER BY event_date, event_type ROWS UNBOUNDED PRECEDING) AS start_ordinal",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "select MAX(start_ordinal) OVER (PARTITION BY groupid ORDER BY event_date, event_type ROWS UNBOUNDED PRECEDING) AS start_ordinal")
+})
+
 test_that("translateSQL sql server -> Redshift partition window function ROW_NUMBER no sort specified", {
   sql <- translateSql("select ROW_NUMBER() over (PARTITION BY procedure_concept_id ORDER BY prc_cnt) as num", 
                       targetDialect = "redshift")$sql
