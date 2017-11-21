@@ -6,7 +6,7 @@
 	<groupId>org.ohdsi.sql</groupId>
 	<artifactId>SqlRender</artifactId>
 	<packaging>jar</packaging>
-	<version>1.4.6-SNAPSHOT</version>
+	<version>1.4.7-SNAPSHOT</version>
 	<name>SqlRender</name>
 	<scm>
 		<connection>scm:git:https://github.com/OHDSI/SqlRender</connection>
