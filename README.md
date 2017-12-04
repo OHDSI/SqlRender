@@ -2,6 +2,7 @@ SqlRender
 =========
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SqlRender)](https://cran.r-project.org/package=SqlRender)
+[![CRAN_Status_Badge](http://cranlogs.r-pkg.org/badges/SqlRender)]((https://cran.r-project.org/package=SqlRender))
 
 Introduction
 ============
