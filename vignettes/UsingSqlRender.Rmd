@@ -181,6 +181,31 @@ SELECT * FROM a EXCEPT SELECT * FROM b                      -- EXCEPT
 ## String concatenation
 String concatenation is one area where SQL Server is less specific than other dialects. In SQL Server, one would write `SELECT first_name + ' ' + last_name AS full_name FROM table`, but this should be `SELECT first_name || ' ' || last_name AS full_name FROM table` in PostgreSQL and Oracle. SqlRender tries to guess when values that are being concatenated are strings. In the example above, because we have an explicit string (the space surrounded by single quotation marks), the translation will be correct. However, if the query had been `SELECT first_name + last_name AS full_name FROM table`, SqlRender would have had no clue the two fields were strings, and would incorrectly leave the plus sign. Another clue that a value is a string is an explicit cast to VARCHAR, so `SELECT last_name + CAST(age AS VARCHAR(3)) AS full_name FROM table` would also be translated correctly. To avoid ambiguity altogether, it is probable best to use the ```CONCAT()``` function to concatenate two or more strings.
 
+## Table aliases and the AS keyword
+
+Many SQL dialects allow the use of the `AS` keyword when defining a table alias, but will also work fine without the keyword. For example, both these SQL statements are fine for SQL Server, PostgreSQL, RedShift, etc.:
+
+```sql
+-- Using AS keyword
+SELECT * 
+FROM my_table AS table_1
+INNER JOIN (
+  SELECT * FROM other_table
+) AS table_2
+ON table_1.person_id = table_2.person_id;
+
+-- Not using AS keyword
+SELECT * 
+FROM my_table table_1
+INNER JOIN (
+  SELECT * FROM other_table
+) table_2
+ON table_1.person_id = table_2.person_id;
+```
+
+However, Oracle will throw an error when the `AS` keyword is used. In the above example, the first query will fail. It is therefore recommended to not use the `AS` keyword when aliasing tables. (Note: we can't make SqlRender handle this, because it can't easily distinguish between table aliases where Oracle doesn't allow `AS` to be used, and field aliases, where Oracle requires `AS` to be used.)
+
+
 ## Temp tables
 Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In Postgres, PDW, RedShift and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. This is why, in Oracle, SqlRender will try to emulate temp tables by
 
