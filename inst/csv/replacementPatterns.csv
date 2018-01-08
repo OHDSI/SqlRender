@@ -419,6 +419,8 @@ impala,#,%temp_prefix%%session_id%
 impala,<hash><hash>,##
 impala,.location,.`location`
 impala,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+impala,DATE,TIMESTAMP
+impala,DATETIME,TIMESTAMP
 impala,BIGINT NOT NULL,BIGINT
 impala,BOOLEAN NOT NULL,BOOLEAN
 impala,CHAR NOT NULL,CHAR
@@ -432,6 +434,24 @@ impala,STRING NOT NULL,STRING
 impala,TIMESTAMP NOT NULL,TIMESTAMP
 impala,TINYINT NOT NULL,TINYINT
 impala,VARCHAR(@a) NOT NULL,VARCHAR(@a)
+impala,BIGINT NULL,BIGINT
+impala,BOOLEAN NULL,BOOLEAN
+impala,CHAR NULL,CHAR
+impala,DECIMAL NULL,DECIMAL
+impala,DOUBLE NULL,DOUBLE
+impala,FLOAT NULL,FLOAT
+impala,INT NULL,INT
+impala,REAL NULL,REAL
+impala,SMALLINT NULL,SMALLINT
+impala,STRING NULL,STRING
+impala,TIMESTAMP NULL,TIMESTAMP
+impala,TINYINT NULL,TINYINT
+impala,VARCHAR(@a) NULL,VARCHAR(@a)
+impala,"CHAR,","CHAR(1),"
+impala,"CHAR\n+","CHAR(1)\n"
+impala,"CHAR)","CHAR(1))"
+impala,"CONSTRAINT @a DEFAULT NOW()",""
+impala,stats,_stats
 netezza,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 netezza,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
 netezza,CAST(@a AS INT),CAST(@a AS INTEGER)
