@@ -29,8 +29,7 @@ oracle,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
 oracle,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
 oracle,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
 oracle,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
-oracle,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
-oracle,CAST(@a AS VARCHAR(@b)),TO_CHAR(@a)
+oracle,"CONVERT(DATE, @a)","TO_DATE(@a, 'YYYYMMDD')"
 oracle,CAST(@a AS VARCHAR),TO_CHAR(@a)
 oracle,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
 oracle,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
