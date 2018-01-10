@@ -51,14 +51,14 @@ test_that("translateSQL sql server -> Oracle CAST(AS DATE)", {
 test_that("translateSQL sql server -> Oracle CONVERT(AS DATE)", {
   sql <- translateSql("CONVERT(DATE, '20000101');",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'yyyymmdd');")
+  expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'YYYYMMDD');")
 })
 
 test_that("translateSQL sql server -> Oracle concatenate string operator", {
-  sql <- translateSql("select distinct cast(cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01' as date) as obs_year;",
+  sql <- translateSql("select distinct CONVERT(DATE, cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01') as obs_year from observation_period;",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql,
-                             "SELECT distinct cast(TO_CHAR(EXTRACT(YEAR FROM observation_period_start_date) ) || '01' || '01' as date) as obs_year FROM DUAL;")
+                             "SELECT distinct TO_DATE(cast(EXTRACT(YEAR FROM observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') as obs_year  FROM observation_period ;")
 })
 
 test_that("translateSQL sql server -> Oracle RIGHT functions", {
@@ -68,10 +68,10 @@ test_that("translateSQL sql server -> Oracle RIGHT functions", {
 })
 
 test_that("translateSQL sql server -> Oracle complex query", {
-  sql <- translateSql("select CAST(CAST(YEAR(x) AS VARCHAR(12)) + RIGHT('0'+MONTH(x),2) + '01' AS DATE);",
+  sql <- translateSql("select CONVERT(DATE,CAST(YEAR(DATEFROMPARTS(2000,1,1)) AS VARCHAR(12)) + RIGHT('0'+MONTH(DATEFROMPARTS(2000,1,1)),2) + '01') as X;",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql,
-                             "SELECT CAST(TO_CHAR(EXTRACT(YEAR FROM x)  ) || SUBSTR('0' ||EXTRACT(MONTH FROM x),-2) || '01' AS DATE) FROM DUAL;")
+                             "SELECT TO_DATE(CAST(EXTRACT(YEAR FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD'))  AS varchar(12)) || SUBSTR('0' ||EXTRACT(MONTH FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD')),-2) || '01', 'YYYYMMDD') as X FROM DUAL;")
 })
 
 test_that("translateSQL sql server -> Oracle '+' in quote", {
