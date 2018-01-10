@@ -528,7 +528,7 @@ test_that("translateSQL sql server -> Netezza DROP TABLE IF EXISTS", {
 test_that("translateSQL sql server -> Netezza RIGHT functions", {
   sql <- translateSql("SELECT RIGHT(x,4);",
                       targetDialect = "netezza")$sql
-  expect_equal_ignore_spaces(sql, "SELECT STRRIGHT(x,4);")
+  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x, length(x) - 4 + 1, 4);")
 })
 
 test_that("translateSQL sql server -> Netezza DELETE FROM WHERE", {
