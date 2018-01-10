@@ -359,13 +359,13 @@ pdw,CREATE TABLE #@table (@definition) WITH (DISTRIBUTION = @distribution);,"CRE
 pdw,[ person_id ],[person_id]
 pdw,[ subject_id ],[subject_id]
 pdw,[ analysis_id ],[analysis_id]
-pdw,TRUNCATE TABLE ,IF XACT_STATE() = 1 COMMIT; TR*NC*T* TABLE
-pdw,DROP TABLE ,IF XACT_STATE() = 1 COMMIT; DR*P TABLE
-pdw,CREATE TABLE ,IF XACT_STATE() = 1 COMMIT; CR**T* TABLE
+pdw,TRUNCATE TABLE ,IF XACT_STATE() = 1 COMMIT; TR*NC*T* TABLE 
+pdw,DROP TABLE ,IF XACT_STATE() = 1 COMMIT; DR*P TABLE 
+pdw,CREATE TABLE ,IF XACT_STATE() = 1 COMMIT; CR**T* TABLE 
 pdw,TR*NC*T*,TRUNCATE
 pdw,DR*P,DROP
 pdw,CR**T*,CREATE
-pdw,IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL
+pdw,IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL 
 impala,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
 impala,COUNT_BIG(@a),COUNT(@a)
 impala,"LEFT(@str,@chars)","SUBSTR(@str,1,@chars)"
