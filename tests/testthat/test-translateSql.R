@@ -445,7 +445,7 @@ test_that("translateSQL sql server -> Impala DELETE FROM", {
 test_that("translateSQL sql server -> Impala DELETE FROM WHERE", {
   sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
                       targetDialect = "impala")$sql
-  expect_match_ignore_spaces(sql, "INSERT OVERWRITE TABLE ACHILLES_results SELECT \\* from ACHILLES_results WHERE NOT\\(analysis_id IN \\(1, 2, 3\)\);")
+  expect_equal_ignore_spaces(sql, "INSERT OVERWRITE TABLE ACHILLES_results SELECT * FROM ACHILLES_results WHERE NOT(analysis_id IN (1, 2, 3));")
 })
 
 test_that("translateSQL sql server -> Impala location reserved word", {
