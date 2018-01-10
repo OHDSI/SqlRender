@@ -2020,4 +2020,23 @@ test_that("translateSQL sql server -> Redshift window function NTILE no sort spe
   expect_equal_ignore_spaces(sql, "select NTILE(4) OVER (procedure_concept_id ORDER BY prc_cnt) as num")
 })
 
+test_that("translateSQL sql server -> Oracle union of two queries without FROM", {
+  sql <- translateSql("SELECT 1,2 UNION SELECT 3,4;", 
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL;")
+})
+
+test_that("translateSQL sql server -> Oracle union of three queries without FROM", {
+  sql <- translateSql("SELECT 1,2 UNION SELECT 3,4 UNION SELECT 5,6;", 
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL UNION SELECT 5,6 FROM DUAL;")
+})
+
+
+test_that("translateSQL sql server -> Oracle insert plus union of three queries without FROM", {
+  sql <- translateSql("INSERT INTO my_table (a, b) SELECT 1,2 UNION SELECT 3,4 UNION SELECT 5,6;", 
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "INSERT INTO my_table (a, b) SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL UNION SELECT 5,6 FROM DUAL;")
+})
+
 

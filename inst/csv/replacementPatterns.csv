@@ -60,10 +60,10 @@ oracle,SELECT @a;,SELECT @a FROM DUAL;
 oracle,(SELECT @a),(SELECT @a FROM DUAL)
 oracle,SELECT @a UNION,SELECT @a FROM DUAL UNION
 oracle,SELECT @a FROM @b FROM DUAL;,SELECT @a FROM @b;
-oracle,FROM @a FROM DUAL,FROM @a
-oracle,FROM @a FROM DUAL,FROM @a
-oracle,FROM @a FROM DUAL,FROM @a
-oracle,FROM @a FROM DUAL,FROM @a
+oracle,FROM @((?!.*UNION).*)a FROM DUAL,FROM @a
+oracle,FROM @((?!.*UNION).*)a FROM DUAL,FROM @a
+oracle,FROM @((?!.*UNION).*)a FROM DUAL,FROM @a
+oracle,FROM @((?!.*UNION).*)a FROM DUAL,FROM @a
 oracle,SELECT @a CASE @b COUNT(@c) @d END @e;,SELECT @a CASE @b COUNT(@c) @d END @e GROUP BY 1;
 oracle,(SELECT @a CASE @b COUNT(@c) @d END @e),(SELECT @a CASE @b COUNT(@c) @d END @e GROUP BY 1)
 oracle,GROUP BY @a GROUP BY 1,GROUP BY @a
