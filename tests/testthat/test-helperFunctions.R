@@ -42,12 +42,15 @@ test_that("camelCaseToSnakeCase ", {
 
 test_that("loadRenderTranslateSql ", {
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "sql server")
+  sql <- gsub("[\r\n]", "", sql)
   expect_equal(sql, "SELECT * FROM table;")
 
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "postgresql")
+  sql <- gsub("[\r\n]", "", sql)
   expect_equal(sql, "SELECT * FROM table;")
 
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "oracle")
+  sql <- gsub("[\r\n]", "", sql)
   expect_equal(sql, "SELECT a FROM table;")
 })
 
