@@ -455,15 +455,33 @@ test_that("translateSQL sql server -> Impala location reserved word", {
 })
 
 test_that("translateSQL sql server -> Impala CREATE TABLE with NOT NULL", {
-  sql <- translateSql("CREATE TABLE a (c1 BIGINT NOT NULL, c2 BOOLEAN NOT NULL, c3 CHAR NOT NULL, c4 DECIMAL NOT NULL, c5 DOUBLE NOT NULL, c6 FLOAT NOT NULL, c7 INT NOT NULL, c8 REAL NOT NULL, c9 SMALLINT NOT NULL, c10 STRING NOT NULL, c11 TIMESTAMP NOT NULL, c12 TINYINT NOT NULL, c13 VARCHAR(10) NOT NULL)",
+  sql <- translateSql("CREATE TABLE a (c1 BIGINT NOT NULL, c2 BOOLEAN NOT NULL, c3 CHAR NOT NULL, c4 DECIMAL NOT NULL, c5 DOUBLE NOT NULL, c6 FLOAT NOT NULL, c7 INT NOT NULL, c8 REAL NOT NULL, c9 SMALLINT NOT NULL, c10 STRING NOT NULL, c11 TIMESTAMP NOT NULL, c12 TINYINT NOT NULL, c13 VARCHAR(10) NOT NULL, c14 DATE NOT NULL, c15 DATETIME NOT NULL)",
                       targetDialect = "impala")$sql
-  expect_equal_ignore_spaces(sql, "CREATE TABLE a (c1 BIGINT, c2 BOOLEAN, c3 CHAR, c4 DECIMAL, c5 DOUBLE, c6 FLOAT, c7 INT, c8 REAL, c9 SMALLINT, c10 STRING, c11 TIMESTAMP, c12 TINYINT, c13 VARCHAR(10))")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE a (c1 BIGINT, c2 BOOLEAN, c3 CHAR(1), c4 DECIMAL, c5 DOUBLE, c6 FLOAT, c7 INT, c8 REAL, c9 SMALLINT, c10 STRING, c11 TIMESTAMP, c12 TINYINT, c13 VARCHAR(10), c14 TIMESTAMP, c15 TIMESTAMP)")
+})
+
+test_that("translateSQL sql server -> Impala CREATE TABLE with NULL", {
+    sql <- translateSql("CREATE TABLE a (c1 BIGINT NULL, c2 BOOLEAN NULL, c3 CHAR NULL, c4 DECIMAL NULL, c5 DOUBLE NULL, c6 FLOAT NULL, c7 INT NULL, c8 REAL NULL, c9 SMALLINT NULL, c10 STRING NULL, c11 TIMESTAMP NULL, c12 TINYINT NULL, c13 VARCHAR(10) NULL, c14 DATE NULL, c15 DATETIME NULL)",
+                    targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "CREATE TABLE a (c1 BIGINT, c2 BOOLEAN, c3 CHAR(1), c4 DECIMAL, c5 DOUBLE, c6 FLOAT, c7 INT, c8 REAL, c9 SMALLINT, c10 STRING, c11 TIMESTAMP, c12 TINYINT, c13 VARCHAR(10), c14 TIMESTAMP, c15 TIMESTAMP)")
 })
 
 test_that("translateSQL sql server -> Impala clause with NOT NULL", {
   sql <- translateSql("SELECT * FROM x WHERE y IS NOT NULL",
                       targetDialect = "impala")$sql
   expect_equal_ignore_spaces(sql, "SELECT * FROM x WHERE y IS NOT NULL")
+})
+
+test_that("translateSQL sql server -> Impala CREATE TABLE with CONSTRAINT DEFAULT", {
+    sql <- translateSql("CREATE TABLE a(c1 TIMESTAMP CONSTRAINT a_c1_def DEFAULT NOW())",
+                    targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "CREATE TABLE a(c1 TIMESTAMP)")
+})
+
+test_that("translateSQL sql server -> Impala stats reserved word",{
+    sql <- translateSql("SELECT * FROM strata_stats AS stats",
+                        targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "SELECT * FROM strata_stats AS _stats")
 })
 
 
