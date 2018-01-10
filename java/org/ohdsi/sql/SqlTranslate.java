@@ -111,7 +111,7 @@ public class SqlTranslate {
 			if (parsedPattern.get(matchCount).isVariable) {
 				if (parsedPattern.get(matchCount).regEx != null && (matchCount == parsedPattern.size() - 1 || parsedPattern.get(matchCount + 1).isVariable)) {
 					// Regex variable at end of pattern, or has another variable following it
-					Pattern pattern = Pattern.compile(parsedPattern.get(matchCount).regEx, Pattern.CASE_INSENSITIVE);
+					Pattern pattern = Pattern.compile(parsedPattern.get(matchCount).regEx, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 					Matcher matcher = pattern.matcher(sql.substring(token.start));
 					if (matcher.find() && matcher.start() == 0) {
 						if (matchCount == 0) {
@@ -201,7 +201,7 @@ public class SqlTranslate {
 	}
 
 	private static boolean matches(String regex, String string) {
-		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 		Matcher matcher = pattern.matcher(string);
 		return (matcher.matches());
 	}
@@ -213,6 +213,7 @@ public class SqlTranslate {
 			for (Map.Entry<String, String> pair : matchedPattern.variableToValue.entrySet())
 				replacement = StringUtils.replaceAll(replacement, pair.getKey(), pair.getValue());
 			sql = sql.substring(0, matchedPattern.start) + replacement + sql.substring(matchedPattern.end, sql.length());
+//			System.out.println(sql);
 			int delta = 1;
 			if (StringUtils.tokenizeSql(replacement).size() == 0)
 				delta = 0;

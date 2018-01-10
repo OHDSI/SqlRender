@@ -2039,4 +2039,22 @@ test_that("translateSQL sql server -> Oracle insert plus union of three queries 
   expect_equal_ignore_spaces(sql, "INSERT INTO my_table (a, b) SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL UNION SELECT 5,6 FROM DUAL;")
 })
 
+test_that("translateSQL sql server -> Oracle union where only last query needs FROM DUAL", {
+  sql <- translateSql("SELECT a,b FROM my_table UNION SELECT 5,6;", 
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a,b FROM my_table UNION SELECT 5,6 FROM DUAL;")
+})
+
+test_that("translateSQL sql server -> Oracle nested queries with EOLs", {
+  sql <- translateSql("INSERT INTO test (a,b) SELECT a,b FROM (SELECT a,b FROM (SELECT a,b FROM my_table\n) nesti WHERE b = 2\n) nesto WHERE a = 1;", 
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "INSERT INTO test (a,b) SELECT a,b FROM (SELECT a,b FROM (SELECT a,b FROM my_table\n ) nesti WHERE b = 2\n ) nesto WHERE a = 1;")
+})
+
+
+test_that("translateSQL sql server -> Oracle nested queries with union", {
+  sql <- translateSql("SELECT a,b FROM (SELECT a,b FROM x UNION ALL SELECT a,b FROM x) o;", 
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a,b FROM (SELECT a,b FROM x UNION ALL SELECT a,b FROM x) o;")
+})
 
