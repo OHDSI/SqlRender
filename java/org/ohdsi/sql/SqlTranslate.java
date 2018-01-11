@@ -216,9 +216,16 @@ public class SqlTranslate {
 			int delta = 1;
 			if (StringUtils.tokenizeSql(replacement).size() == 0)
 				delta = 0;
-			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + delta);
+			matchedPattern = search(sql, parsedPattern, getTokenPosition(matchedPattern.startToken, delta));
 		}
 		return sql;
+	}
+
+	private static int getTokenPosition(int startToken, int delta) {
+		// we start looking after (last - 1) position because sometime you can face situation
+		// where left part of pattern disappears while replacing and it leads to skipping of next token
+		int token = startToken + delta - 1;
+		return token < 0 ? 0 : token;
 	}
 
 	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId, String oracleTempPrefix) {
