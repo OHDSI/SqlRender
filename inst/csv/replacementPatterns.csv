@@ -500,21 +500,12 @@ netezza,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n
 netezza,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 netezza,#,
 netezza,"LEFT(@variable,@b)","SUBSTR(@variable, 0, @b+1)"
-netezza,"RIGHT(@variable,@b)","SUBSTR(@variable, length(@variable)-@b+1, @b)"
+netezza,"RIGHT(@variable,@b)","SUBSTR(@variable, LENGTH(@variable)-@b+1, @b)"
 netezza,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
-netezza,"CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(@a, @b), @c), @d), @e), @f), @g)", @a || @c || @e || @g
-netezza,"CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(@a, @b), @c), @d), @e), @f), @g), @h), @i)", @a || @c || @e || @g || @i
-netezza,"CONCAT(CONCAT(@a, @b), '@c')","@a || @b || '@c'"
-netezza,"CONCAT(CONCAT(@a, '@b'), '@c')","@a || '@b' || '@c'"
-netezza,"CONCAT('@a', @b,'@c',@d)","'@a' || @b || '@c' || @d"
-netezza,"CONCAT(@a, @b)","@a || @b"
-netezza,"CONCAT(@a, '@b')","@a || '@b'"
-netezza,"CONCAT('@a', @b)","'@a' || @b"
-netezza,POWER(,POW(
+netezza,"CONCAT(@a,@b)","@a || @b"
+netezza,"POWER(@a,@b)","POW(@a,@b)"
 netezza,EOMONTH(@date),LAST_DAY(@date)
-netezza,CAST(@a AS INT), CAST(@a AS BIGINT)
 netezza,ROWCOUNT(), ROW_NUMBER()
-netezza,WHERE rn <= 100, LIMIT 100
 netezza,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
 netezza,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
