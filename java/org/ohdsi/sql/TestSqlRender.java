@@ -4,9 +4,9 @@ public class TestSqlRender {
 
 	public static void main(String[] args) {
 		
-		String sql = "SELECT a,b FROM (select a,b FROM x UNION ALL select a,b FROM x) o;";
+		String sql = "CONCAT( CONCAT( field1, ' and ' ), field2 )";
 		String path = "inst/csv/replacementPatterns.csv";
-		sql = SqlTranslate.translateSqlWithPath(sql, "oracle", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sql, "netezza", null, null, path);
 		System.out.println(sql);
 		
 //		Pattern pattern = Pattern.compile("^((?!FROM).)*$");

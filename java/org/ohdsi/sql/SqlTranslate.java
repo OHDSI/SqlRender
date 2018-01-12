@@ -217,6 +217,10 @@ public class SqlTranslate {
 			int delta = 1;
 			if (StringUtils.tokenizeSql(replacement).size() == 0)
 				delta = 0;
+			// Special situation: if replacement pattern starts with variable, and variable content starts with start of search pattern, don't
+			// skip first token:
+			if (delta > 0 && replacePattern.startsWith("@@") && replacement.toLowerCase().trim().startsWith(parsedPattern.get(0).text))
+				delta = 0;
 			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + delta);
 		}
 		return sql;
