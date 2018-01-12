@@ -489,6 +489,7 @@ netezza,LOG10(@expression),LOG(@expression)
 netezza,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 netezza,COUNT_BIG(@a),COUNT(@a)
 netezza,USE @schema;,SET search_path TO @schema;
+netezza,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 netezza,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE @table IF EXISTS;
 netezza,.dbo.,.
 netezza,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
@@ -496,15 +497,22 @@ netezza,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @
 netezza,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
 netezza,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 netezza,VARCHAR(MAX),VARCHAR(1000)
-netezza,FLOAT,NUMERIC
+netezza,FLOAT,"FLOAT(6)"
 netezza,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 netezza,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 netezza,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
 netezza,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 netezza,#,
-netezza,"LEFT(@variable,@b)","STRLEFT(@variable,@b)"
-netezza,"RIGHT(@variable,@b)","STRRIGHT(@variable,@b)"
+netezza,"LEFT(@variable,@b)","SUBSTR(@variable, 0, @b+1)"
+netezza,"RIGHT(@variable,@b)","SUBSTR(@variable, LENGTH(@variable)-@b+1, @b)"
 netezza,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+netezza,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
+netezza,"CONCAT(@a,@b)","@a || @b"
+netezza,"POWER(@a,@b)","POW(@a,@b)"
+netezza,EOMONTH(@date),LAST_DAY(@date)
+netezza,ROWCOUNT(), ROW_NUMBER()
+netezza,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
+netezza,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"

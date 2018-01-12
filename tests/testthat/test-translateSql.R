@@ -528,7 +528,7 @@ test_that("translateSQL sql server -> Netezza DROP TABLE IF EXISTS", {
 test_that("translateSQL sql server -> Netezza RIGHT functions", {
   sql <- translateSql("SELECT RIGHT(x,4);",
                       targetDialect = "netezza")$sql
-  expect_equal_ignore_spaces(sql, "SELECT STRRIGHT(x,4);")
+  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x, LENGTH(x) - 4 + 1, 4);")
 })
 
 test_that("translateSQL sql server -> Netezza DELETE FROM WHERE", {
@@ -2051,10 +2051,20 @@ test_that("translateSQL sql server -> Oracle nested queries with EOLs", {
   expect_equal_ignore_spaces(sql, "INSERT INTO test (a,b) SELECT a,b FROM (SELECT a,b FROM (SELECT a,b FROM my_table\n ) nesti WHERE b = 2\n ) nesto WHERE a = 1;")
 })
 
-
 test_that("translateSQL sql server -> Oracle nested queries with union", {
   sql <- translateSql("SELECT a,b FROM (SELECT a,b FROM x UNION ALL SELECT a,b FROM x) o;", 
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql, "SELECT a,b FROM (SELECT a,b FROM x UNION ALL SELECT a,b FROM x) o;")
 })
 
+test_that("translateSQL sql server -> Netezza concat with more than two arguments", {
+  sql <- translateSql("SELECT CONCAT(a,b,c,d,e) FROM x;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a || b || c || d || e FROM x;")
+})
+
+test_that("translateSQL sql server -> Netezza nested concat ", {
+  sql <- translateSql("SELECT CONCAT(CONCAT(CONCAT(a,CONCAT(b,c)),d),e) FROM x;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a || b || c || d || e FROM x;")
+})
