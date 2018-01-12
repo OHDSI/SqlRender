@@ -506,6 +506,7 @@ netezza,#,
 netezza,"LEFT(@variable,@b)","SUBSTR(@variable, 0, @b+1)"
 netezza,"RIGHT(@variable,@b)","SUBSTR(@variable, LENGTH(@variable)-@b+1, @b)"
 netezza,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+netezza,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
 netezza,"CONCAT(@a,@b)","@a || @b"
 netezza,"POWER(@a,@b)","POW(@a,@b)"
 netezza,EOMONTH(@date),LAST_DAY(@date)
