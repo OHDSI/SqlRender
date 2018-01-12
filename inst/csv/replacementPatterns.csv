@@ -29,8 +29,7 @@ oracle,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
 oracle,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
 oracle,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
 oracle,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
-oracle,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
-oracle,CAST(@a AS VARCHAR(@b)),TO_CHAR(@a)
+oracle,"CONVERT(DATE, @a)","TO_DATE(@a, 'YYYYMMDD')"
 oracle,CAST(@a AS VARCHAR),TO_CHAR(@a)
 oracle,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
 oracle,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
@@ -60,11 +59,16 @@ oracle,SELECT @a WHERE @b UNION,SELECT @a FROM DUAL WHERE @b UNION
 oracle,SELECT @a;,SELECT @a FROM DUAL;
 oracle,(SELECT @a),(SELECT @a FROM DUAL)
 oracle,SELECT @a UNION,SELECT @a FROM DUAL UNION
-oracle,SELECT @a FROM @b FROM DUAL;,SELECT @a FROM @b;
-oracle,FROM @a FROM DUAL,FROM @a
-oracle,FROM @a FROM DUAL,FROM @a
-oracle,FROM @a FROM DUAL,FROM @a
-oracle,FROM @a FROM DUAL,FROM @a
+oracle,FROM DUAL FROM DUAL, <dummy> FROM DUAL
+oracle,FROM @a UNION @b FROM DUAL UNION,FROM @a UNION @b FROM DUAL FROM DUAL UNION
+oracle,FROM @a FROM DUAL UNION,FROM @a UNION
+oracle,FROM @a UNION @b FROM DUAL;,FROM @a UNION @b FROM DUAL FROM DUAL;
+oracle,FROM @a FROM DUAL;,FROM @a;
+oracle,FROM @a UNION @b FROM DUAL WHERE,FROM @a UNION @b FROM DUAL FROM DUAL WHERE
+oracle,FROM @a FROM DUAL WHERE,FROM @a WHERE
+oracle,FROM @a UNION @b FROM DUAL),FROM @a UNION @b FROM DUAL FROM DUAL)
+oracle,FROM @b FROM DUAL),FROM @b)
+oracle,<dummy>,
 oracle,SELECT @a CASE @b COUNT(@c) @d END @e;,SELECT @a CASE @b COUNT(@c) @d END @e GROUP BY 1;
 oracle,(SELECT @a CASE @b COUNT(@c) @d END @e),(SELECT @a CASE @b COUNT(@c) @d END @e GROUP BY 1)
 oracle,GROUP BY @a GROUP BY 1,GROUP BY @a
@@ -411,7 +415,7 @@ impala,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 impala,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 impala,SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c;,SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2;
 impala,(SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c),(SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2)
-impala,DELETE FROM @a WHERE @b;,CREATE TABLE #tmp AS SELECT * FROM @a WHERE NOT(@b); INSERT OVERWRITE TABLE @a SELECT * from #tmp; DROP TABLE #tmp;
+impala,DELETE FROM @a WHERE @b;,INSERT OVERWRITE TABLE @a SELECT * FROM @a WHERE NOT(@b);
 impala,DELETE FROM @a;,TRUNCATE TABLE @a;
 impala,.dbo.,.
 impala,##,<hash><hash>
