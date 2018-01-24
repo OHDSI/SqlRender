@@ -484,6 +484,18 @@ test_that("translateSQL sql server -> Impala stats reserved word",{
     expect_equal_ignore_spaces(sql, "SELECT * FROM strata_stats AS _stats")
 })
 
+test_that("translateSQL sql server -> Impala DATEFROMPARTS()", {
+    sql <- translateSql("SELECT DATEFROMPARTS('1977', '10', '12')", 
+                      targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "SELECT CAST(CONCAT(CAST('1977' AS VARCHAR),'-',CAST('10' AS VARCHAR),'-',CAST('12' AS VARCHAR)) AS TIMESTAMP)")
+  })
+
+test_that("translateSQL sql server -> Impala EOMONTH()", {
+    sql <- translateSql("SELECT eomonth(payer_plan_period_start_date) AS obs_month_end",
+                      targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "SELECT days_sub(add_months(trunc(CAST(payer_plan_period_start_date AS TIMESTAMP), 'MM'),1),1) AS obs_month_end")
+  })
+
 
 # Netezza tests
 
