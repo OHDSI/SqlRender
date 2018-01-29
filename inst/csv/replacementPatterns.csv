@@ -425,6 +425,7 @@ impala,#,%temp_prefix%%session_id%
 impala,<hash><hash>,##
 impala,.location,.`location`
 impala,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+impala,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 impala,DATE,TIMESTAMP
 impala,DATETIME,TIMESTAMP
 impala,BIGINT NOT NULL,BIGINT

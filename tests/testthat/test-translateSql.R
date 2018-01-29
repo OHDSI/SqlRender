@@ -454,6 +454,12 @@ test_that("translateSQL sql server -> Impala location reserved word", {
   expect_equal_ignore_spaces(sql, "select count(1) from omop_cdm.`location`;")
 })
 
+test_that("translateSQL sql server -> Impala TOP in subqueries", {
+    sql <- translateSql("select statistic_value from achilles_results join (SELECT TOP 1 count as total_pts from achilles_results where analysis_id = 1) where analysis_id in (2002,2003)",
+                      targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "select statistic_value from achilles_results join (SELECT count as total_pts from achilles_results where analysis_id = 1 LIMIT 1) where analysis_id in (2002,2003)")
+})
+
 test_that("translateSQL sql server -> Impala CREATE TABLE with NOT NULL", {
   sql <- translateSql("CREATE TABLE a (c1 BIGINT NOT NULL, c2 BOOLEAN NOT NULL, c3 CHAR NOT NULL, c4 DECIMAL NOT NULL, c5 DOUBLE NOT NULL, c6 FLOAT NOT NULL, c7 INT NOT NULL, c8 REAL NOT NULL, c9 SMALLINT NOT NULL, c10 STRING NOT NULL, c11 TIMESTAMP NOT NULL, c12 TINYINT NOT NULL, c13 VARCHAR(10) NOT NULL, c14 DATE NOT NULL, c15 DATETIME NOT NULL)",
                       targetDialect = "impala")$sql
