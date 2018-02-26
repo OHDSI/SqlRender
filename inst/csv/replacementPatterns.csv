@@ -402,6 +402,8 @@ impala,"DATEADD(yy,@years,@date)","ADD_MONTHS(CAST(@date AS DATE), 12 * @years)"
 impala,"DATEDIFF(d,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(dd,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(day,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
+impala,"DATEFROMPARTS(@year,@month,@day)","CAST(CONCAT(CAST(@year AS VARCHAR),'-',CAST(@month AS VARCHAR),'-',CAST(@day AS VARCHAR)) AS TIMESTAMP)"
+impala,"eomonth(@date)","days_sub(add_months(trunc(CAST(@date AS TIMESTAMP), 'MM'),1),1)"
 impala,DAY(@date),DAY(CAST(@date AS DATE))
 impala,GETDATE(),NOW()
 impala,MONTH(@date),MONTH(CAST(@date AS DATE))
@@ -423,6 +425,7 @@ impala,#,%temp_prefix%%session_id%
 impala,<hash><hash>,##
 impala,.location,.`location`
 impala,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+impala,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 impala,DATE,TIMESTAMP
 impala,DATETIME,TIMESTAMP
 impala,BIGINT NOT NULL,BIGINT

@@ -454,6 +454,12 @@ test_that("translateSQL sql server -> Impala location reserved word", {
   expect_equal_ignore_spaces(sql, "select count(1) from omop_cdm.`location`;")
 })
 
+test_that("translateSQL sql server -> Impala TOP in subqueries", {
+    sql <- translateSql("select statistic_value from achilles_results join (SELECT TOP 1 count as total_pts from achilles_results where analysis_id = 1) where analysis_id in (2002,2003)",
+                      targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "select statistic_value from achilles_results join (SELECT count as total_pts from achilles_results where analysis_id = 1 LIMIT 1) where analysis_id in (2002,2003)")
+})
+
 test_that("translateSQL sql server -> Impala CREATE TABLE with NOT NULL", {
   sql <- translateSql("CREATE TABLE a (c1 BIGINT NOT NULL, c2 BOOLEAN NOT NULL, c3 CHAR NOT NULL, c4 DECIMAL NOT NULL, c5 DOUBLE NOT NULL, c6 FLOAT NOT NULL, c7 INT NOT NULL, c8 REAL NOT NULL, c9 SMALLINT NOT NULL, c10 STRING NOT NULL, c11 TIMESTAMP NOT NULL, c12 TINYINT NOT NULL, c13 VARCHAR(10) NOT NULL, c14 DATE NOT NULL, c15 DATETIME NOT NULL)",
                       targetDialect = "impala")$sql
@@ -483,6 +489,18 @@ test_that("translateSQL sql server -> Impala stats reserved word",{
                         targetDialect = "impala")$sql
     expect_equal_ignore_spaces(sql, "SELECT * FROM strata_stats AS _stats")
 })
+
+test_that("translateSQL sql server -> Impala DATEFROMPARTS()", {
+    sql <- translateSql("SELECT DATEFROMPARTS('1977', '10', '12')", 
+                      targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "SELECT CAST(CONCAT(CAST('1977' AS VARCHAR),'-',CAST('10' AS VARCHAR),'-',CAST('12' AS VARCHAR)) AS TIMESTAMP)")
+  })
+
+test_that("translateSQL sql server -> Impala EOMONTH()", {
+    sql <- translateSql("SELECT eomonth(payer_plan_period_start_date) AS obs_month_end",
+                      targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "SELECT days_sub(add_months(trunc(CAST(payer_plan_period_start_date AS TIMESTAMP), 'MM'),1),1) AS obs_month_end")
+  })
 
 
 # Netezza tests
