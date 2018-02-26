@@ -1,3 +1,11 @@
+SqlRender v1.4.8 (Release date: 2018-02-26)
+===========================================
+
+Changes: 
+
+1. Better handling of 'FROM DUAL' for Oracle.
+2. Improved support for Netezza and Impala.
+
 SqlRender v1.4.6 (Release date: 2017-11-06)
 ===========================================
 
