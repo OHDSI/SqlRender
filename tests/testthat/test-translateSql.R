@@ -579,10 +579,16 @@ test_that("translateSQL sql server -> impala TOP", {
   expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
 })
 
-test_that("translateSQL sql server -> redshift TOP", {
+test_that("translateSQL sql server -> netezza TOP", {
   sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
+})
+
+test_that("translateSQL sql server -> netezza TOP subquery", {
+  sql <- translateSql("SELECT * FROM (SELECT TOP 10 * FROM my_table WHERE a = b);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "SELECT * FROM (SELECT * FROM my_table WHERE a = b LIMIT 10);")
 })
 
 test_that("translateSQL sql server -> postgres date to varchar", {
