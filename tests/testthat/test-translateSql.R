@@ -543,10 +543,16 @@ test_that("translateSQL sql server -> Netezza DROP TABLE IF EXISTS", {
                              "DROP TABLE cohort IF EXISTS;")
 })
 
+test_that("translateSQL sql server -> Netezza LEFT functions", {
+  sql <- translateSql("SELECT LEFT(x,4);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x, 1, 4);")
+})
+
 test_that("translateSQL sql server -> Netezza RIGHT functions", {
   sql <- translateSql("SELECT RIGHT(x,4);",
                       targetDialect = "netezza")$sql
-  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x, LENGTH(x) - 4 + 1, 4);")
+  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x, LENGTH(x) - 4, 4);")
 })
 
 test_that("translateSQL sql server -> Netezza DELETE FROM WHERE", {
