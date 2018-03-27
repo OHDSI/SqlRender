@@ -10,9 +10,9 @@ r_packages:
   - covr
   - drat
 
-before_install:
-  - Rscript -e 'update.packages(ask = FALSE)'
-  - export LD_LIBRARY_PATH=$JAVA_HOME:$LD_LIBRARY_PATH
+before_script:
+  - export PKG_NAME=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package))')
+  - export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package,"_",pkg$version,".tar.gz"))')
 
 notifications:
   recipients:
