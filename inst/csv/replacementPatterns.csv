@@ -341,6 +341,7 @@ redshift,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CA
 redshift,^,#
 redshift,"CONVERT(DATE, @a)","CAST(@a as DATE)"
 redshift,"CONVERT(TIMESTAMPTZ, @a)","CONVERT(TIMESTAMP WITH TIME ZONE, @a)"
+pdw,CREATE INDEX @index_name ON #@table (@variable);,-- PDW does not support non-clustered index on temp tables.
 pdw,VARCHAR(MAX),VARCHAR(1000)
 pdw,HINT DISTRIBUTE_ON_KEY(@key) @hint WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 pdw,"WITH @a AS @b SELECT @c1 subject_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(subject_id))\nAS\nWITH @a AS @b SELECT\n@c1 subject_id, @c2\nFROM\n@e;"
@@ -492,19 +493,19 @@ netezza,LOG10(@expression),LOG(@expression)
 netezza,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 netezza,COUNT_BIG(@a),COUNT(@a)
 netezza,USE @schema;,SET search_path TO @schema;
-netezza,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+netezza,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition) DISTRIBUTE ON RANDOM;
 netezza,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE @table IF EXISTS;
 netezza,.dbo.,.
-netezza,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
-netezza,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
-netezza,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
+netezza,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition) DISTRIBUTE ON RANDOM
+netezza,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- netezza does not support indexes
+netezza,CREATE INDEX @index_name ON @table (@variable);,-- netezza does not support indexes
 netezza,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 netezza,VARCHAR(MAX),VARCHAR(1000)
 netezza,FLOAT,"FLOAT(6)"
-netezza,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-netezza,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-netezza,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
-netezza,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+netezza,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS (\nWITH @a AS @b SELECT\n@c\nFROM\n@e\n) DISTRIBUTE ON RANDOM;
+netezza,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS (\nWITH @a AS @b SELECT\n@c\nFROM\n@e\n) DISTRIBUTE ON RANDOM;
+netezza,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS(\nSELECT\n@a\nFROM\n@c\n) DISTRIBUTE ON RANDOM;
+netezza,SELECT @a INTO @b FROM @c;,CREATE TABLE @b\nAS(\nSELECT\n@a\nFROM\n@c\n) DISTRIBUTE ON RANDOM;
 netezza,#,
 netezza,"LEFT(@variable,@b)","SUBSTR(@variable, 1, @b)"
 netezza,"RIGHT(@variable,@b)","SUBSTR(@variable, LENGTH(@variable)-@b+1, @b)"

@@ -533,7 +533,7 @@ test_that("translateSQL sql server -> Netezza WITH SELECT INTO", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;")
+                             "CREATE TABLE d \nAS (\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1\n) DISTRIBUTE ON RANDOM;")
 })
 
 test_that("translateSQL sql server -> Netezza DROP TABLE IF EXISTS", {
@@ -2098,3 +2098,17 @@ test_that("translateSQL sql server -> Netezza nested concat ", {
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql, "SELECT a || b || c || d || e FROM x;")
 })
+
+test_that("translateSQL sql server -> Netezza clustered index not supported", {
+  sql <- translateSql("CREATE CLUSTERED INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "-- netezza does not support indexes")
+})
+
+test_that("translateSQL sql server -> Netezza index not supported", {
+  sql <- translateSql("CREATE INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "-- netezza does not support indexes")
+})
+
+
