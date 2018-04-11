@@ -573,10 +573,22 @@ test_that("translateSQL sql server -> PostgreSql TOP", {
   expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
 })
 
+test_that("translateSQL sql server -> PostgreSql TOP subquery", {
+  sql <- translateSql("SELECT name FROM (SELECT TOP 1 name FROM my_table WHERE a = b);",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT name FROM (SELECT name FROM my_table WHERE a = b LIMIT 1);")
+})
+
 test_that("translateSQL sql server -> Oracle TOP", {
   sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b AND ROWNUM <= 10; ")
+})
+
+test_that("translateSQL sql server -> Oracle TOP subquery", {
+  sql <- translateSql("SELECT name FROM (SELECT TOP 1 name FROM my_table WHERE a = b);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT name FROM (SELECT name FROM my_table WHERE a = b AND ROWNUM <= 1);")
 })
 
 test_that("translateSQL sql server -> impala TOP", {
