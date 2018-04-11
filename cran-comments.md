@@ -1,4 +1,4 @@
-This update has more translation rules (see NEWS)
+This update has more and improved translation rules (see NEWS)
 
 ---
 

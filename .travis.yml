@@ -2,13 +2,17 @@ language: R
 cache: packages
 sudo: false
 
+branches:
+  except:
+    - /^*-v[0-9]/
+
 r_packages:
   - covr
   - drat
 
-before_install:
-  - Rscript -e 'update.packages(ask = FALSE)'
-  - export LD_LIBRARY_PATH=$JAVA_HOME:$LD_LIBRARY_PATH
+before_script:
+  - export PKG_NAME=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package))')
+  - export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package,"_",pkg$version,".tar.gz"))')
 
 notifications:
   recipients:
@@ -19,6 +23,4 @@ notifications:
     on_failure: change
 
 after_success:
-  - Rscript -e 'covr::codecov()'
-  - curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/broadsea-methodslibrary/trigger/f0b51cec-4027-4781-9383-4b38b42dd4f5/
-  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy.sh
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && perl compare_versions --tag && bash deploy.sh && curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/broadsea-methodslibrary/trigger/f0b51cec-4027-4781-9383-4b38b42dd4f5/

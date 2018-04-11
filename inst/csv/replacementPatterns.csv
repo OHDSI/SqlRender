@@ -463,6 +463,7 @@ netezza,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 netezza,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
 netezza,CAST(@a AS INT),CAST(@a AS INTEGER)
 netezza,CAST(@a AS VARCHAR),CAST(@a AS VARCHAR(1000))
+netezza,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
 netezza,"DATEADD(d,@days,@date)",(@date + @days)
 netezza,"DATEADD(dd,@days,@date)",(@date + @days)
 netezza,"DATEADD(day,@days,@date)",(@date + @days)
@@ -480,10 +481,9 @@ netezza,+ '@a',|| '@a'
 netezza,'@a' +,'@a' ||
 netezza,YEAR(@variable),"DATE_PART('YEAR', @variable)"
 netezza,MONTH(@variable),"DATE_PART('MONTH', @variable)"
+netezza,DAY(@variable),"DATE_PART('DAY', @variable)"
 netezza,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
 netezza,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
-netezza,YEAR(@date),EXTRACT(YEAR FROM @date)
-netezza,MONTH(@date),EXTRACT(MONTH FROM @date)
 netezza,STDEV(@a),STDDEV(@a)
 netezza,LEN(@a),CHAR_LENGTH(@a)
 netezza,"LOG(@expression,@base)",(LN(@expression)/LN(@base))
@@ -506,9 +506,10 @@ netezza,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS
 netezza,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
 netezza,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 netezza,#,
-netezza,"LEFT(@variable,@b)","SUBSTR(@variable, 0, @b+1)"
+netezza,"LEFT(@variable,@b)","SUBSTR(@variable, 1, @b)"
 netezza,"RIGHT(@variable,@b)","SUBSTR(@variable, LENGTH(@variable)-@b+1, @b)"
 netezza,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+netezza,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 netezza,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
 netezza,"CONCAT(@a,@b)","@a || @b"
 netezza,"POWER(@a,@b)","POW(@a,@b)"
