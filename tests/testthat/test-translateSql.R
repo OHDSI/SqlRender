@@ -533,8 +533,37 @@ test_that("translateSQL sql server -> Netezza WITH SELECT INTO", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "CREATE TABLE d \nAS (\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1\n) DISTRIBUTE ON RANDOM;")
+                             "CREATE TABLE d \nAS\nWITH cte1  AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
 })
+
+test_that("translateSQL sql server -> Netezza WITH CTE SELECT INTO with RANDOM distribution", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nWITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1\nDISTRUBTE ON RANDOM;")
+})
+
+test_that("translateSQL sql server -> Netezza WITH CTE SELECT INTO with KEY distribution", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(c)\nWITH cte1 AS (SELECT a,c FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "--HINT DISTRIBUTE_ON_KEY(c)\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a,c FROM b)  SELECT\nc \nFROM\ncte1\nDISTRUBTE ON (c);")
+})
+
+test_that("translateSQL sql server -> Netezza WITH SELECT INTO with RANDOM distribution", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nSELECT a INTO b FROM someTable;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRUBTE ON RANDOM;")
+})
+
+test_that("translateSQL sql server -> Netezza WITH SELECT INTO with KEY distribution", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(a)\nSELECT a INTO b FROM someTable;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "--HINT DISTRIBUTE_ON_KEY(a)\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRUBTE ON (a);")
+})
+
 
 test_that("translateSQL sql server -> Netezza DROP TABLE IF EXISTS", {
   sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
@@ -616,6 +645,18 @@ test_that("translateSQL sql server -> pdw hint distribute_on_key", {
   expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE (row_id INT)\nWITH (DISTRIBUTION = HASH(row_id));")
 })
 
+test_that("translateSQL sql server -> pdw hint distribute_on_random", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nSELECT * INTO #my_table FROM other_table;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_RANDOM\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = ROUND_ROBIN) AS\nSELECT\n * \nFROM\n other_table;")
+})
+
+test_that("translateSQL sql server -> pdw hint distribute_on_random", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE(row_id INT);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_RANDOM\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE (row_id INT)\nWITH (DISTRIBUTION = ROUND_ROBIN);")
+})
+
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
@@ -628,6 +669,19 @@ test_that("translateSQL sql server -> redshift hint distribute_on_key", {
                       targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE my_table (row_id INT)\nDISTKEY(row_id);")
 })
+
+test_that("translateSQL sql server -> redshift hint distribute_on_random", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nSELECT * INTO #my_table FROM other_table;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE  #my_table\nDISTSTYLE EVEN\nAS\nSELECT\n * \nFROM\n other_table;")
+})
+
+test_that("translateSQL sql server -> redshift hint distribute_on_random", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE my_table (row_id INT);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE my_table (row_id INT)\nDISTSTYLE EVEN;")
+})
+
 
 test_that("translateSql: warning on temp table name that is too long", {
   expect_warning(translateSql("SELECT * FROM #abcdefghijklmnopqrstuvwxyz", "pdw")$sql)
