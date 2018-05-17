@@ -46,8 +46,9 @@ NULL
 #' pattern is used to turn on or off blocks of SQL code.} }
 #'
 #'
-#' @param sql   The parameterized SQL
-#' @param ...   Parameter values
+#' @param sql                         The parameterized SQL
+#' @param showParameterWarnings       Should missing parameter warnings be shown?
+#' @param ...                         Parameter values
 #' @return
 #' A list containing the following elements: \describe{ \item{parameterizedSql}{The original
 #' parameterized SQL code} \item{sql}{The rendered sql} }
@@ -65,15 +66,18 @@ NULL
 #' renderSql("SELECT * FROM @@a {@@a == 'myTable' & @@b != 'x'}?{WHERE @@b = 1};",
 #'           a = "myTable",
 #'           b = "y")
+#' renderSql(sql = "SELECT * FROM @@a;", showParameterWarnings = FALSE, a = "myTable", b = "missingParameter")
 #' @import rJava
 #' @export
-renderSql <- function(sql = "", ...) {
+renderSql <- function(sql = "", showParameterWarnings = TRUE, ...) {
   parameters <- lapply(list(...), function(x) {
     paste(x, collapse = ",")
   })
-  messages <- rJava::J("org.ohdsi.sql.SqlRender")$check(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
-  for (message in messages) {
-    warning(message)
+  if (showParameterWarnings) {
+    messages <- rJava::J("org.ohdsi.sql.SqlRender")$check(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
+    for (message in messages) {
+      warning(message)
+    }
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlRender")$renderSql(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
   list(originalSql = sql, sql = translatedSql, parameters = parameters)

@@ -4,10 +4,12 @@
 \alias{renderSql}
 \title{renderSql}
 \usage{
-renderSql(sql = "", ...)
+renderSql(sql = "", showParameterWarnings = TRUE, ...)
 }
 \arguments{
 \item{sql}{The parameterized SQL}
+
+\item{showParameterWarnings}{Should missing parameter warnings be shown?}
 
 \item{...}{Parameter values}
 }
@@ -40,4 +42,5 @@ renderSql("{DEFAULT @b = \\"someField\\"}SELECT * FROM @a {@b != ''}?{WHERE @b =
 renderSql("SELECT * FROM @a {@a == 'myTable' & @b != 'x'}?{WHERE @b = 1};",
           a = "myTable",
           b = "y")
+renderSql(sql = "SELECT * FROM @a;", showParameterWarnings = FALSE, a = "myTable", b = "missingParameter")
 }

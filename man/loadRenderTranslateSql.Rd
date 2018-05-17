@@ -5,7 +5,7 @@
 \title{Load, render, and translate a SQL file in a package}
 \usage{
 loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server", ...,
-  oracleTempSchema = NULL)
+  oracleTempSchema = NULL, showParameterWarnings = TRUE)
 }
 \arguments{
 \item{sqlFilename}{The source SQL file}
@@ -18,6 +18,8 @@ loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server", ...,
 \item{...}{Parameter values used for \code{renderSql}}
 
 \item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle.}
+
+\item{showParameterWarnings}{Should missing parameter warnings be shown?}
 }
 \value{
 Returns a string containing the rendered SQL.
