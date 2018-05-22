@@ -2178,3 +2178,8 @@ test_that("translateSQL sql server -> Netezza index not supported", {
 })
 
 
+test_that("translateSQL sql server -> Oracle BIGINT in conditional create table", {
+  sql <- translateSql("IF OBJECT_ID('test', 'U') IS NULL CREATE TABLE test (	x BIGINT);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE test  (x NUMBER(19))';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
+})
