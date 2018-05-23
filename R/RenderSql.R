@@ -47,7 +47,8 @@ NULL
 #'
 #'
 #' @param sql                         The parameterized SQL
-#' @param showParameterWarnings       Should missing parameter warnings be shown?
+#' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
+#'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
 #' @param ...                         Parameter values
 #' @return
 #' A list containing the following elements: \describe{ \item{parameterizedSql}{The original
@@ -66,14 +67,14 @@ NULL
 #' renderSql("SELECT * FROM @@a {@@a == 'myTable' & @@b != 'x'}?{WHERE @@b = 1};",
 #'           a = "myTable",
 #'           b = "y")
-#' renderSql(sql = "SELECT * FROM @@a;", showParameterWarnings = FALSE, a = "myTable", b = "missingParameter")
+#' renderSql(sql = "SELECT * FROM @@a;", warnOnMissingParameters = FALSE, a = "myTable", b = "missingParameter")
 #' @import rJava
 #' @export
-renderSql <- function(sql = "", showParameterWarnings = TRUE, ...) {
+renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
   parameters <- lapply(list(...), function(x) {
     paste(x, collapse = ",")
   })
-  if (showParameterWarnings) {
+  if (warnOnMissingParameters) {
     messages <- rJava::J("org.ohdsi.sql.SqlRender")$check(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
     for (message in messages) {
       warning(message)

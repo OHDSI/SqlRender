@@ -155,7 +155,8 @@ translateSqlFile <- function(sourceFile,
 #'                                    'redshift' are supported
 #' @param ...                         Parameter values used for \code{renderSql}
 #' @param oracleTempSchema            A schema that can be used to create temp tables in when using Oracle.
-#' @param showParameterWarnings       Should missing parameter warnings be shown?
+#' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
+#'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
 #'
 #' @return
 #' Returns a string containing the rendered SQL.
@@ -172,7 +173,7 @@ loadRenderTranslateSql <- function(sqlFilename,
                                    dbms = "sql server",
                                    ...,
                                    oracleTempSchema = NULL,
-                                   showParameterWarnings = TRUE) {
+                                   warnOnMissingParameters = TRUE) {
   pathToSql <- system.file(paste("sql/", gsub(" ", "_", dbms), sep = ""),
                            sqlFilename,
                            package = packageName)
@@ -185,7 +186,7 @@ loadRenderTranslateSql <- function(sqlFilename,
   }
   parameterizedSql <- readChar(pathToSql, file.info(pathToSql)$size)
   
-  renderedSql <- renderSql(sql = parameterizedSql[1], showParameterWarnings = showParameterWarnings, ...)$sql
+  renderedSql <- renderSql(sql = parameterizedSql[1], warnOnMissingParameters = warnOnMissingParameters, ...)$sql
   
   if (mustTranslate)
     renderedSql <- translateSql(sql = renderedSql, targetDialect = dbms, oracleTempSchema = oracleTempSchema)$sql
