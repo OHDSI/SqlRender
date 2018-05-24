@@ -67,7 +67,10 @@ NULL
 #' renderSql("SELECT * FROM @@a {@@a == 'myTable' & @@b != 'x'}?{WHERE @@b = 1};",
 #'           a = "myTable",
 #'           b = "y")
-#' renderSql(sql = "SELECT * FROM @@a;", warnOnMissingParameters = FALSE, a = "myTable", b = "missingParameter")
+#' renderSql(sql = "SELECT * FROM @@a;", 
+#'           warnOnMissingParameters = FALSE, 
+#'           a = "myTable", 
+#'           b = "missingParameter")
 #' @import rJava
 #' @export
 renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
