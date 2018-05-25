@@ -505,6 +505,12 @@ test_that("translateSQL sql server -> Impala EOMONTH()", {
 
 # Netezza tests
 
+test_that("translateSQL sql server -> Netezza WITH cte AS () INSERT INTO tbl SELECT * FROM cte", {
+  sql <- translateSql("WITH data AS (SELECT 'test' AS user, 'secret' AS password) INSERT INTO users SELECT * FROM data;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "INSERT INTO users WITH data AS (SELECT 'test' AS user, 'secret' AS password) SELECT * FROM data;")
+})
+
 test_that("translateSQL sql server -> Netezza CAST(AS DATE)", {
   sql <- translateSql("CAST('20000101' AS DATE);",
                       targetDialect = "netezza")$sql
