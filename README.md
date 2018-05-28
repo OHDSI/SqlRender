@@ -60,18 +60,17 @@ Getting Started
 ===============
 ## R package
 
-In R, use the following commands to install the latest stable version from CRAN:
+In R, to install the latest stable version, install from CRAN:
 
 ```r
 install.packages("SqlRender")
 ```
-
-To install the latest development version directly from GitHub, use:
+  
+To install the latest development version, install from GitHub:
 
 ```r
 install.packages("devtools")
-library(devtools)
-install_github("ohdsi/SqlRender")
+devtools::install_github("ohdsi/SqlRender")
 ```
 
 Once installed, you can try out SqlRender in a Shiny app that comes with the package:

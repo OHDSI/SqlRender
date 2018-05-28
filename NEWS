@@ -1,3 +1,17 @@
+SqlRender v1.5.0 (Release data: 2018-05-28)
+===========================================
+
+Changes:
+
+1. Improved support for Netezza.
+2. Added random distribution hints for PDW, RedShift, Netezza.
+3. Improved MPP index translation for PDW and Netezza.
+4. Warnings about missing parameters when rendering SQL can now be turned off.
+
+Bugfixes:
+
+1. Translation of camelCase to snake_case now adds underscore before numbers.
+
 SqlRender v1.4.8 (Release date: 2018-02-26)
 ===========================================
 
