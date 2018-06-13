@@ -166,6 +166,8 @@ postgresql,#,
 postgresql,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 postgresql,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 postgresql,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
+redshift,CREATE INDEX @index_name ON @table (@variable);,-- redshift does not support indexes
+redshift,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- redshift does not support indexes
 redshift,"OVER (@a ORDER BY @b DESC)","OVER (@a O*D*R B* @b DESC ROWS UNBOUNDED PRECEDING)"
 redshift,"OVER (@a ORDER BY @b ASC)","OVER (@a O*D*R B* @b ASC ROWS UNBOUNDED PRECEDING)"
 redshift,"OVER (@a ORDER BY @((?!.*ROWS).*)b)","OVER (@a O*D*R B* @b ROWS UNBOUNDED PRECEDING)"

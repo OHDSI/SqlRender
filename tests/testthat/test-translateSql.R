@@ -2183,6 +2183,17 @@ test_that("translateSQL sql server -> Netezza index not supported", {
   expect_equal_ignore_spaces(sql, "-- netezza does not support indexes")
 })
 
+test_that("translateSQL sql server -> Redshift clustered index not supported", {
+  sql <- translateSql("CREATE CLUSTERED INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "-- redshift does not support indexes")
+})
+
+test_that("translateSQL sql server -> Redshift index not supported", {
+  sql <- translateSql("CREATE INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "-- redshift does not support indexes")
+})
 
 test_that("translateSQL sql server -> Oracle BIGINT in conditional create table", {
   sql <- translateSql("IF OBJECT_ID('test', 'U') IS NULL CREATE TABLE test (	x BIGINT);",
