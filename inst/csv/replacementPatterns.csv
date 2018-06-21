@@ -489,7 +489,6 @@ netezza,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
 netezza,CAST(@a AS INT),CAST(@a AS INTEGER)
 netezza,CAST(@a AS VARCHAR),CAST(@a AS VARCHAR(1000))
 netezza,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
-netezza,"CONVERT(float, @a)","CAST(@a as float)"
 netezza,"DATEADD(d,@days,@date)",(@date + @days)
 netezza,"DATEADD(dd,@days,@date)",(@date + @days)
 netezza,"DATEADD(day,@days,@date)",(@date + @days)
