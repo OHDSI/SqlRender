@@ -2122,6 +2122,12 @@ test_that("translateSQL sql server -> Redshift window function NTILE no sort spe
   expect_equal_ignore_spaces(sql, "select NTILE(4) OVER (procedure_concept_id ORDER BY prc_cnt) as num")
 })
 
+test_that("translateSQL sql server -> Redshift WITH cte AS () INSERT INTO tbl SELECT * FROM cte", {
+  sql <- translateSql("WITH data AS (SELECT 'test' AS user, 'secret' AS password) INSERT INTO users SELECT * FROM data;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "INSERT INTO users WITH data AS (SELECT 'test' AS user, 'secret' AS password) SELECT * FROM data;")
+})
+
 test_that("translateSQL sql server -> Oracle union of two queries without FROM", {
   sql <- translateSql("SELECT 1,2 UNION SELECT 3,4;", 
                       targetDialect = "oracle")$sql

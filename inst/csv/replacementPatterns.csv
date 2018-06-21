@@ -284,6 +284,7 @@ redshift,HINT DISTRIBUTE_ON_RANDOM WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT
 redshift,HINT SORT_ON_KEY(@type:@sortkey) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @d\n@type SORTKEY(@sortkey)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 redshift,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @d\nDISTKEY(@key)\n@type SORTKEY(@sortkey)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 redshift,HINT DISTRIBUTE_ON_RANDOM SORT_ON_KEY(@type:@sortkey) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_RANDOM SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @d\nDISTSTYLE EVEN\n@type SORTKEY(@sortkey)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 redshift,WITH @a AS @b SELECT @c1 person_id as @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 person_id as @key @c2\nFROM\n@e;
 redshift,WITH @a AS @b SELECT @c1 person_id @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 person_id @key @c2\nFROM\n@e;
 redshift,WITH @a AS @b SELECT @c1 person_id @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(person_id)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 person_id @c2\nFROM\n@e;
