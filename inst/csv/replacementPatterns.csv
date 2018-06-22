@@ -22,6 +22,7 @@ oracle,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
+oracle,"CONVERT(float, @a)","CAST(@a as float)"
 oracle,GETDATE(),SYSDATE
 oracle,+ '@a',|| '@a'
 oracle,'@a' +,'@a' ||
@@ -101,6 +102,7 @@ oracle,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",BE
 oracle,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 postgresql,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
+postgresql,"CONVERT(float, @a)","CAST(@a as float)"
 postgresql,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
 postgresql,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
 postgresql,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
@@ -240,6 +242,7 @@ redshift,"DATEPART(n,@date)","DATEPART(minute,@date)"
 redshift,"DATEPART(ss,@date)","DATEPART(second,@date)"
 redshift,"DATEPART(mcs,@date)","DATEPART(microsecond,@date)"
 redshift,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
+redshift,"CONVERT(float, @a)","CAST(@a as float)"
 redshift,GETDATE(),CURRENT_DATE
 redshift,+ '@a',|| '@a'
 redshift,'@a' +,'@a' ||
