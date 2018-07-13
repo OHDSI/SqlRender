@@ -367,6 +367,18 @@ test_that("translateSQL ## issue on oracle", {
 
 # Impala tests
 
+test_that("translateSQL sql server -> Impala clustered index not supported", {
+  sql <- translateSql("CREATE CLUSTERED INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "-- impala does not support indexes")
+})
+
+test_that("translateSQL sql server -> Impala index not supported", {
+  sql <- translateSql("CREATE INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "-- impala does not support indexes")
+})
+
 test_that("translateSQL sql server -> Impala USE", {
   sql <- translateSql("USE vocabulary;",
                       targetDialect = "impala")$sql
