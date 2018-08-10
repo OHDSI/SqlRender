@@ -99,6 +99,11 @@ oracle,(SELECT @a WHERE @b WHERE ROWNUM <= @rows),(SELECT @a WHERE @b AND ROWNUM
 oracle,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE @table (@definition)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
+oracle,"FROM @a AS @b;","FROM @a @b;"
+oracle,"FROM @a AS @b WHERE","FROM @a @b WHERE"
+oracle,"FROM @a AS @b)","FROM @a @b)"
+oracle,"FROM @a AS @b @((INNER|LEFT|RIGHT)jointype) JOIN","FROM @a @b @jointype JOIN"
+oracle,"JOIN @a AS @b ON","JOIN @a @b ON"
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 postgresql,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
 postgresql,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')

@@ -79,6 +79,19 @@ test_that("translateSQL sql server -> Oracle '+' in quote", {
   expect_equal_ignore_spaces(sql, "SELECT '+' FROM DUAL;")
 })
 
+test_that("translateSQL sql server -> Oracle union in dual", {
+  sql <- translateSql("select 1 union 2;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT 1 FROM DUAL UNION 2 FROM DUAL;")
+})
+
+test_that("translateSQL sql server -> Oracle table alias", {
+  sql <- translateSql("SELECT col1 FROM table1 as tbl WHERE a = b", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT col1 FROM table1 tbl WHERE a = b")
+  sql <- translateSql("SELECT col1 FROM table1 AS tbl1 INNER JOIN table2 AS tbl2 ON tbl2.b = tbl1.a", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT col1 FROM table1 tbl1 INNER JOIN table2 tbl2 ON tbl2.b = tbl1.a")
+})
+
+
 test_that("translateSQL sql server -> PostgreSQL USE", {
   sql <- translateSql("USE vocabulary;",
                       targetDialect = "postgresql")$sql
