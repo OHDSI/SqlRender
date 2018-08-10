@@ -101,7 +101,7 @@ to the specified dialect</p>
     
 
     <pre class="usage"><span class='fu'>loadRenderTranslateSql</span>(<span class='no'>sqlFilename</span>, <span class='no'>packageName</span>, <span class='kw'>dbms</span> <span class='kw'>=</span> <span class='st'>"sql server"</span>, <span class='no'>...</span>,
-  <span class='kw'>oracleTempSchema</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>oracleTempSchema</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>warnOnMissingParameters</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -126,6 +126,11 @@ to the specified dialect</p>
     <tr>
       <th>oracleTempSchema</th>
       <td><p>A schema that can be used to create temp tables in when using Oracle.</p></td>
+    </tr>
+    <tr>
+      <th>warnOnMissingParameters</th>
+      <td><p>Should a warning be raised when parameters provided to this function 
+do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.</p></td>
     </tr>
     </table>
     

@@ -4,12 +4,15 @@
 \alias{renderSqlFile}
 \title{Render a SQL file}
 \usage{
-renderSqlFile(sourceFile, targetFile, ...)
+renderSqlFile(sourceFile, targetFile, warnOnMissingParameters = TRUE, ...)
 }
 \arguments{
 \item{sourceFile}{The source SQL file}
 
 \item{targetFile}{The target SQL file}
+
+\item{warnOnMissingParameters}{Should a warning be raised when parameters provided to this function 
+do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.}
 
 \item{...}{Parameter values}
 }

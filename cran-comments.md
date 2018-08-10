@@ -1,10 +1,10 @@
-This update has more and improved translation rules (see NEWS)
+This update has more and improved translation rules, and one bug fix (see NEWS)
 
 ---
 
 ## Test environments
-* Ubuntu 14.04.5 LTS (Travis), R 3.4.2
-* Windows 7, R 3.4.1
+* Ubuntu 14.04.5 LTS (Travis), R 3.5.0
+* Windows 7, R 3.4.4
 
 ## R CMD check results
 
@@ -12,4 +12,4 @@ There were no ERRORs or WARNINGs.
 
 ## Downstream dependencies
 
-There are no downstream dependencies.
+- DatabaseConnector depends on SqlRender, and has been tested with this new version. No problems were found.

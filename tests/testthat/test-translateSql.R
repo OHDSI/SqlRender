@@ -367,6 +367,18 @@ test_that("translateSQL ## issue on oracle", {
 
 # Impala tests
 
+test_that("translateSQL sql server -> Impala clustered index not supported", {
+  sql <- translateSql("CREATE CLUSTERED INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "-- impala does not support indexes")
+})
+
+test_that("translateSQL sql server -> Impala index not supported", {
+  sql <- translateSql("CREATE INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "-- impala does not support indexes")
+})
+
 test_that("translateSQL sql server -> Impala USE", {
   sql <- translateSql("USE vocabulary;",
                       targetDialect = "impala")$sql
@@ -505,6 +517,12 @@ test_that("translateSQL sql server -> Impala EOMONTH()", {
 
 # Netezza tests
 
+test_that("translateSQL sql server -> Netezza WITH cte AS () INSERT INTO tbl SELECT * FROM cte", {
+  sql <- translateSql("WITH data AS (SELECT 'test' AS user, 'secret' AS password) INSERT INTO users SELECT * FROM data;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "INSERT INTO users WITH data AS (SELECT 'test' AS user, 'secret' AS password) SELECT * FROM data;")
+})
+
 test_that("translateSQL sql server -> Netezza CAST(AS DATE)", {
   sql <- translateSql("CAST('20000101' AS DATE);",
                       targetDialect = "netezza")$sql
@@ -533,8 +551,37 @@ test_that("translateSQL sql server -> Netezza WITH SELECT INTO", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;")
+                             "CREATE TABLE d \nAS\nWITH cte1  AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
 })
+
+test_that("translateSQL sql server -> Netezza WITH CTE SELECT INTO with RANDOM distribution", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nWITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1\nDISTRUBTE ON RANDOM;")
+})
+
+test_that("translateSQL sql server -> Netezza WITH CTE SELECT INTO with KEY distribution", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(c)\nWITH cte1 AS (SELECT a,c FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "--HINT DISTRIBUTE_ON_KEY(c)\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a,c FROM b)  SELECT\nc \nFROM\ncte1\nDISTRUBTE ON (c);")
+})
+
+test_that("translateSQL sql server -> Netezza WITH SELECT INTO with RANDOM distribution", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nSELECT a INTO b FROM someTable;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRUBTE ON RANDOM;")
+})
+
+test_that("translateSQL sql server -> Netezza WITH SELECT INTO with KEY distribution", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(a)\nSELECT a INTO b FROM someTable;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql,
+                             "--HINT DISTRIBUTE_ON_KEY(a)\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRUBTE ON (a);")
+})
+
 
 test_that("translateSQL sql server -> Netezza DROP TABLE IF EXISTS", {
   sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
@@ -573,10 +620,22 @@ test_that("translateSQL sql server -> PostgreSql TOP", {
   expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
 })
 
+test_that("translateSQL sql server -> PostgreSql TOP subquery", {
+  sql <- translateSql("SELECT name FROM (SELECT TOP 1 name FROM my_table WHERE a = b);",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT name FROM (SELECT name FROM my_table WHERE a = b LIMIT 1);")
+})
+
 test_that("translateSQL sql server -> Oracle TOP", {
   sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b AND ROWNUM <= 10; ")
+})
+
+test_that("translateSQL sql server -> Oracle TOP subquery", {
+  sql <- translateSql("SELECT name FROM (SELECT TOP 1 name FROM my_table WHERE a = b);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT name FROM (SELECT name FROM my_table WHERE a = b AND ROWNUM <= 1);")
 })
 
 test_that("translateSQL sql server -> impala TOP", {
@@ -616,6 +675,18 @@ test_that("translateSQL sql server -> pdw hint distribute_on_key", {
   expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE (row_id INT)\nWITH (DISTRIBUTION = HASH(row_id));")
 })
 
+test_that("translateSQL sql server -> pdw hint distribute_on_random", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nSELECT * INTO #my_table FROM other_table;",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_RANDOM\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = ROUND_ROBIN) AS\nSELECT\n * \nFROM\n other_table;")
+})
+
+test_that("translateSQL sql server -> pdw hint distribute_on_random", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE(row_id INT);",
+                      targetDialect = "pdw")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_RANDOM\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE (row_id INT)\nWITH (DISTRIBUTION = ROUND_ROBIN);")
+})
+
 
 test_that("translateSQL sql server -> redshift hint distribute_on_key", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(row_id)\nSELECT * INTO #my_table FROM other_table;",
@@ -628,6 +699,19 @@ test_that("translateSQL sql server -> redshift hint distribute_on_key", {
                       targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(row_id)\nCREATE TABLE my_table (row_id INT)\nDISTKEY(row_id);")
 })
+
+test_that("translateSQL sql server -> redshift hint distribute_on_random", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nSELECT * INTO #my_table FROM other_table;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE  #my_table\nDISTSTYLE EVEN\nAS\nSELECT\n * \nFROM\n other_table;")
+})
+
+test_that("translateSQL sql server -> redshift hint distribute_on_random", {
+  sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE my_table (row_id INT);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE my_table (row_id INT)\nDISTSTYLE EVEN;")
+})
+
 
 test_that("translateSql: warning on temp table name that is too long", {
   expect_warning(translateSql("SELECT * FROM #abcdefghijklmnopqrstuvwxyz", "pdw")$sql)
@@ -2050,6 +2134,12 @@ test_that("translateSQL sql server -> Redshift window function NTILE no sort spe
   expect_equal_ignore_spaces(sql, "select NTILE(4) OVER (procedure_concept_id ORDER BY prc_cnt) as num")
 })
 
+test_that("translateSQL sql server -> Redshift WITH cte AS () INSERT INTO tbl SELECT * FROM cte", {
+  sql <- translateSql("WITH data AS (SELECT 'test' AS user, 'secret' AS password) INSERT INTO users SELECT * FROM data;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "INSERT INTO users WITH data AS (SELECT  CAST('test' as TEXT) AS user, 'secret' AS password) SELECT * FROM data;")
+})
+
 test_that("translateSQL sql server -> Oracle union of two queries without FROM", {
   sql <- translateSql("SELECT 1,2 UNION SELECT 3,4;", 
                       targetDialect = "oracle")$sql
@@ -2097,4 +2187,34 @@ test_that("translateSQL sql server -> Netezza nested concat ", {
   sql <- translateSql("SELECT CONCAT(CONCAT(CONCAT(a,CONCAT(b,c)),d),e) FROM x;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql, "SELECT a || b || c || d || e FROM x;")
+})
+
+test_that("translateSQL sql server -> Netezza clustered index not supported", {
+  sql <- translateSql("CREATE CLUSTERED INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "-- netezza does not support indexes")
+})
+
+test_that("translateSQL sql server -> Netezza index not supported", {
+  sql <- translateSql("CREATE INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "-- netezza does not support indexes")
+})
+
+test_that("translateSQL sql server -> Redshift clustered index not supported", {
+  sql <- translateSql("CREATE CLUSTERED INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "-- redshift does not support indexes")
+})
+
+test_that("translateSQL sql server -> Redshift index not supported", {
+  sql <- translateSql("CREATE INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "-- redshift does not support indexes")
+})
+
+test_that("translateSQL sql server -> Oracle BIGINT in conditional create table", {
+  sql <- translateSql("IF OBJECT_ID('test', 'U') IS NULL CREATE TABLE test (	x BIGINT);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE test  (x NUMBER(19))';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
 })

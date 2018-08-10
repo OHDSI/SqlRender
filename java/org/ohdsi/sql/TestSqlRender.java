@@ -4,9 +4,9 @@ public class TestSqlRender {
 
 	public static void main(String[] args) {
 		
-		String sql = "CONCAT( CONCAT( field1, ' and ' ), field2 )";
+		String sql = "IF OBJECT_ID('test', 'U') IS NULL CREATE TABLE test (	x BIGINT);";
 		String path = "inst/csv/replacementPatterns.csv";
-		sql = SqlTranslate.translateSqlWithPath(sql, "netezza", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sql, "oracle", null, null, path);
 		System.out.println(sql);
 		
 //		Pattern pattern = Pattern.compile("^((?!FROM).)*$");

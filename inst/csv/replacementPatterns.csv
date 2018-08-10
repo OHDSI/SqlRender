@@ -76,9 +76,6 @@ oracle,GROUP BY @a GROUP BY 1,GROUP BY @a
 oracle,YEAR(@date),EXTRACT(YEAR FROM @date)
 oracle,MONTH(@date),EXTRACT(MONTH FROM @date)
 oracle,DAY(@date),EXTRACT(DAY FROM @date)
-oracle,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE @table (@definition)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;
-oracle,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
-oracle,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,USE @schema;,ALTER SESSION SET current_schema = @schema;
 oracle,.dbo.,.
 oracle,CREATE CLUSTERED INDEX,CREATE INDEX
@@ -95,8 +92,13 @@ oracle,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 oracle,##,<hash><hash>
 oracle,#,%temp_prefix%%session_id%
 oracle,<hash><hash>,##
-oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a WHERE ROWNUM <= @rows; 
+oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a WHERE ROWNUM <= @rows;
+oracle,(SELECT TOP @([0-9]+)rows @a),(SELECT @a WHERE ROWNUM <= @rows)
 oracle,SELECT @a WHERE @b WHERE ROWNUM <= @rows;,SELECT @a WHERE @b AND ROWNUM <= @rows;
+oracle,(SELECT @a WHERE @b WHERE ROWNUM <= @rows),(SELECT @a WHERE @b AND ROWNUM <= @rows)
+oracle,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE @table (@definition)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;
+oracle,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
+oracle,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 postgresql,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
 postgresql,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
@@ -155,14 +157,17 @@ postgresql,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 postgresql,DATETIME,TIMESTAMP
 postgresql,VARCHAR(MAX),TEXT
 postgresql,FLOAT,NUMERIC
-postgresql,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+postgresql,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nANALYZE @d;
 postgresql,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-postgresql,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
+postgresql,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;\nANALYZE @b;
 postgresql,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 postgresql,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 postgresql,#,
 postgresql,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+postgresql,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 postgresql,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
+redshift,CREATE INDEX @index_name ON @table (@variable);,-- redshift does not support indexes
+redshift,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- redshift does not support indexes
 redshift,"OVER (@a ORDER BY @b DESC)","OVER (@a O*D*R B* @b DESC ROWS UNBOUNDED PRECEDING)"
 redshift,"OVER (@a ORDER BY @b ASC)","OVER (@a O*D*R B* @b ASC ROWS UNBOUNDED PRECEDING)"
 redshift,"OVER (@a ORDER BY @((?!.*ROWS).*)b)","OVER (@a O*D*R B* @b ROWS UNBOUNDED PRECEDING)"
@@ -268,14 +273,18 @@ redshift,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE
 redshift,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;","DROP TABLE IF EXISTS #@table;"
 redshift,.dbo.,.
 redshift,"HINT DISTRIBUTE_ON_KEY(@key) @hint CREATE TABLE @table (@definition);",HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @table (@definition)\nDISTKEY(@key);
+redshift,"HINT DISTRIBUTE_ON_RANDOM @hint CREATE TABLE @table (@definition);",HINT DISTRIBUTE_ON_RANDOM @hint\nCREATE TABLE @table (@definition)\nDISTSTYLE EVEN;
 redshift,"HINT @hint SORT_ON_KEY(@type:@key) CREATE TABLE @table (@definition) @options;",HINT @hint SORT_ON_KEY(@type:@key)\nCREATE TABLE @table (@definition)\n@options\n@type SORTKEY(@key);
 redshift,"CREATE TABLE @table (@a1 person_id @a2);",CREATE TABLE @table (@a1 person_id @a2)\nDISTKEY(person_id);
 redshift,"CREATE TABLE @table (@a1 subject_id @a2);",CREATE TABLE @table (@a1 subject_id @a2)\nDISTKEY(subject_id);
 redshift,"CREATE TABLE @table (@a1 analysis_id @a2);",CREATE TABLE @table (@a1 analysis_id @a2)\nDISTKEY(analysis_id);
 redshift,"CREATE TABLE @table (@definition);",CREATE TABLE @table (@definition)\nDISTSTYLE ALL;
 redshift,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,HINT DISTRIBUTE_ON_RANDOM WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE @d\nDISTSTYLE EVEN\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 redshift,HINT SORT_ON_KEY(@type:@sortkey) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @d\n@type SORTKEY(@sortkey)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 redshift,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @d\nDISTKEY(@key)\n@type SORTKEY(@sortkey)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,HINT DISTRIBUTE_ON_RANDOM SORT_ON_KEY(@type:@sortkey) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_RANDOM SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @d\nDISTSTYLE EVEN\n@type SORTKEY(@sortkey)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+redshift,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 redshift,WITH @a AS @b SELECT @c1 person_id as @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 person_id as @key @c2\nFROM\n@e;
 redshift,WITH @a AS @b SELECT @c1 person_id @(\w+\b)key @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(@key)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 person_id @key @c2\nFROM\n@e;
 redshift,WITH @a AS @b SELECT @c1 person_id @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(person_id)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 person_id @c2\nFROM\n@e;
@@ -287,8 +296,10 @@ redshift,WITH @a AS @b SELECT @c1 analysis_id @(\w+\b)key @c2 INTO @d FROM @e;,C
 redshift,WITH @a AS @b SELECT @c1 analysis_id @c2 INTO @d FROM @e;,CREATE TABLE @d\nDISTKEY(analysis_id)\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c1 analysis_id @c2\nFROM\n@e;
 redshift,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d DISTSTYLE ALL\nAS\nWITH\n@a\nAS\n@b\nSELECT\n@c\nFROM\n@e;
 redshift,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,HINT DISTRIBUTE_ON_RANDOM SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_RANDOM \nCREATE TABLE @b\nDISTSTYLE EVEN\nAS\nSELECT\n@a\nFROM\n@c;
 redshift,HINT SORT_ON_KEY(@type:@sortkey) SELECT @a INTO @b FROM @c;,HINT SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @b\n@type SORTKEY(@sortkey)\nAS\nSELECT\n@a\nFROM\n@c;
 redshift,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key) SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @b\nDISTKEY(@key)\n@type SORTKEY(@sortkey)\nAS\nSELECT\n@a\nFROM\n@c;
+redshift,HINT DISTRIBUTE_ON_RANDOM SORT_ON_KEY(@type:@sortkey) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_RANDOM SORT_ON_KEY(@type:@sortkey)\nCREATE TABLE @b\nDISTSTYLE EVEN\n@type SORTKEY(@sortkey)\nAS\nSELECT\n@a\nFROM\n@c;
 redshift,SELECT @a1 person_id as @(\w+\b)key @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a1 person_id as @key @a2\nFROM\n@c;
 redshift,SELECT @a1 person_id @(\w+\b)key @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(@key)\nAS\nSELECT\n@a1 person_id @key @a2\nFROM\n@c;
 redshift,SELECT @a1 person_id @a2 INTO @b FROM @c;,CREATE TABLE @b\nDISTKEY(person_id)\nAS\nSELECT\n@a1 person_id @a2\nFROM\n@c;
@@ -341,13 +352,16 @@ redshift,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CA
 redshift,^,#
 redshift,"CONVERT(DATE, @a)","CAST(@a as DATE)"
 redshift,"CONVERT(TIMESTAMPTZ, @a)","CONVERT(TIMESTAMP WITH TIME ZONE, @a)"
+pdw,CREATE INDEX @index_name ON #@table (@variable);,-- PDW does not support non-clustered index on temp tables.
 pdw,VARCHAR(MAX),VARCHAR(1000)
 pdw,HINT DISTRIBUTE_ON_KEY(@key) @hint WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+pdw,HINT DISTRIBUTE_ON_RANDOM @hint WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_RANDOM @hint\nCREATE TABLE @d WITH (DISTRIBUTION = ROUND_ROBIN)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 pdw,"WITH @a AS @b SELECT @c1 subject_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(subject_id))\nAS\nWITH @a AS @b SELECT\n@c1 subject_id, @c2\nFROM\n@e;"
 pdw,"WITH @a AS @b SELECT @c1 person_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(person_id))\nAS\nWITH @a AS @b SELECT\n@c1 person_id, @c2\nFROM\n@e;"
 pdw,"WITH @a AS @b SELECT @c1 analysis_id, @c2 INTO @d FROM @e;","CREATE TABLE @d WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nWITH @a AS @b SELECT\n@c1 analysis_id, @c2\nFROM\n@e;"
 pdw,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d WITH (DISTRIBUTION = REPLICATE)\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 pdw,HINT DISTRIBUTE_ON_KEY(@key) @hint SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @b WITH (DISTRIBUTION = HASH(@key))\nAS\nSELECT\n@a\nFROM\n@c;
+pdw,HINT DISTRIBUTE_ON_RANDOM @hint SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_RANDOM @hint\nCREATE TABLE @b WITH (DISTRIBUTION = ROUND_ROBIN)\nAS\nSELECT\n@a\nFROM\n@c;
 pdw,"SELECT @a1 subject_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(subject_id))\nAS\nSELECT\n@a1 subject_id, @a2\nFROM\n@c;"
 pdw,"SELECT @a1 person_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(person_id))\nAS\nSELECT\n@a1 person_id, @a2\nFROM\n@c;"
 pdw,"SELECT @a1 analysis_id, @a2 INTO @b FROM @c;","CREATE TABLE @b WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n@a1 analysis_id, @a2\nFROM\n@c;"
@@ -355,6 +369,7 @@ pdw,SELECT @a INTO @b FROM @c;,CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\n
 pdw,SELECT @a INTO @b;,CREATE TABLE @b WITH (DISTRIBUTION = REPLICATE)\nAS\nSELECT\n@a;
 pdw,CREATE TABLE #@a WITH (DISTRIBUTION = @b) AS,"CREATE TABLE #@a WITH (LOCATION = USER_DB, DISTRIBUTION = @b) AS"
 pdw,HINT DISTRIBUTE_ON_KEY(@key) @hint CREATE TABLE @table (@definition);,HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = HASH(@key));
+pdw,HINT DISTRIBUTE_ON_RANDOM @hint CREATE TABLE @table (@definition);,HINT DISTRIBUTE_ON_RANDOM @hint\nCREATE TABLE @table (@definition)\nWITH (DISTRIBUTION = ROUND_ROBIN);
 pdw,CREATE TABLE @table (@definition_part1 subject_id @definition_part2);,CREATE TABLE @table (@definition_part1 subject_id @definition_part2)\nWITH (DISTRIBUTION = HASH(subject_id));
 pdw,CREATE TABLE @table (@definition_part1 person_id @definition_part2);,CREATE TABLE @table (@definition_part1 person_id @definition_part2)\nWITH (DISTRIBUTION = HASH(person_id));
 pdw,CREATE TABLE @table (@definition_part1 analysis_id @definition_part2);,CREATE TABLE @table (@definition_part1 analysis_id @definition_part2)\nWITH (DISTRIBUTION = HASH(analysis_id));
@@ -370,6 +385,8 @@ pdw,TR*NC*T*,TRUNCATE
 pdw,DR*P,DROP
 pdw,CR**T*,CREATE
 pdw,IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL 
+impala,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- impala does not support indexes
+impala,CREATE INDEX @index_name ON @table (@variable);,-- impala does not support indexes
 impala,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
 impala,COUNT_BIG(@a),COUNT(@a)
 impala,"LEFT(@str,@chars)","SUBSTR(@str,1,@chars)"
@@ -459,6 +476,13 @@ impala,"CHAR\n+","CHAR(1)\n"
 impala,"CHAR)","CHAR(1))"
 impala,"CONSTRAINT @a DEFAULT NOW()",""
 impala,stats,_stats
+netezza,HINT DISTRIBUTE_ON_KEY(@key)\n@statement;,HINT DISTRIBUTE_ON_KEY(@key)\n@statement\nDISTRUBTE ON (@key);
+netezza,HINT DISTRIBUTE_ON_RANDOM\n@statement;,HINT DISTRIBUTE_ON_RANDOM\n@statement\nDISTRUBTE ON RANDOM;
+netezza,CREATE TABLE #@table (@definition);,CREATE TEMP TABLE @table (@definition);
+netezza,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+netezza,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+netezza,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
+netezza,SELECT @a INTO @b FROM @c;,CREATE TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
 netezza,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 netezza,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
 netezza,CAST(@a AS INT),CAST(@a AS INTEGER)
@@ -492,19 +516,14 @@ netezza,LOG10(@expression),LOG(@expression)
 netezza,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 netezza,COUNT_BIG(@a),COUNT(@a)
 netezza,USE @schema;,SET search_path TO @schema;
-netezza,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+netezza,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition) DISTRIBUTE ON RANDOM;
 netezza,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE @table IF EXISTS;
 netezza,.dbo.,.
-netezza,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
-netezza,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
-netezza,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
+netezza,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- netezza does not support indexes
+netezza,CREATE INDEX @index_name ON @table (@variable);,-- netezza does not support indexes
 netezza,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 netezza,VARCHAR(MAX),VARCHAR(1000)
 netezza,FLOAT,"FLOAT(6)"
-netezza,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-netezza,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-netezza,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
-netezza,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 netezza,#,
 netezza,"LEFT(@variable,@b)","SUBSTR(@variable, 1, @b)"
 netezza,"RIGHT(@variable,@b)","SUBSTR(@variable, LENGTH(@variable)-@b+1, @b)"
@@ -517,6 +536,7 @@ netezza,EOMONTH(@date),LAST_DAY(@date)
 netezza,ROWCOUNT(), ROW_NUMBER()
 netezza,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
 netezza,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
+netezza,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"

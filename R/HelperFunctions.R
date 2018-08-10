@@ -86,6 +86,8 @@ writeSql <- function(sql, targetFile) {
 #'
 #' @param sourceFile   The source SQL file
 #' @param targetFile   The target SQL file
+#' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
+#'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
 #' @param ...          Parameter values
 #'
 #' @examples
@@ -93,9 +95,9 @@ writeSql <- function(sql, targetFile) {
 #' renderSqlFile("myParamStatement.sql", "myRenderedStatement.sql", a = "myTable")
 #' }
 #' @export
-renderSqlFile <- function(sourceFile, targetFile, ...) {
+renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE, ...) {
   sql <- readSql(sourceFile)
-  sql <- renderSql(sql, ...)$sql
+  sql <- renderSql(sql, warnOnMissingParameters, ...)$sql
   writeSql(sql, targetFile)
 }
 
@@ -149,12 +151,14 @@ translateSqlFile <- function(sourceFile,
 #' additional specified parameters.
 #'
 #'
-#' @param sqlFilename        The source SQL file
-#' @param packageName        The name of the package that contains the SQL file
-#' @param dbms               The target dialect. Currently 'sql server', 'oracle', 'postgres', and
-#'                           'redshift' are supported
-#' @param ...                Parameter values used for \code{renderSql}
-#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle.
+#' @param sqlFilename                 The source SQL file
+#' @param packageName                 The name of the package that contains the SQL file
+#' @param dbms                        The target dialect. Currently 'sql server', 'oracle', 'postgres', and
+#'                                    'redshift' are supported
+#' @param ...                         Parameter values used for \code{renderSql}
+#' @param oracleTempSchema            A schema that can be used to create temp tables in when using Oracle.
+#' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
+#'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
 #'
 #' @return
 #' Returns a string containing the rendered SQL.
@@ -170,7 +174,8 @@ loadRenderTranslateSql <- function(sqlFilename,
                                    packageName,
                                    dbms = "sql server",
                                    ...,
-                                   oracleTempSchema = NULL) {
+                                   oracleTempSchema = NULL,
+                                   warnOnMissingParameters = TRUE) {
   pathToSql <- system.file(paste("sql/", gsub(" ", "_", dbms), sep = ""),
                            sqlFilename,
                            package = packageName)
@@ -183,7 +188,7 @@ loadRenderTranslateSql <- function(sqlFilename,
   }
   parameterizedSql <- readChar(pathToSql, file.info(pathToSql)$size)
   
-  renderedSql <- renderSql(parameterizedSql[1], ...)$sql
+  renderedSql <- renderSql(sql = parameterizedSql[1], warnOnMissingParameters = warnOnMissingParameters, ...)$sql
   
   if (mustTranslate)
     renderedSql <- translateSql(sql = renderedSql, targetDialect = dbms, oracleTempSchema = oracleTempSchema)$sql
@@ -203,8 +208,8 @@ trim <- function(string) {
 #' A string
 #'
 #' @examples
-#' snakeCaseToCamelCase("cdm_database_schema")
-#' # > 'cdmDatabaseSchema'
+#' snakeCaseToCamelCase("exposure_concept_id_1")
+#' # > 'exposureConceptId1'
 #'
 #' @export
 snakeCaseToCamelCase <- function(string) {
@@ -212,11 +217,8 @@ snakeCaseToCamelCase <- function(string) {
   for (letter in letters) {
     string <- gsub(paste("_", letter, sep = ""), toupper(letter), string)
   }
-  for (number in 0:9) {
-    string <- gsub(paste("_", number, sep = ""), number, string)
-  }
-  
-  string
+  string <- gsub("_([0-9])", "\\1", string)
+  return(string)
 }
 
 #' Convert a camel case string to snake case
@@ -227,15 +229,15 @@ snakeCaseToCamelCase <- function(string) {
 #' A string
 #'
 #' @examples
-#' camelCaseToSnakeCase("cdmDatabaseSchema")
-#' # > 'cdm_database_schema'
+#' camelCaseToSnakeCase("exposureConceptId1")
+#' # > 'exposure_concept_id_1'
 #'
 #' @export
 camelCaseToSnakeCase <- function(string) {
-  for (letter in toupper(letters)) {
-    string <- gsub(letter, paste("_", tolower(letter), sep = ""), string)
-  }
-  string
+  string <- gsub("([A-Z])", "_\\1", string)
+  string <- tolower(string)
+  string <- gsub("([a-z])([0-9])", "\\1_\\2", string)
+  return(string)
 }
 
 #' Create an R wrapper for SQL

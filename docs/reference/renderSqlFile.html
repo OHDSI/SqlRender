@@ -100,7 +100,7 @@
 and writes it to another file.</p>
     
 
-    <pre class="usage"><span class='fu'>renderSqlFile</span>(<span class='no'>sourceFile</span>, <span class='no'>targetFile</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>renderSqlFile</span>(<span class='no'>sourceFile</span>, <span class='no'>targetFile</span>, <span class='kw'>warnOnMissingParameters</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -112,6 +112,11 @@ and writes it to another file.</p>
     <tr>
       <th>targetFile</th>
       <td><p>The target SQL file</p></td>
+    </tr>
+    <tr>
+      <th>warnOnMissingParameters</th>
+      <td><p>Should a warning be raised when parameters provided to this function 
+do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.</p></td>
     </tr>
     <tr>
       <th>...</th>

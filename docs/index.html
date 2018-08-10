@@ -69,117 +69,77 @@
       </header><div class="row">
   <div class="contents col-md-9">
     
-<div id="sqlrender" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#sqlrender" class="anchor"></a>SqlRender</h1></div>
+<section class="level1"><div class="page-header"><h1>SqlRender</h1></div>
 
-</div>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
+</section><section class="level1"><h1>Introduction</h1>
 <p>This is an R package for rendering parameterized SQL, and translating it to different SQL dialects. SqlRender can also be used as a stand-alone Java library and a command-line executable.</p>
-</div>
-<div id="features" class="section level1">
-<h1 class="hasAnchor">
-<a href="#features" class="anchor"></a>Features</h1>
+</section><section class="level1"><h1>Features</h1>
 <ul>
 <li>Supports a simple markup syntax for making SQL parameterized, and renders parameterized SQL (containing the markup syntax) to executable SQL</li>
 <li>The syntax supports defining default parameter values</li>
 <li>The syntax supports if-then-else structures</li>
 <li>Has functions for translating SQL from one dialect (Microsoft SQL Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift, Impala, IBM Netezza, Google BigQuery, and Microsoft PDW)</li>
 <li>Can be used as R package, Java library, or as stand-alone executable through a command-line interface</li>
-</ul>
-</div>
-<div id="examples" class="section level1">
-<h1 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h1>
+</ul></section><section class="level1"><h1>Examples</h1>
 <p>This exampe shows the use of parameters, as well as SqlRender’s {if} ? {then} : {else} syntax:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/renderSql.html">renderSql</a></span>(<span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, <span class="dt">a =</span> <span class="st">"my_table"</span>, <span class="dt">b =</span> <span class="st">"my_schema"</span>)<span class="op">$</span>sql</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/renderSql.html">renderSql</a></span>(<span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, <span class="dt">a =</span> <span class="st">"my_table"</span>, <span class="dt">b =</span> <span class="st">"my_schema"</span>)<span class="op">$</span>sql</a></code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; USE my_schema;"</code></pre>
 <p>subsequently running this code</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/translateSql.html">translateSql</a></span>(sql, <span class="st">"sql server"</span>, <span class="st">"oracle"</span>)<span class="op">$</span>sql</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/translateSql.html">translateSql</a></span>(sql, <span class="st">"sql server"</span>, <span class="st">"oracle"</span>)<span class="op">$</span>sql</a></code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; ALTER SESSION SET current_schema =  my_schema;"</code></pre>
-</div>
-<div id="technology" class="section level1">
-<h1 class="hasAnchor">
-<a href="#technology" class="anchor"></a>Technology</h1>
+</section><section class="level1"><h1>Technology</h1>
 <p>The SqlRender package is an R package wrapped around a Java library. The rJava package is used as interface.</p>
 <p>The Java library is available as a JAR file.</p>
-</div>
-<div id="system-requirements" class="section level1">
-<h1 class="hasAnchor">
-<a href="#system-requirements" class="anchor"></a>System Requirements</h1>
+</section><section class="level1"><h1>System Requirements</h1>
 <p>Running the package requires R with the package rJava installed. Also requires Java 1.6 or higher.</p>
-</div>
-<div id="dependencies" class="section level1">
-<h1 class="hasAnchor">
-<a href="#dependencies" class="anchor"></a>Dependencies</h1>
+</section><section class="level1"><h1>Dependencies</h1>
 <ul>
 <li>There are no dependencies.</li>
-</ul>
-</div>
-<div id="getting-started" class="section level1">
-<h1 class="hasAnchor">
-<a href="#getting-started" class="anchor"></a>Getting Started</h1>
-<div id="r-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#r-package" class="anchor"></a>R package</h2>
-<p>In R, use the following commands to install the latest stable version from CRAN:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"SqlRender"</span>)</code></pre></div>
-<p>To install the latest development version directly from GitHub, use:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
-<span class="kw">library</span>(devtools)
-<span class="kw">install_github</span>(<span class="st">"ohdsi/SqlRender"</span>)</code></pre></div>
+</ul></section><section class="level1"><h1>Getting Started</h1>
+<section class="level2"><h2>R package</h2>
+<p>In R, to install the latest stable version, install from CRAN:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"SqlRender"</span>)</a></code></pre></div>
+<p>To install the latest development version, install from GitHub:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"ohdsi/SqlRender"</span>)</a></code></pre></div>
 <p>Once installed, you can try out SqlRender in a Shiny app that comes with the package:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SqlRender)
-<span class="kw"><a href="reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span>()</code></pre></div>
-</div>
-<div id="java-library" class="section level2">
-<h2 class="hasAnchor">
-<a href="#java-library" class="anchor"></a>Java library</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">library</span>(SqlRender)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span>()</a></code></pre></div>
+</section><section class="level2"><h2>Java library</h2>
 <p>You can fetch the JAR file in the inst/java folder of this repository, or use Maven:</p>
 <ol>
-<li>
-<p>First add the SqlRender repository so that maven can find and download the SqlRender artifact automatically:</p>
-<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;repositories&gt;</span>
-<span class="kw">&lt;repository&gt;</span>
-    <span class="kw">&lt;id&gt;</span>ohdsi<span class="kw">&lt;/id&gt;</span>
-    <span class="kw">&lt;name&gt;</span>repo.ohdsi.org<span class="kw">&lt;/name&gt;</span>
-    <span class="kw">&lt;url&gt;</span>http://repo.ohdsi.org:8085/nexus/content/repositories/releases<span class="kw">&lt;/url&gt;</span>
-<span class="kw">&lt;/repository&gt;</span>
-<span class="kw">&lt;repository&gt;</span>
-    <span class="kw">&lt;id&gt;</span>ohdsi.snapshots<span class="kw">&lt;/id&gt;</span>
-    <span class="kw">&lt;name&gt;</span>repo.ohdsi.org-snapshots<span class="kw">&lt;/name&gt;</span>
-    <span class="kw">&lt;url&gt;</span>http://repo.ohdsi.org:8085/nexus/content/repositories/snapshots<span class="kw">&lt;/url&gt;</span>
-    <span class="kw">&lt;releases&gt;</span>
-        <span class="kw">&lt;enabled&gt;</span>false<span class="kw">&lt;/enabled&gt;</span>
-    <span class="kw">&lt;/releases&gt;</span>
-    <span class="kw">&lt;snapshots&gt;</span>
-        <span class="kw">&lt;enabled&gt;</span>true<span class="kw">&lt;/enabled&gt;</span>
-    <span class="kw">&lt;/snapshots&gt;</span>
-<span class="kw">&lt;/repository&gt;</span>
-<span class="kw">&lt;/repositories&gt;</span></code></pre></div>
-<p>2: Include the SqlRender dependency in your pom.xml</p>
-<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;dependency&gt;</span>
-<span class="kw">&lt;groupId&gt;</span>org.ohdsi.sql<span class="kw">&lt;/groupId&gt;</span>
-<span class="kw">&lt;artifactId&gt;</span>SqlRender<span class="kw">&lt;/artifactId&gt;</span>
-<span class="kw">&lt;version&gt;</span>1.0.0-SNAPSHOT<span class="kw">&lt;/version&gt;</span>
-<span class="kw">&lt;/dependency&gt;</span></code></pre></div>
-</li>
+<li>First add the SqlRender repository so that maven can find and download the SqlRender artifact automatically:</li>
 </ol>
-</div>
-<div id="command-line-executable" class="section level2">
-<h2 class="hasAnchor">
-<a href="#command-line-executable" class="anchor"></a>Command-line executable</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">&lt;repositories&gt;</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">    <span class="kw">&lt;repository&gt;</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">        <span class="kw">&lt;id&gt;</span>ohdsi<span class="kw">&lt;/id&gt;</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">        <span class="kw">&lt;name&gt;</span>repo.ohdsi.org<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">        <span class="kw">&lt;url&gt;</span>http://repo.ohdsi.org:8085/nexus/content/repositories/releases<span class="kw">&lt;/url&gt;</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">    <span class="kw">&lt;/repository&gt;</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7">    <span class="kw">&lt;repository&gt;</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8">        <span class="kw">&lt;id&gt;</span>ohdsi.snapshots<span class="kw">&lt;/id&gt;</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9">        <span class="kw">&lt;name&gt;</span>repo.ohdsi.org-snapshots<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10">        <span class="kw">&lt;url&gt;</span>http://repo.ohdsi.org:8085/nexus/content/repositories/snapshots<span class="kw">&lt;/url&gt;</span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11">        <span class="kw">&lt;releases&gt;</span></a>
+<a class="sourceLine" id="cb8-12" data-line-number="12">            <span class="kw">&lt;enabled&gt;</span>false<span class="kw">&lt;/enabled&gt;</span></a>
+<a class="sourceLine" id="cb8-13" data-line-number="13">        <span class="kw">&lt;/releases&gt;</span></a>
+<a class="sourceLine" id="cb8-14" data-line-number="14">        <span class="kw">&lt;snapshots&gt;</span></a>
+<a class="sourceLine" id="cb8-15" data-line-number="15">            <span class="kw">&lt;enabled&gt;</span>true<span class="kw">&lt;/enabled&gt;</span></a>
+<a class="sourceLine" id="cb8-16" data-line-number="16">        <span class="kw">&lt;/snapshots&gt;</span></a>
+<a class="sourceLine" id="cb8-17" data-line-number="17">    <span class="kw">&lt;/repository&gt;</span></a>
+<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="kw">&lt;/repositories&gt;</span></a></code></pre></div>
+<p>2: Include the SqlRender dependency in your pom.xml</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">&lt;dependency&gt;</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">    <span class="kw">&lt;groupId&gt;</span>org.ohdsi.sql<span class="kw">&lt;/groupId&gt;</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">    <span class="kw">&lt;artifactId&gt;</span>SqlRender<span class="kw">&lt;/artifactId&gt;</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">    <span class="kw">&lt;version&gt;</span>1.0.0-SNAPSHOT<span class="kw">&lt;/version&gt;</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="kw">&lt;/dependency&gt;</span></a></code></pre></div>
+</section><section class="level2"><h2>Command-line executable</h2>
 <p>You can fetch the JAR file in the inst/java folder of this repository, or use Maven as described above. Run this from the command line to get a list of options:</p>
 <pre><code>java -jar SqlRender.jar ?</code></pre>
-</div>
-</div>
-<div id="getting-involved" class="section level1">
-<h1 class="hasAnchor">
-<a href="#getting-involved" class="anchor"></a>Getting Involved</h1>
+</section></section><section class="level1"><h1>Getting Involved</h1>
 <ul>
 <li>Vignette: <a href="http://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html">Using SqlRender</a>
 </li>
@@ -188,33 +148,18 @@
 <li>Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 </li>
 <li>We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements</li>
-</ul>
-</div>
-<div id="license" class="section level1">
-<h1 class="hasAnchor">
-<a href="#license" class="anchor"></a>License</h1>
+</ul></section><section class="level1"><h1>License</h1>
 <p>SqlRender is licensed under Apache License 2.0</p>
-</div>
-<div id="development" class="section level1">
-<h1 class="hasAnchor">
-<a href="#development" class="anchor"></a>Development</h1>
+</section><section class="level1"><h1>Development</h1>
 <p>SqlRender is being developed in R Studio.</p>
-<div id="development-status" class="section level3">
-<h3 class="hasAnchor">
-<a href="#development-status" class="anchor"></a>Development status</h3>
+<section class="level3"><h3>Development status</h3>
 <p><a href="https://travis-ci.org/OHDSI/SqlRender"><img src="https://travis-ci.org/OHDSI/SqlRender.svg?branch=master" alt="Build Status"></a> <a href="https://codecov.io/github/OHDSI/SqlRender?branch=master"><img src="https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=master" alt="codecov.io"></a></p>
 <p>Stable. The code is actively being used in several projects.</p>
-</div>
-</div>
-<div id="acknowledgements" class="section level1">
-<h1 class="hasAnchor">
-<a href="#acknowledgements" class="anchor"></a>Acknowledgements</h1>
+</section></section><section class="level1"><h1>Acknowledgements</h1>
 <ul>
 <li>This project is supported in part through the National Science Foundation grant IIS 1251151.</li>
-</ul>
+</ul></section>
 </div>
-
-  </div>
 
   <div class="col-md-3" id="sidebar">
     <h2>Links</h2>

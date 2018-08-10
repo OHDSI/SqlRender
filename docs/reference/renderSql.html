@@ -99,7 +99,7 @@
     <p><code>renderSql</code> Renders SQL code based on parameterized SQL and parameter values.</p>
     
 
-    <pre class="usage"><span class='fu'>renderSql</span>(<span class='kw'>sql</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>renderSql</span>(<span class='kw'>sql</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>warnOnMissingParameters</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -107,6 +107,11 @@
     <tr>
       <th>sql</th>
       <td><p>The parameterized SQL</p></td>
+    </tr>
+    <tr>
+      <th>warnOnMissingParameters</th>
+      <td><p>Should a warning be raised when parameters provided to this function 
+do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -226,6 +231,22 @@ pattern is used to turn on or off blocks of SQL code.</p></dd> </dl>
 #&gt; 
 #&gt; $parameters$b
 #&gt; [1] "y"
+#&gt; 
+#&gt; </div><div class='input'><span class='fu'>renderSql</span>(<span class='kw'>sql</span> <span class='kw'>=</span> <span class='st'>"SELECT * FROM @a;"</span>,
+          <span class='kw'>warnOnMissingParameters</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+          <span class='kw'>a</span> <span class='kw'>=</span> <span class='st'>"myTable"</span>,
+          <span class='kw'>b</span> <span class='kw'>=</span> <span class='st'>"missingParameter"</span>)</div><div class='output co'>#&gt; $originalSql
+#&gt; [1] "SELECT * FROM @a;"
+#&gt; 
+#&gt; $sql
+#&gt; [1] "SELECT * FROM myTable;"
+#&gt; 
+#&gt; $parameters
+#&gt; $parameters$a
+#&gt; [1] "myTable"
+#&gt; 
+#&gt; $parameters$b
+#&gt; [1] "missingParameter"
 #&gt; 
 #&gt; </div></pre>
   </div>
