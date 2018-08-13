@@ -2221,7 +2221,7 @@ test_that("translateSQL sql server -> Oracle BIGINT in conditional create table"
 
 test_that("translateSQL sql server -> Oracle analyze table", {
   sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
-                      targetDialect = "redshift")$sql
+                      targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql, "-- ANALYZE should not be used to collect optimizer statistics")
 })
 
@@ -2233,18 +2233,18 @@ test_that("translateSQL sql server -> Redshift analyze table", {
 
 test_that("translateSQL sql server -> Postgres analyze table", {
   sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
-                      targetDialect = "redshift")$sql
+                      targetDialect = "postgresql")$sql
   expect_equal_ignore_spaces(sql, "ANALYZE results_schema.heracles_results;")
 })
 
 test_that("translateSQL sql server -> Impala analyze table", {
   sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
-                      targetDialect = "redshift")$sql
+                      targetDialect = "impala")$sql
   expect_equal_ignore_spaces(sql, "COMPUTE STATS results_schema.heracles_results;")
 })
 
 test_that("translateSQL sql server -> Netezza analyze table", {
   sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
-                      targetDialect = "redshift")$sql
+                      targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql, "GENERATE STATISTICS ON results_schema.heracles_results;")
 })
