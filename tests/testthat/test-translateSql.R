@@ -2218,3 +2218,33 @@ test_that("translateSQL sql server -> Oracle BIGINT in conditional create table"
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE test  (x NUMBER(19))';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
 })
+
+test_that("translateSQL sql server -> Oracle analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "-- ANALYZE should not be used to collect optimizer statistics")
+})
+
+test_that("translateSQL sql server -> Redshift analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "ANALYZE results_schema.heracles_results;")
+})
+
+test_that("translateSQL sql server -> Postgres analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "ANALYZE results_schema.heracles_results;")
+})
+
+test_that("translateSQL sql server -> Impala analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "COMPUTE STATS results_schema.heracles_results;")
+})
+
+test_that("translateSQL sql server -> Netezza analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "GENERATE STATISTICS ON results_schema.heracles_results;")
+})
