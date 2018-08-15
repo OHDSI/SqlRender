@@ -89,9 +89,20 @@ renderSql(sql,x = 2)$sql
 As well as the `IN` operator:
 
 ```{r tidy=TRUE,echo=TRUE}
-sql <- "SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1}; "
+sql <- "SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1};"
 renderSql(sql,x = 2)$sql
 ```
+
+Clauses can combined with boolean operators:
+```{r tidy=TRUE,echo=TRUE}
+sql <- "SELECT * FROM table {@x IN (1,2,3) | @y != 3} ? {WHERE id = @x AND value = @y};"
+renderSql(sql,x = 4, y = 4)$sql
+
+sql <- "SELECT * FROM table {(@x == 1 | @x == 3) & @y != 3} ? {WHERE id = @x AND val = @y};"
+renderSql(sql,x = 3, y = 4)$sql
+
+```
+
 
 # Translation to other SQL dialects
 SQL for one platform (e.g. Microsoft SQL Server) will not always execute on other platforms (e.g. Oracle). The `translateSql()` function can be used to translate between different dialects, but there are some limitations.
