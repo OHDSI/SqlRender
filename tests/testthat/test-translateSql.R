@@ -79,6 +79,27 @@ test_that("translateSQL sql server -> Oracle '+' in quote", {
   expect_equal_ignore_spaces(sql, "SELECT '+' FROM DUAL;")
 })
 
+test_that("translateSQL sql server -> Oracle union in dual", {
+  sql <- translateSql("select 1 union 2;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT 1 FROM DUAL UNION 2 FROM DUAL;")
+})
+
+test_that("translateSQL sql server -> Oracle table alias", {
+  sql <- translateSql("SELECT a FROM a AS a1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a FROM a a1;")
+  sql <- translateSql("SELECT a, b FROM a AS a1 JOIN b AS b1 ON a = b WHERE c = 1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b FROM a a1 JOIN b b1 ON a = b WHERE c = 1;")
+  sql <- translateSql("SELECT a, b FROM a as a1 INNER JOIN b AS b1 ON a = b LEFT JOIN c AS c1 ON b = c WHERE c IN (1,2,4);", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b FROM a a1 INNER JOIN b b1 ON a = b LEFT JOIN c c1 ON b = c WHERE c IN (1,2,4);")
+  sql <- translateSql("SELECT a, b, d FROM a AS a1, b AS b1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1, b b1;")
+  sql <- translateSql("SELECT a, b, d FROM a AS a1, b AS b1, c AS c1 WHERE c = 1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1, b b1, c c1 WHERE c = 1;")
+  sql <- translateSql("SELECT a, b, d FROM a AS a1,(SELECT c AS c1 FROM b AS b1) AS d1 WHERE c = 1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1,(SELECT c AS c1 FROM b b1) d1 WHERE c = 1;")
+})
+
+
 test_that("translateSQL sql server -> PostgreSQL USE", {
   sql <- translateSql("USE vocabulary;",
                       targetDialect = "postgresql")$sql
