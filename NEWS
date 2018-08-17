@@ -1,3 +1,15 @@
+SqlRender v1.5.2 (Release data: 2018-08-17)
+===========================================
+
+Changes:
+
+1. Translation for indexes for RedShift and Impala.
+2. Translation for UPDATE STATISTICS.
+
+Bugfixes:
+
+1. Fixed translation of AS when used for table names in Oracle.
+
 SqlRender v1.5.0 (Release data: 2018-05-28)
 ===========================================
 
