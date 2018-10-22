@@ -579,28 +579,28 @@ test_that("translateSQL sql server -> Netezza WITH CTE SELECT INTO with RANDOM d
   sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nWITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1\nDISTRUBTE ON RANDOM;")
+                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1\nDISTRIBUTE ON RANDOM;")
 })
 
 test_that("translateSQL sql server -> Netezza WITH CTE SELECT INTO with KEY distribution", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(c)\nWITH cte1 AS (SELECT a,c FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_KEY(c)\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a,c FROM b)  SELECT\nc \nFROM\ncte1\nDISTRUBTE ON (c);")
+                             "--HINT DISTRIBUTE_ON_KEY(c)\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a,c FROM b)  SELECT\nc \nFROM\ncte1\nDISTRIBUTE ON (c);")
 })
 
 test_that("translateSQL sql server -> Netezza WITH SELECT INTO with RANDOM distribution", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nSELECT a INTO b FROM someTable;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRUBTE ON RANDOM;")
+                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRIBUTE ON RANDOM;")
 })
 
 test_that("translateSQL sql server -> Netezza WITH SELECT INTO with KEY distribution", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(a)\nSELECT a INTO b FROM someTable;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_KEY(a)\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRUBTE ON (a);")
+                             "--HINT DISTRIBUTE_ON_KEY(a)\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRIBUTE ON (a);")
 })
 
 
