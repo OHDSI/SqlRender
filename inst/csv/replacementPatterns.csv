@@ -83,6 +83,7 @@ oracle,CREATE UNIQUE INDEX @name ON @table (@variable);,BEGIN\n  EXECUTE IMMEDIA
 oracle,CREATE UNIQUE CLUSTERED INDEX @name ON @table (@variable);,BEGIN\n  EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX @name ON @table (@variable)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -1408 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 oracle,DATETIME,TIMESTAMP
+oracle,DATETIME2,TIMESTAMP
 oracle,BIGINT,NUMBER(19)
 oracle,VARCHAR(MAX),CLOB
 oracle,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
@@ -162,6 +163,7 @@ postgresql,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDE
 postgresql,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
 postgresql,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 postgresql,DATETIME,TIMESTAMP
+postgresql,DATETIME2,TIMESTAMP
 postgresql,VARCHAR(MAX),TEXT
 postgresql,FLOAT,NUMERIC
 postgresql,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nANALYZE @d;
@@ -454,6 +456,7 @@ impala,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 impala,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 impala,DATE,TIMESTAMP
 impala,DATETIME,TIMESTAMP
+impala,DATETIME2,TIMESTAMP
 impala,BIGINT NOT NULL,BIGINT
 impala,BOOLEAN NOT NULL,BOOLEAN
 impala,CHAR NOT NULL,CHAR
@@ -548,6 +551,8 @@ netezza,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||
 netezza,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
 netezza,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 netezza,UPDATE STATISTICS @a;,GENERATE STATISTICS ON @a;
+netezza,DATETIME,TIMESTAMP
+netezza,DATETIME2,TIMESTAMP
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
@@ -589,3 +594,4 @@ bigquery,as \" @a \",as @a
 bigquery,"coalesce(@([0-9]+)a, @b)","coalesce(@a, cast(@b as int64))"
 bigquery,"coalesce(@a, @([0-9]+)b)","coalesce(cast(@a as int64), @b)"
 bigquery,"cast(@a as decimal(@b))","cast(@a as float64)"
+bigquery,"DATETIME2","datetime"

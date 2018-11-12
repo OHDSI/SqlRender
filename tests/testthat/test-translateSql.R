@@ -2269,3 +2269,21 @@ test_that("translateSQL sql server -> Netezza analyze table", {
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql, "GENERATE STATISTICS ON results_schema.heracles_results;")
 })
+
+test_that("translateSQL sql server -> Postgres DATETIME and DATETIME2", {
+  sql <- translateSql("CREATE TABLE x (a DATETIME2, b DATETIME);",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE x (a TIMESTAMP, b TIMESTAMP);")
+})
+
+test_that("translateSQL sql server -> Oracle DATETIME and DATETIME2", {
+  sql <- translateSql("CREATE TABLE x (a DATETIME2, b DATETIME);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE x (a TIMESTAMP, b TIMESTAMP);")
+})
+
+test_that("translateSQL sql server -> redshift DATETIME and DATETIME2", {
+  sql <- translateSql("CREATE TABLE x (a DATETIME2, b DATETIME);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE x  (a TIMESTAMP, b TIMESTAMP)\nDISTSTYLE ALL;")
+})
