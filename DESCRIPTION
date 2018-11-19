@@ -13,7 +13,7 @@ Description: A rendering tool for parameterized SQL that also translates into
     'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', and 'Microsoft PDW'.
 License: Apache License 2.0
 VignetteBuilder: knitr
-URL: https://github.com/OHDSI/SqlRender
+URL: https://ohdsi.github.io/SqlRender, https://github.com/OHDSI/SqlRender
 BugReports: https://github.com/OHDSI/SqlRender/issues
 Imports:
     rJava
