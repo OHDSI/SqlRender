@@ -24,4 +24,4 @@ Suggests:
     shiny,
     shinydashboard
 LazyData: false
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
