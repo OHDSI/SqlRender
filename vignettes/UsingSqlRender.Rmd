@@ -3,12 +3,11 @@ title: "Using SqlRender"
 author: "Martijn J. Schuemie"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    number_sections: yes
-    toc: yes
   html_document:
     number_sections: yes
     toc: yes
+pkgdown:
+  as_is: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Using SqlRender}

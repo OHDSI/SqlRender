@@ -82,7 +82,7 @@
       <h1>Using SqlRender</h1>
                         <h4 class="author">Martijn J. Schuemie</h4>
             
-            <h4 class="date">2018-11-19</h4>
+            <h4 class="date">2018-11-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/SqlRender/blob/master/vignettes/UsingSqlRender.Rmd"><code>vignettes/UsingSqlRender.Rmd</code></a></small>
       <div class="hidden name"><code>UsingSqlRender.Rmd</code></div>
@@ -93,16 +93,16 @@
     
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
+<a href="#introduction" class="anchor"></a><span class="header-section-number">1</span> Introduction</h1>
 <p>This vignette describes how one could use the SqlRender R package.</p>
 </div>
 <div id="sql-parameterization" class="section level1">
 <h1 class="hasAnchor">
-<a href="#sql-parameterization" class="anchor"></a>SQL parameterization</h1>
+<a href="#sql-parameterization" class="anchor"></a><span class="header-section-number">2</span> SQL parameterization</h1>
 <p>One of the main functions of the package is to support parameterization of SQL. Often, small variations of SQL need to be generated based on some parameters. SqlRender offers a simple markup syntax inside the SQL code to allow parameterization. Rendering the SQL based on parameter values is done using the <code><a href="../reference/renderSql.html">renderSql()</a></code> function.</p>
 <div id="substituting-parameter-values" class="section level2">
 <h2 class="hasAnchor">
-<a href="#substituting-parameter-values" class="anchor"></a>Substituting parameter values</h2>
+<a href="#substituting-parameter-values" class="anchor"></a><span class="header-section-number">2.1</span> Substituting parameter values</h2>
 <p>The <code>@</code> character can be used to indicate parameter names that need to be exchange for actual parameter values when rendering. In the following example, a variable called <code>a</code> is mentioned in the SQL. In the call to the renderSql function the value of this parameter is defined:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM table WHERE id = @a;"</span></a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">a =</span> <span class="dv">123</span>)<span class="op">$</span>sql</a></code></pre></div>
@@ -118,7 +118,7 @@
 </div>
 <div id="default-parameter-values" class="section level2">
 <h2 class="hasAnchor">
-<a href="#default-parameter-values" class="anchor"></a>Default parameter values</h2>
+<a href="#default-parameter-values" class="anchor"></a><span class="header-section-number">2.2</span> Default parameter values</h2>
 <p>For some or all parameters, it might make sense to define default values that will be used unless the user specifies another value. This can be done using the <code>{DEFAULT @parameter = value}</code> syntax:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">sql &lt;-<span class="st"> "{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql)<span class="op">$</span>sql</a></code></pre></div>
@@ -132,7 +132,7 @@
 </div>
 <div id="if-then-else" class="section level2">
 <h2 class="hasAnchor">
-<a href="#if-then-else" class="anchor"></a>If-then-else</h2>
+<a href="#if-then-else" class="anchor"></a><span class="header-section-number">2.3</span> If-then-else</h2>
 <p>Sometimes blocks of codes need to be turned on or off based on the values of one or more parameters. This is done using the <code>{Condition} ? {if true} : {if false}</code> syntax. If the <em>condition</em> evaluates to true or 1, the <em>if true</em> block is used, else the <em>if false</em> block is shown (if present).</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM table {@x} ? {WHERE id = 1}"</span></a>
 <a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw"><a href="../reference/renderSql.html">renderSql</a></span>(sql, <span class="dt">x =</span> <span class="ot">FALSE</span>)<span class="op">$</span>sql</a></code></pre></div>
@@ -160,7 +160,7 @@
 </div>
 <div id="translation-to-other-sql-dialects" class="section level1">
 <h1 class="hasAnchor">
-<a href="#translation-to-other-sql-dialects" class="anchor"></a>Translation to other SQL dialects</h1>
+<a href="#translation-to-other-sql-dialects" class="anchor"></a><span class="header-section-number">3</span> Translation to other SQL dialects</h1>
 <p>SQL for one platform (e.g. Microsoft SQL Server) will not always execute on other platforms (e.g. Oracle). The <code><a href="../reference/translateSql.html">translateSql()</a></code> function can be used to translate between different dialects, but there are some limitations.</p>
 <p>A first limitation is that <strong>the starting dialect has to be SQL Server</strong>. The reason for this is that this dialect is in general the most specific. For example, the number of days between two dates in SQL Server has to be computed using the DATEDIFF function: <code>DATEDIFF(dd,a,b)</code>. In other languages one can simply subtract the two dates: <code>b-a</code>. Since you’d need to know a and b are dates, it is not possible to go from other languages to SQL Server, only the other way around.</p>
 <p>A second limitation is that currently only these dialects are supported as targets: <strong>Oracle</strong>, <strong>PostgreSQL</strong>, <strong>Microsoft PDW (Parallel Data Warehouse)</strong>, <strong>Impala</strong>, <strong>Netezza</strong>, <strong>Google BigQuery</strong>, and <strong>Amazon Redhift</strong>.</p>
@@ -183,7 +183,7 @@
 </ul>
 <div id="functions-and-structures-supported-by-translatesql" class="section level2">
 <h2 class="hasAnchor">
-<a href="#functions-and-structures-supported-by-translatesql" class="anchor"></a>Functions and structures supported by translateSql</h2>
+<a href="#functions-and-structures-supported-by-translatesql" class="anchor"></a><span class="header-section-number">3.1</span> Functions and structures supported by translateSql</h2>
 <p>These SQL Server functions have been tested and were found to be translated correctly to the various dialects:</p>
 <table class="table">
 <caption>Functions supported by translateSql</caption>
@@ -317,12 +317,12 @@
 </div>
 <div id="string-concatenation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#string-concatenation" class="anchor"></a>String concatenation</h2>
+<a href="#string-concatenation" class="anchor"></a><span class="header-section-number">3.2</span> String concatenation</h2>
 <p>String concatenation is one area where SQL Server is less specific than other dialects. In SQL Server, one would write <code>SELECT first_name + ' ' + last_name AS full_name FROM table</code>, but this should be <code>SELECT first_name || ' ' || last_name AS full_name FROM table</code> in PostgreSQL and Oracle. SqlRender tries to guess when values that are being concatenated are strings. In the example above, because we have an explicit string (the space surrounded by single quotation marks), the translation will be correct. However, if the query had been <code>SELECT first_name + last_name AS full_name FROM table</code>, SqlRender would have had no clue the two fields were strings, and would incorrectly leave the plus sign. Another clue that a value is a string is an explicit cast to VARCHAR, so <code>SELECT last_name + CAST(age AS VARCHAR(3)) AS full_name FROM table</code> would also be translated correctly. To avoid ambiguity altogether, it is probable best to use the <code>CONCAT()</code> function to concatenate two or more strings.</p>
 </div>
 <div id="table-aliases-and-the-as-keyword" class="section level2">
 <h2 class="hasAnchor">
-<a href="#table-aliases-and-the-as-keyword" class="anchor"></a>Table aliases and the AS keyword</h2>
+<a href="#table-aliases-and-the-as-keyword" class="anchor"></a><span class="header-section-number">3.3</span> Table aliases and the AS keyword</h2>
 <p>Many SQL dialects allow the use of the <code>AS</code> keyword when defining a table alias, but will also work fine without the keyword. For example, both these SQL statements are fine for SQL Server, PostgreSQL, RedShift, etc.:</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co">-- Using AS keyword</span></a>
 <a class="sourceLine" id="cb30-2" data-line-number="2"><span class="kw">SELECT</span> * </a>
@@ -343,7 +343,7 @@
 </div>
 <div id="temp-tables" class="section level2">
 <h2 class="hasAnchor">
-<a href="#temp-tables" class="anchor"></a>Temp tables</h2>
+<a href="#temp-tables" class="anchor"></a><span class="header-section-number">3.4</span> Temp tables</h2>
 <p>Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In Postgres, PDW, RedShift and SQL Server temp tables have very nice properties: they’re only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. This is why, in Oracle, SqlRender will try to emulate temp tables by</p>
 <ol style="list-style-type: decimal">
 <li>Adding a random string to the table name so tables from different users will not conflict.</li>
@@ -352,7 +352,7 @@
 <p>For example:</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM #children;"</span></a>
 <a class="sourceLine" id="cb31-2" data-line-number="2"><span class="kw"><a href="../reference/translateSql.html">translateSql</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>, <span class="dt">oracleTempSchema =</span> <span class="st">"temp_schema"</span>)<span class="op">$</span>sql</a></code></pre></div>
-<pre><code>#&gt; [1] "SELECT * FROM temp_schema.x3m1dsw9children ;"</code></pre>
+<pre><code>#&gt; [1] "SELECT * FROM temp_schema.t0yb6ve6children ;"</code></pre>
 <p>Note that the user will need to have write privileges on <code>temp_schema</code>.</p>
 <p>Also note that because Oracle has a limit on table names of 30 characters, <strong>temp table names are only allowed to be at most 22 characters long</strong> because else the name will become too long after appending the session ID.</p>
 <p>Futhermore, remember that temp tables are not automatically dropped on Oracle, so you will need to explicitly <code>TRUNCATE</code> and <code>DROP</code> all temp tables once you’re done with them to prevent orphan tables accumulating in the Oracle temp schema.</p>
@@ -365,7 +365,7 @@
 </div>
 <div id="implicit-casts" class="section level2">
 <h2 class="hasAnchor">
-<a href="#implicit-casts" class="anchor"></a>Implicit casts</h2>
+<a href="#implicit-casts" class="anchor"></a><span class="header-section-number">3.5</span> Implicit casts</h2>
 <p>One of the few points where SQL Server is less explicit than other dialects is that it allows implicit casts. For example, this code will work on SQL Server:</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw">CREATE</span> <span class="kw">TABLE</span> #temp (txt <span class="dt">VARCHAR</span>);</a>
 <a class="sourceLine" id="cb35-2" data-line-number="2"></a>
@@ -381,7 +381,7 @@
 </div>
 <div id="case-sensitivity-in-string-comparisons" class="section level2">
 <h2 class="hasAnchor">
-<a href="#case-sensitivity-in-string-comparisons" class="anchor"></a>Case sensitivity in string comparisons</h2>
+<a href="#case-sensitivity-in-string-comparisons" class="anchor"></a><span class="header-section-number">3.6</span> Case sensitivity in string comparisons</h2>
 <p>Some DBMS platforms such as SQL Server always perform string comparisons in a case-insensitive way, while others such as PostgreSQL are always case sensitive. It is therefore recommended to always assume case-sensitive comparisons, and to explicitly make comparisons case-insensitive when unsure about the case. For example, instead of</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">FROM</span> concept <span class="kw">WHERE</span> concep_class_id = <span class="st">'Clinical Finding'</span></a></code></pre></div>
 <p>it is preferred to use</p>
@@ -389,7 +389,7 @@
 </div>
 <div id="schemas-and-databases" class="section level2">
 <h2 class="hasAnchor">
-<a href="#schemas-and-databases" class="anchor"></a>Schemas and databases</h2>
+<a href="#schemas-and-databases" class="anchor"></a><span class="header-section-number">3.7</span> Schemas and databases</h2>
 <p>In SQL Server, tables are located in a schema, and schemas reside in a database. For example, <code>cdm_data.dbo.person</code> refers to the <code>person</code> table in the <code>dbo</code> schema in the <code>cdm_data</code> database. In other dialects, even though a similar hierarchy often exists they are used very differently. In SQL Server, there is typically one schema per database (often called <code>dbo</code>), and users can easily use data in different databases. On other platforms, for example in PostgreSQL, it is not possible to use data across databases in a single session, but there are often many schemas in a database. In PostgreSQL one could say that the equivalent of SQL Server’s database is the schema.</p>
 <p>We therefore recommend concatenating SQL Server’s database and schema into a single parameter, which we typically call <code>@databaseSchema</code>. For example, we could have the parameterized SQL</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">FROM</span> @databaseSchema.person</a></code></pre></div>
@@ -413,7 +413,7 @@
 </div>
 <div id="optimization-for-massively-parallel-processing" class="section level2">
 <h2 class="hasAnchor">
-<a href="#optimization-for-massively-parallel-processing" class="anchor"></a>Optimization for massively parallel processing</h2>
+<a href="#optimization-for-massively-parallel-processing" class="anchor"></a><span class="header-section-number">3.8</span> Optimization for massively parallel processing</h2>
 <p>Both PDW and RedShift are massively parallel processing platforms, meaning they consist of many nodes that work together. In such an environment, significant increases in performance can be achieved by finetuning the SQL for these platforms. Probably most importantly, developers can specify the way data is distributed over the nodes. Ideally, data in a node only needs to be combined with data in the same node. For example, if I have two tables with the field <code>person_id</code>, I would like all records with the same person ID to be on the same node, so a join on <code>person_id</code> can be performed locally without exchanging data between nodes.</p>
 <p>SQL Server SQL, our source dialect, does not allow for these optimizations, so we’ve introduced the notion of hints. In the following example, a hint is provided on which field should be used for the distribution of data across nodes:</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></a>
@@ -435,7 +435,7 @@
 </div>
 <div id="debugging-parameterized-sql" class="section level1">
 <h1 class="hasAnchor">
-<a href="#debugging-parameterized-sql" class="anchor"></a>Debugging parameterized SQL</h1>
+<a href="#debugging-parameterized-sql" class="anchor"></a><span class="header-section-number">4</span> Debugging parameterized SQL</h1>
 <p>Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL.</p>
 <p>A Shiny app is included in the SqlRender package for interactively editing source SQL and generating rendered and translated SQL. The app can be started using:</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1"><span class="kw"><a href="../reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span>()</a></code></pre></div>
@@ -446,7 +446,7 @@
 </div>
 <div id="developing-r-packages-that-contain-parameterized-sql" class="section level1">
 <h1 class="hasAnchor">
-<a href="#developing-r-packages-that-contain-parameterized-sql" class="anchor"></a>Developing R packages that contain parameterized SQL</h1>
+<a href="#developing-r-packages-that-contain-parameterized-sql" class="anchor"></a><span class="header-section-number">5</span> Developing R packages that contain parameterized SQL</h1>
 <p>Often, the SQL code will become part of an R package, where it might be used to perform initial data-preprocessing and extraction before further analysis. We’ve developed the following practice for doing so: The parameterized SQL should be located in the <em>inst/sql/</em> folder of the package. The parameterized SQL for SQL Server should be in the <em>inst/sql/sql_server/</em> folder. If for some reason you do not want to use the translation functions to generate the SQL for some dialect (e.g because dialect specific code might be written that gives better performance), a dialect-specific version of the parameterized SQL should be placed in a folder with the name of that dialect, for example <em>inst/sql/oracle/</em>. SqlRender has a function <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> that will first check if a dialect-specific version is available for the target dialect. If it is, that version will be rendered, else the SQL Server version will be rendered and subsequently translated to the target dialect.</p>
 <p>The <code><a href="../reference/createRWrapperForSql.html">createRWrapperForSql()</a></code> function can be used to create an R wrapper around a rendered SQL file, using the <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> function . For example, suppose we have a text file called <em>test.sql</em> containing the following parameterized SQL:</p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb52-1" data-line-number="1">{<span class="kw">DEFAULT</span> @selected_value = <span class="dv">1</span>}</a>
@@ -489,28 +489,28 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#introduction">Introduction</a></li>
+<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a></li>
       <li>
-<a href="#sql-parameterization">SQL parameterization</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#substituting-parameter-values">Substituting parameter values</a></li>
-      <li><a href="#default-parameter-values">Default parameter values</a></li>
-      <li><a href="#if-then-else">If-then-else</a></li>
+<a href="#sql-parameterization"><span class="toc-section-number">2</span> SQL parameterization</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#substituting-parameter-values"><span class="toc-section-number">2.1</span> Substituting parameter values</a></li>
+      <li><a href="#default-parameter-values"><span class="toc-section-number">2.2</span> Default parameter values</a></li>
+      <li><a href="#if-then-else"><span class="toc-section-number">2.3</span> If-then-else</a></li>
       </ul>
 </li>
       <li>
-<a href="#translation-to-other-sql-dialects">Translation to other SQL dialects</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#functions-and-structures-supported-by-translatesql">Functions and structures supported by translateSql</a></li>
-      <li><a href="#string-concatenation">String concatenation</a></li>
-      <li><a href="#table-aliases-and-the-as-keyword">Table aliases and the AS keyword</a></li>
-      <li><a href="#temp-tables">Temp tables</a></li>
-      <li><a href="#implicit-casts">Implicit casts</a></li>
-      <li><a href="#case-sensitivity-in-string-comparisons">Case sensitivity in string comparisons</a></li>
-      <li><a href="#schemas-and-databases">Schemas and databases</a></li>
-      <li><a href="#optimization-for-massively-parallel-processing">Optimization for massively parallel processing</a></li>
+<a href="#translation-to-other-sql-dialects"><span class="toc-section-number">3</span> Translation to other SQL dialects</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#functions-and-structures-supported-by-translatesql"><span class="toc-section-number">3.1</span> Functions and structures supported by translateSql</a></li>
+      <li><a href="#string-concatenation"><span class="toc-section-number">3.2</span> String concatenation</a></li>
+      <li><a href="#table-aliases-and-the-as-keyword"><span class="toc-section-number">3.3</span> Table aliases and the AS keyword</a></li>
+      <li><a href="#temp-tables"><span class="toc-section-number">3.4</span> Temp tables</a></li>
+      <li><a href="#implicit-casts"><span class="toc-section-number">3.5</span> Implicit casts</a></li>
+      <li><a href="#case-sensitivity-in-string-comparisons"><span class="toc-section-number">3.6</span> Case sensitivity in string comparisons</a></li>
+      <li><a href="#schemas-and-databases"><span class="toc-section-number">3.7</span> Schemas and databases</a></li>
+      <li><a href="#optimization-for-massively-parallel-processing"><span class="toc-section-number">3.8</span> Optimization for massively parallel processing</a></li>
       </ul>
 </li>
-      <li><a href="#debugging-parameterized-sql">Debugging parameterized SQL</a></li>
-      <li><a href="#developing-r-packages-that-contain-parameterized-sql">Developing R packages that contain parameterized SQL</a></li>
+      <li><a href="#debugging-parameterized-sql"><span class="toc-section-number">4</span> Debugging parameterized SQL</a></li>
+      <li><a href="#developing-r-packages-that-contain-parameterized-sql"><span class="toc-section-number">5</span> Developing R packages that contain parameterized SQL</a></li>
       </ul>
 </div>
       </div>
