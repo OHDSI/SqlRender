@@ -1,5 +1,16 @@
+SqlRender 1.5.3
+===============
+
+Changes:
+
+1. Added translation rules for DATETIME2.
+
+Bugfixes:
+
+1. Fixed misspelling of DISTRIBUTE in Netezza translation rules.
+
 SqlRender 1.5.2
-================
+===============
 
 Changes:
 
