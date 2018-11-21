@@ -396,6 +396,8 @@ pdw,TR*NC*T*,TRUNCATE
 pdw,DR*P,DROP
 pdw,CR**T*,CREATE
 pdw,IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL 
+pdw,"CONSTRAINT @a DEFAULT GETDATE()",""
+pdw,"DEFAULT GETDATE()",""
 impala,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- impala does not support indexes
 impala,CREATE INDEX @index_name ON @table (@variable);,-- impala does not support indexes
 impala,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
@@ -487,6 +489,7 @@ impala,"CHAR,","CHAR(1),"
 impala,"CHAR\n+","CHAR(1)\n"
 impala,"CHAR)","CHAR(1))"
 impala,"CONSTRAINT @a DEFAULT NOW()",""
+impala,"DEFAULT NOW()",""
 impala,stats,_stats
 impala,UPDATE STATISTICS @a;,COMPUTE STATS @a;
 netezza,HINT DISTRIBUTE_ON_KEY(@key)\n@statement;,HINT DISTRIBUTE_ON_KEY(@key)\n@statement\nDISTRIBUTE ON (@key);
