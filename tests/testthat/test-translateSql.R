@@ -257,6 +257,18 @@ test_that("translateSQL sql server -> PDW select into permanent table with analy
                              "IF XACT_STATE() = 1 COMMIT; CREATE TABLE b WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n a, analysis_id, b \nFROM\n c WHERE a = 1;")
 })
 
+test_that("translateSQL sql server -> PDW CREATE TABLE with CONSTRAINT DEFAULT", {
+    sql <- translateSql("CREATE TABLE a(c1 DATETIME CONSTRAINT a_c1_def DEFAULT GETDATE());",
+                    targetDialect = "pdw")$sql
+    expect_equal_ignore_spaces(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a (c1 DATETIME)\nWITH (DISTRIBUTION = REPLICATE);")
+})
+
+test_that("translateSQL sql server -> PDW CREATE TABLE with CONSTRAINT DEFAULT", {
+    sql <- translateSql("CREATE TABLE a(c1 DATETIME DEFAULT GETDATE());",
+                    targetDialect = "pdw")$sql
+    expect_equal_ignore_spaces(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a (c1 DATETIME)\nWITH (DISTRIBUTION = REPLICATE);")
+})
+
 test_that("translateSQL sql server -> Postgres create table if not exists", {
   sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
                       targetDialect = "postgresql")$sql
@@ -492,6 +504,12 @@ test_that("translateSQL sql server -> Impala clause with NOT NULL", {
 
 test_that("translateSQL sql server -> Impala CREATE TABLE with CONSTRAINT DEFAULT", {
     sql <- translateSql("CREATE TABLE a(c1 TIMESTAMP CONSTRAINT a_c1_def DEFAULT NOW())",
+                    targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "CREATE TABLE a(c1 TIMESTAMP)")
+})
+
+test_that("translateSQL sql server -> Impala CREATE TABLE with CONSTRAINT DEFAULT", {
+    sql <- translateSql("CREATE TABLE a(c1 TIMESTAMP DEFAULT NOW())",
                     targetDialect = "impala")$sql
     expect_equal_ignore_spaces(sql, "CREATE TABLE a(c1 TIMESTAMP)")
 })
