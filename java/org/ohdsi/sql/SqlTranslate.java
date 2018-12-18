@@ -356,8 +356,8 @@ public class SqlTranslate {
 				throw new RuntimeException("Don't know how to translate from " + SOURCE_DIALECT + " to " + targetDialect + ". Valid target dialects are "
 						+ StringUtils.join(allowedDialects, ", "));
 			}
-		} else if (targetDialect.equalsIgnoreCase("bigQuery")) 
-			sql = BigQueryTranslate.translatebigQuery(sql);
+		}/* else if (targetDialect.equalsIgnoreCase("bigQuery"))
+			sql = BigQueryTranslate.translatebigQuery(sql);*/
 		return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
 	}
 
