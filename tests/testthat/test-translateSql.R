@@ -2258,6 +2258,12 @@ test_that("translateSQL sql server -> Oracle BIGINT in conditional create table"
   expect_equal_ignore_spaces(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE test  (x NUMBER(19))';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
 })
 
+
+test_that("translateSQL sql server -> Oracle NOT NULL and DEFAULT in conditional create table", {
+    sql <- translateSql("IF OBJECT_ID('test_b', 'U') IS NULL CREATE TABLE test_b (	x INT NOT NULL DEFAULT 0);",
+    targetDialect = "oracle")$sql
+    expect_equal_ignore_spaces(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE test_b  (x NUMBER(10) DEFAULT 0 NOT NULL)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
+
 test_that("translateSQL sql server -> Oracle analyze table", {
   sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
                       targetDialect = "oracle")$sql
