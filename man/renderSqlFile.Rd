@@ -4,7 +4,8 @@
 \alias{renderSqlFile}
 \title{Render a SQL file}
 \usage{
-renderSqlFile(sourceFile, targetFile, warnOnMissingParameters = TRUE, ...)
+renderSqlFile(sourceFile, targetFile, warnOnMissingParameters = TRUE,
+  ...)
 }
 \arguments{
 \item{sourceFile}{The source SQL file}

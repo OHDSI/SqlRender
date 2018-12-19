@@ -2,7 +2,7 @@
 % Please edit documentation in R/RenderSql.R
 \name{splitSql}
 \alias{splitSql}
-\title{splitSql}
+\title{Split a single SQL string into one or more SQL statements}
 \usage{
 splitSql(sql)
 }

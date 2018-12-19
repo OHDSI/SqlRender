@@ -79,6 +79,27 @@ test_that("translateSQL sql server -> Oracle '+' in quote", {
   expect_equal_ignore_spaces(sql, "SELECT '+' FROM DUAL;")
 })
 
+test_that("translateSQL sql server -> Oracle union in dual", {
+  sql <- translateSql("select 1 union 2;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT 1 FROM DUAL UNION 2 FROM DUAL;")
+})
+
+test_that("translateSQL sql server -> Oracle table alias", {
+  sql <- translateSql("SELECT a FROM a AS a1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a FROM a a1;")
+  sql <- translateSql("SELECT a, b FROM a AS a1 JOIN b AS b1 ON a = b WHERE c = 1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b FROM a a1 JOIN b b1 ON a = b WHERE c = 1;")
+  sql <- translateSql("SELECT a, b FROM a as a1 INNER JOIN b AS b1 ON a = b LEFT JOIN c AS c1 ON b = c WHERE c IN (1,2,4);", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b FROM a a1 INNER JOIN b b1 ON a = b LEFT JOIN c c1 ON b = c WHERE c IN (1,2,4);")
+  sql <- translateSql("SELECT a, b, d FROM a AS a1, b AS b1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1, b b1;")
+  sql <- translateSql("SELECT a, b, d FROM a AS a1, b AS b1, c AS c1 WHERE c = 1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1, b b1, c c1 WHERE c = 1;")
+  sql <- translateSql("SELECT a, b, d FROM a AS a1,(SELECT c AS c1 FROM b AS b1) AS d1 WHERE c = 1;", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1,(SELECT c AS c1 FROM b b1) d1 WHERE c = 1;")
+})
+
+
 test_that("translateSQL sql server -> PostgreSQL USE", {
   sql <- translateSql("USE vocabulary;",
                       targetDialect = "postgresql")$sql
@@ -255,6 +276,18 @@ test_that("translateSQL sql server -> PDW select into permanent table with analy
                       targetDialect = "pdw")$sql
   expect_equal_ignore_spaces(sql,
                              "IF XACT_STATE() = 1 COMMIT; CREATE TABLE b WITH (DISTRIBUTION = HASH(analysis_id))\nAS\nSELECT\n a, analysis_id, b \nFROM\n c WHERE a = 1;")
+})
+
+test_that("translateSQL sql server -> PDW CREATE TABLE with CONSTRAINT DEFAULT", {
+    sql <- translateSql("CREATE TABLE a(c1 DATETIME CONSTRAINT a_c1_def DEFAULT GETDATE());",
+                    targetDialect = "pdw")$sql
+    expect_equal_ignore_spaces(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a (c1 DATETIME)\nWITH (DISTRIBUTION = REPLICATE);")
+})
+
+test_that("translateSQL sql server -> PDW CREATE TABLE with CONSTRAINT DEFAULT", {
+    sql <- translateSql("CREATE TABLE a(c1 DATETIME DEFAULT GETDATE());",
+                    targetDialect = "pdw")$sql
+    expect_equal_ignore_spaces(sql, "IF XACT_STATE() = 1 COMMIT; CREATE TABLE a (c1 DATETIME)\nWITH (DISTRIBUTION = REPLICATE);")
 })
 
 test_that("translateSQL sql server -> Postgres create table if not exists", {
@@ -496,6 +529,12 @@ test_that("translateSQL sql server -> Impala CREATE TABLE with CONSTRAINT DEFAUL
     expect_equal_ignore_spaces(sql, "CREATE TABLE a(c1 TIMESTAMP)")
 })
 
+test_that("translateSQL sql server -> Impala CREATE TABLE with CONSTRAINT DEFAULT", {
+    sql <- translateSql("CREATE TABLE a(c1 TIMESTAMP DEFAULT NOW())",
+                    targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "CREATE TABLE a(c1 TIMESTAMP)")
+})
+
 test_that("translateSQL sql server -> Impala stats reserved word",{
     sql <- translateSql("SELECT * FROM strata_stats AS stats",
                         targetDialect = "impala")$sql
@@ -558,28 +597,28 @@ test_that("translateSQL sql server -> Netezza WITH CTE SELECT INTO with RANDOM d
   sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nWITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1\nDISTRUBTE ON RANDOM;")
+                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1\nDISTRIBUTE ON RANDOM;")
 })
 
 test_that("translateSQL sql server -> Netezza WITH CTE SELECT INTO with KEY distribution", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(c)\nWITH cte1 AS (SELECT a,c FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_KEY(c)\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a,c FROM b)  SELECT\nc \nFROM\ncte1\nDISTRUBTE ON (c);")
+                             "--HINT DISTRIBUTE_ON_KEY(c)\nCREATE TABLE d \nAS\nWITH cte1  AS (SELECT a,c FROM b)  SELECT\nc \nFROM\ncte1\nDISTRIBUTE ON (c);")
 })
 
 test_that("translateSQL sql server -> Netezza WITH SELECT INTO with RANDOM distribution", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_RANDOM\nSELECT a INTO b FROM someTable;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRUBTE ON RANDOM;")
+                             "--HINT DISTRIBUTE_ON_RANDOM\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRIBUTE ON RANDOM;")
 })
 
 test_that("translateSQL sql server -> Netezza WITH SELECT INTO with KEY distribution", {
   sql <- translateSql("--HINT DISTRIBUTE_ON_KEY(a)\nSELECT a INTO b FROM someTable;",
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_KEY(a)\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRUBTE ON (a);")
+                             "--HINT DISTRIBUTE_ON_KEY(a)\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRIBUTE ON (a);")
 })
 
 
@@ -2219,8 +2258,56 @@ test_that("translateSQL sql server -> Oracle BIGINT in conditional create table"
   expect_equal_ignore_spaces(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE test  (x NUMBER(19))';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
 })
 
+
 test_that("translateSQL sql server -> Oracle NOT NULL and DEFAULT in conditional create table", {
     sql <- translateSql("IF OBJECT_ID('test_b', 'U') IS NULL CREATE TABLE test_b (	x INT NOT NULL DEFAULT 0);",
     targetDialect = "oracle")$sql
     expect_equal_ignore_spaces(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE test_b  (x NUMBER(10) DEFAULT 0 NOT NULL)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
+
+test_that("translateSQL sql server -> Oracle analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "-- ANALYZE should not be used to collect optimizer statistics")
+})
+
+test_that("translateSQL sql server -> Redshift analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "ANALYZE results_schema.heracles_results;")
+})
+
+test_that("translateSQL sql server -> Postgres analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "ANALYZE results_schema.heracles_results;")
+})
+
+test_that("translateSQL sql server -> Impala analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "impala")$sql
+  expect_equal_ignore_spaces(sql, "COMPUTE STATS results_schema.heracles_results;")
+})
+
+test_that("translateSQL sql server -> Netezza analyze table", {
+  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "netezza")$sql
+  expect_equal_ignore_spaces(sql, "GENERATE STATISTICS ON results_schema.heracles_results;")
+})
+
+test_that("translateSQL sql server -> Postgres DATETIME and DATETIME2", {
+  sql <- translateSql("CREATE TABLE x (a DATETIME2, b DATETIME);",
+                      targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE x (a TIMESTAMP, b TIMESTAMP);")
+})
+
+test_that("translateSQL sql server -> Oracle DATETIME and DATETIME2", {
+  sql <- translateSql("CREATE TABLE x (a DATETIME2, b DATETIME);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE x (a TIMESTAMP, b TIMESTAMP);")
+})
+
+test_that("translateSQL sql server -> redshift DATETIME and DATETIME2", {
+  sql <- translateSql("CREATE TABLE x (a DATETIME2, b DATETIME);",
+                      targetDialect = "redshift")$sql
+  expect_equal_ignore_spaces(sql, "CREATE TABLE x  (a TIMESTAMP, b TIMESTAMP)\nDISTSTYLE ALL;")
 })

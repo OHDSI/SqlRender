@@ -18,3 +18,4 @@ license_header_stub.txt
 target/
 docs
 compare_versions
+_pkgdown.yml

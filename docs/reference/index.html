@@ -11,20 +11,29 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Function reference" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,8 +56,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">SqlRender</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">SqlRender</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.5.3</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -72,6 +85,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
@@ -82,6 +98,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -89,112 +106,108 @@
       
       </header>
 
-      <div class="row">
-  <div class="col-md-9">
+<div class="row">
+  <div class="contents col-md-9">
     <div class="page-header">
-      <h1>
-        Reference
-        <small>version&nbsp;1.5.1</small>
-      </h1>
+      <h1>Reference</h1>
     </div>
 
-    <div class="contents">
-      <table class="ref-index">
+    <table class="ref-index">
 
-      <colgroup>
-        <col class="alias" />
-        <col class="title" />
-      </colgroup>
+    <colgroup>
+      
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
 
-      <tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="camelCaseToSnakeCase.html">camelCaseToSnakeCase</a></code> </p>
-          </td>
-          <td><p>Convert a camel case string to snake case</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="createRWrapperForSql.html">createRWrapperForSql</a></code> </p>
-          </td>
-          <td><p>Create an R wrapper for SQL</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></code> </p>
-          </td>
-          <td><p>Launch the SqlRender Developer Shiny app</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="loadRenderTranslateSql.html">loadRenderTranslateSql</a></code> </p>
-          </td>
-          <td><p>Load, render, and translate a SQL file in a package</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="readSql.html">readSql</a></code> </p>
-          </td>
-          <td><p>Reads a SQL file</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="renderSql.html">renderSql</a></code> </p>
-          </td>
-          <td><p>renderSql</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="renderSqlFile.html">renderSqlFile</a></code> </p>
-          </td>
-          <td><p>Render a SQL file</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="snakeCaseToCamelCase.html">snakeCaseToCamelCase</a></code> </p>
-          </td>
-          <td><p>Convert a snake case string to camel case</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="splitSql.html">splitSql</a></code> </p>
-          </td>
-          <td><p>splitSql</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="SqlRender.html">SqlRender</a></code> </p>
-          </td>
-          <td><p>SqlRender</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="translateSql.html">translateSql</a></code> </p>
-          </td>
-          <td><p>translateSql</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="translateSqlFile.html">translateSqlFile</a></code> </p>
-          </td>
-          <td><p>Translate a SQL file</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="writeSql.html">writeSql</a></code> </p>
-          </td>
-          <td><p>Write SQL to a SQL (text) file</p></td>
-        </tr>
-      </tbody>
-      </table>
-    </div>
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="camelCaseToSnakeCase.html">camelCaseToSnakeCase()</a></code> </p>
+        </td>
+        <td><p>Convert a camel case string to snake case</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="createRWrapperForSql.html">createRWrapperForSql()</a></code> </p>
+        </td>
+        <td><p>Create an R wrapper for SQL</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="launchSqlRenderDeveloper.html">launchSqlRenderDeveloper()</a></code> </p>
+        </td>
+        <td><p>Launch the SqlRender Developer Shiny app</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> </p>
+        </td>
+        <td><p>Load, render, and translate a SQL file in a package</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="readSql.html">readSql()</a></code> </p>
+        </td>
+        <td><p>Reads a SQL file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="renderSql.html">renderSql()</a></code> </p>
+        </td>
+        <td><p>Render SQL code based on parameterized SQL and parameter values</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="renderSqlFile.html">renderSqlFile()</a></code> </p>
+        </td>
+        <td><p>Render a SQL file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="snakeCaseToCamelCase.html">snakeCaseToCamelCase()</a></code> </p>
+        </td>
+        <td><p>Convert a snake case string to camel case</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="splitSql.html">splitSql()</a></code> </p>
+        </td>
+        <td><p>Split a single SQL string into one or more SQL statements</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="SqlRender.html">SqlRender</a></code> </p>
+        </td>
+        <td><p>SqlRender</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="translateSql.html">translateSql()</a></code> </p>
+        </td>
+        <td><p>Translates SQL from one dialect to another</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="translateSqlFile.html">translateSqlFile()</a></code> </p>
+        </td>
+        <td><p>Translate a SQL file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="writeSql.html">writeSql()</a></code> </p>
+        </td>
+        <td><p>Write SQL to a SQL (text) file</p></td>
+      </tr>
+    </tbody>
+    </table>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -211,11 +224,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+
