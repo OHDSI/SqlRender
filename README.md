@@ -1,8 +1,12 @@
 SqlRender
 =========
 
+[![Build Status](https://travis-ci.org/OHDSI/SqlRender.svg?branch=master)](https://travis-ci.org/OHDSI/SqlRender)
+[![codecov.io](https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/SqlRender?branch=master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SqlRender)](https://cran.r-project.org/package=SqlRender)
 [![CRAN_Status_Badge](http://cranlogs.r-pkg.org/badges/SqlRender)](https://cran.r-project.org/package=SqlRender)
+
+SqlRender is part of the [OHDSI Methods Library](https://ohdsi.github.io/MethodsLibrary).
 
 Introduction
 ============
@@ -43,7 +47,7 @@ will produce the variable `sql` containing this value:
 ```
 
 Technology
-============
+==========
 The SqlRender package is an R package wrapped around a Java library. The rJava package is used as interface.
 
 The Java library is available as a JAR file.
@@ -52,12 +56,8 @@ System Requirements
 ===================
 Running the package requires R with the package rJava installed. Also requires Java 1.6 or higher.
 
-Dependencies
-============
- * There are no dependencies.
-
-Getting Started
-===============
+Installation
+=============
 ## R package
 
 In R, to install the latest stable version, install from CRAN:
@@ -119,12 +119,15 @@ You can fetch the JAR file in the inst/java folder of this repository, or use Ma
 java -jar SqlRender.jar ?
 ```
 
-Getting Involved
-=============
-* Vignette: [Using SqlRender](http://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html)
-* Package manual: [SqlRender manual](http://ohdsi.github.io/SqlRender/reference/index.html) 
+User Documentation
+==================
+* Vignette: [Using SqlRender](https://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html)
+* Package manual: [SqlRender manual](https://ohdsi.github.io/SqlRender/reference/index.html) 
+
+Support
+=======
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
-* We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
+* We use the <a href="https://github.com/OHDSI/SqlRender/issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
 License
 =======
@@ -135,8 +138,6 @@ Development
 SqlRender is being developed in R Studio.
 
 ### Development status
-[![Build Status](https://travis-ci.org/OHDSI/SqlRender.svg?branch=master)](https://travis-ci.org/OHDSI/SqlRender)
-[![codecov.io](https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/SqlRender?branch=master)
 
 Stable. The code is actively being used in several projects.
 

@@ -3,22 +3,21 @@ title: "Using SqlRender"
 author: "Martijn J. Schuemie"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    number_sections: yes
-    toc: yes
+  pdf_document: 
+    toc: yes     
   html_document:
     number_sections: yes
     toc: yes
 vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Using SqlRender}
   %\VignetteEncoding{UTF-8}    
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r, echo = FALSE, message = FALSE}
 library(SqlRender)
 knitr::opts_chunk$set(
-  cache=FALSE,
+  cache = FALSE,
   comment = "#>",
   error = FALSE,
   tidy = FALSE)

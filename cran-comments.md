@@ -1,10 +1,10 @@
-This update has more and improved translation rules, and one bug fix (see NEWS)
+This update has added translation rules, and one bug fix (see NEWS)
 
 ---
 
 ## Test environments
 * Ubuntu 14.04.5 LTS (Travis), R 3.5.0
-* Windows 7, R 3.4.4
+* Windows 7, R 3.5.1
 
 ## R CMD check results
 
