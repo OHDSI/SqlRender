@@ -446,13 +446,13 @@ test_that("translateSQL sql server -> Impala WITH SELECT INTO", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "impala")$sql
   expect_equal_ignore_spaces(sql,
-                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;")
+                             "CREATE TABLE d STORED AS PARQUET \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;\n COMPUTE STATS d;")
 })
 
 test_that("translateSQL sql server -> Impala WITH SELECT INTO without FROM", {
   sql <- translateSql("SELECT c INTO d;",
                       targetDialect = "impala")$sql
-  expect_equal_ignore_spaces(sql, "CREATE TABLE d AS\nSELECT\n c;")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE d STORED AS PARQUET AS\nSELECT\n c;\n COMPUTE STATS d;")
 })
 
 test_that("translateSQL sql server -> Impala create table if not exists", {
