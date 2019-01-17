@@ -482,15 +482,15 @@ test_that("translateSQL sql server -> Impala RIGHT functions", {
 })
 
 test_that("translateSQL sql server -> Impala DELETE FROM", {
-  sql <- translateSql("delete from ACHILLES_results;",
+  sql <- translateSql("delete from achilles_results;",
                       targetDialect = "impala")$sql
-  expect_equal_ignore_spaces(sql, "TRUNCATE TABLE ACHILLES_results;")
+  expect_equal_ignore_spaces(sql, "TRUNCATE TABLE achilles_results;")
 })
 
 test_that("translateSQL sql server -> Impala DELETE FROM WHERE", {
-  sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
+  sql <- translateSql("delete from achilles_results where analysis_id IN (1, 2, 3);",
                       targetDialect = "impala")$sql
-  expect_equal_ignore_spaces(sql, "INSERT OVERWRITE TABLE ACHILLES_results SELECT * FROM ACHILLES_results WHERE NOT(analysis_id IN (1, 2, 3));")
+  expect_equal_ignore_spaces(sql, "INSERT OVERWRITE TABLE achilles_results SELECT * FROM achilles_results WHERE NOT(analysis_id IN (1, 2, 3));")
 })
 
 test_that("translateSQL sql server -> Impala location reserved word", {
@@ -642,9 +642,9 @@ test_that("translateSQL sql server -> Netezza RIGHT functions", {
 })
 
 test_that("translateSQL sql server -> Netezza DELETE FROM WHERE", {
-  sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
+  sql <- translateSql("delete from achilles_results where analysis_id IN (1, 2, 3);",
                       targetDialect = "netezza")$sql
-  expect_equal_ignore_spaces(sql, "delete from ACHILLES_results where analysis_id IN (1, 2, 3);")
+  expect_equal_ignore_spaces(sql, "delete from achilles_results where analysis_id IN (1, 2, 3);")
 })
 
 test_that("translateSQL sql server -> Netezza CAST AS VARCHAR", {
