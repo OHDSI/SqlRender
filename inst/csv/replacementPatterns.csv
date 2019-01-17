@@ -556,6 +556,10 @@ netezza,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 netezza,UPDATE STATISTICS @a;,GENERATE STATISTICS ON @a;
 netezza,DATETIME,TIMESTAMP
 netezza,DATETIME2,TIMESTAMP
+bigquery,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+bigquery,WITH @a (@b) AS (,WITH @a AS (
+bigquery,", @a (@b) AS (",", @a AS ("
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
@@ -576,6 +580,8 @@ bigquery,"CAST(@a as:string)","CAST(@a as string)"
 bigquery,"CAST(@a as:integer)","CAST(@a as int64)"
 bigquery,"CAST(@a as:float)","CAST(@a as float64)"
 bigquery,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+bigquery,WITH @a SELECT @b INTO @c FROM @d;,CREATE TABLE @c AS\nWITH @a\nSELECT\n@b\nFROM\n@d;
+bigquery,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 bigquery,SELECT @a INTO @b;,CREATE TABLE @b\nAS\nSELECT\n@a;
 bigquery,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 bigquery,"LEFT(@str,@chars)","SUBSTR(@str,0,@chars)"
@@ -616,4 +622,6 @@ bigquery,"DEFAULT CURRENT_DATE()",""
 bigquery,TRUNCATE TABLE @a;,DELETE FROM @a WHERE True;
 bigquery,#,%temp_prefix%%session_id%
 bigquery,CREATE INDEX @index_name ON @table_col_cond;,-- bigquery does not support indexes
+bigquery,DROP INDEX @index_name;,-- bigquery does not support indexes
 bigquery,"DATEFROMPARTS(@year,@month,@day)","DATE(@year, @month, @day)"
+bigquery,EOMONTH(@date),"DATE_SUB(DATE_TRUNC(DATE_ADD(@date, INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY)"
