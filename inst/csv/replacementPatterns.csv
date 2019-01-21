@@ -492,6 +492,7 @@ impala,"CHAR\n+","CHAR(1)\n"
 impala,"CHAR)","CHAR(1))"
 impala,"CONSTRAINT @a DEFAULT NOW()",""
 impala,"DEFAULT NOW()",""
+impala,"DEFAULT 0",""
 impala,stats,_stats
 impala,UPDATE STATISTICS @a;,COMPUTE STATS @a;
 netezza,HINT DISTRIBUTE_ON_KEY(@key)\n@statement;,HINT DISTRIBUTE_ON_KEY(@key)\n@statement\nDISTRIBUTE ON (@key);
