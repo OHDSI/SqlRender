@@ -544,7 +544,7 @@ test_that("translateSQL sql server -> Impala stats reserved word",{
 test_that("translateSQL sql server -> Impala DATEFROMPARTS()", {
     sql <- translateSql("SELECT DATEFROMPARTS('1977', '10', '12')", 
                       targetDialect = "impala")$sql
-    expect_equal_ignore_spaces(sql, "SELECT CAST(CONCAT(CAST('1977' AS VARCHAR),'-',CAST('10' AS VARCHAR),'-',CAST('12' AS VARCHAR)) AS TIMESTAMP)")
+    expect_equal_ignore_spaces(sql, "SELECT to_timestamp(CONCAT(CAST('1977' AS VARCHAR),'-',CAST('10' AS VARCHAR),'-',CAST('12' AS VARCHAR)), 'yyyy-M-d')")
   })
 
 test_that("translateSQL sql server -> Impala EOMONTH()", {
