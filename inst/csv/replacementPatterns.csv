@@ -610,6 +610,7 @@ bigquery,"bigint","INT64"
 bigquery,"float","FLOAT64"
 bigquery,VARCHAR(@a),STRING
 bigquery,VARCHAR,STRING
+bigquery,CHAR(@a),STRING
 bigquery,CHAR,STRING
 bigquery,STRING NULL,STRING
 bigquery,INT64 NULL,INT64
