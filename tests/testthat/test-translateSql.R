@@ -553,6 +553,10 @@ test_that("translateSQL sql server -> Impala EOMONTH()", {
     expect_equal_ignore_spaces(sql, "SELECT days_sub(add_months(trunc(CAST(payer_plan_period_start_date AS TIMESTAMP), 'MM'),1),1) AS obs_month_end")
   })
 
+test_that("translateSQL sql server -> Impala ISNUMERIC", {
+    sql <- translateSql("SELECT ISNUMERIC(a) FROM b", targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "SELECT regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') FROM b")
+  })
 
 # Netezza tests
 
@@ -694,6 +698,11 @@ test_that("translateSQL sql server -> netezza TOP subquery", {
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql, "SELECT * FROM (SELECT * FROM my_table WHERE a = b LIMIT 10);")
 })
+
+test_that("translateSQL sql server -> netezza ISNUMERIC", {
+    sql <- translateSql("SELECT ISNUMERIC(a) FROM b", targetDialect = "netezza")$sql
+    expect_equal_ignore_spaces(sql, "SELECT REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') FROM b")
+  })
 
 test_that("translateSQL sql server -> postgres date to varchar", {
   sql <- translateSql("SELECT CONVERT(VARCHAR,start_date,112) FROM table;",
@@ -1175,6 +1184,11 @@ test_that("translateSQL sql server -> bigquery cast decimal", {
                       targetDialect = "bigquery")$sql
   expect_equal_ignore_spaces(sql, "select cast(x as float64) from t")
 })
+
+test_that("translateSQL sql server -> bigquery ISNUMERIC", {
+    sql <- translateSql("select ISNUMERIC(a) from b", targetDialect = "bigquery")$sql
+    expect_equal_ignore_spaces(sql, "select REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') from b")
+  })
 
 test_that("translateSQL sql server -> RedShift DATEADD dd", {
   sql <- translateSql("SELECT DATEADD(dd, 30, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql

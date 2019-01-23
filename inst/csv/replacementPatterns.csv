@@ -494,6 +494,7 @@ impala,"CONSTRAINT @a DEFAULT NOW()",""
 impala,"DEFAULT NOW()",""
 impala,stats,_stats
 impala,UPDATE STATISTICS @a;,COMPUTE STATS @a;
+impala,"ISNUMERIC(@a)","regexp_like(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$')"
 netezza,HINT DISTRIBUTE_ON_KEY(@key)\n@statement;,HINT DISTRIBUTE_ON_KEY(@key)\n@statement\nDISTRIBUTE ON (@key);
 netezza,HINT DISTRIBUTE_ON_RANDOM\n@statement;,HINT DISTRIBUTE_ON_RANDOM\n@statement\nDISTRIBUTE ON RANDOM;
 netezza,CREATE TABLE #@table (@definition);,CREATE TEMP TABLE @table (@definition);
@@ -558,6 +559,7 @@ netezza,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 netezza,UPDATE STATISTICS @a;,GENERATE STATISTICS ON @a;
 netezza,DATETIME,TIMESTAMP
 netezza,DATETIME2,TIMESTAMP
+netezza,"ISNUMERIC(@a)","REGEXP_LIKE(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$')"
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
@@ -600,3 +602,4 @@ bigquery,"coalesce(@([0-9]+)a, @b)","coalesce(@a, cast(@b as int64))"
 bigquery,"coalesce(@a, @([0-9]+)b)","coalesce(cast(@a as int64), @b)"
 bigquery,"cast(@a as decimal(@b))","cast(@a as float64)"
 bigquery,"DATETIME2","datetime"
+bigquery,"ISNUMERIC(@a)","REGEXP_MATCH(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$')"
