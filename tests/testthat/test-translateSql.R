@@ -269,6 +269,12 @@ test_that("translateSQL sql server -> Redshift create table if not exists", {
   expect_equal_ignore_spaces(sql, "CREATE TABLE  IF NOT EXISTS  cohort\n  (cohort_definition_id INT)\nDISTSTYLE ALL;")
 })
 
+test_that("translateSQL sql server -> PDW CREATE INDEX with WHERE", {
+    sql <- translateSql("CREATE INDEX idx_a ON a(c1, c2) WHERE c3 <> '';",
+    targetDialect = "pdw")$sql
+    expect_equal_ignore_spaces(sql, "CREATE INDEX idx_a ON a(c1, c2);")
+})
+
 test_that("translateSQL sql server -> Oracle create table if not exists", {
   sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
                       targetDialect = "oracle")$sql

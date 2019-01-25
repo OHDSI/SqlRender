@@ -385,6 +385,7 @@ pdw,TR*NC*T*,TRUNCATE
 pdw,DR*P,DROP
 pdw,CR**T*,CREATE
 pdw,IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL 
+pdw,CREATE INDEX @index_name ON @table (@variable) WHERE @b;,CREATE INDEX @index_name ON @table (@variable);
 impala,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- impala does not support indexes
 impala,CREATE INDEX @index_name ON @table (@variable);,-- impala does not support indexes
 impala,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
