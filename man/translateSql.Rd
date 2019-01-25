@@ -2,7 +2,7 @@
 % Please edit documentation in R/RenderSql.R
 \name{translateSql}
 \alias{translateSql}
-\title{translateSql}
+\title{Translates SQL from one dialect to another}
 \usage{
 translateSql(sql = "", targetDialect, oracleTempSchema = NULL,
   sourceDialect)
@@ -23,7 +23,7 @@ A list containing the following elements: \describe{ \item{originalSql}{The orig
 SQL code} \item{sql}{The translated SQL} }
 }
 \description{
-\code{translateSql} translates SQL from one dialect to another
+\code{translateSql} translates SQL from one dialect to another.
 }
 \details{
 This function takes SQL in one dialect and translates it into another. It uses simple pattern

@@ -32,7 +32,7 @@ NULL
 }
 
 #' @title
-#' renderSql
+#' Render SQL code based on parameterized SQL and parameter values
 #'
 #' @description
 #' \code{renderSql} Renders SQL code based on parameterized SQL and parameter values.
@@ -89,10 +89,10 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 
 
 #' @title
-#' translateSql
+#' Translates SQL from one dialect to another
 #'
 #' @description
-#' \code{translateSql} translates SQL from one dialect to another
+#' \code{translateSql} translates SQL from one dialect to another.
 #'
 #' @details
 #' This function takes SQL in one dialect and translates it into another. It uses simple pattern
@@ -129,7 +129,7 @@ translateSql <- function(sql = "",
 }
 
 #' @title
-#' splitSql
+#' Split a single SQL string into one or more SQL statements
 #'
 #' @description
 #' \code{splitSql} splits a string containing multiple SQL statements into a vector of SQL statements

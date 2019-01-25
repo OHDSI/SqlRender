@@ -1,5 +1,28 @@
-SqlRender v1.5.0 (Release data: 2018-05-28)
-===========================================
+SqlRender 1.5.3
+===============
+
+Changes:
+
+1. Added translation rules for DATETIME2.
+
+Bugfixes:
+
+1. Fixed misspelling of DISTRIBUTE in Netezza translation rules.
+
+SqlRender 1.5.2
+===============
+
+Changes:
+
+1. Translation for indexes for RedShift and Impala.
+2. Translation for UPDATE STATISTICS.
+
+Bugfixes:
+
+1. Fixed translation of AS when used for table names in Oracle.
+
+SqlRender 1.5.0
+================
 
 Changes:
 
@@ -12,16 +35,16 @@ Bugfixes:
 
 1. Translation of camelCase to snake_case now adds underscore before numbers.
 
-SqlRender v1.4.8 (Release date: 2018-02-26)
-===========================================
+SqlRender 1.4.8
+================
 
 Changes: 
 
 1. Better handling of 'FROM DUAL' for Oracle.
 2. Improved support for Netezza and Impala.
 
-SqlRender v1.4.6 (Release date: 2017-11-06)
-===========================================
+SqlRender 1.4.6
+================
 
 Changes: 
 
@@ -31,8 +54,8 @@ Changes:
 4. Adding 'UNBOUNDED PRECEDING' to RedShift windowing functions.
 
 
-SqlRender v1.4.3 (Release date: 2017-09-15)
-===========================================
+SqlRender 1.4.3
+================
 
 Changes: 
 
@@ -46,8 +69,8 @@ Bugfixes:
 1. Fixed issue when splitting SQL containing hints.
 
 
-SqlRender v1.3.7 (Release date: 2017-05-03)
-===========================================
+SqlRender 1.3.7
+================
 
 Changes: 
 
@@ -63,8 +86,8 @@ Bugfixes:
 5. Fixed bug when trying to split SQL where last line has comment but no EOL.
 
 
-SqlRender v1.3.0 (Release date: 2017-03-24)
-===========================================
+SqlRender 1.3.0
+================
 
 Changes: 
 
@@ -82,8 +105,8 @@ Bugfixes:
 2. Now throwing error when boolean logic cannot be parsed (instead of assuming result is TRUE)
 
 
-SqlRender v1.2.0 (Release date: 2017-01-12)
-===========================================
+SqlRender 1.2.0
+================
 
 Changes: 
 
@@ -94,7 +117,7 @@ Bugfixes:
 1. Fixed translation for DATEFROMPARTS for RedShift
 
 
-SqlRender v1.1.7 (Release date: 2016-08-15)
-===========================================
+SqlRender 1.1.7
+================
 
 Changes: initial submission to CRAN
