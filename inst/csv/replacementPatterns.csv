@@ -47,7 +47,7 @@ oracle,LOG(@expression),"LOG(2.718281828459,@expression)"
 oracle,<L_O_G>,LOG
 oracle,LOG10(@expression),"LOG(10,@expression)"
 oracle,"ISNULL(@a,@b)","NVL(@a,@b)"
-oracle,ISNUMERIC(@a),"(LENGTH(TRIM(TRANSLATE(@a, ' +-.0123456789',' '))) IS NULL)"
+oracle,ISNUMERIC(@a),"CASE WHEN (LENGTH(TRIM(TRANSLATE(@a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END"
 oracle,COUNT_BIG(@a),COUNT(@a)
 oracle,SQUARE(@a),((@a)*(@a))
 oracle,PI(),3.141592654
@@ -151,7 +151,7 @@ postgresql,LOG(@expression),LN(CAST((@expression) AS REAL))
 postgresql,<L_O_G>,LOG
 postgresql,LOG10(@expression),"LOG(10,CAST((@expression) AS NUMERIC))"
 postgresql,"ISNULL(@a,@b)","COALESCE(@a,@b)"
-postgresql,ISNUMERIC(@a),(@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$')
+postgresql,"ISNUMERIC(@a)","CASE WHEN (@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
 postgresql,COUNT_BIG(@a),COUNT(@a)
 postgresql,SQUARE(@a),((@a)*(@a))
 postgresql,NEWID(),MD5(RANDOM()::TEXT || CLOCK_TIMESTAMP()::TEXT)
@@ -495,6 +495,7 @@ impala,"CONSTRAINT @a DEFAULT NOW()",""
 impala,"DEFAULT NOW()",""
 impala,stats,_stats
 impala,UPDATE STATISTICS @a;,COMPUTE STATS @a;
+impala,"ISNUMERIC(@a)","case when regexp_like(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') then 1 else 0 end"
 netezza,HINT DISTRIBUTE_ON_KEY(@key)\n@statement;,HINT DISTRIBUTE_ON_KEY(@key)\n@statement\nDISTRIBUTE ON (@key);
 netezza,HINT DISTRIBUTE_ON_RANDOM\n@statement;,HINT DISTRIBUTE_ON_RANDOM\n@statement\nDISTRIBUTE ON RANDOM;
 netezza,CREATE TABLE #@table (@definition);,CREATE TEMP TABLE @table (@definition);
@@ -559,6 +560,7 @@ netezza,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 netezza,UPDATE STATISTICS @a;,GENERATE STATISTICS ON @a;
 netezza,DATETIME,TIMESTAMP
 netezza,DATETIME2,TIMESTAMP
+netezza,"ISNUMERIC(@a)","CASE WHEN REGEXP_LIKE(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
@@ -601,3 +603,4 @@ bigquery,"coalesce(@([0-9]+)a, @b)","coalesce(@a, cast(@b as int64))"
 bigquery,"coalesce(@a, @([0-9]+)b)","coalesce(cast(@a as int64), @b)"
 bigquery,"cast(@a as decimal(@b))","cast(@a as float64)"
 bigquery,"DATETIME2","datetime"
+bigquery,"ISNUMERIC(@a)","CASE WHEN REGEXP_MATCH(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
