@@ -555,11 +555,11 @@ test_that("translateSQL sql server -> Impala EOMONTH()", {
 
 test_that("translateSQL sql server -> Impala ISNUMERIC", {
     sql <- translateSql("SELECT ISNUMERIC(a) FROM b", targetDialect = "impala")$sql
-    expect_equal_ignore_spaces(sql, "SELECT regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') FROM b")
+    expect_equal_ignore_spaces(sql, "SELECT case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end FROM b")
     sql <- translateSql("SELECT some FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "impala")$sql
-    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$')")
+    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end = 1")
     sql <- translateSql("SELECT some FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "impala")$sql
-    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE NOT regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$')")
+    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end = 0")
   })
 
 # Netezza tests
@@ -705,11 +705,11 @@ test_that("translateSQL sql server -> netezza TOP subquery", {
 
 test_that("translateSQL sql server -> netezza ISNUMERIC", {
     sql <- translateSql("SELECT ISNUMERIC(a) FROM b", targetDialect = "netezza")$sql
-    expect_equal_ignore_spaces(sql, "SELECT REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') FROM b")
+    expect_equal_ignore_spaces(sql, "SELECT CASE WHEN REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END FROM b")
     sql <- translateSql("SELECT some FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "netezza")$sql
-    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$')")
+    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE CASE WHEN REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1")
     sql <- translateSql("SELECT some FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "netezza")$sql
-    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE NOT REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$')")
+    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE CASE WHEN REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
   })
 
 test_that("translateSQL sql server -> postgres date to varchar", {
@@ -864,23 +864,23 @@ test_that("translateSQL sql server -> oracle from dual", {
 })
 
 test_that("translateSQL sql server -> oracle ISNUMERIC", {
-  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) THEN a ELSE b FROM c;",
+  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) = 1 THEN a ELSE b FROM c;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN a ELSE b  FROM c ;")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END = 1 THEN a ELSE b  FROM c ;")
   sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL)")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END = 1")
   sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NOT NULL)")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END = 0")
 })
 
 test_that("translateSQL sql server -> postgres ISNUMERIC", {
-  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) THEN a ELSE b FROM c;",
+  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) = 1 THEN a ELSE b FROM c;",
                       targetDialect = "postgresql")$sql
-  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN a ELSE b FROM c;")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;")
   sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "postgresql")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$')")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1")
   sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "postgresql")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE (a !~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$')")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
 })
 
 test_that("translateSQL sql server -> bigquery lowercase all but strings", {
@@ -1203,11 +1203,11 @@ test_that("translateSQL sql server -> bigquery cast decimal", {
 
 test_that("translateSQL sql server -> bigquery ISNUMERIC", {
     sql <- translateSql("select ISNUMERIC(a) from b", targetDialect = "bigquery")$sql
-    expect_equal_ignore_spaces(sql, "select REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') from b")
+    expect_equal_ignore_spaces(sql, "select CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END from b")
     sql <- translateSql("select a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "bigquery")$sql
-    expect_equal_ignore_spaces(sql, "select a from table where REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$')")
+    expect_equal_ignore_spaces(sql, "select a from table where CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1")
     sql <- translateSql("select a FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "bigquery")$sql
-    expect_equal_ignore_spaces(sql, "select a from table where NOT REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$')")
+    expect_equal_ignore_spaces(sql, "select a from table where CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
   })
 
 test_that("translateSQL sql server -> RedShift DATEADD dd", {
