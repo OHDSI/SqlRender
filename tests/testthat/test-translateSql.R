@@ -1132,6 +1132,31 @@ test_that("translateSQL sql server -> bigquery ISNUMERIC", {
     expect_equal_ignore_spaces(sql, "select a from table where CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
   })
 
+
+test_that("translateSQL sql server -> bigquery index not supported", {
+  sql <- translateSql("CREATE INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "-- bigquery does not support indexes")
+})
+
+test_that("translateSQL sql server -> bigquery TRUNCATE TABLE", {
+  sql <- translateSql("TRUNCATE TABLE cohort;",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "DELETE FROM cohort WHERE True;")
+})
+
+test_that("translateSQL sql server -> bigquery DATEFROMPARTS", {
+  sql <- translateSql("select DATEFROMPARTS(2019,1,30)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select DATE(2019,1,30)")
+})
+
+test_that("translateSQL sql server -> bigquery EOMONTH()", {
+  sql <- translateSql("select eomonth(payer_plan_period_start_date)",
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, "select DATE_SUB(DATE_TRUNC(DATE_ADD(payer_plan_period_start_date, INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY)")
+})
+
 test_that("translateSQL sql server -> RedShift DATEADD dd", {
   sql <- translateSql("SELECT DATEADD(dd, 30, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "SELECT DATEADD(day, CAST(30 as int), drug_era_end_date) FROM drug_era;")
