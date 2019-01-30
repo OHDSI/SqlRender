@@ -47,7 +47,7 @@ oracle,LOG(@expression),"LOG(2.718281828459,@expression)"
 oracle,<L_O_G>,LOG
 oracle,LOG10(@expression),"LOG(10,@expression)"
 oracle,"ISNULL(@a,@b)","NVL(@a,@b)"
-oracle,ISNUMERIC(@a),"(LENGTH(TRIM(TRANSLATE(@a, ' +-.0123456789',' '))) IS NULL)"
+oracle,ISNUMERIC(@a),"CASE WHEN (LENGTH(TRIM(TRANSLATE(@a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END"
 oracle,COUNT_BIG(@a),COUNT(@a)
 oracle,SQUARE(@a),((@a)*(@a))
 oracle,PI(),3.141592654
@@ -86,6 +86,8 @@ oracle,DATETIME,TIMESTAMP
 oracle,DATETIME2,TIMESTAMP
 oracle,BIGINT,NUMBER(19)
 oracle,VARCHAR(MAX),CLOB
+oracle,"NOT NULL DEFAULT @a,","DEFAULT @a NOT NULL,"
+oracle,"(@x NOT NULL DEFAULT @a)","(@x DEFAULT @a NOT NULL)"
 oracle,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 oracle,WITH @a AS @b INSERT INTO @c SELECT @d;,INSERT INTO @c WITH @a AS @b SELECT @d;
 oracle,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
@@ -149,7 +151,7 @@ postgresql,LOG(@expression),LN(CAST((@expression) AS REAL))
 postgresql,<L_O_G>,LOG
 postgresql,LOG10(@expression),"LOG(10,CAST((@expression) AS NUMERIC))"
 postgresql,"ISNULL(@a,@b)","COALESCE(@a,@b)"
-postgresql,ISNUMERIC(@a),(@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$')
+postgresql,"ISNUMERIC(@a)","CASE WHEN (@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
 postgresql,COUNT_BIG(@a),COUNT(@a)
 postgresql,SQUARE(@a),((@a)*(@a))
 postgresql,NEWID(),MD5(RANDOM()::TEXT || CLOCK_TIMESTAMP()::TEXT)
@@ -398,6 +400,7 @@ pdw,CR**T*,CREATE
 pdw,IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL 
 pdw,"CONSTRAINT @a DEFAULT GETDATE()",""
 pdw,"DEFAULT GETDATE()",""
+pdw,CREATE INDEX @index_name ON @table (@variable) WHERE @b;,CREATE INDEX @index_name ON @table (@variable);
 impala,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- impala does not support indexes
 impala,CREATE INDEX @index_name ON @table (@variable);,-- impala does not support indexes
 impala,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
@@ -432,7 +435,7 @@ impala,"DATEADD(yy,@years,@date)","ADD_MONTHS(CAST(@date AS DATE), 12 * @years)"
 impala,"DATEDIFF(d,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(dd,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(day,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
-impala,"DATEFROMPARTS(@year,@month,@day)","CAST(CONCAT(CAST(@year AS VARCHAR),'-',CAST(@month AS VARCHAR),'-',CAST(@day AS VARCHAR)) AS TIMESTAMP)"
+impala,"DATEFROMPARTS(@year,@month,@day)","to_timestamp(CONCAT(CAST(@year AS VARCHAR),'-',CAST(@month AS VARCHAR),'-',CAST(@day AS VARCHAR)), 'yyyy-M-d')"
 impala,"eomonth(@date)","days_sub(add_months(trunc(CAST(@date AS TIMESTAMP), 'MM'),1),1)"
 impala,DAY(@date),DAY(CAST(@date AS DATE))
 impala,GETDATE(),NOW()
@@ -442,9 +445,9 @@ impala,CAST(@a AS DATE),"CASE TYPEOF(@a) WHEN 'TIMESTAMP' THEN CAST(@a AS TIMEST
 impala,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 impala,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
 impala,(SELECT @a UNION SELECT @b) ORDER BY,SELECT * FROM\n(SELECT @a\nUNION\nSELECT @b)\nAS t1 ORDER BY
-impala,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-impala,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
-impala,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+impala,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d STORED AS PARQUET\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\n UPDATE STATISTICS @d;
+impala,SELECT @a INTO @b FROM @c;,CREATE TABLE @b STORED AS PARQUET AS\nSELECT\n@a\nFROM\n@c;\n UPDATE STATISTICS @b;
+impala,SELECT @a INTO @b;,CREATE TABLE @b STORED AS PARQUET AS\nSELECT\n@a;\n UPDATE STATISTICS @b;
 impala,SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c;,SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2;
 impala,(SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c),(SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2)
 impala,DELETE FROM @a WHERE @b;,INSERT OVERWRITE TABLE @a SELECT * FROM @a WHERE NOT(@b);
@@ -492,6 +495,7 @@ impala,"CONSTRAINT @a DEFAULT NOW()",""
 impala,"DEFAULT NOW()",""
 impala,stats,_stats
 impala,UPDATE STATISTICS @a;,COMPUTE STATS @a;
+impala,"ISNUMERIC(@a)","case when regexp_like(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') then 1 else 0 end"
 netezza,HINT DISTRIBUTE_ON_KEY(@key)\n@statement;,HINT DISTRIBUTE_ON_KEY(@key)\n@statement\nDISTRIBUTE ON (@key);
 netezza,HINT DISTRIBUTE_ON_RANDOM\n@statement;,HINT DISTRIBUTE_ON_RANDOM\n@statement\nDISTRIBUTE ON RANDOM;
 netezza,CREATE TABLE #@table (@definition);,CREATE TEMP TABLE @table (@definition);
@@ -560,6 +564,7 @@ bigquery,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 bigquery,WITH @a (@b) AS (,WITH @a AS (
 bigquery,", @a (@b) AS (",", @a AS ("
+netezza,"ISNUMERIC(@a)","CASE WHEN REGEXP_LIKE(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
@@ -626,3 +631,4 @@ bigquery,CREATE INDEX @index_name ON @table_col_cond;,-- bigquery does not suppo
 bigquery,DROP INDEX @index_name;,-- bigquery does not support indexes
 bigquery,"DATEFROMPARTS(@year,@month,@day)","DATE(@year, @month, @day)"
 bigquery,EOMONTH(@date),"DATE_SUB(DATE_TRUNC(DATE_ADD(@date, INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY)"
+bigquery,"ISNUMERIC(@a)","CASE WHEN REGEXP_MATCH(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"

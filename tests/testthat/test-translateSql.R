@@ -302,6 +302,12 @@ test_that("translateSQL sql server -> Redshift create table if not exists", {
   expect_equal_ignore_spaces(sql, "CREATE TABLE  IF NOT EXISTS  cohort\n  (cohort_definition_id INT)\nDISTSTYLE ALL;")
 })
 
+test_that("translateSQL sql server -> PDW CREATE INDEX with WHERE", {
+    sql <- translateSql("CREATE INDEX idx_a ON a(c1, c2) WHERE c3 <> '';",
+    targetDialect = "pdw")$sql
+    expect_equal_ignore_spaces(sql, "CREATE INDEX idx_a ON a(c1, c2);")
+})
+
 test_that("translateSQL sql server -> Oracle create table if not exists", {
   sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
                       targetDialect = "oracle")$sql
@@ -446,13 +452,13 @@ test_that("translateSQL sql server -> Impala WITH SELECT INTO", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "impala")$sql
   expect_equal_ignore_spaces(sql,
-                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;")
+                             "CREATE TABLE d STORED AS PARQUET \nAS\nWITH cte1 AS (SELECT a FROM b) SELECT\n c \nFROM\n cte1;\n COMPUTE STATS d;")
 })
 
 test_that("translateSQL sql server -> Impala WITH SELECT INTO without FROM", {
   sql <- translateSql("SELECT c INTO d;",
                       targetDialect = "impala")$sql
-  expect_equal_ignore_spaces(sql, "CREATE TABLE d AS\nSELECT\n c;")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE d STORED AS PARQUET AS\nSELECT\n c;\n COMPUTE STATS d;")
 })
 
 test_that("translateSQL sql server -> Impala create table if not exists", {
@@ -482,15 +488,15 @@ test_that("translateSQL sql server -> Impala RIGHT functions", {
 })
 
 test_that("translateSQL sql server -> Impala DELETE FROM", {
-  sql <- translateSql("delete from achilles_results;",
+  sql <- translateSql("delete from ACHILLES_results;",
                       targetDialect = "impala")$sql
-  expect_equal_ignore_spaces(sql, "TRUNCATE TABLE achilles_results;")
+  expect_equal_ignore_spaces(sql, "TRUNCATE TABLE ACHILLES_results;")
 })
 
 test_that("translateSQL sql server -> Impala DELETE FROM WHERE", {
-  sql <- translateSql("delete from achilles_results where analysis_id IN (1, 2, 3);",
+  sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
                       targetDialect = "impala")$sql
-  expect_equal_ignore_spaces(sql, "INSERT OVERWRITE TABLE achilles_results SELECT * FROM achilles_results WHERE NOT(analysis_id IN (1, 2, 3));")
+  expect_equal_ignore_spaces(sql, "INSERT OVERWRITE TABLE ACHILLES_results SELECT * FROM ACHILLES_results WHERE NOT(analysis_id IN (1, 2, 3));")
 })
 
 test_that("translateSQL sql server -> Impala location reserved word", {
@@ -544,7 +550,7 @@ test_that("translateSQL sql server -> Impala stats reserved word",{
 test_that("translateSQL sql server -> Impala DATEFROMPARTS()", {
     sql <- translateSql("SELECT DATEFROMPARTS('1977', '10', '12')", 
                       targetDialect = "impala")$sql
-    expect_equal_ignore_spaces(sql, "SELECT CAST(CONCAT(CAST('1977' AS VARCHAR),'-',CAST('10' AS VARCHAR),'-',CAST('12' AS VARCHAR)) AS TIMESTAMP)")
+    expect_equal_ignore_spaces(sql, "SELECT to_timestamp(CONCAT(CAST('1977' AS VARCHAR),'-',CAST('10' AS VARCHAR),'-',CAST('12' AS VARCHAR)), 'yyyy-M-d')")
   })
 
 test_that("translateSQL sql server -> Impala EOMONTH()", {
@@ -553,6 +559,14 @@ test_that("translateSQL sql server -> Impala EOMONTH()", {
     expect_equal_ignore_spaces(sql, "SELECT days_sub(add_months(trunc(CAST(payer_plan_period_start_date AS TIMESTAMP), 'MM'),1),1) AS obs_month_end")
   })
 
+test_that("translateSQL sql server -> Impala ISNUMERIC", {
+    sql <- translateSql("SELECT ISNUMERIC(a) FROM b", targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "SELECT case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end FROM b")
+    sql <- translateSql("SELECT some FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end = 1")
+    sql <- translateSql("SELECT some FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "impala")$sql
+    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end = 0")
+  })
 
 # Netezza tests
 
@@ -642,9 +656,9 @@ test_that("translateSQL sql server -> Netezza RIGHT functions", {
 })
 
 test_that("translateSQL sql server -> Netezza DELETE FROM WHERE", {
-  sql <- translateSql("delete from achilles_results where analysis_id IN (1, 2, 3);",
+  sql <- translateSql("delete from ACHILLES_results where analysis_id IN (1, 2, 3);",
                       targetDialect = "netezza")$sql
-  expect_equal_ignore_spaces(sql, "delete from achilles_results where analysis_id IN (1, 2, 3);")
+  expect_equal_ignore_spaces(sql, "delete from ACHILLES_results where analysis_id IN (1, 2, 3);")
 })
 
 test_that("translateSQL sql server -> Netezza CAST AS VARCHAR", {
@@ -694,6 +708,15 @@ test_that("translateSQL sql server -> netezza TOP subquery", {
                       targetDialect = "netezza")$sql
   expect_equal_ignore_spaces(sql, "SELECT * FROM (SELECT * FROM my_table WHERE a = b LIMIT 10);")
 })
+
+test_that("translateSQL sql server -> netezza ISNUMERIC", {
+    sql <- translateSql("SELECT ISNUMERIC(a) FROM b", targetDialect = "netezza")$sql
+    expect_equal_ignore_spaces(sql, "SELECT CASE WHEN REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END FROM b")
+    sql <- translateSql("SELECT some FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "netezza")$sql
+    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE CASE WHEN REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1")
+    sql <- translateSql("SELECT some FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "netezza")$sql
+    expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE CASE WHEN REGEXP_LIKE(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
+  })
 
 test_that("translateSQL sql server -> postgres date to varchar", {
   sql <- translateSql("SELECT CONVERT(VARCHAR,start_date,112) FROM table;",
@@ -847,15 +870,23 @@ test_that("translateSQL sql server -> oracle from dual", {
 })
 
 test_that("translateSQL sql server -> oracle ISNUMERIC", {
-  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) THEN a ELSE b FROM c;",
+  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) = 1 THEN a ELSE b FROM c;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN a ELSE b  FROM c ;")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END = 1 THEN a ELSE b  FROM c ;")
+  sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END = 1")
+  sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END = 0")
 })
 
 test_that("translateSQL sql server -> postgres ISNUMERIC", {
-  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) THEN a ELSE b FROM c;",
+  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) = 1 THEN a ELSE b FROM c;",
                       targetDialect = "postgresql")$sql
-  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN a ELSE b FROM c;")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;")
+  sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1")
+  sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "postgresql")$sql
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
 })
 
 test_that("translateSQL sql server -> bigquery lowercase all but strings", {
@@ -1175,6 +1206,15 @@ test_that("translateSQL sql server -> bigquery cast decimal", {
                       targetDialect = "bigquery")$sql
   expect_equal_ignore_spaces(sql, "select cast(x as float64) from t")
 })
+
+test_that("translateSQL sql server -> bigquery ISNUMERIC", {
+    sql <- translateSql("select ISNUMERIC(a) from b", targetDialect = "bigquery")$sql
+    expect_equal_ignore_spaces(sql, "select CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END from b")
+    sql <- translateSql("select a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "bigquery")$sql
+    expect_equal_ignore_spaces(sql, "select a from table where CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1")
+    sql <- translateSql("select a FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "bigquery")$sql
+    expect_equal_ignore_spaces(sql, "select a from table where CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
+  })
 
 test_that("translateSQL sql server -> RedShift DATEADD dd", {
   sql <- translateSql("SELECT DATEADD(dd, 30, drug_era_end_date) FROM drug_era;", sourceDialect = "sql server", targetDialect = "redshift")$sql
@@ -2256,6 +2296,12 @@ test_that("translateSQL sql server -> Oracle BIGINT in conditional create table"
   sql <- translateSql("IF OBJECT_ID('test', 'U') IS NULL CREATE TABLE test (	x BIGINT);",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE test  (x NUMBER(19))';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
+})
+
+test_that("translateSQL sql server -> Oracle NOT NULL and DEFAULT in conditional create table", {
+  sql <- translateSql("IF OBJECT_ID('test_b', 'U') IS NULL CREATE TABLE test_b (x INT NOT NULL DEFAULT 0);",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE test_b  (x INT DEFAULT 0 NOT NULL)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;")
 })
 
 test_that("translateSQL sql server -> Oracle analyze table", {
