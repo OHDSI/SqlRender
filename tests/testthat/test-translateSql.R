@@ -967,48 +967,6 @@ test_that("translateSQL sql server -> bigquery mixed column references", {
   expect_equal_ignore_spaces(sql, "select concat(t.a, t.b), x+y+z from t group by t.a, t.b, 2;")
 })
 
-test_that("translateSQL sql server -> bigquery CONCAT leading string", {
-  sql <- translateSql("select 'a' + b + c from t;",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select concat(concat('a', b), c) from t;")
-})
-
-test_that("translateSQL sql server -> bigquery CONCAT leading cast", {
-  sql <- translateSql("select cast(a as varchar) + b + c from t;",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select concat(concat(cast(a as string), b), c) from t;")
-})
-
-test_that("translateSQL sql server -> bigquery CONCAT leading isnull", {
-  sql <- translateSql("select isnull(a, 'b') + c from t;",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select concat(IFNULL(a,'b'), c) from  t;")
-})
-
-test_that("translateSQL sql server -> bigquery CONCAT leading case", {
-  sql <- translateSql("select case when x like '1' then 'a' when x like '2' then 'b' else 'c' end + c from t;",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select concat(case when x like '1' then 'a' when x like '2' then 'b' else 'c' end, c ) from  t;")
-})
-
-test_that("translateSQL sql server -> bigquery CONCAT second string", {
-  sql <- translateSql("select a.b + 'c' from t;",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select concat(a.b , 'c') from  t;")
-})
-
-test_that("translateSQL sql server -> bigquery CONCAT with alias", {
-  sql <- translateSql("select 'a' + b AS concept_path from t;",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select concat('a' , b ) as concept_path from  t;")
-})
-
-test_that("translateSQL sql server -> bigquery CONCAT with alias but no AS", {
-  sql <- translateSql("select 'a' + b concept_path from t;",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select concat('a' , b ) as concept_path from  t;")
-})
-
 test_that("translateSQL sql server -> bigquery DATEDIFF", {
   sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                       targetDialect = "bigquery")$sql
@@ -1045,22 +1003,10 @@ test_that("translateSQL sql server -> bigquery COUNT_BIG", {
   expect_equal_ignore_spaces(sql, "COUNT(x)")
 })
 
-test_that("translateSQL sql server -> bigquery CAST :string", {
-  sql <- translateSql("select cast(x as:string)",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select CAST(x as string)")
-})
-
-test_that("translateSQL sql server -> bigquery CAST :integer", {
-  sql <- translateSql("select cast(x as:integer)",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select CAST(x as int64)")
-})
-
 test_that("translateSQL sql server -> bigquery CAST varchar", {
   sql <- translateSql("select cast(x as varchar)",
                       targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select cast(x as string)")
+  expect_equal_ignore_spaces(sql, "select cast(x as STRING)")
 })
 
 test_that("translateSQL sql server -> bigquery CAST :float", {
@@ -1078,19 +1024,7 @@ test_that("translateSQL sql server -> bigquery DROP TABLE IF EXISTS", {
 test_that("translateSQL sql server -> bigquery CAST string", {
   sql <- translateSql("CAST(x AS VARCHAR(255))",
                       targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "CAST(x AS STRING)")
-})
-
-test_that("translateSQL sql server -> bigquery common table expression select into", {
-  sql <- translateSql("WITH cte as (select 1) select * INTO #t FROM t;",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "INTO temp.t WITH cte as (select 1) select * FROM t;")
-})
-
-test_that("translateSQL sql server -> bigquery select into", {
-  sql <- translateSql("select * INTO #t FROM t;",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "INTO temp.t SELECT * FROM t;")
+  expect_equal_ignore_spaces(sql, "cast(x as STRING)")
 })
 
 test_that("translateSQL sql server -> bigquery LEFT, RIGHT", {
@@ -1175,24 +1109,6 @@ test_that("translateSQL sql server -> bigquery unquote aliases", {
   sql <- translateSql("SELECT a as \"b\" from t;",
                       targetDialect = "bigquery")$sql
   expect_equal_ignore_spaces(sql, "select a as b from t;")
-})
-
-test_that("translateSQL sql server -> bigquery non-id in list", {
-  sql <- translateSql("select * from t where x in ('333','22','1')",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select * from t where x in ('333','22','1')")
-})
-
-test_that("translateSQL sql server -> bigquery non-integer in lists", {
-  sql <- translateSql("select * from t where x_id in ('333','22','1a')",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select * from t where x_id in ('333','22','1a')")
-})
-
-test_that("translateSQL sql server -> bigquery unquote id in lists", {
-  sql <- translateSql("select * from t where x_id in ('333','22','1')",
-                      targetDialect = "bigquery")$sql
-  expect_equal_ignore_spaces(sql, "select * from t where x_id in (333,22,1)")
 })
 
 test_that("translateSQL sql server -> bigquery cast int in coalesce", {
