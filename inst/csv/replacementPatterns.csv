@@ -560,6 +560,10 @@ netezza,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 netezza,UPDATE STATISTICS @a;,GENERATE STATISTICS ON @a;
 netezza,DATETIME,TIMESTAMP
 netezza,DATETIME2,TIMESTAMP
+bigquery,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+bigquery,WITH @a (@b) AS (,WITH @a AS (
+bigquery,", @a (@b) AS (",", @a AS ("
 netezza,"ISNUMERIC(@a)","CASE WHEN REGEXP_LIKE(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
@@ -570,7 +574,9 @@ bigquery,"DATEADD(day,@days,@date)","DATE_ADD(cast(@date as date), interval @day
 bigquery,"DATEADD(m,@months,@date)","DATE_ADD(cast(@date as date), interval @months MONTH)"
 bigquery,"DATEADD(mm,@months,@date)","DATE_ADD(cast(@date as date), interval @months MONTH)"
 bigquery,"DATEADD(month,@months,@date)","DATE_ADD(cast(@date as date), interval @months MONTH)"
-bigquery,"GETDATE()","CURRENT_DATE()"
+bigquery,"DATEADD(yy,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
+bigquery,"DATEADD(yyyy,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
+bigquery,"DATEADD(year,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
 bigquery,"STDEV(@a)","STDDEV(@a)"
 bigquery,"HASHBYTES('MD5',@a)","SHA1(@a)"
 bigquery,"LEN(@a)","LENGTH(@a)"
@@ -579,16 +585,15 @@ bigquery,"CAST(@a as:string)","CAST(@a as string)"
 bigquery,"CAST(@a as:integer)","CAST(@a as int64)"
 bigquery,"CAST(@a as:float)","CAST(@a as float64)"
 bigquery,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
-bigquery,CAST(@a AS varchar(@b)),CAST(@a AS STRING)
-bigquery,"WITH @a INTO #@b FROM","INTO #@b WITH @a FROM"
-bigquery,"SELECT @a INTO #@b FROM","INTO #@b SELECT @a FROM"
-bigquery,#,temp.
+bigquery,WITH @a SELECT @b INTO @c FROM @d;,CREATE TABLE @c AS\nWITH @a\nSELECT\n@b\nFROM\n@d;
+bigquery,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+bigquery,SELECT @a INTO @b;,CREATE TABLE @b\nAS\nSELECT\n@a;
+bigquery,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 bigquery,"LEFT(@str,@chars)","SUBSTR(@str,0,@chars)"
 bigquery,"RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
 bigquery,"cast(@a as float)","cast(@a as float64)"
 bigquery,"cast(@a as bigint)","cast(@a as int64)"
 bigquery,"cast(@a as int)","cast(@a as int64)"
-bigquery,"cast(@a as varchar)","cast(@a as string)"
 bigquery,date(@a),cast(@a as date)
 bigquery,"cast(concat(@a) as date)","parse_date('%Y%m%d', concat(@a))"
 bigquery,"YEAR(@date)","EXTRACT(YEAR from @date)"
@@ -602,5 +607,28 @@ bigquery,as \" @a \",as @a
 bigquery,"coalesce(@([0-9]+)a, @b)","coalesce(@a, cast(@b as int64))"
 bigquery,"coalesce(@a, @([0-9]+)b)","coalesce(cast(@a as int64), @b)"
 bigquery,"cast(@a as decimal(@b))","cast(@a as float64)"
+bigquery,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+bigquery,"int","INT64"
 bigquery,"DATETIME2","datetime"
+bigquery,"INTEGER","INT64"
+bigquery,"bigint","INT64"
+bigquery,"float","FLOAT64"
+bigquery,VARCHAR(@a),STRING
+bigquery,VARCHAR,STRING
+bigquery,CHAR(@a),STRING
+bigquery,CHAR,STRING
+bigquery,STRING NULL,STRING
+bigquery,INT64 NULL,INT64
+bigquery,"DOUBLE PRECISION","FLOAT64"
+bigquery,"GETDATE()","CURRENT_DATE()"
+bigquery,"CONSTRAINT @a DEFAULT CURRENT_DATE()",""
+bigquery,DEFAULT @([0-9]+)a,""
+bigquery,DEFAULT \"@a\",""
+bigquery,"DEFAULT CURRENT_DATE()",""
+bigquery,TRUNCATE TABLE @a;,DELETE FROM @a WHERE True;
+bigquery,#,%temp_prefix%%session_id%
+bigquery,CREATE INDEX @index_name ON @table_col_cond;,-- bigquery does not support indexes
+bigquery,DROP INDEX @index_name;,-- bigquery does not support indexes
+bigquery,"DATEFROMPARTS(@year,@month,@day)","DATE(@year, @month, @day)"
+bigquery,EOMONTH(@date),"DATE_SUB(DATE_TRUNC(DATE_ADD(@date, INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY)"
 bigquery,"ISNUMERIC(@a)","CASE WHEN REGEXP_MATCH(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"

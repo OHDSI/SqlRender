@@ -331,91 +331,6 @@ public class BigQueryTranslate {
 	}
 
 	/**
-	 * Decides if a select list expression is a string concatenation.
-	 *
-	 * @param select_expr
-	 *            - the expression to evaluate
-	 * @return true if the expression is a string concatenation
-	 */
-	private static boolean bigQueryExprIsStringConcat(String select_expr) {
-		// Additional patterns can be added to this list to heuristically recognize string concatenation expressions
-		final String[] concat_exprs = { "^ '@@a' +", "^ cast(@@a as varchar) +", "^ isnull(@@a, '@@b') +", "^ case @@a then '@@b' @@c end +", "^ @@a + '@@b'" };
-		for (int i = 0; i < concat_exprs.length; ++i) {
-			MatchedPattern concat_match = SqlTranslate.search("^" + select_expr, SqlTranslate.parseSearchPattern(concat_exprs[i]), 0);
-			if (concat_match.start != -1) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Converts a string expression to use CONCAT() rather than +
-	 *
-	 * @param select_expr
-	 *            - the expression to transform
-	 * @return the transformed expression
-	 */
-	private static String bigQueryReplaceStringConcatsInExpr(String select_expr) {
-		select_expr = "+" + select_expr + "+";
-
-		// Repeatedly replace + with CONCAT until there are none left
-		List<Block> concat_pattern = SqlTranslate.parseSearchPattern("+ @@a + @@b +");
-		while (true) {
-			MatchedPattern concat_match = SqlTranslate.search(select_expr, concat_pattern, 0);
-			if (concat_match.start == -1) {
-				break;
-			}
-			String suffix = "";
-			if (concat_match.end < select_expr.length()) {
-				suffix = select_expr.substring(concat_match.end + 1);
-			}
-			select_expr = "+concat(" + concat_match.variableToValue.get("@@a") + ", " + concat_match.variableToValue.get("@@b") + ")+" + suffix;
-		}
-		return select_expr.substring(1, select_expr.length() - 1);
-	}
-
-	/**
-	 * Converts string concatenations using the + operator to CONCAT() calls.
-	 *
-	 * @param sql
-	 *            - the query to transform
-	 * @return the query with string concatenations converted
-	 */
-	private static String bigQueryReplaceStringConcatsInStatement(String sql) {
-		List<Block> select_statement_pattern = SqlTranslate.parseSearchPattern("select @@a from");
-
-		// Iterates SELECT statements
-		for (MatchedPattern select_statement_match = SqlTranslate.search(sql, select_statement_pattern,
-				0); select_statement_match.start != -1; select_statement_match = SqlTranslate.search(sql, select_statement_pattern,
-						select_statement_match.startToken + 1)) {
-			final String select_list = select_statement_match.variableToValue.get("@@a");
-			String replacement_select_list = "";
-
-			// Iterates elements of the select list
-			CommaListIterator select_list_iter = new CommaListIterator(select_list, CommaListIterator.ListType.SELECT);
-			for (; !select_list_iter.IsDone(); select_list_iter.Next()) {
-
-				// Replaces all string concatenations
-				String replacement_select_expr = select_list_iter.GetExpressionPrefix();
-				if (bigQueryExprIsStringConcat(replacement_select_expr)) {
-					replacement_select_expr = bigQueryReplaceStringConcatsInExpr(replacement_select_expr);
-				}
-				replacement_select_list += ", " + replacement_select_expr;
-				final String alias = select_list_iter.GetExpressionSuffix();
-				if (alias.length() > 0) {
-					replacement_select_list += "as " + alias;
-				}
-			}
-			replacement_select_list = select_list_iter.GetListPrefix() + replacement_select_list.substring(1) + select_list_iter.GetListSuffix();
-
-			sql = sql.substring(0, select_statement_match.start) + "select " + replacement_select_list + " from "
-					+ sql.substring(select_statement_match.end, sql.length());
-		}
-		return sql;
-	}
-
-	/**
 	 * Lower cases everything but string literals
 	 *
 	 * @param sql - the query to translate
@@ -428,56 +343,6 @@ public class BigQueryTranslate {
 				sql = sql.substring(0, token.start) + token.text.toLowerCase() + sql.substring(token.end);
 			}
 		}
-		return sql;
-	}
-
-	/**
-	 * Removes quotes from IN lists elements where the lhs ends with "_id" and the elements are all digits
-	 *
-	 * @param sql - the query to translate
-	 * @return the query after translation
-	 */
-	private static String bigQueryUnquoteIdInLists(String sql) {
-		List<Block> in_list_pattern = SqlTranslate.parseSearchPattern("in (@@i)");
-		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(sql);
-
-		// Iterates SELECT statements
-		for (MatchedPattern in_list_match = SqlTranslate.search(sql, in_list_pattern,
-				0); in_list_match.start != -1; in_list_match = SqlTranslate.search(sql, in_list_pattern,
-				in_list_match.startToken + 1)) {
-			final String in_list = in_list_match.variableToValue.get("@@i");
-
-			// Checks if the lhs is an identifier ending with "_id"
-			if (in_list_match.startToken <=0) {
-				continue;
-			}
-			final StringUtils.Token lhs_token = tokens.get(in_list_match.startToken - 1);
-			if (!lhs_token.isIdentifier()) {
-				continue;
-			}
-			if (!lhs_token.text.toLowerCase().endsWith("_id")) {
-				continue;
-			}
-
-			// Iterates elements of the IN list
-			CommaListIterator in_list_iter = new CommaListIterator(in_list, CommaListIterator.ListType.IN);
-			for (; !in_list_iter.IsDone(); in_list_iter.Next()) {
-				final String expr = in_list_iter.GetFullExpression();
-				if (expr.charAt(0) != '\'' || expr.charAt(expr.length() - 1) != '\'') {
-					return sql;
-				}
-				for (int i = 1; i < expr.length() - 1; ++i) {
-					if (!Character.isDigit(expr.charAt(i))) {
-						return sql;
-					}
-				}
-			}
-			final String replacement_in_list = in_list.replaceAll("\'", "");
-			sql = sql.substring(0, in_list_match.start)
-					+ " in (" + replacement_in_list + ")"
-					+ sql.substring(in_list_match.end, sql.length());
-		}
-
 		return sql;
 	}
 
@@ -495,8 +360,6 @@ public class BigQueryTranslate {
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@r;", CommaListIterator.ListType.GROUP_BY);
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@r)", CommaListIterator.ListType.GROUP_BY);
 		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@c order by @@r;", CommaListIterator.ListType.ORDER_BY);
-		sql = bigQueryReplaceStringConcatsInStatement(sql);
-		sql = bigQueryUnquoteIdInLists(sql);
 		return sql;
 	}
 }
