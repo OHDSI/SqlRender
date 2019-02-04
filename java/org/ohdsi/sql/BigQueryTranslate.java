@@ -263,9 +263,6 @@ public class BigQueryTranslate {
 	 * @return the query with GROUP BY elements replaced
 	 */
 	private static String bigQueryConvertSelectListReferences(String sql, String select_pattern, CommaListIterator.ListType list_type) {
-		// Adds semi-colon in case there isn't one already
-		sql = sql + ";";
-
 		// Iterates SELECT statements
 		List<Block> select_statement_pattern = SqlTranslate.parseSearchPattern(select_pattern);
 		for (MatchedPattern select_statement_match = SqlTranslate.search(sql, select_statement_pattern,
@@ -325,8 +322,6 @@ public class BigQueryTranslate {
 			sql += suffix;
 		}
 
-		// Removes semi-colon added at the beginning
-		sql = sql.substring(0, sql.length() - 1);
 		return sql;
 	}
 
@@ -357,9 +352,17 @@ public class BigQueryTranslate {
 		sql = bigQueryLowerCase(sql);
 		sql = bigQueryAliasCommonTableExpressions(sql, "with @@a (@@b) as (select @@c from @@d)", "with ");
 		sql = bigQueryAliasCommonTableExpressions(sql, ", @@a (@@b) as (select @@c from @@d)", ", ");
-		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@r;", CommaListIterator.ListType.GROUP_BY);
-		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@r)", CommaListIterator.ListType.GROUP_BY);
-		sql = bigQueryConvertSelectListReferences(sql, "select @@s from @@b group by @@c order by @@r;", CommaListIterator.ListType.ORDER_BY);
+
+		String groupByReferences = "select @@s from @@b group by @@r";
+		sql = bigQueryConvertSelectListReferences(sql, groupByReferences + ";", CommaListIterator.ListType.GROUP_BY);
+		sql = bigQueryConvertSelectListReferences(sql, groupByReferences + ")", CommaListIterator.ListType.GROUP_BY);
+		sql = bigQueryConvertSelectListReferences(sql, groupByReferences + " having", CommaListIterator.ListType.GROUP_BY);
+		sql = bigQueryConvertSelectListReferences(sql, groupByReferences + " order by", CommaListIterator.ListType.GROUP_BY);
+
+		String orderBy = "select @@s from @@b order by @@r";
+		sql = bigQueryConvertSelectListReferences(sql, orderBy + ";", CommaListIterator.ListType.ORDER_BY);
+		sql = bigQueryConvertSelectListReferences(sql, orderBy + ")", CommaListIterator.ListType.ORDER_BY);
+
 		return sql;
 	}
 }

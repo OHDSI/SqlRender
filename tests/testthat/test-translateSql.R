@@ -955,6 +955,24 @@ test_that("translateSQL sql server -> bigquery complex group by", {
   expect_equal_ignore_spaces(sql, "select 100, 200, cast(floor(date_diff(a, b, day)/30) string string), 300 from t group by 3;")
 })
 
+test_that("translateSQL sql server -> bigquery group by having", {
+  sql <- translateSql(paste(
+                        "select cast(stratum_1 as integer) as concept_id, sum(count_value) as count_value ",
+                        "from heracles_results ",
+                        "where analysis_id in (123) ",
+                        "group by cast(stratum_1 as integer) ",
+                        "having sum(count_value) > 1;"
+                      ),
+                      targetDialect = "bigquery")$sql
+  expect_equal_ignore_spaces(sql, paste(
+                        "select cast(stratum_1 as INT64) as concept_id, sum(count_value) as count_value ",
+                        "from heracles_results ",
+                        "where analysis_id in (123) ",
+                        "group by 1 ",
+                        "having sum(count_value) > 1;"
+                      ))
+})
+
 test_that("translateSQL sql server -> bigquery column references", {
   sql <- translateSql("select concat(t.a, t.b) from t group by t.a, t.b;",
                       targetDialect = "bigquery")$sql
