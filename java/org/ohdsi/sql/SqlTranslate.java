@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
@@ -356,10 +357,17 @@ public class SqlTranslate {
 				throw new RuntimeException("Don't know how to translate from " + SOURCE_DIALECT + " to " + targetDialect + ". Valid target dialects are "
 						+ StringUtils.join(allowedDialects, ", "));
 			}
-		} else if (targetDialect.equalsIgnoreCase("bigQuery"))  {
+		} else if (Objects.equals(targetDialect, SqlDialect.bigquery.toString())) {
 			sql = BigQueryTranslate.translatebigQuery(sql);
 		}
-		return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
+
+		String translatedSql = translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
+
+		if (Objects.equals(SqlDialect.oracle.toString(), targetDialect) && !translatedSql.startsWith("BEGIN")) {
+			translatedSql = translatedSql.replaceAll(";$", "");
+		}
+
+		return translatedSql;
 	}
 
 	private static void validateSessionId(String sessionId) {
