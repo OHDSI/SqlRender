@@ -58,13 +58,13 @@ test_that("translateSQL sql server -> Oracle concatenate string operator", {
   sql <- translateSql("select distinct CONVERT(DATE, cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01') as obs_year from observation_period;",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql,
-                             "SELECT distinct TO_DATE(cast(EXTRACT(YEAR FROM observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') as obs_year  from observation_period ")
+                             "SELECT distinct TO_DATE(cast(EXTRACT(YEAR FROM observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') as obs_year  FROM observation_period ")
 })
 
 test_that("translateSQL sql server -> Oracle RIGHT functions", {
   sql <- translateSql("select RIGHT(x,4);",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x,-4) from DUAL")
+  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x,-4) FROM DUAL")
 })
 
 test_that("translateSQL sql server -> Oracle complex query", {
