@@ -17,21 +17,21 @@ expect_match_ignore_spaces <- function(string1, regexp) {
 }
 
 test_that("translateSQL sql server -> Oracle DATEDIFF", {
-  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
+  expect_equal_ignore_spaces(sql, "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era")
 })
 
 
 test_that("translateSQL sql server -> Oracle DATEADD", {
-  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
+  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'day')) FROM drug_era;")
+  expect_equal_ignore_spaces(sql, "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'day')) FROM drug_era")
 })
 
 test_that("translateSQL sql server -> Oracle USE", {
   sql <- translateSql("USE vocabulary;", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "ALTER SESSION SET current_schema = vocabulary;")
+  expect_equal_ignore_spaces(sql, "ALTER SESSION SET current_schema = vocabulary")
 })
 
 test_that("translateSQL sql server -> Oracle DROP TABLE IF EXISTS", {
@@ -43,60 +43,60 @@ test_that("translateSQL sql server -> Oracle DROP TABLE IF EXISTS", {
 
 
 test_that("translateSQL sql server -> Oracle CAST(AS DATE)", {
-  sql <- translateSql("CAST('20000101' AS DATE);",
+  sql <- translateSql("CAST('20000101' AS DATE)",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "CAST('20000101' AS DATE);")
+  expect_equal_ignore_spaces(sql, "CAST('20000101' AS DATE)")
 })
 
 test_that("translateSQL sql server -> Oracle CONVERT(AS DATE)", {
-  sql <- translateSql("CONVERT(DATE, '20000101');",
+  sql <- translateSql("CONVERT(DATE, '20000101')",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'YYYYMMDD');")
+  expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'YYYYMMDD')")
 })
 
 test_that("translateSQL sql server -> Oracle concatenate string operator", {
-  sql <- translateSql("select distinct CONVERT(DATE, cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01') as obs_year from observation_period;",
+  sql <- translateSql("select distinct CONVERT(DATE, cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01') as obs_year from observation_period",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql,
-                             "SELECT distinct TO_DATE(cast(EXTRACT(YEAR FROM observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') as obs_year  FROM observation_period ;")
+                             "select distinct TO_DATE(cast(EXTRACT(YEAR FROM observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') as obs_year  from observation_period")
 })
 
 test_that("translateSQL sql server -> Oracle RIGHT functions", {
-  sql <- translateSql("select RIGHT(x,4);",
+  sql <- translateSql("select RIGHT(x,4)",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x,-4) FROM DUAL;")
+  expect_equal_ignore_spaces(sql, "select SUBSTR(x,-4)")
 })
 
 test_that("translateSQL sql server -> Oracle complex query", {
-  sql <- translateSql("select CONVERT(DATE,CAST(YEAR(DATEFROMPARTS(2000,1,1)) AS VARCHAR(12)) + RIGHT('0'+MONTH(DATEFROMPARTS(2000,1,1)),2) + '01') as X;",
+  sql <- translateSql("select CONVERT(DATE,CAST(YEAR(DATEFROMPARTS(2000,1,1)) AS VARCHAR(12)) + RIGHT('0'+MONTH(DATEFROMPARTS(2000,1,1)),2) + '01') as X",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql,
-                             "SELECT TO_DATE(CAST(EXTRACT(YEAR FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD'))  AS varchar(12)) || SUBSTR('0' ||EXTRACT(MONTH FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD')),-2) || '01', 'YYYYMMDD') as X FROM DUAL;")
+                             "select TO_DATE(CAST(EXTRACT(YEAR FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD'))  AS varchar(12)) || SUBSTR('0' ||EXTRACT(MONTH FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD')),-2) || '01', 'YYYYMMDD') as X")
 })
 
 test_that("translateSQL sql server -> Oracle '+' in quote", {
   sql <- translateSql("select '+';", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT '+' FROM DUAL;")
+  expect_equal_ignore_spaces(sql, "SELECT '+' FROM DUAL")
 })
 
 test_that("translateSQL sql server -> Oracle union in dual", {
   sql <- translateSql("select 1 union 2;", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT 1 FROM DUAL UNION 2 FROM DUAL;")
+  expect_equal_ignore_spaces(sql, "SELECT 1 FROM DUAL UNION 2 FROM DUAL ")
 })
 
 test_that("translateSQL sql server -> Oracle table alias", {
   sql <- translateSql("SELECT a FROM a AS a1;", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a FROM a a1;")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM a a1 ")
   sql <- translateSql("SELECT a, b FROM a AS a1 JOIN b AS b1 ON a = b WHERE c = 1;", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a, b FROM a a1 JOIN b b1 ON a = b WHERE c = 1;")
+  expect_equal_ignore_spaces(sql, "SELECT a, b FROM a a1 JOIN b b1 ON a = b WHERE c = 1 ")
   sql <- translateSql("SELECT a, b FROM a as a1 INNER JOIN b AS b1 ON a = b LEFT JOIN c AS c1 ON b = c WHERE c IN (1,2,4);", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a, b FROM a a1 INNER JOIN b b1 ON a = b LEFT JOIN c c1 ON b = c WHERE c IN (1,2,4);")
+  expect_equal_ignore_spaces(sql, "SELECT a, b FROM a a1 INNER JOIN b b1 ON a = b LEFT JOIN c c1 ON b = c WHERE c IN (1,2,4) ")
   sql <- translateSql("SELECT a, b, d FROM a AS a1, b AS b1;", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1, b b1;")
+  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1, b b1 ")
   sql <- translateSql("SELECT a, b, d FROM a AS a1, b AS b1, c AS c1 WHERE c = 1;", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1, b b1, c c1 WHERE c = 1;")
+  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1, b b1, c c1 WHERE c = 1 ")
   sql <- translateSql("SELECT a, b, d FROM a AS a1,(SELECT c AS c1 FROM b AS b1) AS d1 WHERE c = 1;", targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1,(SELECT c AS c1 FROM b b1) d1 WHERE c = 1;")
+  expect_equal_ignore_spaces(sql, "SELECT a, b, d FROM a a1,(SELECT c AS c1 FROM b b1) d1 WHERE c = 1 ")
 })
 
 
@@ -170,21 +170,21 @@ test_that("translateSQL sql server -> Postgres WITH INSERT INTO SELECT", {
 test_that("translateSQL sql server -> Oracle WITH SELECT", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;")
+  expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1 ")
 })
 
 test_that("translateSQL sql server -> Oracle WITH SELECT INTO", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql,
-                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
+                             "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1 ")
 })
 
 test_that("translateSQL sql server -> Oracle WITH INSERT INTO SELECT", {
   sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql,
-                             "INSERT INTO c (d int)  WITH cte1 AS (SELECT a FROM b)  SELECT e FROM cte1;")
+                             "INSERT INTO c (d int)  WITH cte1 AS (SELECT a FROM b)  SELECT e FROM cte1 ")
 })
 
 test_that("translateSQL sql server -> PDW WITH SELECT INTO", {
@@ -401,7 +401,7 @@ test_that("translateSQL select into issue for pdw", {
 test_that("translateSQL ## issue on oracle", {
   sql <- "SELECT a FROM c##blah.table;"
   sql <- translateSql(sql, targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a FROM c##blah.table;")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM c##blah.table ")
 })
 
 # Impala tests
@@ -682,13 +682,13 @@ test_that("translateSQL sql server -> PostgreSql TOP subquery", {
 test_that("translateSQL sql server -> Oracle TOP", {
   sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b AND ROWNUM <= 10; ")
+  expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b AND ROWNUM <= 10")
 })
 
 test_that("translateSQL sql server -> Oracle TOP subquery", {
   sql <- translateSql("SELECT name FROM (SELECT TOP 1 name FROM my_table WHERE a = b);",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT name FROM (SELECT name FROM my_table WHERE a = b AND ROWNUM <= 1);")
+  expect_equal_ignore_spaces(sql, "SELECT name FROM (SELECT name FROM my_table WHERE a = b AND ROWNUM <= 1) ")
 })
 
 test_that("translateSQL sql server -> impala TOP", {
@@ -787,7 +787,7 @@ test_that("translateSql: warning on table name that is too long", {
 test_that("translateSQL sql server -> oracle concat", {
   sql <- translateSql("SELECT CONCAT(a,\" , \",c,d,e) FROM x;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT CONCAT(a, CONCAT(\" , \", CONCAT( c, CONCAT( d, e)))) FROM x;")
+  expect_equal_ignore_spaces(sql, "SELECT CONCAT(a, CONCAT(\" , \", CONCAT( c, CONCAT( d, e)))) FROM x ")
 })
 
 test_that("translateSQL sql server -> oracle natural log", {
@@ -799,7 +799,7 @@ test_that("translateSQL sql server -> oracle natural log", {
 test_that("translateSQL sql server -> oracle log base 10", {
   sql <- translateSql("SELECT LOG10(number) FROM table;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT LOG(10,number) FROM table;")
+  expect_equal_ignore_spaces(sql, "SELECT LOG(10,number) FROM table ")
 })
 
 test_that("translateSQL sql server -> oracle log any base", {
@@ -847,32 +847,32 @@ test_that("translateSQL sql server -> postgresql log any base", {
 test_that("translateSQL sql server -> oracle union 1", {
   sql <- translateSql("SELECT * FROM table1 WHERE a = 1 UNION SELECT * FROM table2 WHERE a = 1;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT * FROM table1 WHERE a = 1 UNION SELECT * FROM table2 WHERE a = 1;")
+  expect_equal_ignore_spaces(sql, "SELECT * FROM table1 WHERE a = 1 UNION SELECT * FROM table2 WHERE a = 1 ")
 })
 
 test_that("translateSQL sql server -> oracle union 2", {
   sql <- translateSql("SELECT * FROM table1 UNION SELECT * FROM table2 WHERE a = 1;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT * FROM table1 UNION SELECT * FROM table2 WHERE a = 1;")
+  expect_equal_ignore_spaces(sql, "SELECT * FROM table1 UNION SELECT * FROM table2 WHERE a = 1 ")
 })
 
 test_that("translateSQL sql server -> oracle from dual", {
   sql <- translateSql("SELECT 1 AS id;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT 1 AS id FROM DUAL;")
+  expect_equal_ignore_spaces(sql, "SELECT 1 AS id FROM DUAL")
 })
 
 
 test_that("translateSQL sql server -> oracle from dual", {
   sql <- translateSql("SELECT (SELECT id FROM a WHERE b=2) AS id;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT (SELECT id FROM a WHERE b=2) AS id FROM DUAL;")
+  expect_equal_ignore_spaces(sql, "SELECT (SELECT id FROM a WHERE b=2) AS id FROM DUAL")
 })
 
 test_that("translateSQL sql server -> oracle ISNUMERIC", {
   sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) = 1 THEN a ELSE b FROM c;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END = 1 THEN a ELSE b  FROM c ;")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END = 1 THEN a ELSE b  FROM c ")
   sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (LENGTH(TRIM(TRANSLATE(a, ' +-.0123456789',' '))) IS NULL) THEN 1 ELSE 0 END = 1")
   sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "oracle")$sql
@@ -2025,13 +2025,13 @@ test_that("translateSQL sql server -> redshift CONVERT to TIMESTAMPTZ", {
 test_that("translateSQL sql server -> oracle add group by when case count", {
   sql <- translateSql("SELECT CASE COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1) END AS stat FROM my_table;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT  CASE  COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1)  END AS stat  FROM my_table  GROUP BY 1;")
+  expect_equal_ignore_spaces(sql, "SELECT  CASE  COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1)  END AS stat  FROM my_table  GROUP BY 1")
 })
 
 test_that("translateSQL sql server -> oracle don't add group by when case count but already group by", {
   sql <- translateSql("SELECT CASE COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1) END AS stat FROM my_table GROUP BY y;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT  CASE  COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1)  END AS stat  FROM my_table GROUP BY y  ;")
+  expect_equal_ignore_spaces(sql, "SELECT  CASE  COUNT(*) = 1 THEN 0 ELSE SUM(x)/(COUNT(*)-1)  END AS stat  FROM my_table GROUP BY y  ")
 })
 
 test_that("translateSQL sql server -> Redshift partition window function sorted descending", {
@@ -2181,38 +2181,38 @@ test_that("translateSQL sql server -> Redshift WITH cte AS () INSERT INTO tbl SE
 test_that("translateSQL sql server -> Oracle union of two queries without FROM", {
   sql <- translateSql("SELECT 1,2 UNION SELECT 3,4;", 
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL;")
+  expect_equal_ignore_spaces(sql, "SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL ")
 })
 
 test_that("translateSQL sql server -> Oracle union of three queries without FROM", {
   sql <- translateSql("SELECT 1,2 UNION SELECT 3,4 UNION SELECT 5,6;", 
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL UNION SELECT 5,6 FROM DUAL;")
+  expect_equal_ignore_spaces(sql, "SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL UNION SELECT 5,6 FROM DUAL ")
 })
 
 
 test_that("translateSQL sql server -> Oracle insert plus union of three queries without FROM", {
   sql <- translateSql("INSERT INTO my_table (a, b) SELECT 1,2 UNION SELECT 3,4 UNION SELECT 5,6;", 
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "INSERT INTO my_table (a, b) SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL UNION SELECT 5,6 FROM DUAL;")
+  expect_equal_ignore_spaces(sql, "INSERT INTO my_table (a, b) SELECT 1,2 FROM DUAL UNION SELECT 3,4 FROM DUAL UNION SELECT 5,6 FROM DUAL ")
 })
 
 test_that("translateSQL sql server -> Oracle union where only last query needs FROM DUAL", {
   sql <- translateSql("SELECT a,b FROM my_table UNION SELECT 5,6;", 
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a,b FROM my_table UNION SELECT 5,6 FROM DUAL;")
+  expect_equal_ignore_spaces(sql, "SELECT a,b FROM my_table UNION SELECT 5,6 FROM DUAL ")
 })
 
 test_that("translateSQL sql server -> Oracle nested queries with EOLs", {
   sql <- translateSql("INSERT INTO test (a,b) SELECT a,b FROM (SELECT a,b FROM (SELECT a,b FROM my_table\n) nesti WHERE b = 2\n) nesto WHERE a = 1;", 
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "INSERT INTO test (a,b) SELECT a,b FROM (SELECT a,b FROM (SELECT a,b FROM my_table\n ) nesti WHERE b = 2\n ) nesto WHERE a = 1;")
+  expect_equal_ignore_spaces(sql, "INSERT INTO test (a,b) SELECT a,b FROM (SELECT a,b FROM (SELECT a,b FROM my_table\n ) nesti WHERE b = 2\n ) nesto WHERE a = 1 ")
 })
 
 test_that("translateSQL sql server -> Oracle nested queries with union", {
   sql <- translateSql("SELECT a,b FROM (SELECT a,b FROM x UNION ALL SELECT a,b FROM x) o;", 
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT a,b FROM (SELECT a,b FROM x UNION ALL SELECT a,b FROM x) o;")
+  expect_equal_ignore_spaces(sql, "SELECT a,b FROM (SELECT a,b FROM x UNION ALL SELECT a,b FROM x) o ")
 })
 
 test_that("translateSQL sql server -> Netezza concat with more than two arguments", {
@@ -2302,7 +2302,7 @@ test_that("translateSQL sql server -> Postgres DATETIME and DATETIME2", {
 test_that("translateSQL sql server -> Oracle DATETIME and DATETIME2", {
   sql <- translateSql("CREATE TABLE x (a DATETIME2, b DATETIME);",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "CREATE TABLE x (a TIMESTAMP, b TIMESTAMP);")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE x (a TIMESTAMP, b TIMESTAMP) ")
 })
 
 test_that("translateSQL sql server -> redshift DATETIME and DATETIME2", {
