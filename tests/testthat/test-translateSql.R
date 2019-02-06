@@ -17,16 +17,16 @@ expect_match_ignore_spaces <- function(string1, regexp) {
 }
 
 test_that("translateSQL sql server -> Oracle DATEDIFF", {
-  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era",
+  sql <- translateSql("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era")
+  expect_equal_ignore_spaces(sql, "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era ")
 })
 
 
 test_that("translateSQL sql server -> Oracle DATEADD", {
-  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era",
+  sql <- translateSql("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'day')) FROM drug_era")
+  expect_equal_ignore_spaces(sql, "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'day')) FROM drug_era ")
 })
 
 test_that("translateSQL sql server -> Oracle USE", {
@@ -55,23 +55,23 @@ test_that("translateSQL sql server -> Oracle CONVERT(AS DATE)", {
 })
 
 test_that("translateSQL sql server -> Oracle concatenate string operator", {
-  sql <- translateSql("select distinct CONVERT(DATE, cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01') as obs_year from observation_period",
+  sql <- translateSql("select distinct CONVERT(DATE, cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01') as obs_year from observation_period;",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql,
-                             "select distinct TO_DATE(cast(EXTRACT(YEAR FROM observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') as obs_year  from observation_period")
+                             "SELECT distinct TO_DATE(cast(EXTRACT(YEAR FROM observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') as obs_year  from observation_period ")
 })
 
 test_that("translateSQL sql server -> Oracle RIGHT functions", {
-  sql <- translateSql("select RIGHT(x,4)",
+  sql <- translateSql("select RIGHT(x,4);",
                       targetDialect = "oracle")$sql
-  expect_equal_ignore_spaces(sql, "select SUBSTR(x,-4)")
+  expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x,-4) from DUAL")
 })
 
 test_that("translateSQL sql server -> Oracle complex query", {
-  sql <- translateSql("select CONVERT(DATE,CAST(YEAR(DATEFROMPARTS(2000,1,1)) AS VARCHAR(12)) + RIGHT('0'+MONTH(DATEFROMPARTS(2000,1,1)),2) + '01') as X",
+  sql <- translateSql("select CONVERT(DATE,CAST(YEAR(DATEFROMPARTS(2000,1,1)) AS VARCHAR(12)) + RIGHT('0'+MONTH(DATEFROMPARTS(2000,1,1)),2) + '01') as X;",
                       targetDialect = "oracle")$sql
   expect_equal_ignore_spaces(sql,
-                             "select TO_DATE(CAST(EXTRACT(YEAR FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD'))  AS varchar(12)) || SUBSTR('0' ||EXTRACT(MONTH FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD')),-2) || '01', 'YYYYMMDD') as X")
+                             "SELECT TO_DATE(CAST(EXTRACT(YEAR FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD'))  AS varchar(12)) || SUBSTR('0' ||EXTRACT(MONTH FROM TO_DATE(TO_CHAR(2000,'0000')||'-'||TO_CHAR(1,'00')||'-'||TO_CHAR(1,'00'), 'YYYY-MM-DD')),-2) || '01', 'YYYYMMDD') as X FROM DUAL")
 })
 
 test_that("translateSQL sql server -> Oracle '+' in quote", {
