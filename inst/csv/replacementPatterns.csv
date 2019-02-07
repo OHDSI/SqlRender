@@ -560,11 +560,11 @@ netezza,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 netezza,UPDATE STATISTICS @a;,GENERATE STATISTICS ON @a;
 netezza,DATETIME,TIMESTAMP
 netezza,DATETIME2,TIMESTAMP
+netezza,"ISNUMERIC(@a)","CASE WHEN REGEXP_LIKE(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
 bigquery,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 bigquery,WITH @a (@b) AS (,WITH @a AS (
 bigquery,", @a (@b) AS (",", @a AS ("
-netezza,"ISNUMERIC(@a)","CASE WHEN REGEXP_LIKE(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
@@ -632,3 +632,69 @@ bigquery,DROP INDEX @index_name;,-- bigquery does not support indexes
 bigquery,"DATEFROMPARTS(@year,@month,@day)","DATE(@year, @month, @day)"
 bigquery,EOMONTH(@date),"DATE_SUB(DATE_TRUNC(DATE_ADD(@date, INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY)"
 bigquery,"ISNUMERIC(@a)","CASE WHEN REGEXP_MATCH(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
+sqlite,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
+sqlite,DATETIME,REAL
+sqlite,DATETIME2,REAL
+sqlite,"CONVERT(DATE, @a)","STRFTIME('%s', SUBSTR(@a, 1, 4) || '-' || SUBSTR(@a, 5, 2) || '-' || SUBSTR(@a, 7)))"
+sqlite,"DATEADD(second,@seconds,@datetime)","STRFTIME('%s', DATETIME(@datetime, 'unixepoch', '@seconds seconds'))"
+sqlite,"DATEADD(minute,@minutes,@datetime)","STRFTIME('%s', DATETIME(@datetime, 'unixepoch', '@minutes minutes'))"
+sqlite,"DATEADD(hour,@hours,@datetime)","STRFTIME('%s', DATETIME(@datetime, 'unixepoch', '@hours hours'))"
+sqlite,"DATEADD(d,@days,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@days days'))"
+sqlite,"DATEADD(dd,@days,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@days days'))"
+sqlite,"DATEADD(day,@days,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@days days'))"
+sqlite,"DATEADD(m,@months,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@months months'))"
+sqlite,"DATEADD(mm,@months,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@months months'))"
+sqlite,"DATEADD(months,@months,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@months months'))"
+sqlite,"DATEADD(yy,@years,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@years years'))"
+sqlite,"DATEADD(yyyy,@years,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@years years'))"
+sqlite,"DATEADD(year,@years,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@years years'))"
+sqlite,"DATEDIFF(d,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
+sqlite,"DATEDIFF(dd,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
+sqlite,"DATEDIFF(day,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
+sqlite,"CONVERT(VARCHAR,@date,112)","STRFTIME('%Y%m%d', @date)"
+sqlite,GETDATE(),STRFTIME('%s','now')
+sqlite,+ '@a',|| '@a'
+sqlite,'@a' +,'@a' ||
+sqlite,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
+sqlite,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
+sqlite,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
+sqlite,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
+sqlite,"DATEFROMPARTS(@year,@month,@day)","STRFTIME('%s', SUBSTR('0000'||@year,-4) || '-' || SUBSTR('00'||@month,-2) || '-' || SUBSTR('00'||@day,-2))"
+sqlite,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","STRFTIME('%s', SUBSTR('0000'||@year,-4) || '-' || SUBSTR('00'||@month,-2) || '-' || SUBSTR('00'||@day,-2) || ' ' || SUBSTR('00'||@hour,-2) || ':' || SUBSTR('00'||@minute,-2) || ':' || SUBSTR('00'||@second,-2) || '.' || SUBSTR('000'||@ms,-3))"
+sqlite,YEAR(@date),"STRFTIME('%Y', @date, 'unixepoch')"
+sqlite,MONTH(@date),"STRFTIME('%m', @date, 'unixepoch')"
+sqlite,DAY(@date),"STRFTIME('%d', @date, 'unixepoch')"
+sqlite,EOMONTH(@date),"STRFTIME('%s', DATETIME(@date, 'unixepoch', 'start of month', '+1 month', '-1 day'))"
+sqlite,VAR(@a),VARIANCE(@a)
+sqlite,RAND(),RANDOM()
+sqlite,LEN(@a),LENGTH(@a)
+sqlite,"LOG(@expression,@base)","(LOG(@expression)/LOG(@base))"
+sqlite,"ISNULL(@a,@b)","COALESCE(@a,@b)"
+sqlite,"ISNUMERIC(@a)","CASE WHEN @a GLOB '[0-9]*' OR @a GLOB '[0-9]*.[0-9]*' OR @a GLOB '.[0-9]*' THEN 1 ELSE 0 END"
+sqlite,COUNT_BIG(@a),COUNT(@a)
+sqlite,NEWID(),RANDOM()
+sqlite,"RIGHT(@a,@b)","RIGHTSTR(@a,@b)"
+sqlite,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+sqlite,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+sqlite,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+sqlite,.dbo.,.
+sqlite,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
+sqlite,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);
+sqlite,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
+sqlite,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
+sqlite,VARCHAR(@a),TEXT
+sqlite,VARCHAR,TEXT
+sqlite,FLOAT,REAL
+sqlite,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nANALYZE @d;
+sqlite,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+sqlite,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;\nANALYZE @b;
+sqlite,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+sqlite,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+sqlite,#,temp.
+sqlite,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+sqlite,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+sqlite,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
+sqlite,UPDATE STATISTICS @a;,ANALYZE @a;
+sqlite,TRUNCATE TABLE @a;,DELETE FROM @a;
+sqlite,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
+sqlite,"CONCAT(@a, @b)","@a || @b"
