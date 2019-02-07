@@ -41,6 +41,7 @@ public class SqlTranslate {
 	private static Random						random							= new Random();
 	private static String						globalSessionId					= null;
 	private static String						SOURCE_DIALECT					= "sql server";
+	private static String						BIG_QUERY						= "bigquery";
 
 	protected static class Block extends StringUtils.Token {
 		public boolean	isVariable;
@@ -213,7 +214,7 @@ public class SqlTranslate {
 			for (Map.Entry<String, String> pair : matchedPattern.variableToValue.entrySet())
 				replacement = StringUtils.replaceAll(replacement, pair.getKey(), pair.getValue());
 			sql = sql.substring(0, matchedPattern.start) + replacement + sql.substring(matchedPattern.end, sql.length());
-//			System.out.println(sql);
+			// System.out.println(sql);
 			int delta = 1;
 			if (StringUtils.tokenizeSql(replacement).size() == 0)
 				delta = 0;
@@ -254,7 +255,9 @@ public class SqlTranslate {
 	}
 
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.The source 
+	 * dialect is always SQL Server. Note that trailing semicolons are not removed for Oracle, which is required before sending a statement through JDBC. This
+	 * will be done by splitSql.
 	 * 
 	 * @param sql
 	 *            The SQL to be translated
@@ -290,12 +293,12 @@ public class SqlTranslate {
 	}
 
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited. The source 
+	 * dialect is always SQL Server. Note that trailing semicolons are not removed for Oracle, which is required before sending a statement through JDBC. This
+	 * will be done by splitSql.
 	 * 
 	 * @param sql
 	 *            The SQL to be translated
-	 * @param SOURCE_DIALECT
-	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
 	 * @param targetDialect
 	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
 	 * @param sessionId
@@ -310,9 +313,75 @@ public class SqlTranslate {
 	public static String translateSql(String sql, String targetDialect, String sessionId, String oracleTempSchema) {
 		return translateSqlWithPath(sql, targetDialect, sessionId, oracleTempSchema, null);
 	}
-
+	
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited. The source 
+	 * dialect is always SQL Server. This removes any trailing semicolon as required by Oracle when sending through JDBC. A runtime exception is thrown if 
+	 * more than one statement is encountered in the SQL.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @return The translated SQL
+	 */
+	public static String translateSingleStatementSql(String sql, String targetDialect) {
+		return translateSingleStatementSql(sql, targetDialect, null, null);
+	}
+	
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.The source 
+	 * dialect is always SQL Server. This removes any trailing semicolon as required by Oracle when sending through JDBC. A runtime exception is thrown if 
+	 * more than one statement is encountered in the SQL.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @param sessionId
+	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
+	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
+	 *            calls to translateSql.
+	 * @param oracleTempSchema
+	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
+	 *            name is prefixed to the temp table name).
+	 * @return The translated SQL
+	 */
+	public static String translateSingleStatementSql(String sql, String targetDialect, String sessionId, String oracleTempSchema) {
+		return translateSingleStatementSqlWithPath(sql, targetDialect, sessionId, oracleTempSchema, null);
+	}
+	
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.The source 
+	 * dialect is always SQL Server. This removes any trailing semicolon as required by Oracle when sending through JDBC. A runtime exception is thrown if 
+	 * more than one statement is encountered in the SQL.
+	 * 
+	 * @param sql
+	 *            The SQL to be translated
+	 * @param targetDialect
+	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @param sessionId
+	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
+	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
+	 *            calls to translateSql.
+	 * @param oracleTempSchema
+	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
+	 *            name is prefixed to the temp table name).
+	 * @param pathToReplacementPatterns
+	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
+	 * @return The translated SQL
+	 */
+	public static String translateSingleStatementSqlWithPath(String sql, String targetDialect, String sessionId, String oracleTempSchema, String pathToReplacementPatterns) {
+		sql = translateSqlWithPath(sql, targetDialect, sessionId, oracleTempSchema, pathToReplacementPatterns);
+		String[] sqlStatements = SqlSplit.splitSql(sql);
+		if (sqlStatements.length > 1)
+			throw new RuntimeException("SQL contains more than one statement: " + sql);
+		return sqlStatements[0];
+	}
+	
+	/**
+	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.The source 
+	 * dialect is always SQL Server.
 	 * 
 	 * @param sql
 	 *            The SQL to be translated
@@ -356,7 +425,7 @@ public class SqlTranslate {
 				throw new RuntimeException("Don't know how to translate from " + SOURCE_DIALECT + " to " + targetDialect + ". Valid target dialects are "
 						+ StringUtils.join(allowedDialects, ", "));
 			}
-		} else if (targetDialect.equalsIgnoreCase("bigQuery"))  {
+		} else if (targetDialect.equalsIgnoreCase(BIG_QUERY)) {
 			sql = BigQueryTranslate.translatebigQuery(sql);
 		}
 		return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);

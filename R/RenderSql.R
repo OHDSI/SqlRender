@@ -96,7 +96,9 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 #'
 #' @details
 #' This function takes SQL in one dialect and translates it into another. It uses simple pattern
-#' replacement, so its functionality is limited.
+#' replacement, so its functionality is limited. Note that trailing semicolons are not removed 
+#' for Oracle, which is required before sending a statement through JDBC. This will be done by 
+#' \code{\link{splitSql}}.
 #'
 #' @param sql                The SQL to be translated
 #' @param sourceDialect      Deprecated: The source dialect. Currently, only "sql server" for Microsoft SQL Server
@@ -127,6 +129,48 @@ translateSql <- function(sql = "",
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(sql, targetDialect, rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
   list(originalSql = sql, sql = translatedSql)
 }
+
+#' @title
+#' Translates a single SQL statement from one dialect to another
+#'
+#' @description
+#' \code{translateSql} translates a single SQL statement from one dialect to another.
+#'
+#' @details
+#' This function takes SQL in one dialect and translates it into another. It uses simple pattern
+#' replacement, so its functionality is limited. This removes any trailing semicolon as required 
+#' by Oracle when sending through JDBC. An error is thrown if more than one statement is encountered 
+#' in the SQL.
+#'
+#' @param sql                The SQL to be translated
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
+#'                           "redshift" are supported
+#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
+#' @return
+#' A list containing the following elements: \describe{ \item{originalSql}{The original parameterized
+#' SQL code} \item{sql}{The translated SQL} }
+#' @examples
+#' translateSingleStatementSql("USE my_schema;", targetDialect = "oracle")
+#' 
+#' @export
+translateSingleStatementSql <- function(sql = "",
+                                        targetDialect,
+                                        oracleTempSchema = NULL) {
+  pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
+  if (missing(oracleTempSchema) || is.null(oracleTempSchema))
+    oracleTempSchema <- rJava::.jnull()
+  messages <- rJava::J("org.ohdsi.sql.SqlTranslate")$check(sql, targetDialect)
+  for (message in messages) {
+    warning(message)
+  }
+  translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSingleStatementSqlWithPath(sql, 
+                                                                                              targetDialect, 
+                                                                                              rJava::.jnull(), 
+                                                                                              oracleTempSchema, 
+                                                                                              pathToReplacementPatterns)
+  list(originalSql = sql, sql = translatedSql)
+}
+
 
 #' @title
 #' Split a single SQL string into one or more SQL statements

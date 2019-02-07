@@ -2310,3 +2310,24 @@ test_that("translateSQL sql server -> redshift DATETIME and DATETIME2", {
                       targetDialect = "redshift")$sql
   expect_equal_ignore_spaces(sql, "CREATE TABLE x  (a TIMESTAMP, b TIMESTAMP)\nDISTSTYLE ALL;")
 })
+
+test_that("translateSingleStatementSQL sql server -> oracle with trailing ;", {
+  sql <- translateSingleStatementSql("SELECT * FROM my_table;",
+                      targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "SELECT * FROM my_table ")
+})
+
+test_that("translateSingleStatementSQL sql server -> oracle with trailing ; but BEGIN END", {
+  sql <- translateSingleStatementSql("BEGIN\nSELECT * INTO a FROM b;\nEND;",
+                                     targetDialect = "oracle")$sql
+  expect_equal_ignore_spaces(sql, "BEGIN \n CREATE TABLE a AS \n SELECT \n * \n FROM \n b ; \n END;")
+})
+
+test_that("translateSingleStatementSQL sql server -> oracle throw error if > 1 statement", {
+  expect_error(
+    sql <- translateSingleStatementSql("TRUNCATE my_table; DROP TABLE my_table;",
+                                       targetDialect = "oracle")$sql
+  )
+})
+
+
