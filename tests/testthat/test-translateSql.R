@@ -1143,11 +1143,11 @@ test_that("translateSQL sql server -> bigquery cast decimal", {
 
 test_that("translateSQL sql server -> bigquery ISNUMERIC", {
     sql <- translateSql("select ISNUMERIC(a) from b", targetDialect = "bigquery")$sql
-    expect_equal_ignore_spaces(sql, "select CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END from b")
+    expect_equal_ignore_spaces(sql, "select CASE WHEN SAFE_CAST(a AS FLOAT64) IS NULL THEN 0 ELSE 1 END from b")
     sql <- translateSql("select a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "bigquery")$sql
-    expect_equal_ignore_spaces(sql, "select a from table where CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1")
+    expect_equal_ignore_spaces(sql, "select a from table where CASE WHEN SAFE_CAST(a AS FLOAT64) IS NULL THEN 0 ELSE 1 END THEN 1 ELSE 0 END = 1")
     sql <- translateSql("select a FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "bigquery")$sql
-    expect_equal_ignore_spaces(sql, "select a from table where CASE WHEN REGEXP_MATCH(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
+    expect_equal_ignore_spaces(sql, "select a from table where CASE WHEN SAFE_CAST(a AS FLOAT64) IS NULL THEN 0 ELSE 1 END THEN 1 ELSE 0 END = 0")
   })
 
 
