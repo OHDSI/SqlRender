@@ -631,7 +631,7 @@ bigquery,CREATE INDEX @index_name ON @table_col_cond;,-- bigquery does not suppo
 bigquery,DROP INDEX @index_name;,-- bigquery does not support indexes
 bigquery,"DATEFROMPARTS(@year,@month,@day)","DATE(@year, @month, @day)"
 bigquery,EOMONTH(@date),"DATE_SUB(DATE_TRUNC(DATE_ADD(@date, INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY)"
-bigquery,"ISNUMERIC(@a)","CASE WHEN REGEXP_MATCH(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
+bigquery,"ISNUMERIC(@a)","CASE WHEN SAFE_CAST(@a AS FLOAT64) IS NULL THEN 0 ELSE 1 END"
 sqlite,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
 sqlite,DATETIME,REAL
 sqlite,DATETIME2,REAL
