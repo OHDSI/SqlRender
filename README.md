@@ -25,7 +25,7 @@ Examples
 This exampe shows the use of parameters, as well as SqlRender's {if} ? {then} : {else} syntax:
 
 ```r
-sql <- render("SELECT * FROM @a; {@b != ''}?{USE @b;}", a = "my_table", b = "my_schema")l
+sql <- render("SELECT * FROM @a; {@b != ''}?{USE @b;}", a = "my_table", b = "my_schema")
 ```
 
 will produce the variable `sql` containing this value: 
