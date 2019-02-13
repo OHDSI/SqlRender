@@ -2328,3 +2328,9 @@ test_that("translateSingleStatement sql server -> oracle throw error if > 1 stat
                                        targetDialect = "oracle")
   )
 })
+
+test_that("translate create table if not exists pdw", {
+  sql <- translate( "IF OBJECT_ID('test.testing', 'U') IS NULL create table test.testing (id int);", 
+                    targetDialect = "pdw")
+  expect_equal_ignore_spaces(sql, "IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID('test.testing', 'U') IS NULL  CREATE TABLE  test.testing  (id int)\nWITH (DISTRIBUTION = REPLICATE);")
+})
