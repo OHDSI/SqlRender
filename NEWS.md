@@ -9,7 +9,11 @@ Changes:
 
 3. ISNUMERIC translation implemented for Impala, Netezza, and BigQuery.
 
-4. Performance improvement for Imapala temp tables (CREATE TABLE ... STORED AS PARQUET).
+4. Performance improvement for Impala temp tables (CREATE TABLE ... STORED AS PARQUET).
+
+5. Adding functions `render` and `translate` that output strings instead of lists. Deprecating `renderSql` and `translateSql`.
+
+6. Added function `translateSingleStatement`.
 
 Bugfixes:
 

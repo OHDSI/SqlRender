@@ -27,7 +27,7 @@ shinyServer(function(input, output, session) {
           parameterValues[[param]] <- value
         }
       }
-      sql <- do.call("renderSql", append(input$source, parameterValues))$sql
+      sql <- do.call("render", append(input$source, parameterValues))
       warningString <- c()
       handleWarning <- function(e) {
         output$warnings <- e$message
@@ -35,7 +35,7 @@ shinyServer(function(input, output, session) {
       oracleTempSchema <- input$oracleTempSchema
       if (oracleTempSchema == "")
         oracleTempSchema <- NULL
-      sql <- withCallingHandlers(suppressWarnings(translateSql(sql, targetDialect = tolower(input$dialect), oracleTempSchema = oracleTempSchema)$sql), warning = handleWarning)
+      sql <- withCallingHandlers(suppressWarnings(translate(sql, targetDialect = tolower(input$dialect), oracleTempSchema = oracleTempSchema)), warning = handleWarning)
       if (!is.null(warningString))
         output$warnings <- warningString
       # cache$target <- sql

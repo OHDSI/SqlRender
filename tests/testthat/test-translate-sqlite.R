@@ -11,116 +11,112 @@ expect_equal_ignore_spaces <- function(string1, string2) {
   expect_equal(string1, string2)
 }
 
-test_that("translateSQL sql server -> SQLite string concat", {
-  sql <- translateSql("'x' + b ( 'x' + b)",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite string concat", {
+  sql <- translate("'x' + b ( 'x' + b)",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "'x' || b ( 'x' || b)")
 })
 
-test_that("translateSQL sql server -> SQLite string concat", {
-  sql <- translateSql("a + ';b'", targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite string concat", {
+  sql <- translate("a + ';b'", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "a || ';b'")
 })
 
-test_that("translateSQL sql server -> SQLite string concat", {
-  sql <- translateSql("a + ';('", targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite string concat", {
+  sql <- translate("a + ';('", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "a || ';('")
 })
 
 
-test_that("translateSQL sql server -> SQLite add month", {
-  sql <- translateSql("DATEADD(mm,1,date)",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite add month", {
+  sql <- translate("DATEADD(mm,1,date)",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "STRFTIME('%s', DATETIME(date, 'unixepoch', '1 months'))")
 })
 
 
-test_that("translateSQL sql server -> SQLite WITH SELECT INTO", {
-  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite WITH SELECT INTO", {
+  sql <- translate("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql,
                              "CREATE TABLE d \nAS\nWITH cte1 AS (SELECT a FROM b)  SELECT\nc \nFROM\ncte1;")
 })
 
-test_that("translateSQL sql server -> SQLite WITH SELECT INTO without FROM", {
-  sql <- translateSql("SELECT c INTO d;",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite WITH SELECT INTO without FROM", {
+  sql <- translate("SELECT c INTO d;",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "CREATE TABLE d AS\nSELECT\nc ;")
 })
 
 
-test_that("translateSQL sql server -> SQLite WITH INSERT INTO SELECT", {
-  sql <- translateSql("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite WITH INSERT INTO SELECT", {
+  sql <- translate("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;")
 })
 
 
-test_that("translateSQL sql server -> SQLite create table if not exists", {
-  sql <- translateSql("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite create table if not exists", {
+  sql <- translate("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS cohort\n (cohort_definition_id INT);")
 })
 
 
-test_that("translateSQL sql server -> SQLite select random row", {
-  sql <- translateSql("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite select random row", {
+  sql <- translate("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql,
                              "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn FROM table) tmp WHERE rn <= 1")
 })
 
-test_that("translateSQL sql server -> SQLite temp table", {
-  sql <- translateSql("SELECT * FROM #my_temp;",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite temp table", {
+  sql <- translate("SELECT * FROM #my_temp;",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql,
                              "SELECT * FROM temp.my_temp;")
 })
 
-
-test_that("translateSQL sql server -> PostgreSql TOP", {
-  sql <- translateSql("SELECT TOP 10 * FROM my_table WHERE a = b;",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> PostgreSql TOP", {
+  sql <- translate("SELECT TOP 10 * FROM my_table WHERE a = b;",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
 })
 
-test_that("translateSQL sql server -> PostgreSql TOP subquery", {
-  sql <- translateSql("SELECT name FROM (SELECT TOP 1 name FROM my_table WHERE a = b);",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> PostgreSql TOP subquery", {
+  sql <- translate("SELECT name FROM (SELECT TOP 1 name FROM my_table WHERE a = b);",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT name FROM (SELECT name FROM my_table WHERE a = b LIMIT 1);")
 })
 
-test_that("translateSQL sql server -> postgres date to string", {
-  sql <- translateSql("SELECT CONVERT(VARCHAR,start_date,112) FROM table;",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> postgres date to string", {
+  sql <- translate("SELECT CONVERT(VARCHAR,start_date,112) FROM table;",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT STRFTIME('%Y%m%d', start_date) FROM table;")
 })
 
-
-test_that("translateSQL sql server -> sqlite log any base", {
-  sql <- translateSql("SELECT LOG(number, base) FROM table",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> sqlite log any base", {
+  sql <- translate("SELECT LOG(number, base) FROM table",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT (LOG(number)/LOG(base)) FROM table")
 })
 
-test_that("translateSQL sql server -> postgres ISNUMERIC", {
-  sql <- translateSql("SELECT CASE WHEN ISNUMERIC(a) = 1 THEN a ELSE b FROM c;",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> postgres ISNUMERIC", {
+  sql <- translate("SELECT CASE WHEN ISNUMERIC(a) = 1 THEN a ELSE b FROM c;",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN a GLOB '[0-9]*' OR a GLOB '[0-9]*.[0-9]*' OR a GLOB '.[0-9]*' THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;")
-  sql <- translateSql("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "sqlite")$sql
+  sql <- translate("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN a GLOB '[0-9]*' OR a GLOB '[0-9]*.[0-9]*' OR a GLOB '.[0-9]*' THEN 1 ELSE 0 END = 1")
 })
 
-
-test_that("translateSQL sql server -> SQLite analyze table", {
-  sql <- translateSql("UPDATE STATISTICS results_schema.heracles_results;",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite analyze table", {
+  sql <- translate("UPDATE STATISTICS results_schema.heracles_results;",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "ANALYZE results_schema.heracles_results;")
 })
 
-
-test_that("translateSQL sql server -> SQLite DATETIME and DATETIME2", {
-  sql <- translateSql("CREATE TABLE x (a DATETIME2, b DATETIME);",
-                      targetDialect = "sqlite")$sql
+test_that("translate sql server -> SQLite DATETIME and DATETIME2", {
+  sql <- translate("CREATE TABLE x (a DATETIME2, b DATETIME);",
+                      targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "CREATE TABLE x (a REAL, b REAL);")
 })

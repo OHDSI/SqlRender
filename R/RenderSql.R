@@ -35,12 +35,12 @@ NULL
 #' Render SQL code based on parameterized SQL and parameter values
 #'
 #' @description
-#' \code{renderSql} Renders SQL code based on parameterized SQL and parameter values.
+#' \code{render} Renders SQL code based on parameterized SQL and parameter values.
 #'
 #' @details
 #' This function takes parameterized SQL and a list of parameter values and renders the SQL that can
 #' be send to the server. Parameterization syntax: \describe{ \item{@@parameterName}{Parameters are
-#' indicated using a @@ prefix, and are replaced with the actual values provided in the renderSql
+#' indicated using a @@ prefix, and are replaced with the actual values provided in the render
 #' call.} \item{\{DEFAULT @@parameterName = parameterValue\}}{Default values for parameters can be
 #' defined using curly and the DEFAULT keyword.} \item{\{if\}?\{then\}:\{else\}}{The if-then-else
 #' pattern is used to turn on or off blocks of SQL code.} }
@@ -50,30 +50,31 @@ NULL
 #' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
 #'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
 #' @param ...                         Parameter values
+#' 
 #' @return
-#' A list containing the following elements: \describe{ \item{parameterizedSql}{The original
-#' parameterized SQL code} \item{sql}{The rendered sql} }
+#' A character string containing the rendered SQL.
+#' 
 #' @examples
-#' renderSql("SELECT * FROM @@a;", a = "myTable")
-#' renderSql("SELECT * FROM @@a {@@b}?{WHERE x = 1};", a = "myTable", b = "true")
-#' renderSql("SELECT * FROM @@a {@@b == ''}?{WHERE x = 1}:{ORDER BY x};", a = "myTable", b = "true")
-#' renderSql("SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};", a = "myTable", b = "y")
-#' renderSql("SELECT * FROM @@a {1 IN (@@c)}?{WHERE @@b = 1};",
-#'           a = "myTable",
-#'           b = "y",
-#'           c = c(1, 2, 3, 4))
-#' renderSql("{DEFAULT @@b = \"someField\"}SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};",
-#'           a = "myTable")
-#' renderSql("SELECT * FROM @@a {@@a == 'myTable' & @@b != 'x'}?{WHERE @@b = 1};",
-#'           a = "myTable",
-#'           b = "y")
-#' renderSql(sql = "SELECT * FROM @@a;", 
-#'           warnOnMissingParameters = FALSE, 
-#'           a = "myTable", 
-#'           b = "missingParameter")
+#' render("SELECT * FROM @@a;", a = "myTable")
+#' render("SELECT * FROM @@a {@@b}?{WHERE x = 1};", a = "myTable", b = "true")
+#' render("SELECT * FROM @@a {@@b == ''}?{WHERE x = 1}:{ORDER BY x};", a = "myTable", b = "true")
+#' render("SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};", a = "myTable", b = "y")
+#' render("SELECT * FROM @@a {1 IN (@@c)}?{WHERE @@b = 1};",
+#'        a = "myTable",
+#'        b = "y",
+#'        c = c(1, 2, 3, 4))
+#' render("{DEFAULT @@b = \"someField\"}SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};",
+#'        a = "myTable")
+#' render("SELECT * FROM @@a {@@a == 'myTable' & @@b != 'x'}?{WHERE @@b = 1};",
+#'        a = "myTable",
+#'        b = "y")
+#' render(sql = "SELECT * FROM @@a;", 
+#'        warnOnMissingParameters = FALSE, 
+#'        a = "myTable", 
+#'        b = "missingParameter")
 #' @import rJava
 #' @export
-renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
+render <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
   parameters <- lapply(list(...), function(x) {
     paste(x, collapse = ",")
   })
@@ -84,15 +85,39 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
     }
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlRender")$renderSql(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
-  list(originalSql = sql, sql = translatedSql, parameters = parameters)
+  return(translatedSql)
 }
 
+#' @title
+#' Render SQL code based on parameterized SQL and parameter values
+#'
+#' @description
+#' This function has been deprecated. Use \code{\link{render}} instead. This new 
+#' function returns a character vector instead of a list.
+#'
+#' @param sql                         The parameterized SQL
+#' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
+#'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
+#' @param ...                         Parameter values
+#' @return
+#' A list containing the following elements: \describe{ \item{parameterizedSql}{The original
+#' parameterized SQL code} \item{sql}{The rendered sql} }
+#' @import rJava
+#' @export
+renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
+  .Deprecated("render")
+  translatedSql <- render(sql, warnOnMissingParameters, ...)
+  parameters <- lapply(list(...), function(x) {
+    paste(x, collapse = ",")
+  })
+  return(list(originalSql = sql, sql = translatedSql, parameters = parameters))
+}
 
 #' @title
 #' Translates SQL from one dialect to another
 #'
 #' @description
-#' \code{translateSql} translates SQL from one dialect to another.
+#' \code{translate} translates SQL from one dialect to another.
 #'
 #' @details
 #' This function takes SQL in one dialect and translates it into another. It uses simple pattern
@@ -101,24 +126,19 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 #' \code{\link{splitSql}}.
 #'
 #' @param sql                The SQL to be translated
-#' @param sourceDialect      Deprecated: The source dialect. Currently, only "sql server" for Microsoft SQL Server
-#'                           is supported
 #' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
 #'                           "redshift" are supported
 #' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
 #' @return
-#' A list containing the following elements: \describe{ \item{originalSql}{The original parameterized
-#' SQL code} \item{sql}{The translated SQL} }
+#' A character string containing the translated SQL.
+#' 
 #' @examples
-#' translateSql("USE my_schema;", targetDialect = "oracle")
+#' translate("USE my_schema;", targetDialect = "oracle")
 #' 
 #' @export
-translateSql <- function(sql = "",
-                         targetDialect,
-                         oracleTempSchema = NULL,
-                         sourceDialect) {
-  if (!missing(sourceDialect))
-    warning("sourceDialect argument is deprecated in the translateSql function in SqlRender. Please update your code")
+translate <- function(sql = "",
+                      targetDialect,
+                      oracleTempSchema = NULL) {
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
   if (missing(oracleTempSchema) || is.null(oracleTempSchema))
     oracleTempSchema <- rJava::.jnull()
@@ -127,14 +147,41 @@ translateSql <- function(sql = "",
     warning(message)
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(sql, targetDialect, rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
-  list(originalSql = sql, sql = translatedSql)
+  return(translatedSql)
+}
+
+#' @title
+#' Translates SQL from one dialect to another
+#'
+#' @description
+#' This function has been deprecated. Use \code{\link{translate}} instead. This new 
+#' function returns a character vector instead of a list.
+#'
+#' @param sql                The SQL to be translated
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
+#'                           "redshift" are supported
+#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
+#' 
+#' @return
+#' A list containing the following elements: \describe{ \item{originalSql}{The original parameterized
+#' SQL code} \item{sql}{The translated SQL} }
+#' 
+#' @export
+translateSql <- function(sql = "",
+                         targetDialect,
+                         oracleTempSchema = NULL) {
+  .Deprecated("translate")
+  translatedSql <- translate(sql, 
+                             targetDialect,
+                             oracleTempSchema = NULL)
+  return(list(originalSql = sql, sql = translatedSql))
 }
 
 #' @title
 #' Translates a single SQL statement from one dialect to another
 #'
 #' @description
-#' \code{translateSql} translates a single SQL statement from one dialect to another.
+#' \code{translateSingleStatement} translates a single SQL statement from one dialect to another.
 #'
 #' @details
 #' This function takes SQL in one dialect and translates it into another. It uses simple pattern
@@ -147,15 +194,14 @@ translateSql <- function(sql = "",
 #'                           "redshift" are supported
 #' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
 #' @return
-#' A list containing the following elements: \describe{ \item{originalSql}{The original parameterized
-#' SQL code} \item{sql}{The translated SQL} }
+#' A character vector with the translated SQL.
 #' @examples
-#' translateSingleStatementSql("USE my_schema;", targetDialect = "oracle")
+#' translateSingleStatement("USE my_schema;", targetDialect = "oracle")
 #' 
 #' @export
-translateSingleStatementSql <- function(sql = "",
-                                        targetDialect,
-                                        oracleTempSchema = NULL) {
+translateSingleStatement <- function(sql = "",
+                                     targetDialect,
+                                     oracleTempSchema = NULL) {
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
   if (missing(oracleTempSchema) || is.null(oracleTempSchema))
     oracleTempSchema <- rJava::.jnull()
@@ -168,7 +214,7 @@ translateSingleStatementSql <- function(sql = "",
                                                                                               rJava::.jnull(), 
                                                                                               oracleTempSchema, 
                                                                                               pathToReplacementPatterns)
-  list(originalSql = sql, sql = translatedSql)
+  return(translatedSql)
 }
 
 

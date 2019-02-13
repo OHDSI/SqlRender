@@ -28,28 +28,28 @@ knitr::opts_chunk$set(
 This vignette describes how one could use the SqlRender R package. 
 
 # SQL parameterization
-One of the main functions of the package is to support parameterization of SQL. Often, small variations of SQL need to be generated based on some parameters. SqlRender offers a simple markup syntax inside the SQL code to allow parameterization. Rendering the SQL based on parameter values is done using the `renderSql()` function.
+One of the main functions of the package is to support parameterization of SQL. Often, small variations of SQL need to be generated based on some parameters. SqlRender offers a simple markup syntax inside the SQL code to allow parameterization. Rendering the SQL based on parameter values is done using the `render()` function.
 
 ## Substituting parameter values
-The `@` character can be used to indicate parameter names that need to be exchange for actual parameter values when rendering. In the following example, a variable called `a` is mentioned in the SQL. In the call to the renderSql function the value of this parameter is defined:
+The `@` character can be used to indicate parameter names that need to be exchange for actual parameter values when rendering. In the following example, a variable called `a` is mentioned in the SQL. In the call to the render function the value of this parameter is defined:
 
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table WHERE id = @a;"
-renderSql(sql, a=123)$sql
+render(sql, a=123)
 ```
 
 Note that, unlike the parameterization offered by most database management systems, it is just as easy to parameterize table or field names as values:
 
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM @x WHERE id = @a;"
-renderSql(sql, x="my_table", a=123)$sql
+render(sql, x="my_table", a=123)
 ```
 
 The parameter values can be numbers, strings, booleans, as well as vectors, which are converted to comma-delimited lists:
 
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table WHERE id IN (@a);"
-renderSql(sql,a = c(1,2,3))$sql
+render(sql,a = c(1,2,3))
 ```
 
 ## Default parameter values
@@ -57,15 +57,15 @@ For some or all parameters, it might make sense to define default values that wi
 
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"
-renderSql(sql)$sql
-renderSql(sql,a=2)$sql
+render(sql)
+render(sql,a=2)
 ```
 
 Defaults for multiple variables can be defined:
 
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"
-renderSql(sql)$sql
+render(sql)
 ```
 
 ## If-then-else 
@@ -73,38 +73,38 @@ Sometimes blocks of codes need to be turned on or off based on the values of one
 
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table {@x} ? {WHERE id = 1}"
-renderSql(sql,x = FALSE)$sql
-renderSql(sql,x = TRUE)$sql
+render(sql,x = FALSE)
+render(sql,x = TRUE)
 ```
 
 Simple comparisons are also supported:
 
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table {@x == 1} ? {WHERE id = 1};"
-renderSql(sql,x = 1)$sql
-renderSql(sql,x = 2)$sql
+render(sql,x = 1)
+render(sql,x = 2)
 ```
 
 As well as the `IN` operator:
 
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1};"
-renderSql(sql,x = 2)$sql
+render(sql,x = 2)
 ```
 
 Clauses can combined with boolean operators:
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM table {@x IN (1,2,3) | @y != 3} ? {WHERE id = @x AND value = @y};"
-renderSql(sql,x = 4, y = 4)$sql
+render(sql,x = 4, y = 4)
 
 sql <- "SELECT * FROM table {(@x == 1 | @x == 3) & @y != 3} ? {WHERE id = @x AND val = @y};"
-renderSql(sql,x = 3, y = 4)$sql
+render(sql,x = 3, y = 4)
 
 ```
 
 
 # Translation to other SQL dialects
-SQL for one platform (e.g. Microsoft SQL Server) will not always execute on other platforms (e.g. Oracle). The `translateSql()` function can be used to translate between different dialects, but there are some limitations.
+SQL for one platform (e.g. Microsoft SQL Server) will not always execute on other platforms (e.g. Oracle). The `translate()` function can be used to translate between different dialects, but there are some limitations.
 
 A first limitation is that **the starting dialect has to be SQL Server**. The reason for this is that this dialect is in general the most specific. For example, the number of days between two dates in SQL Server has to be computed using the DATEDIFF function: `DATEDIFF(dd,a,b)`. In other languages one can simply subtract the two dates: `b-a`. Since you'd need to know a and b are dates, it is not possible to go from other languages to SQL Server, only the other way around.
 
@@ -118,7 +118,7 @@ Below an example:
 
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT DATEDIFF(dd,a,b) FROM table; "
-translateSql(sql,targetDialect = "oracle")$sql
+translate(sql,targetDialect = "oracle")
 ```
 
 The `targetDialect` parameter can have the following values:
@@ -133,7 +133,7 @@ The `targetDialect` parameter can have the following values:
   - "sqlite"
   - "sql server" (no translation)
 
-## Functions and structures supported by translateSql
+## Functions and structures supported by translate
 
 These SQL Server functions have been tested and were found to be translated correctly to the various dialects:
 
@@ -141,7 +141,7 @@ These SQL Server functions have been tested and were found to be translated corr
 funs <- c("ABS", "ACOS", "ASIN", "ATAN", "AVG", "CAST", "CEILING", "CHARINDEX", "CONCAT", "COS", "COUNT", "COUNT_BIG", "DATEADD", "DATEDIFF", "DATEFROMPARTS", "DATETIMEFROMPARTS", "DAY", "EOMONTH", "EXP", "FLOOR", "GETDATE", "HASHBYTES*", "ISNULL", "ISNUMERIC", "LEFT", "LEN", "LOG", "LOG10", "LOWER", "LTRIM", "MAX", "MIN", "MONTH", "NEWID", "PI", "POWER", "RAND", "RANK", "RIGHT", "ROUND", "ROW_NUMBER", "RTRIM", "SIN", "SQRT", "SQUARE", "STDEV", "SUM", "TAN", "UPPER", "VAR", "YEAR", "")
 
 
-knitr::kable(matrix(funs, ncol = 4), col.names = rep("Function",4), caption = "Functions supported by translateSql")
+knitr::kable(matrix(funs, ncol = 4), col.names = rep("Function",4), caption = "Functions supported by translate")
 ```
 
 * Requires special priviliges on Oracle. Has no equivalent on SQLite.
@@ -226,7 +226,7 @@ Temp tables can be very useful to store intermediate results, and when used corr
 For example:
 ```{r tidy=TRUE,echo=TRUE}
 sql <- "SELECT * FROM #children;"
-translateSql(sql, targetDialect = "oracle", oracleTempSchema = "temp_schema")$sql
+translate(sql, targetDialect = "oracle", oracleTempSchema = "temp_schema")
 ```
 
 Note that the user will need to have write privileges on `temp_schema`.
@@ -309,8 +309,8 @@ we can set `database = "cdm_data"` and the other called `databaseSchema = "cdm_d
 foo <- function(databaseSchema, dbms) {
   database <- strsplit(databaseSchema ,"\\.")[[1]][1]
   sql <- "SELECT * FROM @databaseSchema.person; USE @database; SELECT * FROM person;"
-  sql <- renderSql(sql, databaseSchema = databaseSchema, database = database)$sql
-  sql <- translateSql(sql, targetDialect = dbms)$sql
+  sql <- render(sql, databaseSchema = databaseSchema, database = database)
+  sql <- translate(sql, targetDialect = dbms)
   return(sql)
 }
 foo("cdm_data.dbo", "sql server")
@@ -364,10 +364,10 @@ launchSqlRenderDeveloper()
 
 Which will open the default browser with the app.
 
-In addition, two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
+In addition, two  functions have been developed to aid the debugging process: `renderFile()` and `translateFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
 
 ```{r tidy=TRUE,eval=FALSE}
-translateSqlFile("parameterizedSql.txt","renderedSql.txt")
+translateFile("parameterizedSql.txt","renderedSql.txt")
 ```
 
 will render the file, using the default parameter values specified in the SQL. What works well for us is editing in the parameterized file, (re)running the command above, and have the rendered SQL file open in a SQL client for testing. Any problems reported by the server can be dealt with in the source SQL, and can quickly be re-rendered.

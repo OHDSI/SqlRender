@@ -1,4 +1,4 @@
-This update has added translation rules, and one bug fix (see NEWS)
+This update has 6 changes, and 1 bug fix (see NEWS.md)
 
 ---
 
