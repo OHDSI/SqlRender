@@ -2,7 +2,7 @@
 % Please edit documentation in R/RenderSql.R
 \name{translateSql}
 \alias{translateSql}
-\title{Translates SQL from one dialect to another}
+\title{Deprecated: Translates SQL from one dialect to another}
 \usage{
 translateSql(sql = "", targetDialect, oracleTempSchema = NULL)
 }

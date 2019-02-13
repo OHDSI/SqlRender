@@ -2,7 +2,7 @@
 % Please edit documentation in R/RenderSql.R
 \name{renderSql}
 \alias{renderSql}
-\title{Render SQL code based on parameterized SQL and parameter values}
+\title{Deprecated: Render SQL code based on parameterized SQL and parameter values}
 \usage{
 renderSql(sql = "", warnOnMissingParameters = TRUE, ...)
 }

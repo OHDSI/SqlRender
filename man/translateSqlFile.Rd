@@ -4,16 +4,13 @@
 \alias{translateSqlFile}
 \title{Translate a SQL file}
 \usage{
-translateSqlFile(sourceFile, targetFile, sourceDialect, targetDialect,
+translateSqlFile(sourceFile, targetFile, targetDialect,
   oracleTempSchema = NULL)
 }
 \arguments{
 \item{sourceFile}{The source SQL file}
 
 \item{targetFile}{The target SQL file}
-
-\item{sourceDialect}{Deprecated: The source dialect. Currently, only 'sql server' for Microsoft SQL Server
-is supported}
 
 \item{targetDialect}{The target dialect. Currently 'oracle', 'postgresql', and 'redshift' are
 supported}

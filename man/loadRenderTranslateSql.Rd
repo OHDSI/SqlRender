@@ -15,7 +15,7 @@ loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server",
 \item{dbms}{The target dialect. Currently 'sql server', 'oracle', 'postgres', and
 'redshift' are supported}
 
-\item{...}{Parameter values used for \code{renderSql}}
+\item{...}{Parameter values used for \code{render}}
 
 \item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle.}
 
@@ -32,8 +32,8 @@ to the specified dialect
 \details{
 This function looks for a SQL file with the specified name in the inst/sql/<dbms> folder of the
 specified package. If it doesn't find it in that folder, it will try and load the file from the
-inst/sql/sql_server folder and use the \code{translateSql} function to translate it to the
-requested dialect. It will subsequently call the \code{renderSql} function with any of the
+inst/sql/sql_server folder and use the \code{translate} function to translate it to the
+requested dialect. It will subsequently call the \code{render} function with any of the
 additional specified parameters.
 }
 \examples{

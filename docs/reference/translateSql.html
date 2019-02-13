@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Translates SQL from one dialect to another — translateSql • SqlRender</title>
+<title>Deprecated: Translates SQL from one dialect to another — translateSql • SqlRender</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="Translates SQL from one dialect to another — translateSql" />
+<meta property="og:title" content="Deprecated: Translates SQL from one dialect to another — translateSql" />
 
-<meta property="og:description" content="translateSql translates SQL from one dialect to another." />
+<meta property="og:description" content="This function has been deprecated. Use translate instead. This new 
+function returns a character vector instead of a list." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -114,19 +115,19 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Translates SQL from one dialect to another</h1>
+    <h1>Deprecated: Translates SQL from one dialect to another</h1>
     <small class="dont-index">Source: <a href='https://github.com/OHDSI/SqlRender/blob/master/R/RenderSql.R'><code>R/RenderSql.R</code></a></small>
     <div class="hidden name"><code>translateSql.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p><code>translateSql</code> translates SQL from one dialect to another.</p>
+    <p>This function has been deprecated. Use <code><a href='translate.html'>translate</a></code> instead. This new 
+function returns a character vector instead of a list.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>translateSql</span>(<span class='kw'>sql</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>targetDialect</span>, <span class='kw'>oracleTempSchema</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>sourceDialect</span>)</pre>
+    <pre class="usage"><span class='fu'>translateSql</span>(<span class='kw'>sql</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>targetDialect</span>, <span class='kw'>oracleTempSchema</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,11 +145,6 @@
       <th>oracleTempSchema</th>
       <td><p>A schema that can be used to create temp tables in when using Oracle or Impala.</p></td>
     </tr>
-    <tr>
-      <th>sourceDialect</th>
-      <td><p>Deprecated: The source dialect. Currently, only "sql server" for Microsoft SQL Server
-is supported</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -158,20 +154,7 @@ is supported</p></td>
 SQL code</p></dd> <dt>sql</dt><dd><p>The translated SQL</p></dd> </dl>
 
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function takes SQL in one dialect and translates it into another. It uses simple pattern
-replacement, so its functionality is limited.</p>
-    
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>translateSql</span>(<span class='st'>"USE my_schema;"</span>, <span class='kw'>targetDialect</span> <span class='kw'>=</span> <span class='st'>"oracle"</span>)</div><div class='output co'>#&gt; $originalSql
-#&gt; [1] "USE my_schema;"
-#&gt; 
-#&gt; $sql
-#&gt; [1] "ALTER SESSION SET current_schema = my_schema;"
-#&gt; </div><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -179,11 +162,7 @@ replacement, so its functionality is limited.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

@@ -78,7 +78,7 @@ writeSql <- function(sql, targetFile) {
 #' @details
 #' This function takes parameterized SQL and a list of parameter values and renders the SQL that can
 #' be send to the server. Parameterization syntax: \describe{ \item{@@parameterName}{Parameters are
-#' indicated using a @@ prefix, and are replaced with the actual values provided in the renderSql
+#' indicated using a @@ prefix, and are replaced with the actual values provided in the render
 #' call.} \item{\{DEFAULT @@parameterName = parameterValue\}}{Default values for parameters can be
 #' defined using curly and the DEFAULT keyword.} \item{\{if\}?\{then\}:\{else\}}{The if-then-else
 #' pattern is used to turn on or off blocks of SQL code.} }
@@ -97,7 +97,7 @@ writeSql <- function(sql, targetFile) {
 #' @export
 renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE, ...) {
   sql <- readSql(sourceFile)
-  sql <- renderSql(sql, warnOnMissingParameters, ...)$sql
+  sql <- render(sql, warnOnMissingParameters, ...)
   writeSql(sql, targetFile)
 }
 
@@ -111,8 +111,6 @@ renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE
 #'
 #' @param sourceFile         The source SQL file
 #' @param targetFile         The target SQL file
-#' @param sourceDialect      Deprecated: The source dialect. Currently, only 'sql server' for Microsoft SQL Server
-#'                           is supported
 #' @param targetDialect      The target dialect. Currently 'oracle', 'postgresql', and 'redshift' are
 #'                           supported
 #' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle.
@@ -126,14 +124,10 @@ renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE
 #' @export
 translateSqlFile <- function(sourceFile,
                              targetFile,
-                             sourceDialect,
                              targetDialect,
                              oracleTempSchema = NULL) {
-  if (!missing(sourceDialect))
-    warning("sourceDialect argument is deprecated in the translateSqlFile function in SqlRender. Please update your code")
-  
   sql <- readSql(sourceFile)
-  sql <- translateSql(sql = sql, targetDialect = targetDialect, oracleTempSchema = oracleTempSchema)$sql
+  sql <- translate(sql = sql, targetDialect = targetDialect, oracleTempSchema = oracleTempSchema)
   writeSql(sql, targetFile)
 }
 
@@ -146,8 +140,8 @@ translateSqlFile <- function(sourceFile,
 #' @details
 #' This function looks for a SQL file with the specified name in the inst/sql/<dbms> folder of the
 #' specified package. If it doesn't find it in that folder, it will try and load the file from the
-#' inst/sql/sql_server folder and use the \code{translateSql} function to translate it to the
-#' requested dialect. It will subsequently call the \code{renderSql} function with any of the
+#' inst/sql/sql_server folder and use the \code{translate} function to translate it to the
+#' requested dialect. It will subsequently call the \code{render} function with any of the
 #' additional specified parameters.
 #'
 #'
@@ -155,7 +149,7 @@ translateSqlFile <- function(sourceFile,
 #' @param packageName                 The name of the package that contains the SQL file
 #' @param dbms                        The target dialect. Currently 'sql server', 'oracle', 'postgres', and
 #'                                    'redshift' are supported
-#' @param ...                         Parameter values used for \code{renderSql}
+#' @param ...                         Parameter values used for \code{render}
 #' @param oracleTempSchema            A schema that can be used to create temp tables in when using Oracle.
 #' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
 #'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
@@ -188,10 +182,10 @@ loadRenderTranslateSql <- function(sqlFilename,
   }
   parameterizedSql <- readChar(pathToSql, file.info(pathToSql)$size)
   
-  renderedSql <- renderSql(sql = parameterizedSql[1], warnOnMissingParameters = warnOnMissingParameters, ...)$sql
+  renderedSql <- render(sql = parameterizedSql[1], warnOnMissingParameters = warnOnMissingParameters, ...)
   
   if (mustTranslate)
-    renderedSql <- translateSql(sql = renderedSql, targetDialect = dbms, oracleTempSchema = oracleTempSchema)$sql
+    renderedSql <- translate(sql = renderedSql, targetDialect = dbms, oracleTempSchema = oracleTempSchema)
   
   renderedSql
 }

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Deprecated: Render SQL code based on parameterized SQL and parameter values — renderSql • SqlRender</title>
+<title>Translates SQL from one dialect to another — translate • SqlRender</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,10 +30,9 @@
 
 
 
-<meta property="og:title" content="Deprecated: Render SQL code based on parameterized SQL and parameter values — renderSql" />
+<meta property="og:title" content="Translates SQL from one dialect to another — translate" />
 
-<meta property="og:description" content="This function has been deprecated. Use render instead. This new 
-function returns a character vector instead of a list." />
+<meta property="og:description" content="translate translates SQL from one dialect to another." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -115,46 +114,52 @@ function returns a character vector instead of a list." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Deprecated: Render SQL code based on parameterized SQL and parameter values</h1>
+    <h1>Translates SQL from one dialect to another</h1>
     <small class="dont-index">Source: <a href='https://github.com/OHDSI/SqlRender/blob/master/R/RenderSql.R'><code>R/RenderSql.R</code></a></small>
-    <div class="hidden name"><code>renderSql.Rd</code></div>
+    <div class="hidden name"><code>translate.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function has been deprecated. Use <code><a href='render.html'>render</a></code> instead. This new 
-function returns a character vector instead of a list.</p>
+    <p><code>translate</code> translates SQL from one dialect to another.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>renderSql</span>(<span class='kw'>sql</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>warnOnMissingParameters</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>translate</span>(<span class='kw'>sql</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>targetDialect</span>, <span class='kw'>oracleTempSchema</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>sql</th>
-      <td><p>The parameterized SQL</p></td>
+      <td><p>The SQL to be translated</p></td>
     </tr>
     <tr>
-      <th>warnOnMissingParameters</th>
-      <td><p>Should a warning be raised when parameters provided to this function 
-do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.</p></td>
+      <th>targetDialect</th>
+      <td><p>The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
+"redshift" are supported</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Parameter values</p></td>
+      <th>oracleTempSchema</th>
+      <td><p>A schema that can be used to create temp tables in when using Oracle or Impala.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list containing the following elements:</p><dl class='dl-horizontal'>
-<dt>parameterizedSql</dt><dd><p>The original
-parameterized SQL code</p></dd> <dt>sql</dt><dd><p>The rendered sql</p></dd> </dl>
+    <p>A character string containing the translated SQL.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>This function takes SQL in one dialect and translates it into another. It uses simple pattern
+replacement, so its functionality is limited. Note that trailing semicolons are not removed 
+for Oracle, which is required before sending a statement through JDBC. This will be done by 
+<code><a href='splitSql.html'>splitSql</a></code>.</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>translate</span>(<span class='st'>"USE my_schema;"</span>, <span class='kw'>targetDialect</span> <span class='kw'>=</span> <span class='st'>"oracle"</span>)</div><div class='output co'>#&gt; [1] "ALTER SESSION SET current_schema = my_schema;"</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -162,7 +167,11 @@ parameterized SQL code</p></dd> <dt>sql</dt><dd><p>The rendered sql</p></dd> </d
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

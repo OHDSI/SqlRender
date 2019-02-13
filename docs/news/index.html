@@ -124,7 +124,9 @@
 <li><p>Major overhaul of BigQuery translation.</p></li>
 <li><p>Added support for SQLite.</p></li>
 <li><p>ISNUMERIC translation implemented for Impala, Netezza, and BigQuery.</p></li>
-<li><p>Performance improvement for Imapala temp tables (CREATE TABLE … STORED AS PARQUET).</p></li>
+<li><p>Performance improvement for Impala temp tables (CREATE TABLE … STORED AS PARQUET).</p></li>
+<li><p>Adding functions <code>render</code> and <code>translate</code> that output strings instead of lists. Deprecating <code>renderSql</code> and <code>translateSql</code>.</p></li>
+<li><p>Added function <code>translateSingleStatement</code>.</p></li>
 </ol>
 <p>Bugfixes:</p>
 <ol>

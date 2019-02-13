@@ -25,7 +25,7 @@ Examples
 This exampe shows the use of parameters, as well as SqlRender's {if} ? {then} : {else} syntax:
 
 ```r
-sql <- renderSql("SELECT * FROM @a; {@b != ''}?{USE @b;}", a = "my_table", b = "my_schema")$sql
+sql <- render("SELECT * FROM @a; {@b != ''}?{USE @b;}", a = "my_table", b = "my_schema")l
 ```
 
 will produce the variable `sql` containing this value: 
@@ -37,7 +37,7 @@ will produce the variable `sql` containing this value:
 subsequently running this code
 
 ```r
-sql <- translateSql(sql, "sql server", "oracle")$sql
+sql <- translate(sql, "sql server", "oracle")
 ```
 
 will produce the variable `sql` containing this value: 

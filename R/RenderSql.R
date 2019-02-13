@@ -89,7 +89,7 @@ render <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 }
 
 #' @title
-#' Render SQL code based on parameterized SQL and parameter values
+#' Deprecated: Render SQL code based on parameterized SQL and parameter values
 #'
 #' @description
 #' This function has been deprecated. Use \code{\link{render}} instead. This new 
@@ -151,7 +151,7 @@ translate <- function(sql = "",
 }
 
 #' @title
-#' Translates SQL from one dialect to another
+#' Deprecated: Translates SQL from one dialect to another
 #'
 #' @description
 #' This function has been deprecated. Use \code{\link{translate}} instead. This new 

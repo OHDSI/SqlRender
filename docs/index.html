@@ -12,7 +12,7 @@
 <script src="pkgdown.js"></script><meta property="og:title" content="Rendering Parameterized SQL and Translation to Dialects">
 <meta property="og:description" content="A rendering tool for parameterized SQL that also translates into
   different SQL dialects.  These dialects include 'Microsoft Sql Server', 'Oracle', 
-  'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', and 'Microsoft PDW'.">
+  'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', and 'SQLite'.">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -108,11 +108,11 @@
 <h1 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h1>
 <p>This exampe shows the use of parameters, as well as SqlRender’s {if} ? {then} : {else} syntax:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/renderSql.html">renderSql</a></span>(<span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, <span class="dt">a =</span> <span class="st">"my_table"</span>, <span class="dt">b =</span> <span class="st">"my_schema"</span>)<span class="op">$</span>sql</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/render.html">render</a></span>(<span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, <span class="dt">a =</span> <span class="st">"my_table"</span>, <span class="dt">b =</span> <span class="st">"my_schema"</span>)l</a></code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; USE my_schema;"</code></pre>
 <p>subsequently running this code</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/translateSql.html">translateSql</a></span>(sql, <span class="st">"sql server"</span>, <span class="st">"oracle"</span>)<span class="op">$</span>sql</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/translate.html">translate</a></span>(sql, <span class="st">"sql server"</span>, <span class="st">"oracle"</span>)</a></code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; ALTER SESSION SET current_schema =  my_schema;"</code></pre>
 </div>
