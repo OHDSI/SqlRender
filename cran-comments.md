@@ -1,4 +1,4 @@
-This update has 6 changes, and 1 bug fix (see NEWS.md)
+This update has 6 changes, and 2 bug fixes (see NEWS.md)
 
 ---
 

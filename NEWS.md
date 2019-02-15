@@ -19,6 +19,8 @@ Bugfixes:
 
 1. Dropping WHERE clause when translating CREATE INDEX for PDW.
 
+2. Fixed PDW's equivalent of CREATE TABLE IF NOT EXISTS.
+
 
 SqlRender 1.5.3
 ===============

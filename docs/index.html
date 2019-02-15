@@ -108,7 +108,7 @@
 <h1 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h1>
 <p>This exampe shows the use of parameters, as well as SqlRender’s {if} ? {then} : {else} syntax:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/render.html">render</a></span>(<span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, <span class="dt">a =</span> <span class="st">"my_table"</span>, <span class="dt">b =</span> <span class="st">"my_schema"</span>)l</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">sql &lt;-<span class="st"> </span><span class="kw"><a href="reference/render.html">render</a></span>(<span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, <span class="dt">a =</span> <span class="st">"my_table"</span>, <span class="dt">b =</span> <span class="st">"my_schema"</span>)</a></code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; USE my_schema;"</code></pre>
 <p>subsequently running this code</p>
