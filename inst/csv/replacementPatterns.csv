@@ -562,7 +562,7 @@ netezza,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
 netezza,UPDATE STATISTICS @a;,GENERATE STATISTICS ON @a;
 netezza,DATETIME,TIMESTAMP
 netezza,DATETIME2,TIMESTAMP
-netezza,"ISNUMERIC(@a)","CASE WHEN REGEXP_LIKE(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
+netezza,"ISNUMERIC(@a)","CASE WHEN translate(@a,'0123456789','') in ('','.','-','-.') THEN 1 ELSE 0 END"
 bigquery,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 bigquery,WITH @a (@b) AS (,WITH @a AS (
