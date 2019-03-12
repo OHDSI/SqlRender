@@ -894,10 +894,10 @@ test_that("translate sql server -> postgres ISNUMERIC", {
   expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
 })
 
-test_that("translate sql server -> bigquery lowercase all but strings", {
-  sql <- translate("SELECT X.Y, 'Mixed Case String' FROM \"MixedCaseTableName.T\" GROUP BY X.Y",
+test_that("translate sql server -> bigquery lowercase all but strings and variables", {
+  sql <- translate("SELECT X.Y, 'Mixed Case String' FROM \"MixedCaseTableName.T\" where x.z=@camelCaseVar GROUP BY X.Y",
                       targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "select x.y, 'Mixed Case String' from \"MixedCaseTableName.T\" group by x.y")
+  expect_equal_ignore_spaces(sql, "select x.y, 'Mixed Case String' from \"MixedCaseTableName.T\" where x.z=@camelCaseVar group by x.y")
 })
 
 test_that("translate sql server -> bigquery common table expression column list", {
