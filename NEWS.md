@@ -1,3 +1,15 @@
+SqlRender 1.6.1
+===============
+
+Changes:
+
+1. Added rules for Impala for INTEGER NOT NULL and DOUBLE PRECISION.
+
+Bugfixes:
+
+1. Fixed isNumeric check for Netezza
+
+
 SqlRender 1.6.0
 ===============
 

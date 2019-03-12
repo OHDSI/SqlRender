@@ -37,7 +37,7 @@ will produce the variable `sql` containing this value:
 subsequently running this code
 
 ```r
-sql <- translate(sql, "sql server", "oracle")
+sql <- translate(sql, "oracle")
 ```
 
 will produce the variable `sql` containing this value: 
