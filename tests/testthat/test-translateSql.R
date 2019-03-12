@@ -567,6 +567,12 @@ test_that("translate sql server -> Impala ISNUMERIC", {
     expect_equal_ignore_spaces(sql, "SELECT some FROM table WHERE case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end = 0")
   })
 
+test_that("translate sql server -> Impala data types", {
+  sql <- translate("CREATE TABLE a (c1 DOUBLE PRECISION)",
+                      targetDialect = "impala")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE a (c1 DOUBLE)")
+})
+
 # Netezza tests
 
 test_that("translate sql server -> Netezza WITH cte AS () INSERT INTO tbl SELECT * FROM cte", {
