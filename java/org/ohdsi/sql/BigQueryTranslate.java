@@ -334,7 +334,7 @@ public class BigQueryTranslate {
 	private static String bigQueryLowerCase(String sql) {
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(sql);
 		for (StringUtils.Token token : tokens) {
-			if (!token.inQuotes) {
+			if (!token.inQuotes && !token.text.startsWith("@")) {
 				sql = sql.substring(0, token.start) + token.text.toLowerCase() + sql.substring(token.end);
 			}
 		}
