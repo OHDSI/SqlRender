@@ -66,6 +66,11 @@ test_that("translate sql server -> Oracle RIGHT functions", {
   expect_equal_ignore_spaces(sql, "SELECT SUBSTR(x,-4) FROM DUAL;")
 })
 
+test_that("translate sql server -> Oracle functional index", {
+    sql <- translate("CREATE INDEX name1 ON someTable (firstColumn,secondColumn) WHERE someCondition;", targetDialect = "oracle")
+    expect_equal_ignore_spaces(sql, "CREATE INDEX name1 ON someTable (CASE WHEN someCondition THEN firstColumn END, CASE WHEN someCondition THEN secondColumn END);")
+})
+
 test_that("translate sql server -> Oracle complex query", {
   sql <- translate("select CONVERT(DATE,CAST(YEAR(DATEFROMPARTS(2000,1,1)) AS VARCHAR(12)) + RIGHT('0'+MONTH(DATEFROMPARTS(2000,1,1)),2) + '01') as X;",
                       targetDialect = "oracle")

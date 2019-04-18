@@ -94,6 +94,7 @@ oracle,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 oracle,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 oracle,##,<hash><hash>
 oracle,#,%temp_prefix%%session_id%
+oracle,"CREATE INDEX @a ON @b (@c,@d) WHERE @e;","CREATE INDEX @a ON @b (CASE WHEN @e THEN @c END, CASE WHEN @e THEN @d END);"
 oracle,<hash><hash>,##
 oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a WHERE ROWNUM <= @rows;
 oracle,(SELECT TOP @([0-9]+)rows @a),(SELECT @a WHERE ROWNUM <= @rows)
