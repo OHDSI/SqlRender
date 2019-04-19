@@ -28,6 +28,12 @@ test_that("translate sql server -> Oracle DATEADD", {
   expect_equal_ignore_spaces(sql, "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'day')) FROM drug_era;")
 })
 
+test_that("translate sql server -> Oracle functional index", {
+    sql <- translate("CREATE INDEX name1 ON someTable (firstColumn,secondColumn) WHERE someCondition;", 
+                            targetDialect = "oracle")
+    expect_equal_ignore_spaces(sql, "CREATE INDEX name1 ON someTable (CASE WHEN someCondition THEN firstColumn END, CASE WHEN someCondition THEN secondColumn END);")
+})
+
 test_that("translate sql server -> Oracle USE", {
   sql <- translate("USE vocabulary;", targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "ALTER SESSION SET current_schema = vocabulary;")
