@@ -239,14 +239,17 @@ public class BigQueryTranslate {
 				}
 				final String with_expr = with_list_iter.GetFullExpression();
 				final String select_expr = select_list_iter.GetExpressionPrefix() + " as " + with_expr;
-				replacement_select_list = replacement_select_list + "," + select_expr;
+				if(replacement_select_list.length() > 0) {
+                    replacement_select_list = replacement_select_list + ",";
+                }
+				replacement_select_list = replacement_select_list + select_expr;
 				with_list_iter.Next();
 				select_list_iter.Next();
 			}
 			replacement_select_list = select_list_iter.GetListPrefix() + replacement_select_list + select_list_iter.GetListSuffix();
 
 			sql = sql.substring(0, cte_match.start) + prefix + cte_match.variableToValue.get("@@a") + " as (select "
-					+ replacement_select_list.substring(1) + " from " + cte_match.variableToValue.get("@@d") + ")" + sql.substring(cte_match.end);
+					+ replacement_select_list + " from " + cte_match.variableToValue.get("@@d") + ")" + sql.substring(cte_match.end);
 		}
 		return sql;
 	}
