@@ -918,6 +918,12 @@ test_that("translate sql server -> bigquery multiple common table expression col
   expect_equal_ignore_spaces(sql, "with cte1 as (select 2), cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
 })
 
+test_that("translate sql server -> bigquery distinct keyword", {
+    sql <- translate("with cte2 (column1, column2) as (select distinct c1.column1, c1.column2 from cte c1) select column1, column2 into cte2 from cte2",
+    targetDialect = "bigquery")
+    expect_equal_ignore_spaces(sql, "with cte2  as (select distinct c1.column1 as column1,c1.column2  as column2 from cte c1) select column1, column2 into cte2 from cte2")
+})
+
 test_that("translate sql server -> bigquery group by function", {
   sql <- translate("select f(a), count(*) from t group by f(a);",
                       targetDialect = "bigquery")
