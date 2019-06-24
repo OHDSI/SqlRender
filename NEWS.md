@@ -1,3 +1,15 @@
+SqlRender 1.6.2
+===============
+
+Changes:
+
+1. Added rules for Oracle for conditonal indices.
+
+Bugfixes:
+
+1. Fixing erroneous variable name translation for BigQuery.
+
+
 SqlRender 1.6.1
 ===============
 

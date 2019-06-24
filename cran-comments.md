@@ -1,10 +1,10 @@
-This update has 6 changes, and 2 bug fixes (see NEWS.md)
+This update has 2 changes, and 2 bug fixes since 1.6.0 (see NEWS.md)
 
 ---
 
 ## Test environments
-* Ubuntu 14.04.5 LTS (Travis), R 3.5.0
-* Windows 7, R 3.5.1
+* Ubuntu 14.04.5 LTS (Travis), R 3.6.0
+* Windows 7, R 3.6.0
 
 ## R CMD check results
 
