@@ -1,3 +1,16 @@
+SqlRender 1.6.3
+===============
+
+Changes:
+
+1. Added rules for SQLite for LEFT and RIGHT functions.
+
+2. SQLite now dropping schema name when creating and dropping index (as this throws an error if left).
+
+Bugfixes:
+
+1. Fixing GETDATE translation for SQLite.
+
 SqlRender 1.6.2
 ===============
 

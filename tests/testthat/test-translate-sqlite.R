@@ -77,19 +77,19 @@ test_that("translate sql server -> SQLite temp table", {
                              "SELECT * FROM temp.my_temp;")
 })
 
-test_that("translate sql server -> PostgreSql TOP", {
+test_that("translate sql server -> sqliteql TOP", {
   sql <- translate("SELECT TOP 10 * FROM my_table WHERE a = b;",
                       targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
 })
 
-test_that("translate sql server -> PostgreSql TOP subquery", {
+test_that("translate sql server -> sqliteql TOP subquery", {
   sql <- translate("SELECT name FROM (SELECT TOP 1 name FROM my_table WHERE a = b);",
                       targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT name FROM (SELECT name FROM my_table WHERE a = b LIMIT 1);")
 })
 
-test_that("translate sql server -> postgres date to string", {
+test_that("translate sql server -> sqlite date to string", {
   sql <- translate("SELECT CONVERT(VARCHAR,start_date,112) FROM table;",
                       targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT STRFTIME('%Y%m%d', start_date) FROM table;")
@@ -101,7 +101,7 @@ test_that("translate sql server -> sqlite log any base", {
   expect_equal_ignore_spaces(sql, "SELECT (LOG(number)/LOG(base)) FROM table")
 })
 
-test_that("translate sql server -> postgres ISNUMERIC", {
+test_that("translate sql server -> sqlite ISNUMERIC", {
   sql <- translate("SELECT CASE WHEN ISNUMERIC(a) = 1 THEN a ELSE b FROM c;",
                       targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN a GLOB '[0-9]*' OR a GLOB '[0-9]*.[0-9]*' OR a GLOB '.[0-9]*' THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;")
@@ -120,3 +120,16 @@ test_that("translate sql server -> SQLite DATETIME and DATETIME2", {
                       targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "CREATE TABLE x (a REAL, b REAL);")
 })
+
+test_that("translate sql server -> sqlite GETDATE", {
+  sql <- translate("GETDATE()",
+                   targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "STRFTIME('%s','now')")
+})
+
+test_that("translate sql server -> sqlite CREATE INDEX", {
+  sql <- translate("CREATE INDEX idx_1 ON main.person (person_id);",
+                   targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "CREATE INDEX idx_1  ON person  (person_id);")
+})
+

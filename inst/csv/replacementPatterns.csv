@@ -656,7 +656,7 @@ sqlite,"DATEDIFF(d,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@star
 sqlite,"DATEDIFF(dd,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
 sqlite,"DATEDIFF(day,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
 sqlite,"CONVERT(VARCHAR,@date,112)","STRFTIME('%Y%m%d', @date)"
-sqlite,GETDATE(),STRFTIME('%s','now')
+sqlite,GETDATE(),"STRFTIME('%s','now')"
 sqlite,+ '@a',|| '@a'
 sqlite,'@a' +,'@a' ||
 sqlite,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
@@ -677,7 +677,8 @@ sqlite,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 sqlite,"ISNUMERIC(@a)","CASE WHEN @a GLOB '[0-9]*' OR @a GLOB '[0-9]*.[0-9]*' OR @a GLOB '.[0-9]*' THEN 1 ELSE 0 END"
 sqlite,COUNT_BIG(@a),COUNT(@a)
 sqlite,NEWID(),RANDOM()
-sqlite,"RIGHT(@a,@b)","RIGHTSTR(@a,@b)"
+sqlite,"RIGHT(@a,@b)","SUBSTR(@a,-@b)"
+sqlite,"LEFT(@str,@chars)","SUBSTR(@str,1,@chars)"
 sqlite,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 sqlite,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
 sqlite,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
@@ -685,6 +686,9 @@ sqlite,.dbo.,.
 sqlite,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
 sqlite,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);
 sqlite,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
+sqlite,CREATE INDEX @index_name ON @schema.@table (@variable);,CREATE INDEX @index_name ON @table (@variable);
+sqlite,CREATE UNIQUE INDEX @index_name ON @schema.@table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
+sqlite,DROP INDEX @schema.@index_name;,DROP INDEX @index_name;
 sqlite,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 sqlite,VARCHAR(@a),TEXT
 sqlite,VARCHAR,TEXT
