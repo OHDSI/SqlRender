@@ -150,7 +150,7 @@ test_that("Backslash in parameter is handled correctly", {
 })
 
 test_that("Dollar in parameter is handled correctly", {
-    sql <- renderSql("SELECT * FROM table WHERE name = '@name';", name = "NA$joe")$sql
+    sql <- render("SELECT * FROM table WHERE name = '@name';", name = "NA$joe")
     expect_equal(sql, "SELECT * FROM table WHERE name = 'NA$joe';")
 })
 

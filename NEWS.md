@@ -11,6 +11,8 @@ Bugfixes:
 
 1. Fixing GETDATE translation for SQLite.
 
+2. When calling 'render', the replacement value can now contain a $ sign. (Previously this caused an error).
+
 SqlRender 1.6.2
 ===============
 
