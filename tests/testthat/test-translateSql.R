@@ -646,6 +646,15 @@ test_that("translate sql server -> Netezza WITH SELECT INTO with KEY distributio
                              "--HINT DISTRIBUTE_ON_KEY(a)\nCREATE TABLE b \nAS\nSELECT\na \nFROM\nsomeTable\nDISTRIBUTE ON (a);")
 })
 
+test_that("translate sql server -> Netezza SELECT INTO TEMP TABLE", {
+  sql <- translate("SELECT a INTO #b;", targetDialect = "netezza")
+  expect_equal_ignore_spaces(sql, "CREATE TEMP TABLE b\n AS \n SELECT \n a;")
+})
+
+test_that("translate sql server -> Netezza SELECT INTO TABLE", {
+  sql <- translate("SELECT a INTO b;", targetDialect = "netezza")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE b \n AS \n SELECT a;")
+})
 
 test_that("translate sql server -> Netezza DROP TABLE IF EXISTS", {
   sql <- translate("IF OBJECT_ID('cohort', 'U') IS NOT NULL DROP TABLE cohort;",
