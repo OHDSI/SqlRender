@@ -579,6 +579,11 @@ test_that("translate sql server -> Impala data types", {
   expect_equal_ignore_spaces(sql, "CREATE TABLE a (c1 DOUBLE)")
 })
 
+test_that("translate sql server -> Impala escape chars", {
+  sql <- translate("INSERT INTO t VALUES('some \"string\" ''with escape'' chars')", targetDialect = "impala")
+  expect_equal_ignore_spaces(sql, "INSERT INTO t VALUES(CONCAT('some \\042string\\042 ','\\047','with escape','\\047','chars'))")
+})
+
 # Netezza tests
 
 test_that("translate sql server -> Netezza WITH cte AS () INSERT INTO tbl SELECT * FROM cte", {
@@ -1199,6 +1204,11 @@ test_that("translate sql server -> bigquery EOMONTH()", {
   sql <- translate("select eomonth(payer_plan_period_start_date)",
                       targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "select DATE_SUB(DATE_TRUNC(DATE_ADD(payer_plan_period_start_date, INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY)")
+})
+
+test_that("translate sql server -> bigquery escape chars", {
+  sql <- translate("INSERT INTO t VALUES('some \"string\" ''with escape'' chars')", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "insert into t values(CONCAT('some \\042string\\042 ','\\047','with escape','\\047','chars'))")
 })
 
 test_that("translate sql server -> RedShift DATEADD dd", {
