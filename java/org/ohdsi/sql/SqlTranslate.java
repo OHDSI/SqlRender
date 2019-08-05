@@ -42,6 +42,7 @@ public class SqlTranslate {
 	private static String						globalSessionId					= null;
 	private static String						SOURCE_DIALECT					= "sql server";
 	private static String						BIG_QUERY						= "bigquery";
+	private static String 						IMPALA 							= "impala";
 
 	protected static class Block extends StringUtils.Token {
 		public boolean	isVariable;
@@ -428,7 +429,11 @@ public class SqlTranslate {
 		} else if (targetDialect.equalsIgnoreCase(BIG_QUERY)) {
 			sql = BigQueryTranslate.translatebigQuery(sql);
 		}
-		return translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
+		sql = translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
+		if (targetDialect.equalsIgnoreCase(IMPALA) || targetDialect.equalsIgnoreCase(BIG_QUERY)) {
+			sql = StringUtils.replaceWithConcat(sql);
+		}
+		return sql;
 	}
 
 	private static void validateSessionId(String sessionId) {
