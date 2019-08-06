@@ -19,8 +19,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringUtils {
+
+	// single quoted string with escaped single quotes
+	public static final String REGEX_ESCAPED_APOSTROPHES = "('([^']|'')*')";
+
 	public static String replaceCharAt(String string, int pos, char ch) {
 		return string.substring(0, pos) + ch + string.substring(pos + 1);
 	}
@@ -180,5 +186,80 @@ public class StringUtils {
 			result.append(iter.next().toString());
 		}
 		return result.toString();
+	}
+
+	public static List<String> splitAndKeep(String val, String regex) {
+
+		List<String> result = new ArrayList<String>();
+		Matcher matcher = Pattern.compile(regex).matcher(val);
+		int pos = 0;
+		while (matcher.find()) {
+			result.add(val.substring(pos, matcher.start()));
+			result.add(matcher.group());
+			pos = matcher.end();
+		}
+		if (pos < val.length()) {
+			result.add(val.substring(pos));
+		}
+		return result;
+	}
+
+	/**
+	 * Splits and replaces string containing escaped single quotes with CONCAT function,
+	 * e.g. 'escaped '' string' would be modified as CONCAT('escaped ','\'',' string')
+	 * @param val source string to be modified
+	 * @return modified string or original string if no escapes
+	 */
+	public static String replaceWithConcat(String val) {
+
+		return replaceWith(val, new StringFunction() {
+			public String apply(String t) {
+
+				if (!t.equals("''")) {
+					List<String> literals = splitAndKeep(t, "''");
+					StringBuilder result = new StringBuilder();
+					int size = literals.size();
+					for(int i = 0; i < size; i++) {
+						String literal = literals.get(i);
+						StringBuilder sb = new StringBuilder().append("'");
+						if (literal.matches("''")) {
+							sb.append("\\047");
+						} else {
+							sb.append(literal.replaceAll("'", "")
+									.replaceAll("\\\\", Matcher.quoteReplacement("\\\\"))
+									.replaceAll("\"", Matcher.quoteReplacement("\\042"))
+									.replaceAll("/", Matcher.quoteReplacement("\\/")));
+						}
+						sb.append("'");
+						result.append(sb);
+						if (i < size - 1) {
+							result.append(",");
+						}
+					}
+
+					return "CONCAT(" + result.toString() + ")";
+				} else {
+					return t;
+				}
+			}
+		});
+	}
+
+	private static String replaceWith(String val, StringFunction func) {
+
+		List<String> tokens = splitAndKeep(val, REGEX_ESCAPED_APOSTROPHES);
+		StringBuilder result = new StringBuilder();
+		for(String token : tokens) {
+			if (token.matches(REGEX_ESCAPED_APOSTROPHES) && token.contains("''")) {
+				result.append(func.apply(token));
+			} else {
+				result.append(token);
+			}
+		}
+		return result.toString();
+	}
+
+	interface StringFunction {
+		String apply(String val);
 	}
 }
