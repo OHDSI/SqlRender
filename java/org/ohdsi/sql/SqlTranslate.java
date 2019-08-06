@@ -230,11 +230,16 @@ public class SqlTranslate {
 
 	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId, String oracleTempPrefix) {
 		for (int i = 0; i < replacementPatterns.size(); i++) {
-			String[] pair = replacementPatterns.get(i).clone();
-			pair[1] = pair[1].replace("%session_id%", sessionId);
-			pair[1] = pair[1].replace("%temp_prefix%", oracleTempPrefix);
-			List<Block> parsedPattern = parseSearchPattern(pair[0]);
-			sql = searchAndReplace(sql, parsedPattern, pair[1]);
+			try {
+				String[] pair = replacementPatterns.get(i).clone();
+				pair[1] = pair[1].replace("%session_id%", sessionId);
+				pair[1] = pair[1].replace("%temp_prefix%", oracleTempPrefix);
+				List<Block> parsedPattern = parseSearchPattern(pair[0]);
+				sql = searchAndReplace(sql, parsedPattern, pair[1]);
+				System.out.println(String.format("Applied translation rule: %s", replacementPatterns.get(i)[1]));
+			} catch (Exception ex) {
+				System.out.println(String.format("Failed to apply translation rule: %s", replacementPatterns.get(i)[1]));
+			}
 		}
 		return sql;
 	}

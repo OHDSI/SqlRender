@@ -212,37 +212,42 @@ public class StringUtils {
 	 */
 	public static String replaceWithConcat(String val) {
 
-		return replaceWith(val, new StringFunction() {
-			public String apply(String t) {
+		try {
+			return replaceWith(val, new StringFunction() {
+				public String apply(String t) {
 
-				if (!t.equals("''")) {
-					List<String> literals = splitAndKeep(t, "''");
-					StringBuilder result = new StringBuilder();
-					int size = literals.size();
-					for(int i = 0; i < size; i++) {
-						String literal = literals.get(i);
-						StringBuilder sb = new StringBuilder().append("'");
-						if (literal.matches("''")) {
-							sb.append("\\047");
-						} else {
-							sb.append(literal.replaceAll("'", "")
-									.replaceAll("\\\\", Matcher.quoteReplacement("\\\\"))
-									.replaceAll("\"", Matcher.quoteReplacement("\\042"))
-									.replaceAll("/", Matcher.quoteReplacement("\\/")));
+					if (!t.equals("''")) {
+						List<String> literals = splitAndKeep(t, "''");
+						StringBuilder result = new StringBuilder();
+						int size = literals.size();
+						for (int i = 0; i < size; i++) {
+							String literal = literals.get(i);
+							StringBuilder sb = new StringBuilder().append("'");
+							if (literal.matches("''")) {
+								sb.append("\\047");
+							} else {
+								sb.append(literal.replaceAll("'", "")
+										.replaceAll("\\\\", Matcher.quoteReplacement("\\\\"))
+										.replaceAll("\"", Matcher.quoteReplacement("\\042"))
+										.replaceAll("/", Matcher.quoteReplacement("\\/")));
+							}
+							sb.append("'");
+							result.append(sb);
+							if (i < size - 1) {
+								result.append(",");
+							}
 						}
-						sb.append("'");
-						result.append(sb);
-						if (i < size - 1) {
-							result.append(",");
-						}
+
+						return "CONCAT(" + result.toString() + ")";
+					} else {
+						return t;
 					}
-
-					return "CONCAT(" + result.toString() + ")";
-				} else {
-					return t;
 				}
-			}
-		});
+			});
+		} catch (Exception ex) {
+			System.out.println(String.format("Failed to replace with concat: %s", val));
+			throw new RuntimeException(ex);
+		}
 	}
 
 	private static String replaceWith(String val, StringFunction func) {
