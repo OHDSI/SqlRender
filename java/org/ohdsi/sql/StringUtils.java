@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class StringUtils {
 
 	// single quoted string with escaped single quotes
-	public static final String REGEX_ESCAPED_APOSTROPHES = "('([^']|'')*')";
+	public static final String REGEX_ESCAPED_APOSTROPHES = "(['\"])((?!\\1).|\\1{2})*\\1";
 
 	public static String replaceCharAt(String string, int pos, char ch) {
 		return string.substring(0, pos) + ch + string.substring(pos + 1);
