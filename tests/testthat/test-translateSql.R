@@ -393,6 +393,13 @@ test_that("translate sql server -> Redshift select random row using hash", {
                              "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY MD5(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
 })
 
+test_that("translate sql server -> Big Query select random row using hash", {
+  sql <- translate("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
+      targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql,
+    "select column from (select column, row_number() over (order by SHA1(cast(person_id as STRING))) tmp where rn <= 1")
+})
+
 test_that("translate sql server -> PDW cte with preceding 'with' in quotes", {
   sql <- translate("insert into x (a) values ('with'); with cte (a) as(select a from b) select a INTO #c from cte;",
                       targetDialect = "pdw")
