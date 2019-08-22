@@ -111,6 +111,8 @@ oracle,"FROM @a AS @b)","FROM @a @b)"
 oracle,"JOIN @a AS @b ON","JOIN @a @b ON"
 oracle,UPDATE STATISTICS @a;,-- ANALYZE should not be used to collect optimizer statistics
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
+postgresql,"HASHBYTES(@a)","MD5(@a)"
+postgresql,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","CAST(CONCAT('x', @a) AS BIT(32))"
 postgresql,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
 postgresql,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
 postgresql,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
