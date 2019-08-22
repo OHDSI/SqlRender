@@ -172,6 +172,16 @@ test_that("translate sql server -> Postgres WITH INSERT INTO SELECT", {
   expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;")
 })
 
+test_that("translate sql server -> Postgres HASHBYTES", {
+	sql <- translate("SELECT HASHBYTES('MD5', column) FROM table;", targetDialect = "postgresql")
+	expect_equal_ignore_spaces(sql, "SELECT MD5(column) FROM table;")
+})
+
+test_that("translate sql server -> Postgres convert hexadecimal as VARBINARY", {
+	sql <- translate("SELECT CONVERT(VARBINARY, CONCAT('0x', column), 1) FROM table;", targetDialect = "postgresql")
+	expect_equal_ignore_spaces(sql, "SELECT CAST(CONCAT('x', column) AS BIT(32)) FROM table;")
+})
+
 test_that("translate sql server -> Oracle WITH SELECT", {
   sql <- translate("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
                       targetDialect = "oracle")
