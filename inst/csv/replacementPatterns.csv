@@ -271,6 +271,7 @@ redshift,VAR(@a),VARIANCE(@a)
 redshift,STDEV(@a),STDDEV(@a)
 redshift,RAND(),RANDOM()
 redshift,"HASHBYTES('MD5',@a)",MD5(@a)
+redshift,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","STRTOL(LEFT(@a, 15), 16)"
 redshift,LEN(@a),CHAR_LENGTH(@a)
 redshift,"LOG(@expression,@base)",(LN(CAST((@expression) AS REAL))/LN(CAST((@base) AS REAL)))
 redshift,LOG(@expression),LN(CAST((@expression) AS REAL))
@@ -502,6 +503,7 @@ impala,stats,_stats
 impala,UPDATE STATISTICS @a;,COMPUTE STATS @a;
 impala,"ISNUMERIC(@a)","case when regexp_like(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') then 1 else 0 end"
 impala,"HASHBYTES('MD5',@a)","fnv_hash(@a)"
+impala,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","cast(conv(@a, 16, 10) as int)"
 netezza,HINT DISTRIBUTE_ON_KEY(@key)\n@statement;,HINT DISTRIBUTE_ON_KEY(@key)\n@statement\nDISTRIBUTE ON (@key);
 netezza,HINT DISTRIBUTE_ON_RANDOM\n@statement;,HINT DISTRIBUTE_ON_RANDOM\n@statement\nDISTRIBUTE ON RANDOM;
 netezza,CREATE TABLE #@table (@definition);,CREATE TEMP TABLE @table (@definition);
@@ -570,6 +572,8 @@ netezza,DATETIME,TIMESTAMP
 netezza,DATETIME2,TIMESTAMP
 netezza,"ISNUMERIC(@a)","CASE WHEN translate(@a,'0123456789','') in ('','.','-','-.') THEN 1 ELSE 0 END"
 netezza,"HASHBYTES('MD5',@a)","hash(@a)"
+netezza,"CONVERT(VARBINARY, '0x' || @a, 1)","hex_to_binary(@a)"
+bigquery,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","safe_cast(concat('0x', @a) as int64)"
 bigquery,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 bigquery,WITH @a (@b) AS (,WITH @a AS (
