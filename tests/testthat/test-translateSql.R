@@ -172,16 +172,6 @@ test_that("translate sql server -> Postgres WITH INSERT INTO SELECT", {
   expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;")
 })
 
-test_that("translate sql server -> Postgres HASHBYTES", {
-	sql <- translate("SELECT HASHBYTES('MD5', column) FROM table;", targetDialect = "postgresql")
-	expect_equal_ignore_spaces(sql, "SELECT MD5(column) FROM table;")
-})
-
-test_that("translate sql server -> Postgres convert hexadecimal as VARBINARY", {
-	sql <- translate("SELECT CONVERT(VARBINARY, CONCAT('0x', column), 1) FROM table;", targetDialect = "postgresql")
-	expect_equal_ignore_spaces(sql, "SELECT CAST(CONCAT('x', column) AS BIT(32)) FROM table;")
-})
-
 test_that("translate sql server -> Oracle WITH SELECT", {
   sql <- translate("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
                       targetDialect = "oracle")
@@ -398,6 +388,20 @@ test_that("translate sql server -> Big Query select random row using hash", {
       targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql,
     "select column from (select column, row_number() over (order by SHA1(cast(person_id as STRING))) tmp where rn <= 1")
+})
+
+test_that("translate sql server -> Impala select random row using hash", {
+  sql <- translate("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
+      targetDialect = "impala")
+  expect_equal_ignore_spaces(sql,
+    "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY fnv_hash(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
+})
+
+test_that("translate sql server -> Netezza select random row using hash", {
+  sql <- translate("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
+      targetDialect = "netezza")
+  expect_equal_ignore_spaces(sql,
+    "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY hash(CAST(person_id AS VARCHAR(1000)))) tmp WHERE rn <= 1")
 })
 
 test_that("translate sql server -> PDW cte with preceding 'with' in quotes", {
