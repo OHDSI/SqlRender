@@ -110,7 +110,10 @@ oracle,"FROM @a AS @b WHERE","FROM @a @b WHERE"
 oracle,"FROM @a AS @b)","FROM @a @b)"
 oracle,"JOIN @a AS @b ON","JOIN @a @b ON"
 oracle,UPDATE STATISTICS @a;,-- ANALYZE should not be used to collect optimizer statistics
+oracle,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","TO_NUMBER(@a, RPAD('X', LENGTH(@a), 'X'))"
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
+postgresql,"HASHBYTES('MD5',@a)","MD5(@a)"
+postgresql,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","CAST(CONCAT('x', @a) AS BIT(32))"
 postgresql,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
 postgresql,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
 postgresql,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
@@ -144,7 +147,6 @@ postgresql,EOMONTH(@date),"(DATE_TRUNC('MONTH', @date) + INTERVAL '1 MONTH - 1 d
 postgresql,STDEV(@a),STDDEV(@a)
 postgresql,VAR(@a),VARIANCE(@a)
 postgresql,RAND(),RANDOM()
-postgresql,"HASHBYTES('MD5',@a)",MD5(@a)
 postgresql,LEN(@a),CHAR_LENGTH(@a)
 postgresql,"CHARINDEX(@a,@b)","STRPOS(@b,@a)"
 postgresql,"LOG(@expression,@base)","<L_O_G>(CAST((@base) AS NUMERIC),CAST((@expression) AS NUMERIC))"
@@ -270,6 +272,7 @@ redshift,VAR(@a),VARIANCE(@a)
 redshift,STDEV(@a),STDDEV(@a)
 redshift,RAND(),RANDOM()
 redshift,"HASHBYTES('MD5',@a)",MD5(@a)
+redshift,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","STRTOL(LEFT(@a, 15), 16)"
 redshift,LEN(@a),CHAR_LENGTH(@a)
 redshift,"LOG(@expression,@base)",(LN(CAST((@expression) AS REAL))/LN(CAST((@base) AS REAL)))
 redshift,LOG(@expression),LN(CAST((@expression) AS REAL))
@@ -500,6 +503,8 @@ impala,"DEFAULT NOW()",""
 impala,stats,_stats
 impala,UPDATE STATISTICS @a;,COMPUTE STATS @a;
 impala,"ISNUMERIC(@a)","case when regexp_like(@a,'^([0-9]+\.?[0-9]*|\.[0-9]+)$') then 1 else 0 end"
+impala,"HASHBYTES('MD5',@a)","fnv_hash(@a)"
+impala,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","cast(conv(@a, 16, 10) as int)"
 netezza,HINT DISTRIBUTE_ON_KEY(@key)\n@statement;,HINT DISTRIBUTE_ON_KEY(@key)\n@statement\nDISTRIBUTE ON (@key);
 netezza,HINT DISTRIBUTE_ON_RANDOM\n@statement;,HINT DISTRIBUTE_ON_RANDOM\n@statement\nDISTRIBUTE ON RANDOM;
 netezza,CREATE TABLE #@table (@definition);,CREATE TEMP TABLE @table (@definition);
@@ -567,6 +572,9 @@ netezza,UPDATE STATISTICS @a;,GENERATE STATISTICS ON @a;
 netezza,DATETIME,TIMESTAMP
 netezza,DATETIME2,TIMESTAMP
 netezza,"ISNUMERIC(@a)","CASE WHEN translate(@a,'0123456789','') in ('','.','-','-.') THEN 1 ELSE 0 END"
+netezza,"HASHBYTES('MD5',@a)","hash(@a)"
+netezza,"CONVERT(VARBINARY, '0x' || @a, 1)","hex_to_binary(@a)"
+bigquery,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","safe_cast(concat('0x', @a) as int64)"
 bigquery,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 bigquery,WITH @a (@b) AS (,WITH @a AS (
@@ -584,7 +592,7 @@ bigquery,"DATEADD(yy,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
 bigquery,"DATEADD(yyyy,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
 bigquery,"DATEADD(year,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
 bigquery,"STDEV(@a)","STDDEV(@a)"
-bigquery,"HASHBYTES('MD5',@a)","SHA1(@a)"
+bigquery,"HASHBYTES('MD5',@a)","md5(@a)"
 bigquery,"LEN(@a)","LENGTH(@a)"
 bigquery,"COUNT_BIG(@a)","COUNT(@a)"
 bigquery,"CAST(@a as:string)","CAST(@a as string)"
