@@ -152,7 +152,7 @@ postgresql,LOG(@expression),LN(CAST((@expression) AS REAL))
 postgresql,<L_O_G>,LOG
 postgresql,LOG10(@expression),"LOG(10,CAST((@expression) AS NUMERIC))"
 postgresql,"ISNULL(@a,@b)","COALESCE(@a,@b)"
-postgresql,"ISNUMERIC(@a)","CASE WHEN (@a ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
+postgresql,"ISNUMERIC(@a)","CASE WHEN (CAST(@a AS VARCHAR) ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
 postgresql,COUNT_BIG(@a),COUNT(@a)
 postgresql,SQUARE(@a),((@a)*(@a))
 postgresql,NEWID(),MD5(RANDOM()::TEXT || CLOCK_TIMESTAMP()::TEXT)
