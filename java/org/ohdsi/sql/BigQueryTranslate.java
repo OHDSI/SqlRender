@@ -221,7 +221,7 @@ public class BigQueryTranslate {
 	 *            - the query to transform
 	 * @return the query after transformation
 	 */
-	private static String bigQueryAliasCommonTableExpressions(String sql, String pattern, String prefix) {
+	private static String bigQueryAliasCommonTableExpressions(String sql, String pattern) {
 		List<Block> cte_pattern = SqlTranslate.parseSearchPattern(pattern);
 
 		// Iterates over common table expressions with column lists
@@ -248,8 +248,13 @@ public class BigQueryTranslate {
 			}
 			replacement_select_list = select_list_iter.GetListPrefix() + replacement_select_list + select_list_iter.GetListSuffix();
 
-			sql = sql.substring(0, cte_match.start) + prefix + cte_match.variableToValue.get("@@a") + " as (select "
-					+ replacement_select_list + " from " + cte_match.variableToValue.get("@@d") + ")" + sql.substring(cte_match.end);
+			sql = sql.substring(0, cte_match.start)
+				+ pattern
+					.replace("@@a", cte_match.variableToValue.get("@@a"))
+					.replace("(@@b)", "")
+					.replace("@@c", replacement_select_list)
+					.replace("@@d", cte_match.variableToValue.get("@@d"))
+				+ sql.substring(cte_match.end);
 		}
 		return sql;
 	}
@@ -353,8 +358,10 @@ public class BigQueryTranslate {
 	 */
 	public static String translatebigQuery(String sql) {
 		sql = bigQueryLowerCase(sql);
-		sql = bigQueryAliasCommonTableExpressions(sql, "with @@a (@@b) as (select @@c from @@d)", "with ");
-		sql = bigQueryAliasCommonTableExpressions(sql, ", @@a (@@b) as (select @@c from @@d)", ", ");
+		sql = bigQueryAliasCommonTableExpressions(sql, "with @@a (@@b) as (select @@c from @@d)");
+		sql = bigQueryAliasCommonTableExpressions(sql, ", @@a (@@b) as (select @@c from @@d)");
+		sql = bigQueryAliasCommonTableExpressions(sql, "create table @@a (@@b) as (select @@c from @@d)");
+		sql = bigQueryAliasCommonTableExpressions(sql, "create table @@a (@@b) as (select @@c union @@d)");
 
 		String groupByReferences = "select @@s from @@b group by @@r";
 		sql = bigQueryConvertSelectListReferences(sql, groupByReferences + ";", CommaListIterator.ListType.GROUP_BY);
