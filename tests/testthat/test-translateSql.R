@@ -2429,14 +2429,8 @@ test_that("translate create table if not exists pdw", {
   expect_equal_ignore_spaces(sql, "IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID('test.testing', 'U') IS NULL  CREATE TABLE  test.testing  (id int)\nWITH (DISTRIBUTION = REPLICATE);")
 })
 
-test_that("translate CTAS bigquery", {
-  sql <- translate( "CREATE TABLE test (a, b) AS (SELECT c1, c2 FROM some_table);",
+test_that("translate SELECT INTO + CTE bigquery", {
+  sql <- translate( "WITH data (a,b) AS (SELECT 1, 2 UNION ALL SELECT 3, 4) SELECT a,b INTO test FROM data;",
                     targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "create table test as (select c1 as a, c2 as b from some_table);")
-})
-
-test_that("translate CTAS bigquery", {
-  sql <- translate( "CREATE TABLE test (a, b) AS (SELECT 1, 2 UNION ALL SELECT 3, 4);",
-                    targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "create table test as (select 1 as a, 2 as b union all select 3, 4);")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE test AS WITH data as (select 1 as a, 2 as b union all select 3, 4) SELECT a,b FROM data;")
 })

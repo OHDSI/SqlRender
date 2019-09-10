@@ -359,9 +359,8 @@ public class BigQueryTranslate {
 	public static String translatebigQuery(String sql) {
 		sql = bigQueryLowerCase(sql);
 		sql = bigQueryAliasCommonTableExpressions(sql, "with @@a (@@b) as (select @@c from @@d)");
+		sql = bigQueryAliasCommonTableExpressions(sql, "with @@a (@@b) as (select @@c union @@d)");
 		sql = bigQueryAliasCommonTableExpressions(sql, ", @@a (@@b) as (select @@c from @@d)");
-		sql = bigQueryAliasCommonTableExpressions(sql, "create table @@a (@@b) as (select @@c from @@d)");
-		sql = bigQueryAliasCommonTableExpressions(sql, "create table @@a (@@b) as (select @@c union @@d)");
 
 		String groupByReferences = "select @@s from @@b group by @@r";
 		sql = bigQueryConvertSelectListReferences(sql, groupByReferences + ";", CommaListIterator.ListType.GROUP_BY);
