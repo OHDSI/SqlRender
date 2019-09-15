@@ -404,38 +404,38 @@ test_that("translate sql server -> Netezza select random row using hash", {
     "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY hash(CAST(person_id AS VARCHAR(1000)))) tmp WHERE rn <= 1")
 })
 
-test_that("translate sql server -> Oracle SELECT CONVERT(VARBINARY, CONCAT('0x', @a), 1)", {
-  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, CONCAT('0x', val), 1) rn WHERE rn <= 1",
+test_that("translate sql server -> Oracle SELECT CONVERT(VARBINARY, @a, 1)", {
+  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, val, 1) rn WHERE rn <= 1",
       targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "SELECT ROW_NUMBER() OVER TO_NUMBER(val, RPAD('X', LENGTH(val), 'X')) rn WHERE rn <= 1")
 })
 
-test_that("translate sql server -> Postgres SELECT CONVERT(VARBINARY, CONCAT('0x', @a), 1)", {
-  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, CONCAT('0x', val), 1) rn WHERE rn <= 1",
+test_that("translate sql server -> Postgres SELECT CONVERT(VARBINARY, @a, 1)", {
+  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, val, 1) rn WHERE rn <= 1",
       targetDialect = "postgresql")
   expect_equal_ignore_spaces(sql, "SELECT ROW_NUMBER() OVER CAST(CONCAT('x', val) AS BIT(32)) rn WHERE rn <= 1")
 })
 
-test_that("translate sql server -> RedShift SELECT CONVERT(VARBINARY, CONCAT('0x', @a), 1)", {
-  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, CONCAT('0x', val), 1) rn WHERE rn <= 1",
+test_that("translate sql server -> RedShift SELECT CONVERT(VARBINARY, @a, 1)", {
+  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, val, 1) rn WHERE rn <= 1",
       targetDialect = "redshift")
   expect_equal_ignore_spaces(sql, "SELECT ROW_NUMBER() OVER STRTOL(LEFT(val, 15), 16) rn WHERE rn <= 1")
 })
 
-test_that("translate sql server -> Impala SELECT CONVERT(VARBINARY, CONCAT('0x', @a), 1)", {
-  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, CONCAT('0x', val), 1) rn WHERE rn <= 1",
+test_that("translate sql server -> Impala SELECT CONVERT(VARBINARY, @a, 1)", {
+  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, val, 1) rn WHERE rn <= 1",
       targetDialect = "impala")
   expect_equal_ignore_spaces(sql, "SELECT ROW_NUMBER() OVER cast(conv(val, 16, 10) as int) rn WHERE rn <= 1")
 })
 
-test_that("translate sql server -> Netezza SELECT CONVERT(VARBINARY, CONCAT('0x', @a), 1)", {
-  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, CONCAT('0x', val), 1) rn WHERE rn <= 1",
+test_that("translate sql server -> Netezza SELECT CONVERT(VARBINARY, @a, 1)", {
+  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, val, 1) rn WHERE rn <= 1",
       targetDialect = "netezza")
   expect_equal_ignore_spaces(sql, "SELECT ROW_NUMBER() OVER hex_to_binary(val) rn WHERE rn <= 1")
 })
 
-test_that("translate sql server -> BigQuery SELECT CONVERT(VARBINARY, CONCAT('0x', @a), 1)", {
-  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, CONCAT('0x', val), 1) rn WHERE rn <= 1",
+test_that("translate sql server -> BigQuery SELECT CONVERT(VARBINARY, @a, 1)", {
+  sql <- translate("SELECT ROW_NUMBER() OVER CONVERT(VARBINARY, val, 1) rn WHERE rn <= 1",
       targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "select row_number() over safe_cast(concat('0x', val) as int64) rn where rn <= 1")
 })
