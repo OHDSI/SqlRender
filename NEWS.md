@@ -1,3 +1,10 @@
+SqlRender 1.6.4
+===============
+
+Changes:
+
+1. No longer automatically casting literal to TEXT in RedShift CTE. Users are required to do explicit casts instead.
+
 SqlRender 1.6.3
 ===============
 
