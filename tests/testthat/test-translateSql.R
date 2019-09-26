@@ -2420,3 +2420,541 @@ test_that("translate SELECT INTO + CTE bigquery", {
                     targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "CREATE TABLE test AS WITH data as (select 1 as a, 2 as b union all select 3, 4) SELECT a,b FROM data;")
 })
+
+# Hive tests
+
+test_that("translate sql server -> Hive clustered index not supported", {
+    sql <- translate("CREATE CLUSTERED INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "-- hive does not support indexes")
+})
+
+test_that("translate sql server -> Hive index not supported", {
+    sql <- translate("CREATE INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "-- hive does not support indexes")
+})
+
+test_that("translate sql server -> Hive index with Where not supported", {
+    sql <- translate("CREATE INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date) WHERE cohort_definition_id=1;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "-- hive does not support indexes")
+})
+
+test_that("translate sql server -> Hive CHARINDEX from position", {
+    sql <- translate("SELECT CHARINDEX('test','abctest') FROM table",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT INSTR('abctest','test') FROM table")
+})
+
+test_that("translate sql server -> Hive COUNT", {
+    sql <- translate("SELECT COUNT_BIG('test') FROM table",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT COUNT('test') FROM table")
+})
+
+test_that("translate sql server -> Hive left SUBSTR", {
+    sql <- translate("SELECT LEFT('test',3)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT SUBSTR('test',1,3)")
+})
+
+test_that("translate sql server -> Hive right SUBSTR", {
+    sql <- translate("SELECT RIGHT('test',3)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT SUBSTR('test',-3)")
+})
+
+test_that("translate sql server -> Hive LENGTH", {
+    sql <- translate("SELECT LEN('test')",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT LENGTH('test')")
+})
+
+test_that("translate sql server -> Hive LN", {
+    sql <- translate("SELECT LOG(10)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT LN(10)")
+})
+
+test_that("translate sql server -> Hive new ID", {
+    sql <- translate("SELECT NEWID()",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT reflect('java.util.UUID','randomUUID')")
+})
+
+test_that("translate sql server -> Hive ROUND", {
+    sql <- translate("SELECT ROUND('100.2564', 2)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT ROUND(CAST('100.2564' AS DOUBLE),2)")
+})
+
+test_that("translate sql server -> Hive SQUARE", {
+    sql <- translate("SELECT SQUARE(2)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT ((2)*(2))")
+})
+
+test_that("translate sql server -> Hive STDDEV", {
+    sql <- translate("SELECT STDEV(4)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT STDDEV_POP(4)")
+})
+
+test_that("translate sql server -> Hive VARIANCE", {
+    sql <- translate("SELECT VAR(4)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT VARIANCE(4)")
+})
+
+test_that("translate sql server -> Hive DATE_ADD day", {
+    sql <- translate("SELECT DATEADD(d,30,CAST(drug_era_end_date AS DATE)) FROM drug_era;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT DATE_ADD(drug_era_end_date, 30) FROM drug_era;")
+})
+
+test_that("translate sql server -> Hive DATE_ADD month", {
+    sql <- translate("SELECT DATEADD(month,3,CAST(drug_era_end_date AS DATE)) FROM drug_era;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT CAST(ADD_MONTHS(drug_era_end_date, 3) AS TIMESTAMP) FROM drug_era;")
+})
+
+test_that("translate sql server -> Hive DATEFROMPARTS", {
+    sql <- translate("SELECT DATEFROMPARTS(1999,12,12);",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT CAST(unix_timestamp(CONCAT(CAST(1999 AS STRING),'-',CAST(12 AS STRING),'-',CAST(12 AS STRING)), 'yyyy-M-d') AS TIMESTAMP);")
+})
+
+test_that("translate sql server -> Hive EOMONTH", {
+    sql <- translate("SELECT eomonth(drug_era_end_date);",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT CAST(last_day(drug_era_end_date) AS TIMESTAMP);")
+})
+
+test_that("translate sql server -> Hive TIMESTAMP", {
+    sql <- translate("SELECT GETDATE();",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT unix_timestamp();")
+})
+
+test_that("translate sql server -> Hive TIMESTAMP", {
+    sql <- translate("SELECT GETDATE();",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT unix_timestamp();")
+})
+
+test_that("translate sql server -> Hive TIMESTAMP", {
+    sql <- translate("SELECT GETDATE();",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT unix_timestamp();")
+})
+
+test_that("translate sql server -> Hive CREATE TABLE", {
+    sql <- translate("IF OBJECT_ID('test.testing', 'U') IS NULL CREATE TABLE test.testing (id int);",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS test.testing (id int);")
+})
+
+test_that("translate sql server -> Hive DROP TABLE", {
+    sql <- translate("IF OBJECT_ID('test.testing', 'U') IS NOT NULL DROP TABLE test.testing;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS test.testing;")
+})
+
+test_that("translate sql server -> Hive UNION", {
+    sql <- translate("(SELECT test UNION SELECT ytest) ORDER BY",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT * FROM\n(SELECT test\nUNION\nSELECT ytest)\nAS t1 ORDER BY")
+})
+
+test_that("translate sql server -> Hive CREATE TABLE WITH", {
+    sql <- translate("WITH ctel AS (SELECT a FROM b) SELECT e INTO c FROM ctel;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CREATE TABLE c\nAS\nWITH ctel AS (SELECT a FROM b) SELECT\ne\nFROM\nctel;")
+})
+
+test_that("translate sql server -> Hive CREATE TABLE AS", {
+    sql <- translate("SELECT test INTO t FROM testing;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CREATE TABLE t AS\nSELECT\ntest\nFROM\ntesting;")
+})
+
+test_that("translate sql server -> Hive CREATE TABLE AS short", {
+    sql <- translate("SELECT test INTO t;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CREATE TABLE t AS\nSELECT\ntest;")
+})
+
+test_that("translate sql server -> Hive INTERSECT", {
+    sql <- translate("SELECT DISTINCT property FROM test INTERSECT SELECT DISTINCT property FROM ytest;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT t1.property FROM (SELECT DISTINCT property FROM test UNION ALL SELECT DISTINCT property FROM ytest) AS t1 GROUP BY property HAVING COUNT(*) >= 2;")
+})
+
+test_that("translate sql server -> Hive INTERSECT DISTINCT", {
+    sql <- translate("(SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "(SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2)")
+})
+
+test_that("translate sql server -> Hive DELETE WHERE", {
+    sql <- translate("DELETE FROM test WHERE test.a = 1;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "INSERT OVERWRITE TABLE test SELECT * FROM test WHERE NOT(test.a = 1);")
+})
+
+test_that("translate sql server -> Hive TRUNCATE", {
+    sql <- translate("DELETE FROM test;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "TRUNCATE TABLE test;")
+})
+
+test_that("translate sql server -> Hive dbo", {
+    sql <- translate(".dbo.",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, ".")
+})
+
+test_that("translate sql server -> Hive TOP in subqueries", {
+    sql <- translate("select statistic_value from achilles_results join (SELECT TOP 1 count as total_pts from achilles_results where analysis_id = 1) where analysis_id in (2002,2003)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "select statistic_value from achilles_results join (SELECT count as total_pts from achilles_results where analysis_id = 1 LIMIT 1) where analysis_id in (2002,2003)")
+})
+
+test_that("translate sql server -> Hive TOP in subqueries with parentheses", {
+    sql <- translate("(select statistic_value from achilles_results join (SELECT TOP 1 count as total_pts from achilles_results where analysis_id = 1) where analysis_id in (2002,2003))",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "(select statistic_value from achilles_results join (SELECT count as total_pts from achilles_results where analysis_id = 1 LIMIT 1) where analysis_id in (2002,2003))")
+})
+
+test_that("translate sql server -> Hive DATE", {
+    sql <- translate("DATE",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "TIMESTAMP")
+})
+
+test_that("translate sql server -> Hive DATETIME", {
+    sql <- translate("DATETIME",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "TIMESTAMP")
+})
+
+test_that("translate sql server -> Hive DATETIME2", {
+    sql <- translate("DATETIME2",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "TIMESTAMP")
+})
+
+test_that("translate sql server -> Hive BIGINT NOT NULL", {
+    sql <- translate("BIGINT NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "BIGINT")
+})
+
+test_that("translate sql server -> Hive BOOLEAN NOT NULL", {
+    sql <- translate("BOOLEAN NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "BOOLEAN")
+})
+
+test_that("translate sql server -> Hive CHAR NOT NULL", {
+    sql <- translate("CHAR NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CHAR")
+})
+
+test_that("translate sql server -> Hive DECIMAL NOT NULL", {
+    sql <- translate("DECIMAL NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "DECIMAL")
+})
+
+test_that("translate sql server -> Hive DOUBLE NOT NULL", {
+    sql <- translate("DOUBLE NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "DOUBLE")
+})
+
+test_that("translate sql server -> Hive FLOAT NOT NULL", {
+    sql <- translate("FLOAT NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "FLOAT")
+})
+
+test_that("translate sql server -> Hive INT NOT NULL", {
+    sql <- translate("INT NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "INT")
+})
+
+test_that("translate sql server -> Hive REAL NOT NULL", {
+    sql <- translate("REAL NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "FLOAT")
+})
+
+test_that("translate sql server -> Hive SMALLINT NOT NULL", {
+    sql <- translate("SMALLINT NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SMALLINT")
+})
+
+test_that("translate sql server -> Hive STRING NOT NULL", {
+    sql <- translate("STRING NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "VARCHAR")
+})
+
+test_that("translate sql server -> Hive TIMESTAMP NOT NULL", {
+    sql <- translate("TIMESTAMP NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "TIMESTAMP")
+})
+
+test_that("translate sql server -> Hive TINYINT NOT NULL", {
+    sql <- translate("TINYINT NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "TINYINT")
+})
+
+test_that("translate sql server -> Hive VARCHAR NOT NULL", {
+    sql <- translate("VARCHAR(10) NOT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "VARCHAR(10)")
+})
+
+test_that("translate sql server -> Hive BIGINT NULL", {
+    sql <- translate("BIGINT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "BIGINT")
+})
+
+test_that("translate sql server -> Hive BOOLEAN NULL", {
+    sql <- translate("BOOLEAN NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "BOOLEAN")
+})
+
+test_that("translate sql server -> Hive CHAR NULL", {
+    sql <- translate("CHAR NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CHAR")
+})
+
+test_that("translate sql server -> Hive DECIMAL NULL", {
+    sql <- translate("DECIMAL NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "DECIMAL")
+})
+
+test_that("translate sql server -> Hive DOUBLE NULL", {
+    sql <- translate("DOUBLE NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "DOUBLE")
+})
+
+test_that("translate sql server -> Hive FLOAT NULL", {
+    sql <- translate("FLOAT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "FLOAT")
+})
+
+test_that("translate sql server -> Hive INT NULL", {
+    sql <- translate("INT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "INT")
+})
+
+test_that("translate sql server -> Hive REAL NULL", {
+    sql <- translate("FLOAT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "FLOAT")
+})
+
+test_that("translate sql server -> Hive SMALLINT NULL", {
+    sql <- translate("SMALLINT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SMALLINT")
+})
+
+test_that("translate sql server -> Hive STRING NULL", {
+    sql <- translate("STRING NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "VARCHAR")
+})
+
+test_that("translate sql server -> Hive TIMESTAMP NULL", {
+    sql <- translate("TIMESTAMP NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "TIMESTAMP")
+})
+
+test_that("translate sql server -> Hive TINYINT NULL", {
+    sql <- translate("TINYINT NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "TINYINT")
+})
+
+test_that("translate sql server -> Hive VARCHAR NULL", {
+    sql <- translate("VARCHAR(10) NULL",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "VARCHAR(10)")
+})
+
+test_that("translate sql server -> Hive CHAR", {
+    sql <- translate("CHAR,",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CHAR(1),")
+})
+
+test_that("translate sql server -> Hive CHAR\n", {
+    sql <- translate("CHAR\n+",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CHAR(1)\n")
+})
+
+test_that("translate sql server -> Hive CHAR)", {
+    sql <- translate("CHAR)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CHAR(1))")
+})
+
+test_that("translate sql server -> Hive CONSTRAINT DEFAULT timestamp", {
+    sql <- translate("CONSTRAINT test DEFAULT unix_timestamp()",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "")
+})
+
+test_that("translate sql server -> Hive DEFAULT timestamp", {
+    sql <- translate("DEFAULT unix_timestamp()",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "")
+})
+
+test_that("translate sql server -> Hive STATS", {
+    sql <- translate("stats",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "_stats")
+})
+
+test_that("translate sql server -> Hive UPDATE STATISTICS", {
+    sql <- translate("UPDATE STATISTICS results_schema.heracles_results;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "-- hive does not support COMPUTE STATS")
+})
+
+test_that("translate sql server -> Hive CAST VARCHAR", {
+    sql <- translate("CAST(10 AS VARCHAR)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CAST(10 AS VARCHAR(1000))")
+})
+
+test_that("translate sql server -> Hive COALESCE", {
+    sql <- translate("ISNULL(abc,gde)",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "COALESCE(abc,gde)")
+})
+
+test_that("translate sql server -> Hive WITH AS", {
+    sql <- translate("WITH cte (test) AS",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "WITH cte AS")
+})
+
+test_that("translate sql server -> Hive SubQuery", {
+    sql <- translate("CREATE TEMPORARY TABLE cohort_ends  AS (
+    SELECT event_id, person_id, end_date from results.axmkoh98strategy_ends
+),
+first_ends (person_id, start_date, end_date) as
+(
+	select F.person_id, F.start_date, F.end_date
+	FROM (
+	  select I.event_id, I.person_id, I.start_date, E.end_date, row_number() over (partition by I.person_id, I.event_id order by E.end_date) as ordinal 
+	  from results.axmkoh98included_events I
+	  join cohort_ends E on I.event_id = E.event_id and I.person_id = E.person_id and E.end_date >= I.start_date
+	) F
+	WHERE F.ordinal = 1
+)
+;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "CREATE TEMPORARY TABLE cohort_ends AS (
+    SELECT event_id, person_id, end_date from results.axmkoh98strategy_ends
+);
+CREATE TEMPORARY TABLE first_ends AS
+(
+	select F.person_id, F.start_date, F.end_date
+	FROM (
+	  select I.event_id, I.person_id, I.start_date, E.end_date, row_number() over (partition by I.person_id, I.event_id order by E.end_date) as ordinal 
+	  from results.axmkoh98included_events I
+	  join cohort_ends E on I.event_id = E.event_id and I.person_id = E.person_id and E.end_date >= I.start_date
+	) F
+	WHERE F.ordinal = 1
+)
+;")
+})
+
+test_that("translate sql server -> Hive Min", {
+    sql <- translate("cteEnds (person_id, start_date, end_date) AS
+(
+	SELECT
+	FROM #cohort_rows c
+)
+select person_id, min(start_date) as start_date, end_date
+into #final_cohort
+from cteEnds
+group by person_id, end_date
+;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "WITH cte AS")
+})
+
+test_that("translate sql server -> Large SubQuery", {
+    sql <- translate("WITH person_dates AS (
+SELECT subject_id, cohort_start_date cohort_date FROM #raw_events
+UNION
+SELECT subject_id, cohort_end_date cohort_date FROM #raw_events
+),
+marked_dates AS (
+SELECT ROW_NUMBER() OVER (ORDER BY subject_id ASC, cohort_date ASC) ordinal,
+subject_id,
+cohort_date,
+CASE WHEN (datediff(d,LAG(cohort_date) OVER (ORDER BY subject_id ASC, cohort_date ASC), cohort_date) < @combo_window AND subject_id = LAG(subject_id) OVER (ORDER BY subject_id ASC, cohort_date ASC)) THEN 1 ELSE 0 END to_be_collapsed
+FROM person_dates
+),
+grouped_dates AS (
+SELECT ordinal, subject_id, cohort_date, to_be_collapsed, ordinal - SUM(to_be_collapsed) OVER ( PARTITION BY subject_id ORDER BY cohort_date ASC ROWS UNBOUNDED PRECEDING) group_idx
+FROM marked_dates
+),
+replacements AS (
+SELECT orig.subject_id, orig.cohort_date, FIRST_VALUE(cohort_date) OVER (PARTITION BY group_idx ORDER BY ordinal ASC ROWS UNBOUNDED PRECEDING) as replacement_date
+FROM grouped_dates orig
+)
+SELECT *
+INTO #date_replacements
+FROM replacements
+WHERE cohort_date <> replacement_date;",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "WITH cte AS")
+})
+
+test_that("translate sql server -> Hive TBLPROPERTIES", {
+    sql <- translate("with primary_events (event_id, person_id, start_date, end_date, op_start_date, op_end_date, visit_occurrence_id) as
+(
+-- Begin Primary Events
+select P.ordinal as event_id, P.person_id, P.start_date, P.end_date, op_start_date, op_end_date, cast(P.visit_occurrence_id as bigint) as visit_occurrence_id
+FROM
+(
+  select E.person_id, E.start_date, E.end_date, row_number() OVER (PARTITION BY E.person_id ORDER BY E.start_date ASC) ordinal, OP.observation_period_start_date as op_start_date, OP.observation_period_end_date as op_end_date, cast(E.visit_occurrence_id as bigint) as visit_occurrence_id
+  FROM 
+  (
+  -- Begin Condition Era Criteria
+select C.person_id, C.condition_era_id as event_id, C.condition_era_start_date as start_date, C.condition_era_end_date as end_date, C.CONDITION_CONCEPT_ID as TARGET_CONCEPT_ID, CAST(NULL as bigint) as visit_occurrence_id
+from 
+(
+  select ce.* 
+  FROM omop_orc.CONDITION_ERA ce
+where ce.condition_concept_id in (SELECT concept_id from  #Codesets where codeset_id = 2)
+) C",
+    targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "WITH cte AS")
+})
