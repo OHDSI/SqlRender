@@ -1,4 +1,4 @@
-This update has 2 changes, and 2 bug fixes since 1.6.0 (see NEWS.md)
+This update has 5 changes, and 4 bug fixes since 1.6.2 (see NEWS.md)
 
 ---
 
