@@ -748,7 +748,7 @@ hive,"DATEADD(yy,@years,@date)","CAST(ADD_MONTHS(CAST(@date AS TIMESTAMP), 12 * 
 hive,"DATEDIFF(d,@start, @end)","DATEDIFF(CAST(@end AS TIMESTAMP), CAST(@start AS TIMESTAMP))"
 hive,"DATEDIFF(dd,@start, @end)","DATEDIFF(CAST(@end AS TIMESTAMP), CAST(@start AS TIMESTAMP))"
 hive,"DATEDIFF(day,@start, @end)","DATEDIFF(CAST(@end AS TIMESTAMP), CAST(@start AS TIMESTAMP))"
-hive,"DATEFROMPARTS(@year,@month,@day)","CAST(unix_timestamp(CONCAT(CAST(@year AS STRING),'-',CAST(@month AS STRING),'-',CAST(@day AS STRING)), 'yyyy-M-d') AS TIMESTAMP)"
+hive,"DATEFROMPARTS(@year,@month,@day)","CAST(CONCAT(CAST(@year AS STRING),'-',CAST(@month AS STRING),'-',CAST(@day AS STRING)) AS TIMESTAMP)"
 hive,"eomonth(@date)","CAST(last_day(@date) AS TIMESTAMP)"
 hive,GETDATE(),unix_timestamp()
 hive,year(unix_timestamp()),year(from_unixtime(unix_timestamp()))
