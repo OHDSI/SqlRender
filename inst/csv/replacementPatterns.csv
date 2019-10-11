@@ -745,9 +745,9 @@ hive,"DATEADD(m,@months,@date)","CAST(ADD_MONTHS(CAST(@date AS TIMESTAMP), @mont
 hive,"DATEADD(year,@years,@date)","CAST(ADD_MONTHS(CAST(@date AS TIMESTAMP), 12 * @years) AS TIMESTAMP)"
 hive,"DATEADD(yyyy,@years,@date)","CAST(ADD_MONTHS(CAST(@date AS TIMESTAMP), 12 * @years) AS TIMESTAMP)"
 hive,"DATEADD(yy,@years,@date)","CAST(ADD_MONTHS(CAST(@date AS TIMESTAMP), 12 * @years) AS TIMESTAMP)"
-hive,"DATEDIFF(d,@start, @end)","DATEDIFF(CAST(@end AS TIMESTAMP), CAST(@start AS TIMESTAMP))"
-hive,"DATEDIFF(dd,@start, @end)","DATEDIFF(CAST(@end AS TIMESTAMP), CAST(@start AS TIMESTAMP))"
-hive,"DATEDIFF(day,@start, @end)","DATEDIFF(CAST(@end AS TIMESTAMP), CAST(@start AS TIMESTAMP))"
+hive,"DATEDIFF(d,@start, @end)","day(CAST(@end AS TIMESTAMP) - CAST(@start AS TIMESTAMP))"
+hive,"DATEDIFF(dd,@start, @end)","day(CAST(@end AS TIMESTAMP) - CAST(@start AS TIMESTAMP))"
+hive,"DATEDIFF(day,@start, @end)","day(CAST(@end AS TIMESTAMP) - CAST(@start AS TIMESTAMP))"
 hive,"DATEFROMPARTS(@year,@month,@day)","CAST(CONCAT(CAST(@year AS STRING),'-',CAST(@month AS STRING),'-',CAST(@day AS STRING)) AS TIMESTAMP)"
 hive,"eomonth(@date)","CAST(last_day(@date) AS TIMESTAMP)"
 hive,GETDATE(),unix_timestamp()
