@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Using SqlRender • SqlRender</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Using SqlRender">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
@@ -30,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.3</span>
       </span>
     </div>
 
@@ -38,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -64,7 +65,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/OHDSI/SqlRender">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -77,13 +78,14 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Using SqlRender</h1>
                         <h4 class="author">Martijn J. Schuemie</h4>
             
-            <h4 class="date">2019-06-24</h4>
+            <h4 class="date">2019-09-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/SqlRender/blob/master/vignettes/UsingSqlRender.Rmd"><code>vignettes/UsingSqlRender.Rmd</code></a></small>
       <div class="hidden name"><code>UsingSqlRender.Rmd</code></div>
@@ -105,57 +107,57 @@
 <h2 class="hasAnchor">
 <a href="#substituting-parameter-values" class="anchor"></a>Substituting parameter values</h2>
 <p>The <code>@</code> character can be used to indicate parameter names that need to be exchange for actual parameter values when rendering. In the following example, a variable called <code>a</code> is mentioned in the SQL. In the call to the render function the value of this parameter is defined:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM table WHERE id = @a;"</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">a =</span> <span class="dv">123</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>sql &lt;-<span class="st"> "SELECT * FROM table WHERE id = @a;"</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">a =</span> <span class="dv">123</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 123;"</code></pre>
 <p>Note that, unlike the parameterization offered by most database management systems, it is just as easy to parameterize table or field names as values:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM @x WHERE id = @a;"</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="st">"my_table"</span>, <span class="dt">a =</span> <span class="dv">123</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>sql &lt;-<span class="st"> "SELECT * FROM @x WHERE id = @a;"</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="st">"my_table"</span>, <span class="dt">a =</span> <span class="dv">123</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM my_table WHERE id = 123;"</code></pre>
 <p>The parameter values can be numbers, strings, booleans, as well as vectors, which are converted to comma-delimited lists:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM table WHERE id IN (@a);"</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">a =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>sql &lt;-<span class="st"> "SELECT * FROM table WHERE id IN (@a);"</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">a =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id IN (1,2,3);"</code></pre>
 </div>
 <div id="default-parameter-values" class="section level2">
 <h2 class="hasAnchor">
 <a href="#default-parameter-values" class="anchor"></a>Default parameter values</h2>
 <p>For some or all parameters, it might make sense to define default values that will be used unless the user specifies another value. This can be done using the <code>{DEFAULT @parameter = value}</code> syntax:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">sql &lt;-<span class="st"> "{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>sql &lt;-<span class="st"> "{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 1;"</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">a =</span> <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">a =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 2;"</code></pre>
 <p>Defaults for multiple variables can be defined:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">sql &lt;-<span class="st"> "{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"</span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>sql &lt;-<span class="st"> "{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM my_table WHERE id = 1;"</code></pre>
 </div>
 <div id="if-then-else" class="section level2">
 <h2 class="hasAnchor">
 <a href="#if-then-else" class="anchor"></a>If-then-else</h2>
 <p>Sometimes blocks of codes need to be turned on or off based on the values of one or more parameters. This is done using the <code>{Condition} ? {if true} : {if false}</code> syntax. If the <em>condition</em> evaluates to true or 1, the <em>if true</em> block is used, else the <em>if false</em> block is shown (if present).</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM table {@x} ? {WHERE id = 1}"</span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>sql &lt;-<span class="st"> "SELECT * FROM table {@x} ? {WHERE id = 1}"</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table "</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 1"</code></pre>
 <p>Simple comparisons are also supported:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM table {@x == 1} ? {WHERE id = 1};"</span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>sql &lt;-<span class="st"> "SELECT * FROM table {@x == 1} ? {WHERE id = 1};"</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 1;"</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table ;"</code></pre>
 <p>As well as the <code>IN</code> operator:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1};"</span></a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>sql &lt;-<span class="st"> "SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1};"</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 1;"</code></pre>
 <p>Clauses can combined with boolean operators:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM table {@x IN (1,2,3) | @y != 3} ? {WHERE id = @x AND value = @y};"</span></a>
-<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">4</span>, <span class="dt">y =</span> <span class="dv">4</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>sql &lt;-<span class="st"> "SELECT * FROM table {@x IN (1,2,3) | @y != 3} ? {WHERE id = @x AND value = @y};"</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">4</span>, <span class="dt">y =</span> <span class="dv">4</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 4 AND value = 4;"</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM table {(@x == 1 | @x == 3) &amp; @y != 3} ? {WHERE id = @x AND val = @y};"</span></a>
-<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">3</span>, <span class="dt">y =</span> <span class="dv">4</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>sql &lt;-<span class="st"> "SELECT * FROM table {(@x == 1 | @x == 3) &amp; @y != 3} ? {WHERE id = @x AND val = @y};"</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">x =</span> <span class="dv">3</span>, <span class="dt">y =</span> <span class="dv">4</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM table WHERE id = 3 AND val = 4;"</code></pre>
 </div>
 </div>
@@ -168,8 +170,8 @@
 <p>A third limitation is that only a limited set of translation rules have currently been implemented, although adding them to the <a href="https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv">list</a> should not be hard.</p>
 <p>A last limitation is that not all functions supported in one dialect have an equivalent in other dialects.</p>
 <p>Below an example:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT DATEDIFF(dd,a,b) FROM table; "</span></a>
-<a class="sourceLine" id="cb27-2" data-line-number="2"><span class="kw"><a href="../reference/translate.html">translate</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>sql &lt;-<span class="st"> "SELECT DATEDIFF(dd,a,b) FROM table; "</span></span>
+<span id="cb27-2"><a href="#cb27-2"></a><span class="kw"><a href="../reference/translate.html">translate</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT (CAST(b AS DATE) - CAST(a AS DATE)) FROM table ; "</code></pre>
 <p>The <code>targetDialect</code> parameter can have the following values:</p>
 <ul>
@@ -280,42 +282,42 @@
 <li>Requires special priviliges on Oracle. Has no equivalent on SQLite.</li>
 </ul>
 <p>Similarly, many SQL syntax structures are supported. Here is a non-exhaustive lists of things that we know will translate well:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span>;                                        <span class="co">-- Simple selects</span></a>
-<a class="sourceLine" id="cb29-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="kw">SELECT</span> * <span class="kw">FROM</span> table_1 <span class="kw">INNER</span> <span class="kw">JOIN</span> table_2 <span class="kw">ON</span> a = b;          <span class="co">-- Selects with joins </span></a>
-<a class="sourceLine" id="cb29-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb29-5" data-line-number="5"><span class="kw">SELECT</span> * <span class="kw">FROM</span> (<span class="kw">SELECT</span> * <span class="kw">FROM</span> table_1) tmp <span class="kw">WHERE</span> a = b;      <span class="co">-- Nested queries</span></a>
-<a class="sourceLine" id="cb29-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb29-7" data-line-number="7"><span class="kw">SELECT</span> TOP <span class="dv">10</span> * <span class="kw">FROM</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span>;                                 <span class="co">-- Limiting to top rows</span></a>
-<a class="sourceLine" id="cb29-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb29-9" data-line-number="9"><span class="kw">SELECT</span> * <span class="kw">INTO</span> new_table <span class="kw">FROM</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span>;                         <span class="co">-- Selecting into a new table</span></a>
-<a class="sourceLine" id="cb29-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb29-11" data-line-number="11"><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span> (field <span class="dt">INT</span>);                             <span class="co">-- Creating tables</span></a>
-<a class="sourceLine" id="cb29-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb29-13" data-line-number="13"><span class="kw">INSERT</span> <span class="kw">INTO</span> other_table (field_1) <span class="kw">VALUES</span> (<span class="dv">1</span>);               <span class="co">-- Inserting verbatim values           </span></a>
-<a class="sourceLine" id="cb29-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb29-15" data-line-number="15"><span class="kw">INSERT</span> <span class="kw">INTO</span> other_table (field_1) <span class="kw">SELECT</span> <span class="fu">value</span> <span class="kw">FROM</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span>;  <span class="co">-- Inserting from SELECT</span></a>
-<a class="sourceLine" id="cb29-16" data-line-number="16">  </a>
-<a class="sourceLine" id="cb29-17" data-line-number="17"><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span>;                                           <span class="co">-- Simple drop commands</span></a>
-<a class="sourceLine" id="cb29-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb29-19" data-line-number="19"><span class="kw">IF</span> OBJECT_ID(<span class="st">'ACHILLES_analysis'</span>, <span class="st">'U'</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">NULL</a></span>          <span class="co">-- Drop table if it exists</span></a>
-<a class="sourceLine" id="cb29-20" data-line-number="20">  <span class="kw">DROP</span> <span class="kw">TABLE</span> ACHILLES_analysis;</a>
-<a class="sourceLine" id="cb29-21" data-line-number="21">  </a>
-<a class="sourceLine" id="cb29-22" data-line-number="22"><span class="kw">IF</span> OBJECT_ID(<span class="st">'tempdb..#cohorts'</span>, <span class="st">'U'</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">NULL</a></span>           <span class="co">-- Drop temp table if it exists</span></a>
-<a class="sourceLine" id="cb29-23" data-line-number="23">  <span class="kw">DROP</span> <span class="kw">TABLE</span> #cohorts;  </a>
-<a class="sourceLine" id="cb29-24" data-line-number="24"></a>
-<a class="sourceLine" id="cb29-25" data-line-number="25"><span class="kw">WITH</span> cte <span class="kw">AS</span> (<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span>) <span class="kw">SELECT</span> * <span class="kw">FROM</span> cte;        <span class="co">-- Common table expressions</span></a>
-<a class="sourceLine" id="cb29-26" data-line-number="26"></a>
-<a class="sourceLine" id="cb29-27" data-line-number="27"><span class="kw">SELECT</span> <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> a <span class="kw">ORDER</span> <span class="kw">BY</span> b)        <span class="co">-- OVER clauses</span></a>
-<a class="sourceLine" id="cb29-28" data-line-number="28">  <span class="kw">AS</span> <span class="ot">"Row Number"</span> <span class="kw">FROM</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span>;</a>
-<a class="sourceLine" id="cb29-29" data-line-number="29">  </a>
-<a class="sourceLine" id="cb29-30" data-line-number="30"><span class="kw">SELECT</span> <span class="kw">CASE</span> <span class="kw">WHEN</span> a=<span class="dv">1</span> <span class="kw">THEN</span> a <span class="kw">ELSE</span> <span class="dv">0</span> <span class="kw">END</span> <span class="kw">AS</span> <span class="fu">value</span> <span class="kw">FROM</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span>; <span class="co">-- CASE WHEN clauses</span></a>
-<a class="sourceLine" id="cb29-31" data-line-number="31"></a>
-<a class="sourceLine" id="cb29-32" data-line-number="32"><span class="kw">SELECT</span> * <span class="kw">FROM</span> a <span class="kw">UNION</span> <span class="kw">SELECT</span> * <span class="kw">FROM</span> b                       <span class="co">-- UNIONs</span></a>
-<a class="sourceLine" id="cb29-33" data-line-number="33"></a>
-<a class="sourceLine" id="cb29-34" data-line-number="34"><span class="kw">SELECT</span> * <span class="kw">FROM</span> a <span class="kw">INTERSECT</span> <span class="kw">SELECT</span> * <span class="kw">FROM</span> b                   <span class="co">-- INTERSECTIONs</span></a>
-<a class="sourceLine" id="cb29-35" data-line-number="35"></a>
-<a class="sourceLine" id="cb29-36" data-line-number="36"><span class="kw">SELECT</span> * <span class="kw">FROM</span> a <span class="kw">EXCEPT</span> <span class="kw">SELECT</span> * <span class="kw">FROM</span> b                      <span class="co">-- EXCEPT</span></a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb29-1"><a href="#cb29-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>;                                        <span class="co">-- Simple selects</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a></span>
+<span id="cb29-3"><a href="#cb29-3"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> table_1 <span class="kw">INNER</span> <span class="kw">JOIN</span> table_2 <span class="kw">ON</span> a <span class="op">=</span> b;          <span class="co">-- Selects with joins </span></span>
+<span id="cb29-4"><a href="#cb29-4"></a></span>
+<span id="cb29-5"><a href="#cb29-5"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> table_1) tmp <span class="kw">WHERE</span> a <span class="op">=</span> b;      <span class="co">-- Nested queries</span></span>
+<span id="cb29-6"><a href="#cb29-6"></a></span>
+<span id="cb29-7"><a href="#cb29-7"></a><span class="kw">SELECT</span> TOP <span class="dv">10</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>;                                 <span class="co">-- Limiting to top rows</span></span>
+<span id="cb29-8"><a href="#cb29-8"></a></span>
+<span id="cb29-9"><a href="#cb29-9"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> new_table <span class="kw">FROM</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>;                         <span class="co">-- Selecting into a new table</span></span>
+<span id="cb29-10"><a href="#cb29-10"></a></span>
+<span id="cb29-11"><a href="#cb29-11"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span> (field <span class="dt">INT</span>);                             <span class="co">-- Creating tables</span></span>
+<span id="cb29-12"><a href="#cb29-12"></a></span>
+<span id="cb29-13"><a href="#cb29-13"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> other_table (field_1) <span class="kw">VALUES</span> (<span class="dv">1</span>);               <span class="co">-- Inserting verbatim values           </span></span>
+<span id="cb29-14"><a href="#cb29-14"></a></span>
+<span id="cb29-15"><a href="#cb29-15"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> other_table (field_1) <span class="kw">SELECT</span> <span class="fu">value</span> <span class="kw">FROM</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>;  <span class="co">-- Inserting from SELECT</span></span>
+<span id="cb29-16"><a href="#cb29-16"></a>  </span>
+<span id="cb29-17"><a href="#cb29-17"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>;                                           <span class="co">-- Simple drop commands</span></span>
+<span id="cb29-18"><a href="#cb29-18"></a></span>
+<span id="cb29-19"><a href="#cb29-19"></a><span class="cf">IF</span> OBJECT_ID(<span class="st">'ACHILLES_analysis'</span>, <span class="st">'U'</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw"><a href="https://rdrr.io/r/base/NULL.html">NULL</a></span>          <span class="co">-- Drop table if it exists</span></span>
+<span id="cb29-20"><a href="#cb29-20"></a>  <span class="kw">DROP</span> <span class="kw">TABLE</span> ACHILLES_analysis;</span>
+<span id="cb29-21"><a href="#cb29-21"></a>  </span>
+<span id="cb29-22"><a href="#cb29-22"></a><span class="cf">IF</span> OBJECT_ID(<span class="st">'tempdb..#cohorts'</span>, <span class="st">'U'</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw"><a href="https://rdrr.io/r/base/NULL.html">NULL</a></span>           <span class="co">-- Drop temp table if it exists</span></span>
+<span id="cb29-23"><a href="#cb29-23"></a>  <span class="kw">DROP</span> <span class="kw">TABLE</span> #cohorts;  </span>
+<span id="cb29-24"><a href="#cb29-24"></a></span>
+<span id="cb29-25"><a href="#cb29-25"></a><span class="kw">WITH</span> cte <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>) <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> cte;        <span class="co">-- Common table expressions</span></span>
+<span id="cb29-26"><a href="#cb29-26"></a></span>
+<span id="cb29-27"><a href="#cb29-27"></a><span class="kw">SELECT</span> <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> a <span class="kw">ORDER</span> <span class="kw">BY</span> b)        <span class="co">-- OVER clauses</span></span>
+<span id="cb29-28"><a href="#cb29-28"></a>  <span class="kw">AS</span> <span class="ot">"Row Number"</span> <span class="kw">FROM</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>;</span>
+<span id="cb29-29"><a href="#cb29-29"></a>  </span>
+<span id="cb29-30"><a href="#cb29-30"></a><span class="kw">SELECT</span> <span class="cf">CASE</span> <span class="cf">WHEN</span> a<span class="op">=</span><span class="dv">1</span> <span class="cf">THEN</span> a <span class="cf">ELSE</span> <span class="dv">0</span> <span class="cf">END</span> <span class="kw">AS</span> <span class="fu">value</span> <span class="kw">FROM</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>; <span class="co">-- CASE WHEN clauses</span></span>
+<span id="cb29-31"><a href="#cb29-31"></a></span>
+<span id="cb29-32"><a href="#cb29-32"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> a <span class="kw">UNION</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> b                       <span class="co">-- UNIONs</span></span>
+<span id="cb29-33"><a href="#cb29-33"></a></span>
+<span id="cb29-34"><a href="#cb29-34"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> a <span class="kw">INTERSECT</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> b                   <span class="co">-- INTERSECTIONs</span></span>
+<span id="cb29-35"><a href="#cb29-35"></a></span>
+<span id="cb29-36"><a href="#cb29-36"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> a <span class="kw">EXCEPT</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> b                      <span class="co">-- EXCEPT</span></span></code></pre></div>
 </div>
 <div id="string-concatenation" class="section level2">
 <h2 class="hasAnchor">
@@ -326,21 +328,21 @@
 <h2 class="hasAnchor">
 <a href="#table-aliases-and-the-as-keyword" class="anchor"></a>Table aliases and the AS keyword</h2>
 <p>Many SQL dialects allow the use of the <code>AS</code> keyword when defining a table alias, but will also work fine without the keyword. For example, both these SQL statements are fine for SQL Server, PostgreSQL, RedShift, etc.:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co">-- Using AS keyword</span></a>
-<a class="sourceLine" id="cb30-2" data-line-number="2"><span class="kw">SELECT</span> * </a>
-<a class="sourceLine" id="cb30-3" data-line-number="3"><span class="kw">FROM</span> my_table <span class="kw">AS</span> table_<span class="dv">1</span></a>
-<a class="sourceLine" id="cb30-4" data-line-number="4"><span class="kw">INNER</span> <span class="kw">JOIN</span> (</a>
-<a class="sourceLine" id="cb30-5" data-line-number="5">  <span class="kw">SELECT</span> * <span class="kw">FROM</span> other_table</a>
-<a class="sourceLine" id="cb30-6" data-line-number="6">) <span class="kw">AS</span> table_<span class="dv">2</span></a>
-<a class="sourceLine" id="cb30-7" data-line-number="7"><span class="kw">ON</span> table_1.person_id = table_2.person_id;</a>
-<a class="sourceLine" id="cb30-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb30-9" data-line-number="9"><span class="co">-- Not using AS keyword</span></a>
-<a class="sourceLine" id="cb30-10" data-line-number="10"><span class="kw">SELECT</span> * </a>
-<a class="sourceLine" id="cb30-11" data-line-number="11"><span class="kw">FROM</span> my_table table_<span class="dv">1</span></a>
-<a class="sourceLine" id="cb30-12" data-line-number="12"><span class="kw">INNER</span> <span class="kw">JOIN</span> (</a>
-<a class="sourceLine" id="cb30-13" data-line-number="13">  <span class="kw">SELECT</span> * <span class="kw">FROM</span> other_table</a>
-<a class="sourceLine" id="cb30-14" data-line-number="14">) table_<span class="dv">2</span></a>
-<a class="sourceLine" id="cb30-15" data-line-number="15"><span class="kw">ON</span> table_1.person_id = table_2.person_id;</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb30-1"><a href="#cb30-1"></a><span class="co">-- Using AS keyword</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb30-3"><a href="#cb30-3"></a><span class="kw">FROM</span> my_table <span class="kw">AS</span> table_1</span>
+<span id="cb30-4"><a href="#cb30-4"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> (</span>
+<span id="cb30-5"><a href="#cb30-5"></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> other_table</span>
+<span id="cb30-6"><a href="#cb30-6"></a>) <span class="kw">AS</span> table_2</span>
+<span id="cb30-7"><a href="#cb30-7"></a><span class="kw">ON</span> table_1.person_id <span class="op">=</span> table_2.person_id;</span>
+<span id="cb30-8"><a href="#cb30-8"></a></span>
+<span id="cb30-9"><a href="#cb30-9"></a><span class="co">-- Not using AS keyword</span></span>
+<span id="cb30-10"><a href="#cb30-10"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb30-11"><a href="#cb30-11"></a><span class="kw">FROM</span> my_table table_1</span>
+<span id="cb30-12"><a href="#cb30-12"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> (</span>
+<span id="cb30-13"><a href="#cb30-13"></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> other_table</span>
+<span id="cb30-14"><a href="#cb30-14"></a>) table_2</span>
+<span id="cb30-15"><a href="#cb30-15"></a><span class="kw">ON</span> table_1.person_id <span class="op">=</span> table_2.person_id;</span></code></pre></div>
 <p>However, Oracle will throw an error when the <code>AS</code> keyword is used. In the above example, the first query will fail. It is therefore recommended to not use the <code>AS</code> keyword when aliasing tables. (Note: we can’t make SqlRender handle this, because it can’t easily distinguish between table aliases where Oracle doesn’t allow <code>AS</code> to be used, and field aliases, where Oracle requires <code>AS</code> to be used.)</p>
 </div>
 <div id="temp-tables" class="section level2">
@@ -352,65 +354,65 @@
 <li>Allowing the user to specify the schema where the temp tables will be created.</li>
 </ol>
 <p>For example:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">sql &lt;-<span class="st"> "SELECT * FROM #children;"</span></a>
-<a class="sourceLine" id="cb31-2" data-line-number="2"><span class="kw"><a href="../reference/translate.html">translate</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>, <span class="dt">oracleTempSchema =</span> <span class="st">"temp_schema"</span>)</a></code></pre></div>
-<pre><code>#&gt; [1] "SELECT * FROM temp_schema.v0tixxxfchildren ;"</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>sql &lt;-<span class="st"> "SELECT * FROM #children;"</span></span>
+<span id="cb31-2"><a href="#cb31-2"></a><span class="kw"><a href="../reference/translate.html">translate</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>, <span class="dt">oracleTempSchema =</span> <span class="st">"temp_schema"</span>)</span></code></pre></div>
+<pre><code>#&gt; [1] "SELECT * FROM temp_schema.i2np5ciwchildren ;"</code></pre>
 <p>Note that the user will need to have write privileges on <code>temp_schema</code>.</p>
 <p>Also note that because Oracle has a limit on table names of 30 characters, <strong>temp table names are only allowed to be at most 22 characters long</strong> because else the name will become too long after appending the session ID.</p>
 <p>Futhermore, remember that temp tables are not automatically dropped on Oracle, so you will need to explicitly <code>TRUNCATE</code> and <code>DROP</code> all temp tables once you’re done with them to prevent orphan tables accumulating in the Oracle temp schema.</p>
 <p>If possible, try to avoid using temp tables altogether. Sometimes one could use Common Table Expressions (CTEs) when one would normally use a temp table. For example, instead of</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">INTO</span> #children <span class="kw">FROM</span> person <span class="kw">WHERE</span> year_of_birth &gt; <span class="dv">2000</span>;</a>
-<a class="sourceLine" id="cb33-2" data-line-number="2"><span class="kw">SELECT</span> * <span class="kw">FROM</span> #children <span class="kw">WHERE</span> gender = <span class="dv">8507</span>;</a></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb33-1"><a href="#cb33-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> #children <span class="kw">FROM</span> person <span class="kw">WHERE</span> year_of_birth <span class="op">&gt;</span> <span class="dv">2000</span>;</span>
+<span id="cb33-2"><a href="#cb33-2"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #children <span class="kw">WHERE</span> gender <span class="op">=</span> <span class="dv">8507</span>;</span></code></pre></div>
 <p>you could use</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw">WITH</span> children <span class="kw">AS</span> (<span class="kw">SELECT</span> * <span class="kw">FROM</span> person <span class="kw">WHERE</span> year_of_birth &gt; <span class="dv">2000</span>)</a>
-<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="kw">SELECT</span> * <span class="kw">FROM</span> children <span class="kw">WHERE</span> gender = <span class="dv">8507</span>;</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb34-1"><a href="#cb34-1"></a><span class="kw">WITH</span> children <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> person <span class="kw">WHERE</span> year_of_birth <span class="op">&gt;</span> <span class="dv">2000</span>)</span>
+<span id="cb34-2"><a href="#cb34-2"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> children <span class="kw">WHERE</span> gender <span class="op">=</span> <span class="dv">8507</span>;</span></code></pre></div>
 </div>
 <div id="implicit-casts" class="section level2">
 <h2 class="hasAnchor">
 <a href="#implicit-casts" class="anchor"></a>Implicit casts</h2>
 <p>One of the few points where SQL Server is less explicit than other dialects is that it allows implicit casts. For example, this code will work on SQL Server:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw">CREATE</span> <span class="kw">TABLE</span> #temp (txt <span class="dt">VARCHAR</span>);</a>
-<a class="sourceLine" id="cb35-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb35-3" data-line-number="3"><span class="kw">INSERT</span> <span class="kw">INTO</span> #temp</a>
-<a class="sourceLine" id="cb35-4" data-line-number="4"><span class="kw">SELECT</span> <span class="st">'1'</span>;</a>
-<a class="sourceLine" id="cb35-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb35-6" data-line-number="6"><span class="kw">SELECT</span> * <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> txt = <span class="dv">1</span>;</a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb35-1"><a href="#cb35-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> #temp (txt <span class="dt">VARCHAR</span>);</span>
+<span id="cb35-2"><a href="#cb35-2"></a></span>
+<span id="cb35-3"><a href="#cb35-3"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> #temp</span>
+<span id="cb35-4"><a href="#cb35-4"></a><span class="kw">SELECT</span> <span class="st">'1'</span>;</span>
+<span id="cb35-5"><a href="#cb35-5"></a></span>
+<span id="cb35-6"><a href="#cb35-6"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> txt <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div>
 <p>Even though <code>txt</code> is a VARCHAR field and we are comparing it with an integer, SQL Server will automatically cast one of the two to the correct type to allow the comparison. In contrast, other dialects such as PosgreSQL will throw an error when trying to compare a VARCHAR with an INT.</p>
 <p>You should therefore always make casts explicit. In the above example, the last statement should be replaced with either</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> txt = <span class="fu">CAST</span>(<span class="dv">1</span> <span class="kw">AS</span> <span class="dt">VARCHAR</span>);</a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb36-1"><a href="#cb36-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> txt <span class="op">=</span> <span class="fu">CAST</span>(<span class="dv">1</span> <span class="kw">AS</span> <span class="dt">VARCHAR</span>);</span></code></pre></div>
 <p>or</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> <span class="fu">CAST</span>(txt <span class="kw">AS</span> <span class="dt">INT</span>) = <span class="dv">1</span>;</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb37-1"><a href="#cb37-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> <span class="fu">CAST</span>(txt <span class="kw">AS</span> <span class="dt">INT</span>) <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div>
 </div>
 <div id="case-sensitivity-in-string-comparisons" class="section level2">
 <h2 class="hasAnchor">
 <a href="#case-sensitivity-in-string-comparisons" class="anchor"></a>Case sensitivity in string comparisons</h2>
 <p>Some DBMS platforms such as SQL Server always perform string comparisons in a case-insensitive way, while others such as PostgreSQL are always case sensitive. It is therefore recommended to always assume case-sensitive comparisons, and to explicitly make comparisons case-insensitive when unsure about the case. For example, instead of</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">FROM</span> concept <span class="kw">WHERE</span> concep_class_id = <span class="st">'Clinical Finding'</span></a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb38-1"><a href="#cb38-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> concept <span class="kw">WHERE</span> concep_class_id <span class="op">=</span> <span class="st">'Clinical Finding'</span></span></code></pre></div>
 <p>it is preferred to use</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">FROM</span> concept <span class="kw">WHERE</span> <span class="fu">LOWER</span>(concep_class_id) = <span class="st">'clinical finding'</span></a></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb39-1"><a href="#cb39-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> concept <span class="kw">WHERE</span> <span class="fu">LOWER</span>(concep_class_id) <span class="op">=</span> <span class="st">'clinical finding'</span></span></code></pre></div>
 </div>
 <div id="schemas-and-databases" class="section level2">
 <h2 class="hasAnchor">
 <a href="#schemas-and-databases" class="anchor"></a>Schemas and databases</h2>
 <p>In SQL Server, tables are located in a schema, and schemas reside in a database. For example, <code>cdm_data.dbo.person</code> refers to the <code>person</code> table in the <code>dbo</code> schema in the <code>cdm_data</code> database. In other dialects, even though a similar hierarchy often exists they are used very differently. In SQL Server, there is typically one schema per database (often called <code>dbo</code>), and users can easily use data in different databases. On other platforms, for example in PostgreSQL, it is not possible to use data across databases in a single session, but there are often many schemas in a database. In PostgreSQL one could say that the equivalent of SQL Server’s database is the schema.</p>
 <p>We therefore recommend concatenating SQL Server’s database and schema into a single parameter, which we typically call <code>@databaseSchema</code>. For example, we could have the parameterized SQL</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">FROM</span> @databaseSchema.person</a></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb40-1"><a href="#cb40-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> @databaseSchema.person</span></code></pre></div>
 <p>where on SQL Server we can include both database and schema names in the value: <code>databaseSchema = "cdm_data.dbo"</code>. On other platforms, we can use the same code, but now only specify the schema as the parameter value: <code>databaseSchema = "cdm_data"</code>.</p>
 <p>The one situation where this will fail is the <code>USE</code> command, since <code>USE cdm_data.dbo;</code> will throw an error. It is therefore preferred not to use the <code>USE</code> command, but always specify the database / schema where a table is located. However, if one wanted to use it anyway, we recommend creating two variables, one called <code>@database</code> and the other called <code>@databaseSchema</code>. For example, for this parameterized SQL:</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb41-1" data-line-number="1"><span class="kw">SELECT</span> * <span class="kw">FROM</span> @databaseSchema.person;</a>
-<a class="sourceLine" id="cb41-2" data-line-number="2"><span class="kw">USE</span> @database;</a>
-<a class="sourceLine" id="cb41-3" data-line-number="3"><span class="kw">SELECT</span> * <span class="kw">FROM</span> person</a></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb41-1"><a href="#cb41-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> @databaseSchema.person;</span>
+<span id="cb41-2"><a href="#cb41-2"></a><span class="kw">USE</span> @database;</span>
+<span id="cb41-3"><a href="#cb41-3"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> person</span></code></pre></div>
 <p>we can set <code>database = "cdm_data"</code> and the other called <code>databaseSchema = "cdm_data.dbo"</code>. On platforms other than SQL Server, the two variables will hold the same value and only on SQL Server will they be different. Within an R function, it is even possible to derive one variable from the other, so the user of your function would need to specify only one value:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1">foo &lt;-<span class="st"> </span><span class="cf">function</span>(databaseSchema, dbms) {</a>
-<a class="sourceLine" id="cb42-2" data-line-number="2">    database &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/strsplit">strsplit</a></span>(databaseSchema, <span class="st">"</span><span class="ch">\\</span><span class="st">."</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>]</a>
-<a class="sourceLine" id="cb42-3" data-line-number="3">    sql &lt;-<span class="st"> "SELECT * FROM @databaseSchema.person; USE @database; SELECT * FROM person;"</span></a>
-<a class="sourceLine" id="cb42-4" data-line-number="4">    sql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">databaseSchema =</span> databaseSchema, <span class="dt">database =</span> database)</a>
-<a class="sourceLine" id="cb42-5" data-line-number="5">    sql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/translate.html">translate</a></span>(sql, <span class="dt">targetDialect =</span> dbms)</a>
-<a class="sourceLine" id="cb42-6" data-line-number="6">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(sql)</a>
-<a class="sourceLine" id="cb42-7" data-line-number="7">}</a>
-<a class="sourceLine" id="cb42-8" data-line-number="8"><span class="kw">foo</span>(<span class="st">"cdm_data.dbo"</span>, <span class="st">"sql server"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>foo &lt;-<span class="st"> </span><span class="cf">function</span>(databaseSchema, dbms) {</span>
+<span id="cb42-2"><a href="#cb42-2"></a>    database &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span>(databaseSchema, <span class="st">"</span><span class="ch">\\</span><span class="st">."</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>]</span>
+<span id="cb42-3"><a href="#cb42-3"></a>    sql &lt;-<span class="st"> "SELECT * FROM @databaseSchema.person; USE @database; SELECT * FROM person;"</span></span>
+<span id="cb42-4"><a href="#cb42-4"></a>    sql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/render.html">render</a></span>(sql, <span class="dt">databaseSchema =</span> databaseSchema, <span class="dt">database =</span> database)</span>
+<span id="cb42-5"><a href="#cb42-5"></a>    sql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/translate.html">translate</a></span>(sql, <span class="dt">targetDialect =</span> dbms)</span>
+<span id="cb42-6"><a href="#cb42-6"></a>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(sql)</span>
+<span id="cb42-7"><a href="#cb42-7"></a>}</span>
+<span id="cb42-8"><a href="#cb42-8"></a><span class="kw">foo</span>(<span class="st">"cdm_data.dbo"</span>, <span class="st">"sql server"</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM cdm_data.dbo.person; USE cdm_data; SELECT * FROM person;"</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="kw">foo</span>(<span class="st">"cdm_data"</span>, <span class="st">"postgresql"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="kw">foo</span>(<span class="st">"cdm_data"</span>, <span class="st">"postgresql"</span>)</span></code></pre></div>
 <pre><code>#&gt; [1] "SELECT * FROM cdm_data.person; SET search_path TO cdm_data; SELECT * FROM person;"</code></pre>
 </div>
 <div id="optimization-for-massively-parallel-processing" class="section level2">
@@ -418,20 +420,20 @@
 <a href="#optimization-for-massively-parallel-processing" class="anchor"></a>Optimization for massively parallel processing</h2>
 <p>Both PDW and RedShift are massively parallel processing platforms, meaning they consist of many nodes that work together. In such an environment, significant increases in performance can be achieved by finetuning the SQL for these platforms. Probably most importantly, developers can specify the way data is distributed over the nodes. Ideally, data in a node only needs to be combined with data in the same node. For example, if I have two tables with the field <code>person_id</code>, I would like all records with the same person ID to be on the same node, so a join on <code>person_id</code> can be performed locally without exchanging data between nodes.</p>
 <p>SQL Server SQL, our source dialect, does not allow for these optimizations, so we’ve introduced the notion of hints. In the following example, a hint is provided on which field should be used for the distribution of data across nodes:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></a>
-<a class="sourceLine" id="cb46-2" data-line-number="2"><span class="kw">SELECT</span> * <span class="kw">INTO</span> one_table <span class="kw">FROM</span> other_table;</a></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb46-1"><a href="#cb46-1"></a><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></span>
+<span id="cb46-2"><a href="#cb46-2"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> one_table <span class="kw">FROM</span> other_table;</span></code></pre></div>
 <p>which will translate into the following on PDW:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb47-1" data-line-number="1"><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></a>
-<a class="sourceLine" id="cb47-2" data-line-number="2"><span class="kw">IF</span> XACT_STATE() = <span class="dv">1</span> <span class="kw">COMMIT</span>; </a>
-<a class="sourceLine" id="cb47-3" data-line-number="3"><span class="kw">CREATE</span> <span class="kw">TABLE</span> one_table <span class="kw">WITH</span> (DISTRIBUTION = <span class="kw">HASH</span>(person_id)) <span class="kw">AS</span></a>
-<a class="sourceLine" id="cb47-4" data-line-number="4"><span class="kw">SELECT</span> * <span class="kw">FROM</span> other_table;</a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb47-1"><a href="#cb47-1"></a><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></span>
+<span id="cb47-2"><a href="#cb47-2"></a><span class="cf">IF</span> XACT_STATE() <span class="op">=</span> <span class="dv">1</span> <span class="kw">COMMIT</span>; </span>
+<span id="cb47-3"><a href="#cb47-3"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> one_table <span class="kw">WITH</span> (DISTRIBUTION <span class="op">=</span> <span class="kw">HASH</span>(person_id)) <span class="kw">AS</span></span>
+<span id="cb47-4"><a href="#cb47-4"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> other_table;</span></code></pre></div>
 <p>Another tuning parameter is the key to sort a table on. This can be also be specified in a hint:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span></a>
-<a class="sourceLine" id="cb48-2" data-line-number="2"><span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date);</a></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb48-1"><a href="#cb48-1"></a><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span></span>
+<span id="cb48-2"><a href="#cb48-2"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date);</span></code></pre></div>
 <p>translates to the following on RedShift:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb49-1" data-line-number="1"><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span></a>
-<a class="sourceLine" id="cb49-2" data-line-number="2"><span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date)</a>
-<a class="sourceLine" id="cb49-3" data-line-number="3">INTERLEAVED SORTKEY(start_date);</a></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb49-1"><a href="#cb49-1"></a><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span></span>
+<span id="cb49-2"><a href="#cb49-2"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date)</span>
+<span id="cb49-3"><a href="#cb49-3"></a>INTERLEAVED SORTKEY(start_date);</span></code></pre></div>
 <p>The hints should be formatted exactly as shown above, and directly precede the statement where the table is created.</p>
 </div>
 </div>
@@ -440,10 +442,10 @@
 <a href="#debugging-parameterized-sql" class="anchor"></a>Debugging parameterized SQL</h1>
 <p>Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can be tested against a database server, but changes to the code should be made in the parameterized (pre-rendered) SQL.</p>
 <p>A Shiny app is included in the SqlRender package for interactively editing source SQL and generating rendered and translated SQL. The app can be started using:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1"><span class="kw"><a href="../reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a><span class="kw"><a href="../reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span>()</span></code></pre></div>
 <p>Which will open the default browser with the app.</p>
 <p>In addition, two functions have been developed to aid the debugging process: <code>renderFile()</code> and <code>translateFile()</code>. These can be used to read SQL from file, render or translate it, and write it back to file. For example:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" data-line-number="1"><span class="kw">translateFile</span>(<span class="st">"parameterizedSql.txt"</span>, <span class="st">"renderedSql.txt"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a><span class="kw">translateFile</span>(<span class="st">"parameterizedSql.txt"</span>, <span class="st">"renderedSql.txt"</span>)</span></code></pre></div>
 <p>will render the file, using the default parameter values specified in the SQL. What works well for us is editing in the parameterized file, (re)running the command above, and have the rendered SQL file open in a SQL client for testing. Any problems reported by the server can be dealt with in the source SQL, and can quickly be re-rendered.</p>
 </div>
 <div id="developing-r-packages-that-contain-parameterized-sql" class="section level1">
@@ -451,36 +453,36 @@
 <a href="#developing-r-packages-that-contain-parameterized-sql" class="anchor"></a>Developing R packages that contain parameterized SQL</h1>
 <p>Often, the SQL code will become part of an R package, where it might be used to perform initial data-preprocessing and extraction before further analysis. We’ve developed the following practice for doing so: The parameterized SQL should be located in the <em>inst/sql/</em> folder of the package. The parameterized SQL for SQL Server should be in the <em>inst/sql/sql_server/</em> folder. If for some reason you do not want to use the translation functions to generate the SQL for some dialect (e.g because dialect specific code might be written that gives better performance), a dialect-specific version of the parameterized SQL should be placed in a folder with the name of that dialect, for example <em>inst/sql/oracle/</em>. SqlRender has a function <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> that will first check if a dialect-specific version is available for the target dialect. If it is, that version will be rendered, else the SQL Server version will be rendered and subsequently translated to the target dialect.</p>
 <p>The <code><a href="../reference/createRWrapperForSql.html">createRWrapperForSql()</a></code> function can be used to create an R wrapper around a rendered SQL file, using the <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> function . For example, suppose we have a text file called <em>test.sql</em> containing the following parameterized SQL:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb52-1" data-line-number="1">{<span class="kw">DEFAULT</span> @selected_value = <span class="dv">1</span>}</a>
-<a class="sourceLine" id="cb52-2" data-line-number="2"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/table">table</a></span> <span class="kw">INTO</span> result <span class="kw">where</span> x = @selected_value;</a></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb52-1"><a href="#cb52-1"></a>{<span class="kw">DEFAULT</span> @selected_value <span class="op">=</span> <span class="dv">1</span>}</span>
+<span id="cb52-2"><a href="#cb52-2"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span> <span class="kw">INTO</span> result <span class="kw">where</span> x <span class="op">=</span> @selected_value;</span></code></pre></div>
 <p>Then the command</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="kw"><a href="../reference/createRWrapperForSql.html">createRWrapperForSql</a></span>(<span class="dt">sqlFilename =</span> <span class="st">"test.sql"</span>, </a>
-<a class="sourceLine" id="cb53-2" data-line-number="2">                     <span class="dt">rFilename =</span> <span class="st">"test.R"</span>, </a>
-<a class="sourceLine" id="cb53-3" data-line-number="3">                     <span class="dt">packageName =</span> <span class="st">"myPackage"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="kw"><a href="../reference/createRWrapperForSql.html">createRWrapperForSql</a></span>(<span class="dt">sqlFilename =</span> <span class="st">"test.sql"</span>, </span>
+<span id="cb53-2"><a href="#cb53-2"></a>                     <span class="dt">rFilename =</span> <span class="st">"test.R"</span>, </span>
+<span id="cb53-3"><a href="#cb53-3"></a>                     <span class="dt">packageName =</span> <span class="st">"myPackage"</span>)</span></code></pre></div>
 <p>would result in the file <em>test.R</em> being generated containing this R code:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1"><span class="co">#' Todo: add title</span></a>
-<a class="sourceLine" id="cb54-2" data-line-number="2"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb54-3" data-line-number="3"><span class="co">#' @description</span></a>
-<a class="sourceLine" id="cb54-4" data-line-number="4"><span class="co">#' Todo: add description</span></a>
-<a class="sourceLine" id="cb54-5" data-line-number="5"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb54-6" data-line-number="6"><span class="co">#' @details</span></a>
-<a class="sourceLine" id="cb54-7" data-line-number="7"><span class="co">#' Todo: add details</span></a>
-<a class="sourceLine" id="cb54-8" data-line-number="8"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb54-9" data-line-number="9"><span class="co">#' @param connectionDetails   An R object of type \code{ConnectionDetails} created ...</span></a>
-<a class="sourceLine" id="cb54-10" data-line-number="10"><span class="co">#' @param selectedValue</span></a>
-<a class="sourceLine" id="cb54-11" data-line-number="11"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb54-12" data-line-number="12"><span class="co">#' @export</span></a>
-<a class="sourceLine" id="cb54-13" data-line-number="13">test &lt;-<span class="st"> </span><span class="cf">function</span>(connectionDetails, <span class="dt">selectedValue =</span> <span class="dv">1</span>) {</a>
-<a class="sourceLine" id="cb54-14" data-line-number="14">    renderedSql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql</a></span>(<span class="st">"test.txt"</span>, <span class="dt">packageName =</span> <span class="st">"myPackage"</span>, </a>
-<a class="sourceLine" id="cb54-15" data-line-number="15">        <span class="dt">dbms =</span> connectionDetails<span class="op">$</span>dbms, <span class="dt">selected_value =</span> selectedValue)</a>
-<a class="sourceLine" id="cb54-16" data-line-number="16">    conn &lt;-<span class="st"> </span><span class="kw">connect</span>(connectionDetails)</a>
-<a class="sourceLine" id="cb54-17" data-line-number="17">    </a>
-<a class="sourceLine" id="cb54-18" data-line-number="18">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/writeLines">writeLines</a></span>(<span class="st">"Executing multiple queries. This could take a while"</span>)</a>
-<a class="sourceLine" id="cb54-19" data-line-number="19">    <span class="kw">executeSql</span>(conn, renderedSql)</a>
-<a class="sourceLine" id="cb54-20" data-line-number="20">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/writeLines">writeLines</a></span>(<span class="st">"Done"</span>)</a>
-<a class="sourceLine" id="cb54-21" data-line-number="21">    </a>
-<a class="sourceLine" id="cb54-22" data-line-number="22">    dummy &lt;-<span class="st"> </span><span class="kw">dbDisconnect</span>(conn)</a>
-<a class="sourceLine" id="cb54-23" data-line-number="23">}</a></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="co">#' Todo: add title</span></span>
+<span id="cb54-2"><a href="#cb54-2"></a><span class="co">#'</span></span>
+<span id="cb54-3"><a href="#cb54-3"></a><span class="co">#' @description</span></span>
+<span id="cb54-4"><a href="#cb54-4"></a><span class="co">#' Todo: add description</span></span>
+<span id="cb54-5"><a href="#cb54-5"></a><span class="co">#'</span></span>
+<span id="cb54-6"><a href="#cb54-6"></a><span class="co">#' @details</span></span>
+<span id="cb54-7"><a href="#cb54-7"></a><span class="co">#' Todo: add details</span></span>
+<span id="cb54-8"><a href="#cb54-8"></a><span class="co">#'</span></span>
+<span id="cb54-9"><a href="#cb54-9"></a><span class="co">#' @param connectionDetails   An R object of type \code{ConnectionDetails} created ...</span></span>
+<span id="cb54-10"><a href="#cb54-10"></a><span class="co">#' @param selectedValue</span></span>
+<span id="cb54-11"><a href="#cb54-11"></a><span class="co">#'</span></span>
+<span id="cb54-12"><a href="#cb54-12"></a><span class="co">#' @export</span></span>
+<span id="cb54-13"><a href="#cb54-13"></a>test &lt;-<span class="st"> </span><span class="cf">function</span>(connectionDetails, <span class="dt">selectedValue =</span> <span class="dv">1</span>) {</span>
+<span id="cb54-14"><a href="#cb54-14"></a>    renderedSql &lt;-<span class="st"> </span><span class="kw"><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql</a></span>(<span class="st">"test.txt"</span>, <span class="dt">packageName =</span> <span class="st">"myPackage"</span>, </span>
+<span id="cb54-15"><a href="#cb54-15"></a>        <span class="dt">dbms =</span> connectionDetails<span class="op">$</span>dbms, <span class="dt">selected_value =</span> selectedValue)</span>
+<span id="cb54-16"><a href="#cb54-16"></a>    conn &lt;-<span class="st"> </span><span class="kw">connect</span>(connectionDetails)</span>
+<span id="cb54-17"><a href="#cb54-17"></a>    </span>
+<span id="cb54-18"><a href="#cb54-18"></a>    <span class="kw"><a href="https://rdrr.io/r/base/writeLines.html">writeLines</a></span>(<span class="st">"Executing multiple queries. This could take a while"</span>)</span>
+<span id="cb54-19"><a href="#cb54-19"></a>    <span class="kw">executeSql</span>(conn, renderedSql)</span>
+<span id="cb54-20"><a href="#cb54-20"></a>    <span class="kw"><a href="https://rdrr.io/r/base/writeLines.html">writeLines</a></span>(<span class="st">"Done"</span>)</span>
+<span id="cb54-21"><a href="#cb54-21"></a>    </span>
+<span id="cb54-22"><a href="#cb54-22"></a>    dummy &lt;-<span class="st"> </span><span class="kw">dbDisconnect</span>(conn)</span>
+<span id="cb54-23"><a href="#cb54-23"></a>}</span></code></pre></div>
 <p>This code expects the file <em>test.sql</em> to be located in the <em>inst/sql/sql_server/</em> folder of the package source.</p>
 <p>Note that the parameters are identified by the declaration of default values, and that snake_case names (our standard for SQL) are converted to camelCase names (our standard for R).</p>
 </div>
@@ -520,17 +522,20 @@
 </div>
 
 
+
       <footer><div class="copyright">
   <p>Developed by Martijn Schuemie, Marc Suchard.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.9100.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

@@ -1,10 +1,3 @@
-SqlRender 1.6.4
-===============
-
-Changes:
-
-1. No longer automatically casting literal to TEXT in RedShift CTE. Users are required to do explicit casts instead.
-
 SqlRender 1.6.3
 ===============
 
@@ -14,11 +7,21 @@ Changes:
 
 2. SQLite now dropping schema name when creating and dropping index (as this throws an error if left).
 
+3.  No longer automatically casting literal to TEXT in RedShift CTE. Users are required to do explicit casts instead.
+
+4. BigQuery insertTable now also uses CTAS hack.
+
+5. Added translation rules for HASHBYTES.
+
 Bugfixes:
 
 1. Fixing GETDATE translation for SQLite.
 
 2. When calling 'render', the replacement value can now contain a $ sign. (Previously this caused an error).
+
+3. isNumeric can now also be applied to numeric fields in Postgres.
+
+4. Better handling of illegal characters in Impala.
 
 SqlRender 1.6.2
 ===============

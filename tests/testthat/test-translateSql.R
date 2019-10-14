@@ -964,11 +964,11 @@ test_that("translate sql server -> oracle ISNUMERIC", {
 test_that("translate sql server -> postgres ISNUMERIC", {
   sql <- translate("SELECT CASE WHEN ISNUMERIC(a) = 1 THEN a ELSE b FROM c;",
                       targetDialect = "postgresql")
-  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN CASE WHEN (CAST(a AS VARCHAR) ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;")
   sql <- translate("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "postgresql")
-  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (CAST(a AS VARCHAR) ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1")
   sql <- translate("SELECT a FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "postgresql")
-  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (a ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM table WHERE CASE WHEN (CAST(a AS VARCHAR) ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 0")
 })
 
 test_that("translate sql server -> bigquery lowercase all but strings and variables", {
