@@ -573,6 +573,8 @@ netezza,DATETIME2,TIMESTAMP
 netezza,"ISNUMERIC(@a)","CASE WHEN translate(@a,'0123456789','') in ('','.','-','-.') THEN 1 ELSE 0 END"
 netezza,"HASHBYTES('MD5',@a)","hash(@a)"
 netezza,"CONVERT(VARBINARY, @a, 1)","hex_to_binary(@a)"
+bigquery,"ISNUMERIC(@a)=1 AND CAST(@a AS INT)","SAFE_CAST(@a as int64)"
+bigquery,"ISNUMERIC(@a)=1 AND CAST(@a AS FLOAT)","SAFE_CAST(@a as float64)"
 bigquery,"CONVERT(VARBINARY, @a, 1)","safe_cast(concat('0x', @a) as int64)"
 bigquery,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
