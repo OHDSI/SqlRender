@@ -32,7 +32,7 @@ dashboardPage(
       column(width = 3,
              box(background = "light-blue",
                  h4("Target dialect"), width = NULL,
-                 selectInput("dialect", NULL, choices = c("BigQuery", "Impala", "Netezza", "Oracle", "PDW", "PostgreSQL", "RedShift", "SQL Server", "SQLite"), selected = "SQL Server"),
+                 selectInput("dialect", NULL, choices = c("BigQuery", "Impala", "Netezza", "Oracle", "PDW", "PostgreSQL", "RedShift", "SQL Server", "SQLite", "Hive"), selected = "SQL Server"),
                  h4("Oracle temp schema"),
                  textInput("oracleTempSchema", NULL),
                  h4("Parameters"),
