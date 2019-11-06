@@ -20,7 +20,7 @@ import java.util.List;
 import org.ohdsi.sql.SqlTranslate.Block;
 import org.ohdsi.sql.SqlTranslate.MatchedPattern;
 
-public class BigQueryTranslate {
+public class BigQuerySparkTranslate {
 
 	/**
 	 * Iterates the elements of a comma-separated list of expressions (SELECT, GROUP BY, or ORDER BY).
@@ -373,5 +373,25 @@ public class BigQueryTranslate {
 		sql = bigQueryConvertSelectListReferences(sql, orderBy + ")", CommaListIterator.ListType.ORDER_BY);
 
 		return sql;
+	}
+	
+		/**
+	 * spark specific translations
+	 *
+	 * @param sql
+	 *            - the query to translate
+	 * @return the query after translation
+	 */
+	public static String translateSpark(String sql) {
+		sql = bigQueryLowerCase(sql);
+		sql = bigQueryAliasCommonTableExpressions(sql, "with @@a (@@b) as (select @@c from @@d)");
+		sql = bigQueryAliasCommonTableExpressions(sql, "with @@a (@@b) as (select @@c union @@d)");
+		sql = bigQueryAliasCommonTableExpressions(sql, ", @@a (@@b) as (select @@c from @@d)");
+
+		if (sql.toLowerCase().contains("cross join") &
+				sql.toLowerCase().contains("insert")) {
+			sql = "set spark.sql.crossJoin.enabled = true; \n\n" + sql;
+		}
+    return sql;
 	}
 }
