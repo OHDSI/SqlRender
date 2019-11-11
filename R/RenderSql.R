@@ -126,8 +126,8 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 #' \code{\link{splitSql}}.
 #'
 #' @param sql                The SQL to be translated
-#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
-#'                           "redshift" are supported
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery",
+#'                           "redshift", and "spark" are supported
 #' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
 #' @return
 #' A character string containing the translated SQL.
@@ -158,8 +158,8 @@ translate <- function(sql = "",
 #' function returns a character vector instead of a list.
 #'
 #' @param sql                The SQL to be translated
-#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
-#'                           "redshift" are supported
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery",
+#'                           "redshift", and "spark" are supported
 #' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
 #' 
 #' @return
@@ -190,8 +190,8 @@ translateSql <- function(sql = "",
 #' in the SQL.
 #'
 #' @param sql                The SQL to be translated
-#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
-#'                           "redshift" are supported
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery",
+#'                           "redshift", and "spark" are supported
 #' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
 #' @return
 #' A character vector with the translated SQL.
