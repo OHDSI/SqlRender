@@ -4,8 +4,12 @@
 \alias{createRWrapperForSql}
 \title{Create an R wrapper for SQL}
 \usage{
-createRWrapperForSql(sqlFilename, rFilename, packageName,
-  createRoxygenTemplate = TRUE)
+createRWrapperForSql(
+  sqlFilename,
+  rFilename,
+  packageName,
+  createRoxygenTemplate = TRUE
+)
 }
 \arguments{
 \item{sqlFilename}{The SQL file.}
