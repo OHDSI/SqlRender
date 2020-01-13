@@ -4,8 +4,7 @@
 \alias{translateSingleStatement}
 \title{Translates a single SQL statement from one dialect to another}
 \usage{
-translateSingleStatement(sql = "", targetDialect,
-  oracleTempSchema = NULL)
+translateSingleStatement(sql = "", targetDialect, oracleTempSchema = NULL)
 }
 \arguments{
 \item{sql}{The SQL to be translated}

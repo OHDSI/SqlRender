@@ -37,7 +37,7 @@ render("SELECT * FROM @a {1 IN (@c)}?{WHERE @b = 1};",
        a = "myTable",
        b = "y",
        c = c(1, 2, 3, 4))
-render("{DEFAULT @b = \\"someField\\"}SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",
+render("{DEFAULT @b = \"someField\"}SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",
        a = "myTable")
 render("SELECT * FROM @a {@a == 'myTable' & @b != 'x'}?{WHERE @b = 1};",
        a = "myTable",
