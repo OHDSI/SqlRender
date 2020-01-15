@@ -1,3 +1,11 @@
+SqlRender 1.6.4
+===============
+
+Changes:
+
+1. Adding support for Apache Hive LLAP.
+
+
 SqlRender 1.6.3
 ===============
 
