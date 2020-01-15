@@ -3012,3 +3012,9 @@ test_that("translate sql server -> Hive AS", {
     targetDialect = "hive")
     expect_equal_ignore_spaces(sql, "as test_variable")
 })
+
+test_that("translate sql server -> Hive HASHBYTES", {
+    sql <- translate("SELECT AVG(CAST(CAST(CONVERT(VARBINARY, HASHBYTES('MD5',line), 1) AS INT) AS BIGINT)) as checksum",
+      targetDialect = "hive")
+    expect_equal_ignore_spaces(sql, "SELECT AVG(CAST(CAST(hash(line) AS INT) AS BIGINT)) as checksum")
+})
