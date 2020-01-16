@@ -770,6 +770,8 @@ spark,DATETIME2,TIMESTAMP
 spark,VARCHAR(MAX),STRING
 spark,VARCHAR(@a),STRING
 spark,VARCHAR,STRING
+spark,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d\nUSING DELTA\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nOPTIMIZE @d ZORDER BY @key;
+spark,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE @b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;\nOPTIMIZE @b ZORDER BY @key;
 spark,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TABLE %temp_prefix%%session_id%@d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 spark,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 spark,SELECT @a INTO #@b FROM @c;,CREATE TABLE %temp_prefix%%session_id%@b\nAS\nSELECT\n@a\nFROM\n@c;
@@ -780,3 +782,5 @@ spark,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 spark,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as STRING) @s2)"
 spark,UPDATE STATISTICS @a;,
 spark,"insert into @a (@b)","insert into @a"
+spark,"select @a from (@b) @x,(@c)","select @a from (@b) @x cross join (@c)"
+spark,"(select @a from @b) @x,(select @c from @d)","(select @a from @b) @x cross join (select @c from @d)"

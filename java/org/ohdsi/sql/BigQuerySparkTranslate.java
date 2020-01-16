@@ -392,6 +392,7 @@ public class BigQuerySparkTranslate {
 				sql.toLowerCase().contains("insert")) {
 			sql = "set spark.sql.crossJoin.enabled = true; \n\n" + sql;
 		}
-    return sql;
+		
+		return sql;
 	}
 }
