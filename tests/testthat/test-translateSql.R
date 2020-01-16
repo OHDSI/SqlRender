@@ -2705,3 +2705,15 @@ test_that("translate sql server -> spark ctas", {
   expect_equal_ignore_spaces(sql, "CREATE TABLE @b  AS\nSELECT\n@a \nFROM\n@c;")
 })
 
+test_that("translate sql server -> spark ctas with distribute_on_key", {
+  sql <- translate(sql = "--HINT DISTRIBUTE_ON_KEY(key)
+                          SELECT @a INTO @b FROM @c;",
+                   targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(key) \nCREATE TABLE @b \nUSING DELTA\nAS\nSELECT\n@a \nFROM\n@c;\nOPTIMIZE @b  ZORDER BY key;")
+})
+
+test_that("translate sql server -> spark cross join", {
+  sql <- translate(sql = "SELECT @a from (@b) x, (@c) y;",
+                   targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "select @a  from (@b) x cross join (@c) y;")
+})

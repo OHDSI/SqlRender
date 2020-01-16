@@ -43,7 +43,7 @@ public class SqlTranslate {
 	private static String						SOURCE_DIALECT					= "sql server";
 	private static String						BIG_QUERY						= "bigquery";
 	private static String 						IMPALA 							= "impala";
-	private static String           SPARK               = "spark";
+	private static String           			SPARK               			= "spark";
 
 	protected static class Block extends StringUtils.Token {
 		public boolean	isVariable;
