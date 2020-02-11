@@ -22,23 +22,23 @@
 	<distributionManagement>
 		<repository>
 			<id>internal</id>
-			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
+			<url>https://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
-			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/snapshots</url>
+			<url>https://repo.ohdsi.org:8085/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>central</id>
 			<name>Central Repository</name>
-			<url>http://repo.maven.apache.org/maven2/ </url>
+			<url>https://repo.maven.apache.org/maven2/ </url>
 		</repository>
 		<repository>
 			<id>ohdsi</id>
 			<name>repo.ohdsi.org</name>
-			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
+			<url>https://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
 		</repository>
 	</repositories>
 	<build>
