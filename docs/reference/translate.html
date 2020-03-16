@@ -8,10 +8,12 @@
 
 <title>Translates SQL from one dialect to another — translate • SqlRender</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -32,10 +34,11 @@
 
 
 
-<meta property="og:title" content="Translates SQL from one dialect to another — translate" />
 
+<meta property="og:title" content="Translates SQL from one dialect to another — translate" />
 <meta property="og:description" content="translate translates SQL from one dialect to another." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -66,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.4</span>
       </span>
     </div>
 
@@ -97,7 +100,6 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/OHDSI/SqlRender">
@@ -124,13 +126,11 @@
     </div>
 
     <div class="ref-description">
-    
     <p><code>translate</code> translates SQL from one dialect to another.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>translate</span>(<span class='kw'>sql</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>targetDialect</span>, <span class='kw'>oracleTempSchema</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -140,26 +140,24 @@
     </tr>
     <tr>
       <th>targetDialect</th>
-      <td><p>The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
-"redshift" are supported</p></td>
+      <td><p>The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery",
+"redshift", and "spark" are supported</p></td>
     </tr>
     <tr>
       <th>oracleTempSchema</th>
       <td><p>A schema that can be used to create temp tables in when using Oracle or Impala.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A character string containing the translated SQL.</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function takes SQL in one dialect and translates it into another. It uses simple pattern
 replacement, so its functionality is limited. Note that trailing semicolons are not removed 
 for Oracle, which is required before sending a statement through JDBC. This will be done by 
 <code><a href='splitSql.html'>splitSql</a></code>.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>translate</span>(<span class='st'>"USE my_schema;"</span>, <span class='kw'>targetDialect</span> <span class='kw'>=</span> <span class='st'>"oracle"</span>)</div><div class='output co'>#&gt; [1] "ALTER SESSION SET current_schema = my_schema;"</div><div class='input'>
@@ -169,11 +167,8 @@ for Oracle, which is required before sending a statement through JDBC. This will
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
@@ -187,7 +182,7 @@ for Oracle, which is required before sending a statement through JDBC. This will
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.9100.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

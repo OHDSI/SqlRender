@@ -8,10 +8,12 @@
 
 <title>Create an R wrapper for SQL — createRWrapperForSql • SqlRender</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
@@ -32,12 +34,13 @@
 
 
 
-<meta property="og:title" content="Create an R wrapper for SQL — createRWrapperForSql" />
 
+<meta property="og:title" content="Create an R wrapper for SQL — createRWrapperForSql" />
 <meta property="og:description" content="createRWrapperForSql creates an R wrapper for a parameterized SQL file. The created R script
 file will contain a single function, that executes the SQL, and accepts the same parameters as
 specified in the SQL." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -68,7 +71,7 @@ specified in the SQL." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.4</span>
       </span>
     </div>
 
@@ -99,7 +102,6 @@ specified in the SQL." />
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/OHDSI/SqlRender">
@@ -126,16 +128,18 @@ specified in the SQL." />
     </div>
 
     <div class="ref-description">
-    
     <p><code>createRWrapperForSql</code> creates an R wrapper for a parameterized SQL file. The created R script
 file will contain a single function, that executes the SQL, and accepts the same parameters as
 specified in the SQL.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>createRWrapperForSql</span>(<span class='no'>sqlFilename</span>, <span class='no'>rFilename</span>, <span class='no'>packageName</span>,
-  <span class='kw'>createRoxygenTemplate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>createRWrapperForSql</span>(
+  <span class='no'>sqlFilename</span>,
+  <span class='no'>rFilename</span>,
+  <span class='no'>packageName</span>,
+  <span class='kw'>createRoxygenTemplate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -146,7 +150,7 @@ specified in the SQL.</p>
     <tr>
       <th>rFilename</th>
       <td><p>The name of the R file to be generated. Defaults to the name of the
-SQL file with the extention reset to R.</p></td>
+SQL file with the extension reset to R.</p></td>
     </tr>
     <tr>
       <th>packageName</th>
@@ -157,28 +161,25 @@ SQL file with the extention reset to R.</p></td>
       <td><p>If true, a template of Roxygen comments will be added.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function reads the declarations of defaults in the parameterized SQL file, and creates an R
 function that exposes the parameters. It uses the <code>loadRenderTranslateSql</code> function, and
 assumes the SQL will be used inside a package. To use inside a package, the SQL file should be
 placed in the inst/sql/sql_server folder of the package.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># This will create a file called CohortMethod.R:</span>
 <span class='fu'>createRWrapperForSql</span>(<span class='st'>"CohortMethod.sql"</span>, <span class='kw'>packageName</span> <span class='kw'>=</span> <span class='st'>"CohortMethod"</span>)
-<span class='co'># }</span></pre>
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#details">Details</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
@@ -192,7 +193,7 @@ placed in the inst/sql/sql_server folder of the package.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.9100.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

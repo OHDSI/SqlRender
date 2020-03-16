@@ -4,8 +4,12 @@
 \alias{translateSqlFile}
 \title{Translate a SQL file}
 \usage{
-translateSqlFile(sourceFile, targetFile, targetDialect,
-  oracleTempSchema = NULL)
+translateSqlFile(
+  sourceFile,
+  targetFile,
+  targetDialect,
+  oracleTempSchema = NULL
+)
 }
 \arguments{
 \item{sourceFile}{The source SQL file}

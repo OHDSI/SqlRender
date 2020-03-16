@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.4</span>
       </span>
     </div>
 
@@ -85,7 +85,7 @@
       <h1>Using SqlRender</h1>
                         <h4 class="author">Martijn J. Schuemie</h4>
             
-            <h4 class="date">2019-09-20</h4>
+            <h4 class="date">2020-03-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/SqlRender/blob/master/vignettes/UsingSqlRender.Rmd"><code>vignettes/UsingSqlRender.Rmd</code></a></small>
       <div class="hidden name"><code>UsingSqlRender.Rmd</code></div>
@@ -279,7 +279,7 @@
 </tbody>
 </table>
 <ul>
-<li>Requires special priviliges on Oracle. Has no equivalent on SQLite.</li>
+<li>Requires special privileges on Oracle. Has no equivalent on SQLite.</li>
 </ul>
 <p>Similarly, many SQL syntax structures are supported. Here is a non-exhaustive lists of things that we know will translate well:</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb29-1"><a href="#cb29-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>;                                        <span class="co">-- Simple selects</span></span>
@@ -356,10 +356,10 @@
 <p>For example:</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>sql &lt;-<span class="st"> "SELECT * FROM #children;"</span></span>
 <span id="cb31-2"><a href="#cb31-2"></a><span class="kw"><a href="../reference/translate.html">translate</a></span>(sql, <span class="dt">targetDialect =</span> <span class="st">"oracle"</span>, <span class="dt">oracleTempSchema =</span> <span class="st">"temp_schema"</span>)</span></code></pre></div>
-<pre><code>#&gt; [1] "SELECT * FROM temp_schema.i2np5ciwchildren ;"</code></pre>
+<pre><code>#&gt; [1] "SELECT * FROM temp_schema.c0g0q580children ;"</code></pre>
 <p>Note that the user will need to have write privileges on <code>temp_schema</code>.</p>
 <p>Also note that because Oracle has a limit on table names of 30 characters, <strong>temp table names are only allowed to be at most 22 characters long</strong> because else the name will become too long after appending the session ID.</p>
-<p>Futhermore, remember that temp tables are not automatically dropped on Oracle, so you will need to explicitly <code>TRUNCATE</code> and <code>DROP</code> all temp tables once you’re done with them to prevent orphan tables accumulating in the Oracle temp schema.</p>
+<p>Furthermore, remember that temp tables are not automatically dropped on Oracle, so you will need to explicitly <code>TRUNCATE</code> and <code>DROP</code> all temp tables once you’re done with them to prevent orphan tables accumulating in the Oracle temp schema.</p>
 <p>If possible, try to avoid using temp tables altogether. Sometimes one could use Common Table Expressions (CTEs) when one would normally use a temp table. For example, instead of</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb33-1"><a href="#cb33-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> #children <span class="kw">FROM</span> person <span class="kw">WHERE</span> year_of_birth <span class="op">&gt;</span> <span class="dv">2000</span>;</span>
 <span id="cb33-2"><a href="#cb33-2"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #children <span class="kw">WHERE</span> gender <span class="op">=</span> <span class="dv">8507</span>;</span></code></pre></div>
@@ -418,7 +418,7 @@
 <div id="optimization-for-massively-parallel-processing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#optimization-for-massively-parallel-processing" class="anchor"></a>Optimization for massively parallel processing</h2>
-<p>Both PDW and RedShift are massively parallel processing platforms, meaning they consist of many nodes that work together. In such an environment, significant increases in performance can be achieved by finetuning the SQL for these platforms. Probably most importantly, developers can specify the way data is distributed over the nodes. Ideally, data in a node only needs to be combined with data in the same node. For example, if I have two tables with the field <code>person_id</code>, I would like all records with the same person ID to be on the same node, so a join on <code>person_id</code> can be performed locally without exchanging data between nodes.</p>
+<p>Both PDW and RedShift are massively parallel processing platforms, meaning they consist of many nodes that work together. In such an environment, significant increases in performance can be achieved by fine-tuning the SQL for these platforms. Probably most importantly, developers can specify the way data is distributed over the nodes. Ideally, data in a node only needs to be combined with data in the same node. For example, if I have two tables with the field <code>person_id</code>, I would like all records with the same person ID to be on the same node, so a join on <code>person_id</code> can be performed locally without exchanging data between nodes.</p>
 <p>SQL Server SQL, our source dialect, does not allow for these optimizations, so we’ve introduced the notion of hints. In the following example, a hint is provided on which field should be used for the distribution of data across nodes:</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb46-1"><a href="#cb46-1"></a><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></span>
 <span id="cb46-2"><a href="#cb46-2"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> one_table <span class="kw">FROM</span> other_table;</span></code></pre></div>
@@ -489,6 +489,7 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
@@ -528,7 +529,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.9100.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

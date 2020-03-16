@@ -4,8 +4,14 @@
 \alias{loadRenderTranslateSql}
 \title{Load, render, and translate a SQL file in a package}
 \usage{
-loadRenderTranslateSql(sqlFilename, packageName, dbms = "sql server",
-  ..., oracleTempSchema = NULL, warnOnMissingParameters = TRUE)
+loadRenderTranslateSql(
+  sqlFilename,
+  packageName,
+  dbms = "sql server",
+  ...,
+  oracleTempSchema = NULL,
+  warnOnMissingParameters = TRUE
+)
 }
 \arguments{
 \item{sqlFilename}{The source SQL file}

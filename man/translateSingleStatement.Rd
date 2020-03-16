@@ -4,14 +4,13 @@
 \alias{translateSingleStatement}
 \title{Translates a single SQL statement from one dialect to another}
 \usage{
-translateSingleStatement(sql = "", targetDialect,
-  oracleTempSchema = NULL)
+translateSingleStatement(sql = "", targetDialect, oracleTempSchema = NULL)
 }
 \arguments{
 \item{sql}{The SQL to be translated}
 
-\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
-"redshift" are supported}
+\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery",
+"redshift", and "spark" are supported}
 
 \item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle or Impala.}
 }
