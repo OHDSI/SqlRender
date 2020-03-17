@@ -20,11 +20,13 @@
 OhdsiRTools::formatRFolder()
 OhdsiRTools::checkUsagePackage("SqlRender")
 OhdsiRTools::updateCopyrightYearFolder()
+devtools::spell_check()
 
 # Create manual and vignettes:
 unlink("extras/SqlRender.pdf")
 shell("R CMD Rd2pdf ./ --output=extras/SqlRender.pdf")
 
+dir.create("inst/doc")
 rmarkdown::render("vignettes/UsingSqlRender.Rmd",
                   output_file = "../inst/doc/UsingSqlRender.pdf",
                   rmarkdown::pdf_document(latex_engine = "pdflatex",

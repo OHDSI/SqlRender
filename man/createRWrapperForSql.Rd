@@ -15,7 +15,7 @@ createRWrapperForSql(
 \item{sqlFilename}{The SQL file.}
 
 \item{rFilename}{The name of the R file to be generated. Defaults to the name of the
-SQL file with the extention reset to R.}
+SQL file with the extension reset to R.}
 
 \item{packageName}{The name of the package that will contains the SQL file.}
 

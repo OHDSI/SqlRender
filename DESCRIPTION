@@ -2,7 +2,7 @@ Package: SqlRender
 Type: Package
 Title: Rendering Parameterized SQL and Translation to Dialects
 Version: 1.6.4
-Date: 2020-01-15
+Date: 2020-03-17
 Authors@R: c(
   person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
   person("Marc", "Suchard", role = c("aut"))
