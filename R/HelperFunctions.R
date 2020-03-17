@@ -1,6 +1,6 @@
 # @file HelperFunctions.R
 #
-# Copyright 2020 Observational Health Data Sciences and Informatics
+# Copyright 2019 Observational Health Data Sciences and Informatics
 #
 # This file is part of SqlRender
 # 
@@ -249,7 +249,7 @@ camelCaseToSnakeCase <- function(string) {
 #'
 #' @param sqlFilename             The SQL file.
 #' @param rFilename               The name of the R file to be generated. Defaults to the name of the
-#'                                SQL file with the extension reset to R.
+#'                                SQL file with the extention reset to R.
 #' @param packageName             The name of the package that will contains the SQL file.
 #' @param createRoxygenTemplate   If true, a template of Roxygen comments will be added.
 #'

@@ -1,6 +1,6 @@
 # @file PackageMaintenance
 #
-# Copyright 2020 Observational Health Data Sciences and Informatics
+# Copyright 2019 Observational Health Data Sciences and Informatics
 #
 # This file is part of SqlRender
 # 
@@ -20,10 +20,9 @@
 OhdsiRTools::formatRFolder()
 OhdsiRTools::checkUsagePackage("SqlRender")
 OhdsiRTools::updateCopyrightYearFolder()
-devtools::spell_check()
 
 # Create manual and vignettes:
-unlink("extras/SqlRender.pdf")
+shell("rm extras/SqlRender.pdf")
 shell("R CMD Rd2pdf ./ --output=extras/SqlRender.pdf")
 
 rmarkdown::render("vignettes/UsingSqlRender.Rmd",
