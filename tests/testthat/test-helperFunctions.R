@@ -53,6 +53,16 @@ test_that("camelCaseToSnakeCase ", {
   expect_equal(string2, "exposure_id_1")
 })
 
+test_that("camelCaseToTitleCase ", {
+  string1 <- "cdmDatabaseSchema"
+  string2 <- camelCaseToTitleCase(string1)
+  expect_equal(string2, "Cdm Database Schema")
+  
+  string1 <- "exposureId1"
+  string2 <- camelCaseToTitleCase(string1)
+  expect_equal(string2, "Exposure Id 1")
+})
+
 test_that("loadRenderTranslateSql ", {
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "sql server")
   sql <- gsub("[\r\n]", "", sql)
