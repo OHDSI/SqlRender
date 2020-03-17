@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • SqlRender</title>
+<title>Convert a camel case string to title case — camelCaseToTitleCase • SqlRender</title>
 
 
 <!-- jquery -->
@@ -35,7 +35,9 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Convert a camel case string to title case — camelCaseToTitleCase" />
+<meta property="og:description" content="Convert a camel case string to title case" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -54,7 +56,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -116,138 +118,45 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Convert a camel case string to title case</h1>
+    <small class="dont-index">Source: <a href='https://github.com/OHDSI/SqlRender/blob/master/R/HelperFunctions.R'><code>R/HelperFunctions.R</code></a></small>
+    <div class="hidden name"><code>camelCaseToTitleCase.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Convert a camel case string to title case</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>camelCaseToTitleCase</span>(<span class='no'>string</span>)</pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="camelCaseToSnakeCase.html">camelCaseToSnakeCase()</a></code> </p>
-        </td>
-        <td><p>Convert a camel case string to snake case</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="camelCaseToTitleCase.html">camelCaseToTitleCase()</a></code> </p>
-        </td>
-        <td><p>Convert a camel case string to title case</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="createRWrapperForSql.html">createRWrapperForSql()</a></code> </p>
-        </td>
-        <td><p>Create an R wrapper for SQL</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="launchSqlRenderDeveloper.html">launchSqlRenderDeveloper()</a></code> </p>
-        </td>
-        <td><p>Launch the SqlRender Developer Shiny app</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> </p>
-        </td>
-        <td><p>Load, render, and translate a SQL file in a package</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="readSql.html">readSql()</a></code> </p>
-        </td>
-        <td><p>Reads a SQL file</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="render.html">render()</a></code> </p>
-        </td>
-        <td><p>Render SQL code based on parameterized SQL and parameter values</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="renderSql.html">renderSql()</a></code> </p>
-        </td>
-        <td><p>Deprecated: Render SQL code based on parameterized SQL and parameter values</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="renderSqlFile.html">renderSqlFile()</a></code> </p>
-        </td>
-        <td><p>Render a SQL file</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="snakeCaseToCamelCase.html">snakeCaseToCamelCase()</a></code> </p>
-        </td>
-        <td><p>Convert a snake case string to camel case</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="splitSql.html">splitSql()</a></code> </p>
-        </td>
-        <td><p>Split a single SQL string into one or more SQL statements</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SqlRender.html">SqlRender</a></code> </p>
-        </td>
-        <td><p>SqlRender</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="translate.html">translate()</a></code> </p>
-        </td>
-        <td><p>Translates SQL from one dialect to another</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="translateSingleStatement.html">translateSingleStatement()</a></code> </p>
-        </td>
-        <td><p>Translates a single SQL statement from one dialect to another</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="translateSql.html">translateSql()</a></code> </p>
-        </td>
-        <td><p>Deprecated: Translates SQL from one dialect to another</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="translateSqlFile.html">translateSqlFile()</a></code> </p>
-        </td>
-        <td><p>Translate a SQL file</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="writeSql.html">writeSql()</a></code> </p>
-        </td>
-        <td><p>Write SQL to a SQL (text) file</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>string</th>
+      <td><p>The string to be converted</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A string</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>camelCaseToTitleCase</span>(<span class='st'>"exposureConceptId1"</span>)</div><div class='output co'>#&gt; [1] "Exposure Concept Id 1"</div><div class='input'># > 'Exposure Concept Id 1'
+
+</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
+
   </div>
 </div>
 

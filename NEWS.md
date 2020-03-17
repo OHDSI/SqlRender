@@ -7,8 +7,6 @@ Changes:
 
 2. Adding functions to convert camelCase to Title Case. (camelCaseToTitleCase)
 
-
-
 SqlRender 1.6.3
 ===============
 
