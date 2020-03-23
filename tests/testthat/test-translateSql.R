@@ -1076,13 +1076,13 @@ test_that("translate sql server -> bigquery mixed column references", {
 test_that("translate sql server -> bigquery DATEDIFF", {
   sql <- translate("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                       targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "select DATE_DIFF(cast(drug_era_end_date as date), cast(drug_era_start_date as date), DAY) from drug_era;")
+  expect_equal_ignore_spaces(sql, "select DATE_DIFF(parse_date('%Y%m%d',drug_era_end_date), parse_date('%Y%m%d',drug_era_start_date), DAY) from drug_era;")
 })
 
 test_that("translate sql server -> bigquery DATEADD", {
   sql <- translate("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                       targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "select DATE_ADD(cast(drug_era_end_date as date), interval 30 DAY) from drug_era;")
+  expect_equal_ignore_spaces(sql, "select DATE_ADD(parse_date('%Y%m%d',drug_era_end_date), interval 30 DAY) from drug_era;")
 })
 
 test_that("translate sql server -> bigquery GETDATE", {
@@ -1160,13 +1160,19 @@ test_that("translate sql server -> bigquery cast int", {
 test_that("translate sql server -> bigquery cast date", {
   sql <- translate("date(d)",
                       targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "cast(d as date)")
+  expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d',d)")
 })
 
-test_that("translate sql server -> bigquery cast string as date", {
+test_that("translate sql server -> bigquery cast concat string as date", {
   sql <- translate("cast(concat(a,b) as date)",
                       targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d', concat(a,b))")
+})
+
+test_that("translate sql server -> bigquery cast string as date", {
+  sql <- translate("cast(a as date)",
+                      targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d', a)")
 })
 
 test_that("translate sql server -> bigquery extract year", {
