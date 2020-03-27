@@ -1076,13 +1076,13 @@ test_that("translate sql server -> bigquery mixed column references", {
 test_that("translate sql server -> bigquery DATEDIFF", {
   sql <- translate("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                       targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "select DATE_DIFF(parse_date('%Y%m%d',drug_era_end_date), parse_date('%Y%m%d',drug_era_start_date), DAY) from drug_era;")
+  expect_equal_ignore_spaces(sql, "select DATE_DIFF(IF(SAFE_CAST(drug_era_end_date AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(drug_era_end_date AS STRING)),SAFE_CAST(drug_era_end_date AS DATE)),IF(SAFE_CAST(drug_era_start_date AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(drug_era_start_date AS STRING)),SAFE_CAST(drug_era_start_date AS DATE)),DAY)from drug_era;")
 })
 
 test_that("translate sql server -> bigquery DATEADD", {
   sql <- translate("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                       targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "select DATE_ADD(parse_date('%Y%m%d',drug_era_end_date), interval 30 DAY) from drug_era;")
+  expect_equal_ignore_spaces(sql, "select DATE_ADD(IF(SAFE_CAST(drug_era_end_date AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(drug_era_end_date AS STRING)),SAFE_CAST(drug_era_end_date AS DATE)), interval 30 DAY) from drug_era;")
 })
 
 test_that("translate sql server -> bigquery GETDATE", {
@@ -1160,7 +1160,7 @@ test_that("translate sql server -> bigquery cast int", {
 test_that("translate sql server -> bigquery cast date", {
   sql <- translate("date(d)",
                       targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d',d)")
+  expect_equal_ignore_spaces(sql, "IF(SAFE_CAST(d AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(d AS STRING)),SAFE_CAST(d AS DATE))")
 })
 
 test_that("translate sql server -> bigquery cast concat string as date", {
@@ -1172,7 +1172,7 @@ test_that("translate sql server -> bigquery cast concat string as date", {
 test_that("translate sql server -> bigquery cast string as date", {
   sql <- translate("cast(a as date)",
                       targetDialect = "bigquery")
-  expect_equal_ignore_spaces(sql, "parse_date('%Y%m%d', a)")
+  expect_equal_ignore_spaces(sql, "IF(SAFE_CAST(a AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(a AS STRING)),SAFE_CAST(a AS DATE))")
 })
 
 test_that("translate sql server -> bigquery extract year", {
