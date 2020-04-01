@@ -1,4 +1,4 @@
-This update has 2 changes since 1.6.3 (see NEWS.md)
+This update has 1 bugfix since 1.6.4 (see NEWS.md)
 
 ---
 

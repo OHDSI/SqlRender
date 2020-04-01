@@ -32,6 +32,7 @@ rmarkdown::render("vignettes/UsingSqlRender.Rmd",
                   rmarkdown::pdf_document(latex_engine = "pdflatex",
                                           toc = TRUE,
                                           number_sections = TRUE))
+unlink("../inst/doc/UsingSqlRender.tex")
 
 pkgdown::build_site()
 

@@ -1,3 +1,11 @@
+SqlRender 1.6.5
+===============
+
+Bugfixes:
+
+1. Fixed CAST(@a as DATE) for YYYYMMDD string dates on BigQuery.
+
+
 SqlRender 1.6.4
 ===============
 
@@ -6,6 +14,7 @@ Changes:
 1. Adding support for Apache Hive LLAP.
 
 2. Adding functions to convert camelCase to Title Case. (camelCaseToTitleCase)
+
 
 SqlRender 1.6.3
 ===============
@@ -31,6 +40,7 @@ Bugfixes:
 3. isNumeric can now also be applied to numeric fields in Postgres.
 
 4. Better handling of illegal characters in Impala.
+
 
 SqlRender 1.6.2
 ===============
@@ -91,6 +101,7 @@ Bugfixes:
 
 1. Fixed misspelling of DISTRIBUTE in Netezza translation rules.
 
+
 SqlRender 1.5.2
 ===============
 
@@ -103,19 +114,24 @@ Bugfixes:
 
 1. Fixed translation of AS when used for table names in Oracle.
 
+
 SqlRender 1.5.0
 ================
 
 Changes:
 
 1. Improved support for Netezza.
+
 2. Added random distribution hints for PDW, RedShift, Netezza.
+
 3. Improved MPP index translation for PDW and Netezza.
+
 4. Warnings about missing parameters when rendering SQL can now be turned off.
 
 Bugfixes:
 
 1. Translation of camelCase to snake_case now adds underscore before numbers.
+
 
 SqlRender 1.4.8
 ================
@@ -123,7 +139,9 @@ SqlRender 1.4.8
 Changes: 
 
 1. Better handling of 'FROM DUAL' for Oracle.
+
 2. Improved support for Netezza and Impala.
+
 
 SqlRender 1.4.6
 ================
@@ -131,8 +149,11 @@ SqlRender 1.4.6
 Changes: 
 
 1. Bigquery support for mismatched string and int arguments in coalesce.
+
 2. Translate decimal to float for BigQuery.
+
 3. Created rules to add dummy 'group by' for Oracle statements combining 'case' and 'count' to prevent Oracle from crashing.
+
 4. Adding 'UNBOUNDED PRECEDING' to RedShift windowing functions.
 
 
@@ -142,8 +163,11 @@ SqlRender 1.4.3
 Changes: 
 
 1. Added a Shiny app for developing parameterized SQL, and view how this would be rendered and translated into the various supported dialects.
+
 2. Added support for Google BigQuery.
+
 3. Added many more rules for Amazon RedShift, including support for optimization hints.
+
 4. Added rules for DELETE FROM translation for Impala.
 
 Bugfixes:
@@ -162,9 +186,13 @@ Changes:
 Bugfixes:
 
 1. Fixed bug when trying to split SQL where reserved word 'end' is used as a field name.
+
 2. Fixes for Impala translations.
+
 3. Fixed translation issues for Oracle involving 'FROM DUAL'.
+
 4. Added workaround for Oracle bug for intervals greater than 99 days.
+
 5. Fixed bug when trying to split SQL where last line has comment but no EOL.
 
 
@@ -174,10 +202,15 @@ SqlRender 1.3.0
 Changes: 
 
 1. Added ability to use regular expression in translation patterns. This allowed SELECT TOP n to be translated.
+
 2. Deprecated sourceDialect argument.
+
 3. Added translation for CONCAT function with >2 arguments to Oracle (which only allows 2 arguments)
+
 4. Added hints for translation optimization to massive parallel platforms like RedShift
+
 5. Throw warnings when translateSql is called with variable names that are not in the SQL
+
 6. Throw warnings when table names are too long for Oracle
 
 
