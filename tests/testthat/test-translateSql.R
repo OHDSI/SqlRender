@@ -858,11 +858,11 @@ test_that("translate sql server -> redshift hint distribute_on_random", {
 
 
 test_that("translate: warning on temp table name that is too long", {
-  expect_warning(translate("SELECT * FROM #abcdefghijklmnopqrstuvwxyz", "pdw"))
+  expect_warning(translate("SELECT * FROM #abcdefghijklmnopqrstuvwxyz", "oracle"))
 })
 
 test_that("translate: warning on table name that is too long", {
-  expect_warning(translate("DROP TABLE abcdefghijklmnopqrstuvwxyz123456789", "pdw"))
+  expect_warning(translate("DROP TABLE abcdefghijklmnopqrstuvwxyz123456789", "oracle"))
 })
 
 

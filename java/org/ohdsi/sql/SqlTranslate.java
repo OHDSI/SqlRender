@@ -43,6 +43,7 @@ public class SqlTranslate {
 	private static String						SOURCE_DIALECT					= "sql server";
 	private static String						BIG_QUERY						= "bigquery";
 	private static String 						IMPALA 							= "impala";
+	private static String						ORACLE							= "oracle";
 
 	protected static class Block extends StringUtils.Token {
 		public boolean	isVariable;
@@ -519,30 +520,32 @@ public class SqlTranslate {
 	public static String[] check(String sql, String targetDialect) {
 		List<String> warnings = new ArrayList<String>();
 
-		// temp table names:
-		Pattern pattern = Pattern.compile("#[0-9a-zA-Z_]+");
-		Matcher matcher = pattern.matcher(sql);
-		Set<String> longTempNames = new HashSet<String>();
-		while (matcher.find())
-			if (matcher.group().length() > MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH - 1)
-				longTempNames.add(matcher.group());
+		if (targetDialect.equalsIgnoreCase(ORACLE)) {
+			// temp table names:
+			Pattern pattern = Pattern.compile("#[0-9a-zA-Z_]+");
+			Matcher matcher = pattern.matcher(sql);
+			Set<String> longTempNames = new HashSet<String>();
+			while (matcher.find())
+				if (matcher.group().length() > MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH - 1)
+					longTempNames.add(matcher.group());
 
-		for (String longName : longTempNames)
-			warnings.add("Temp table name '" + longName + "' is too long. Temp table names should be shorter than "
-					+ (MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH) + " characters to prevent Oracle from crashing.");
+			for (String longName : longTempNames)
+				warnings.add("Temp table name '" + longName + "' is too long. Temp table names should be shorter than "
+						+ (MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH) + " characters to prevent Oracle from crashing.");
 
-		// normal table names:
-		pattern = Pattern.compile("(create|drop|truncate)\\s+table +[0-9a-zA-Z_]+");
-		matcher = pattern.matcher(sql.toLowerCase());
-		Set<String> longNames = new HashSet<String>();
-		while (matcher.find()) {
-			String name = sql.substring(matcher.start() + matcher.group().lastIndexOf(" "), matcher.end());
-			if (name.length() > MAX_ORACLE_TABLE_NAME_LENGTH && !longTempNames.contains("#" + name))
-				longNames.add(name);
+			// normal table names:
+			pattern = Pattern.compile("(create|drop|truncate)\\s+table +[0-9a-zA-Z_]+");
+			matcher = pattern.matcher(sql.toLowerCase());
+			Set<String> longNames = new HashSet<String>();
+			while (matcher.find()) {
+				String name = sql.substring(matcher.start() + matcher.group().lastIndexOf(" "), matcher.end());
+				if (name.length() > MAX_ORACLE_TABLE_NAME_LENGTH && !longTempNames.contains("#" + name))
+					longNames.add(name);
+			}
+			for (String longName : longNames)
+				warnings.add("Table name '" + longName + "' is too long. Table names should be shorter than " + MAX_ORACLE_TABLE_NAME_LENGTH
+						+ " characters to prevent Oracle from crashing.");
 		}
-		for (String longName : longNames)
-			warnings.add("Table name '" + longName + "' is too long. Table names should be shorter than " + MAX_ORACLE_TABLE_NAME_LENGTH
-					+ " characters to prevent Oracle from crashing.");
 
 		return warnings.toArray(new String[warnings.size()]);
 	}
