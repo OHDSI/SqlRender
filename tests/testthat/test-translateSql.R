@@ -3037,3 +3037,10 @@ test_that("translate sql server -> Hive HASHBYTES", {
       targetDialect = "hive")
     expect_equal_ignore_spaces(sql, "SELECT AVG(CAST(CAST(hash(line) AS INT) AS BIGINT)) as checksum")
 })
+
+test_that("translate sql server -> BigQuery % operator", {
+  sql <- translate("SELECT  (CAST(person_id*month(cohort_start_date) AS BIGINT) % 123)*(CAST(year(cohort_start_date)*day(cohort_start_date) AS BIGINT) % 123)) FROM my_table;",
+                   targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "select (MOD(cast(person_id*EXTRACT(MONTH from cohort_start_date) as int64), 123))*(MOD(cast(EXTRACT(YEAR from cohort_start_date)*EXTRACT(DAY from cohort_start_date) as int64), 123))) from my_table;")
+})
+

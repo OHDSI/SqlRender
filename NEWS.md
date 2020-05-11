@@ -1,3 +1,10 @@
+SqlRender 1.6.6
+===============
+
+Changes:
+
+1. Catching more uses of modulus operator for BigQuery.
+
 SqlRender 1.6.5
 ===============
 
