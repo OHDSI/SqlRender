@@ -6,7 +6,7 @@ SqlRender
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SqlRender)](https://cran.r-project.org/package=SqlRender)
 [![CRAN_Status_Badge](http://cranlogs.r-pkg.org/badges/SqlRender)](https://cran.r-project.org/package=SqlRender)
 
-SqlRender is part of the [OHDSI Methods Library](https://ohdsi.github.io/MethodsLibrary).
+SqlRender is part of [HADES](https://ohdsi.github.io/Hades).
 
 Introduction
 ============
@@ -121,6 +121,9 @@ java -jar SqlRender.jar ?
 
 User Documentation
 ==================
+Documentation can be found on the [package website](https://ohdsi.github.io/SqlRender).
+
+PDF versions of the documentation are also available:
 * Vignette: [Using SqlRender](https://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html)
 * Package manual: [SqlRender manual](https://ohdsi.github.io/SqlRender/reference/index.html) 
 
@@ -128,6 +131,10 @@ Support
 =======
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="https://github.com/OHDSI/SqlRender/issues">GitHub issue tracker</a> for all bugs/issues/enhancements
+
+Contributing
+============
+Read [here](https://ohdsi.github.io/Hades/contribute.html) how you can contribute to this package.
 
 License
 =======

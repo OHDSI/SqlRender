@@ -6,3 +6,11 @@ home:
   links:
   - text: Ask a question
     href: http://forums.ohdsi.org
+
+navbar:
+  structure:
+    right: [methodsLibrary, github]
+  components:
+    methodsLibrary:
+      text: hadesLogo
+      href: https://ohdsi.github.io/Hades
