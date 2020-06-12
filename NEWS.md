@@ -1,3 +1,13 @@
+SqlRender 1.6.7
+===============
+
+Bugfixes:
+
+1. On SQLite, DATEADD and CONVERT functions now cast to REAL (used to represent DATE / DATETIME). 
+
+2. On SQLite, DATEADD function now works when amount to add is not a verbatim number.
+
+
 SqlRender 1.6.6
 ===============
 

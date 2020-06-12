@@ -27,13 +27,11 @@ test_that("translate sql server -> SQLite string concat", {
   expect_equal_ignore_spaces(sql, "a || ';('")
 })
 
-
 test_that("translate sql server -> SQLite add month", {
   sql <- translate("DATEADD(mm,1,date)",
                       targetDialect = "sqlite")
-  expect_equal_ignore_spaces(sql, "STRFTIME('%s', DATETIME(date, 'unixepoch', '1 months'))")
+  expect_equal_ignore_spaces(sql, "CAST(STRFTIME('%s', DATETIME(date, 'unixepoch', (1)||' months')) AS REAL)")
 })
-
 
 test_that("translate sql server -> SQLite WITH SELECT INTO", {
   sql <- translate("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
@@ -48,20 +46,17 @@ test_that("translate sql server -> SQLite WITH SELECT INTO without FROM", {
   expect_equal_ignore_spaces(sql, "CREATE TABLE d AS\nSELECT\nc ;")
 })
 
-
 test_that("translate sql server -> SQLite WITH INSERT INTO SELECT", {
   sql <- translate("WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;",
                       targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "WITH cte1 AS (SELECT a FROM b) INSERT INTO c (d int) SELECT e FROM cte1;")
 })
 
-
 test_that("translate sql server -> SQLite create table if not exists", {
   sql <- translate("IF OBJECT_ID('cohort', 'U') IS NULL\n CREATE TABLE cohort\n(cohort_definition_id INT);",
                       targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS cohort\n (cohort_definition_id INT);")
 })
-
 
 test_that("translate sql server -> SQLite select random row", {
   sql <- translate("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
@@ -92,7 +87,7 @@ test_that("translate sql server -> sqliteql TOP subquery", {
 test_that("translate sql server -> sqlite date to string", {
   sql <- translate("SELECT CONVERT(VARCHAR,start_date,112) FROM table;",
                       targetDialect = "sqlite")
-  expect_equal_ignore_spaces(sql, "SELECT STRFTIME('%Y%m%d', start_date) FROM table;")
+  expect_equal_ignore_spaces(sql, "SELECT CAST(STRFTIME('%Y%m%d', start_date) AS REAL) FROM table;")
 })
 
 test_that("translate sql server -> sqlite log any base", {
@@ -132,4 +127,3 @@ test_that("translate sql server -> sqlite CREATE INDEX", {
                    targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "CREATE INDEX idx_1  ON person  (person_id);")
 })
-
