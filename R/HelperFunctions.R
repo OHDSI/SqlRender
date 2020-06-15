@@ -179,6 +179,9 @@ loadRenderTranslateSql <- function(sqlFilename,
     pathToSql <- system.file(paste("sql/", "sql_server", sep = ""),
                              sqlFilename,
                              package = packageName)
+    if (!file.exists(pathToSql)) {
+       stop("Cannot find '", sqlFilename, "' in the 'sql/sql_server' folder of the '", packageName , "' package.") 
+    }
   }
   parameterizedSql <- readChar(pathToSql, file.info(pathToSql)$size)
   
