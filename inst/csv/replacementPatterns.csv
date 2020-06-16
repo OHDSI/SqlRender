@@ -18,9 +18,9 @@ oracle,"DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"
 oracle,"DATEADD(year,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 oracle,"DATEADD(yyyy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 oracle,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
-oracle,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
-oracle,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
-oracle,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+oracle,"DATEDIFF(day,@start, @end)",CEIL(CAST(@end AS DATE) - CAST(@start AS DATE))
+oracle,"DATEDIFF(dd,@start, @end)",CEIL(CAST(@end AS DATE) - CAST(@start AS DATE))
+oracle,"DATEDIFF(d,@start, @end)",CEIL(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
 oracle,GETDATE(),SYSDATE
 oracle,+ '@a',|| '@a'
