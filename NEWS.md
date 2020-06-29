@@ -1,3 +1,11 @@
+SqlRender 1.6.8
+===============
+
+Bugfixes:
+
+1. Fixing error when SQL is not a native character vector (e.g. when it has been created using glue).
+
+
 SqlRender 1.6.7
 ===============
 

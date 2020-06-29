@@ -68,12 +68,16 @@ render <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
     paste(x, collapse = ",")
   })
   if (warnOnMissingParameters) {
-    messages <- rJava::J("org.ohdsi.sql.SqlRender")$check(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
+    messages <- rJava::J("org.ohdsi.sql.SqlRender")$check(as.character(sql), 
+                                                          rJava::.jarray(names(parameters)), 
+                                                          rJava::.jarray(as.character(parameters)))
     for (message in messages) {
       warning(message)
     }
   }
-  translatedSql <- rJava::J("org.ohdsi.sql.SqlRender")$renderSql(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
+  translatedSql <- rJava::J("org.ohdsi.sql.SqlRender")$renderSql(as.character(sql), 
+                                                                 rJava::.jarray(names(parameters)), 
+                                                                 rJava::.jarray(as.character(parameters)))
   return(translatedSql)
 }
 
@@ -129,13 +133,21 @@ translate <- function(sql = "",
                       targetDialect,
                       oracleTempSchema = NULL) {
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
-  if (missing(oracleTempSchema) || is.null(oracleTempSchema))
+  if (missing(oracleTempSchema) || is.null(oracleTempSchema)) {
     oracleTempSchema <- rJava::.jnull()
-  messages <- rJava::J("org.ohdsi.sql.SqlTranslate")$check(sql, targetDialect)
+  } else {
+    oracleTempSchema <- as.character(oracleTempSchema)
+  }
+  messages <- rJava::J("org.ohdsi.sql.SqlTranslate")$check(as.character(sql), 
+                                                           as.character(targetDialect))
   for (message in messages) {
     warning(message)
   }
-  translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(sql, targetDialect, rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
+  translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(as.character(sql), 
+                                                                               as.character(targetDialect), 
+                                                                               rJava::.jnull(), 
+                                                                               oracleTempSchema, 
+                                                                               as.character(pathToReplacementPatterns))
   return(translatedSql)
 }
 
@@ -192,17 +204,21 @@ translateSingleStatement <- function(sql = "",
                                      targetDialect,
                                      oracleTempSchema = NULL) {
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
-  if (missing(oracleTempSchema) || is.null(oracleTempSchema))
+  if (missing(oracleTempSchema) || is.null(oracleTempSchema)) {
     oracleTempSchema <- rJava::.jnull()
-  messages <- rJava::J("org.ohdsi.sql.SqlTranslate")$check(sql, targetDialect)
+  } else {
+    oracleTempSchema <- as.character(oracleTempSchema)
+  }
+  messages <- rJava::J("org.ohdsi.sql.SqlTranslate")$check(as.character(sql), 
+                                                           as.character(targetDialect))
   for (message in messages) {
     warning(message)
   }
-  translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSingleStatementSqlWithPath(sql, 
-                                                                                              targetDialect, 
+  translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSingleStatementSqlWithPath(as.character(sql), 
+                                                                                              as.character(targetDialect), 
                                                                                               rJava::.jnull(), 
                                                                                               oracleTempSchema, 
-                                                                                              pathToReplacementPatterns)
+                                                                                              as.character(pathToReplacementPatterns))
   return(translatedSql)
 }
 
@@ -225,5 +241,5 @@ translateSingleStatement <- function(sql = "",
 #'
 #' @export
 splitSql <- function(sql) {
-  rJava::J("org.ohdsi.sql.SqlSplit")$splitSql(sql)
+  rJava::J("org.ohdsi.sql.SqlSplit")$splitSql(as.character(sql))
 }
