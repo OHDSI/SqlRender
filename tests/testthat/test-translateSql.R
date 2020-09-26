@@ -983,6 +983,12 @@ test_that("translate sql server -> bigquery common table expression column list"
   expect_equal_ignore_spaces(sql, "with cte as (select c1 as x, c2 as y, c3 as z from t) select x, y, z from cte;")
 })
 
+test_that("translate sql server -> bigquery common table expression column list no from or union", {
+  sql <- translate("WITH data(x) AS (SELECT (CAST(1 AS INT) x)) SELECT x INTO my_table FROM data;",
+                   targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE my_table  AS WITH data  as (select (cast(1  as int64) x) as x)  SELECT x  FROM data;")
+})
+
 test_that("translate sql server -> bigquery multiple common table expression column list", {
   sql <- translate("with cte1 as (select 2), cte(x, y, z) as (select c1, c2 as y, c3 as r from t) select x, y, z from cte;",
                       targetDialect = "bigquery")

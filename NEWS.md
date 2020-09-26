@@ -1,3 +1,11 @@
+SqlRender 1.6.9
+===============
+
+Bugfixes:
+
+1. Fixed translation of CTE without FROM or UNION in BigQuery. 
+
+
 SqlRender 1.6.8
 ===============
 
