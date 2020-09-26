@@ -1,6 +1,5 @@
 language: R
 cache: packages
-sudo: false
 
 branches:
   except:
@@ -10,6 +9,9 @@ r_packages:
   - covr
   - drat
   - devtools
+  
+before_install:
+  - sudo $(which R) CMD javareconf
 
 before_script:
   - export PKG_NAME=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package))')
