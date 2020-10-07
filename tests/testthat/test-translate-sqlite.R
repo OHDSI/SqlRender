@@ -133,3 +133,15 @@ test_that("translate sql server -> sqlite CREATE INDEX", {
                    targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "CREATE INDEX idx_1  ON person  (person_id);")
 })
+
+test_that("translate sql server -> sqlite DATEDIFF with literals", {
+  sql <- translate("SELECT DATEDIFF(DAY, '20000131', '20000101');",
+                   targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "SELECT JULIANDAY(CAST(STRFTIME('%s', SUBSTR('20000101', 1, 4) || '-' || SUBSTR('20000101', 5, 2) || '-' || SUBSTR('20000101', 7)) AS REAL), 'unixepoch') - JULIANDAY(CAST(STRFTIME('%s', SUBSTR('20000131', 1, 4) || '-' || SUBSTR('20000131', 5, 2) || '-' || SUBSTR('20000131', 7)) AS REAL), 'unixepoch');")
+})
+
+test_that("translate sql server -> sqlite DATEDIFF with date fields", {
+  sql <- translate("SELECT DATEDIFF(DAY, date1, date2);",
+                   targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "SELECT JULIANDAY(date2, 'unixepoch') - JULIANDAY(date1, 'unixepoch');")
+})

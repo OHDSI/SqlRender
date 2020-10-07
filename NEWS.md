@@ -5,6 +5,10 @@ Bugfixes:
 
 1. Fixed translation of CTE without FROM or UNION in BigQuery. 
 
+2. Fixed translation of CONVERT(DATE...) in SQLite.
+
+3. Fixed translation of DATEDIFF with literals in SQLite.
+
 
 SqlRender 1.6.8
 ===============

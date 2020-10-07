@@ -668,6 +668,7 @@ sqlite,"DATEADD(year,@years,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixep
 sqlite,"DATEDIFF(d,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
 sqlite,"DATEDIFF(dd,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
 sqlite,"DATEDIFF(day,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
+sqlite,"JULIANDAY('@literal', 'unixepoch')","JULIANDAY(CAST(STRFTIME('%s', SUBSTR('@literal', 1, 4) || '-' || SUBSTR('@literal', 5, 2) || '-' || SUBSTR('@literal', 7)) AS REAL), 'unixepoch')"
 sqlite,"CONVERT(VARCHAR,@date,112)","CAST(STRFTIME('%Y%m%d', @date) AS REAL)"
 sqlite,GETDATE(),"STRFTIME('%s','now')"
 sqlite,+ '@a',|| '@a'
