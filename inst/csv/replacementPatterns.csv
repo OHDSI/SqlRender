@@ -652,7 +652,7 @@ bigquery,UPDATE STATISTICS @a;,-- big query does not support such functionality
 sqlite,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
 sqlite,DATETIME,REAL
 sqlite,DATETIME2,REAL
-sqlite,"CONVERT(DATE, @a)","CAST(STRFTIME('%s', SUBSTR(@a, 1, 4) || '-' || SUBSTR(@a, 5, 2) || '-' || SUBSTR(@a, 7))) AS REAL)"
+sqlite,"CONVERT(DATE, @a)","CAST(STRFTIME('%s', SUBSTR(@a, 1, 4) || '-' || SUBSTR(@a, 5, 2) || '-' || SUBSTR(@a, 7)) AS REAL)"
 sqlite,"DATEADD(second,@seconds,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@seconds)||' seconds')) AS REAL)"
 sqlite,"DATEADD(minute,@minutes,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@minutes)||' minutes')) AS REAL)"
 sqlite,"DATEADD(hour,@hours,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@hours)||' hours')) AS REAL)"

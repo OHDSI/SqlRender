@@ -90,6 +90,12 @@ test_that("translate sql server -> sqlite date to string", {
   expect_equal_ignore_spaces(sql, "SELECT CAST(STRFTIME('%Y%m%d', start_date) AS REAL) FROM table;")
 })
 
+test_that("translate sql server -> sqlite CONVERT(AS DATE)", {
+  sql <- translate("CONVERT(DATE, '20000101');",
+                   targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "CAST(STRFTIME('%s', SUBSTR('20000101', 1, 4) || '-' || SUBSTR('20000101', 5, 2) || '-' || SUBSTR('20000101', 7)) AS REAL);")
+})
+
 test_that("translate sql server -> sqlite log any base", {
   sql <- translate("SELECT LOG(number, base) FROM table",
                       targetDialect = "sqlite")
