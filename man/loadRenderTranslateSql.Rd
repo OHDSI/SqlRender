@@ -9,6 +9,7 @@ loadRenderTranslateSql(
   packageName,
   dbms = "sql server",
   ...,
+  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
   oracleTempSchema = NULL,
   warnOnMissingParameters = TRUE
 )
@@ -23,7 +24,11 @@ loadRenderTranslateSql(
 
 \item{...}{Parameter values used for \code{render}}
 
-\item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle.}
+\item{tempEmulationSchema}{Some database platforms like Oracle and Impala do not truly support temp tables. To
+emulate temp tables, provide a schema with write privileges where temp tables
+can be created.}
+
+\item{oracleTempSchema}{DEPRECATED: use \code{tempEmulationSchema} instead.}
 
 \item{warnOnMissingParameters}{Should a warning be raised when parameters provided to this function 
 do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.}

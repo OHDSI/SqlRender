@@ -16,32 +16,25 @@ shinyServer(function(input, output, session) {
   })
   
   output$target <- renderText({
-    # if (!input$continuous && (input$renderTranslate == cache$clicks)) {
-    #   return(cache$target)
-    # } else {
-      # print(paste("continuous: ", input$continuous, ", renderTranslate: ", input$renderTranslate))
-      parameterValues <- list()
-      for (param in parameters()) {
-        value <- input[[param]]
-        if (!is.null(value)) {
-          parameterValues[[param]] <- value
-        }
+    parameterValues <- list()
+    for (param in parameters()) {
+      value <- input[[param]]
+      if (!is.null(value)) {
+        parameterValues[[param]] <- value
       }
-      sql <- do.call("render", append(input$source, parameterValues))
-      warningString <- c()
-      handleWarning <- function(e) {
-        output$warnings <- e$message
-      }
-      oracleTempSchema <- input$oracleTempSchema
-      if (oracleTempSchema == "")
-        oracleTempSchema <- NULL
-      sql <- withCallingHandlers(suppressWarnings(translate(sql, targetDialect = tolower(input$dialect), oracleTempSchema = oracleTempSchema)), warning = handleWarning)
-      if (!is.null(warningString))
-        output$warnings <- warningString
-      # cache$target <- sql
-      # cache$clicks <- input$renderTranslate
-      return(sql)
-    # }
+    }
+    sql <- do.call("render", append(input$source, parameterValues))
+    warningString <- c()
+    handleWarning <- function(e) {
+      output$warnings <- e$message
+    }
+    tempEmulationSchema <- input$tempEmulationSchema
+    if (tempEmulationSchema == "")
+      tempEmulationSchema <- NULL
+    sql <- withCallingHandlers(suppressWarnings(translate(sql, targetDialect = tolower(input$dialect), tempEmulationSchema = tempEmulationSchema)), warning = handleWarning)
+    if (!is.null(warningString))
+      output$warnings <- warningString
+    return(sql)
   })
   
   output$parameterInputs <- renderUI({

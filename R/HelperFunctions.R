@@ -111,9 +111,12 @@ renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE
 #'
 #' @param sourceFile         The source SQL file
 #' @param targetFile         The target SQL file
-#' @param targetDialect      The target dialect. Currently 'oracle', 'postgresql', and 'redshift' are
-#'                           supported
-#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle.
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "sqlite", "netezza", "bigquery", and
+#'                           "redshift" are supported.
+#' @param oracleTempSchema    DEPRECATED: use \code{tempEmulationSchema} instead.
+#' @param tempEmulationSchema Some database platforms like Oracle and Impala do not truly support temp tables. To
+#'                            emulate temp tables, provide a schema with write privileges where temp tables
+#'                            can be created.
 #'
 #' @examples
 #' \dontrun{
@@ -125,9 +128,14 @@ renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE
 translateSqlFile <- function(sourceFile,
                              targetFile,
                              targetDialect,
+                             tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
                              oracleTempSchema = NULL) {
+  if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
+    rlang::warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.", .frequency = "regularly", .frequency_id = "oracleTempSchema")
+    tempEmulationSchema <- oracleTempSchema
+  }
   sql <- readSql(sourceFile)
-  sql <- translate(sql = sql, targetDialect = targetDialect, oracleTempSchema = oracleTempSchema)
+  sql <- translate(sql = sql, targetDialect = targetDialect, tempEmulationSchema = tempEmulationSchema)
   writeSql(sql, targetFile)
 }
 
@@ -150,7 +158,10 @@ translateSqlFile <- function(sourceFile,
 #' @param dbms                        The target dialect. Currently 'sql server', 'oracle', 'postgres', and
 #'                                    'redshift' are supported
 #' @param ...                         Parameter values used for \code{render}
-#' @param oracleTempSchema            A schema that can be used to create temp tables in when using Oracle.
+#' @param oracleTempSchema    DEPRECATED: use \code{tempEmulationSchema} instead.
+#' @param tempEmulationSchema Some database platforms like Oracle and Impala do not truly support temp tables. To
+#'                            emulate temp tables, provide a schema with write privileges where temp tables
+#'                            can be created.
 #' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
 #'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
 #'
@@ -168,8 +179,13 @@ loadRenderTranslateSql <- function(sqlFilename,
                                    packageName,
                                    dbms = "sql server",
                                    ...,
+                                   tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
                                    oracleTempSchema = NULL,
                                    warnOnMissingParameters = TRUE) {
+  if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
+    rlang::warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.", .frequency = "regularly", .frequency_id = "oracleTempSchema")
+    tempEmulationSchema <- oracleTempSchema
+  }
   pathToSql <- system.file(paste("sql/", gsub(" ", "_", dbms), sep = ""),
                            sqlFilename,
                            package = packageName)
@@ -188,7 +204,7 @@ loadRenderTranslateSql <- function(sqlFilename,
   renderedSql <- render(sql = parameterizedSql[1], warnOnMissingParameters = warnOnMissingParameters, ...)
   
   if (mustTranslate)
-    renderedSql <- translate(sql = renderedSql, targetDialect = dbms, oracleTempSchema = oracleTempSchema)
+    renderedSql <- translate(sql = renderedSql, targetDialect = dbms, tempEmulationSchema = tempEmulationSchema)
   
   renderedSql
 }
@@ -354,7 +370,7 @@ createRWrapperForSql <- function(sqlFilename,
                "#' @param connectionDetails\t\tAn R object of type \\code{ConnectionDetails} created using the function \\code{createConnectionDetails} in the \\code{DatabaseConnector} package.")
     if (hasTempTables)
       lines <- c(lines,
-                 "#' @param oracleTempSchema\t\tA schema where temp tables can be created in Oracle.")
+                 "#' @param tempEmulationSchema\t\tSome database platforms like Oracle and Impala do not truly support temp tables. To emulate temp tables, provide a schema with write privileges where temp tables can be created.")
     for (i in 1:nrow(functionDefinitions)) {
       lines <- c(lines, paste("#' @param", functionDefinitions$rParameter[i], "\t\t"))
     }
@@ -364,7 +380,7 @@ createRWrapperForSql <- function(sqlFilename,
   lines <- c(lines,
              paste(gsub(".sql", "", sqlFilename), " <- function(connectionDetails,", sep = ""))
   if (hasTempTables)
-    lines <- c(lines, "                         oracleTempSchema = NULL,")
+    lines <- c(lines, "                         tempEmulationSchema = getOption(\"sqlRenderTempEmulationSchema\"),")
   for (i in 1:nrow(functionDefinitions)) {
     if (i == nrow(functionDefinitions))
       end <- ") {" else end <- ","
@@ -389,7 +405,7 @@ createRWrapperForSql <- function(sqlFilename,
   lines <- c(lines, paste("              packageName = \"", packageName, "\",", sep = ""))
   lines <- c(lines, "              dbms = connectionDetails$dbms,")
   if (hasTempTables)
-    lines <- c(lines, "              oracleTempSchema = oracleTempSchema,")
+    lines <- c(lines, "              tempEmulationSchema = tempEmulationSchema,")
   for (i in 1:nrow(definitions)) {
     if (i == nrow(definitions))
       end <- ")" else end <- ","

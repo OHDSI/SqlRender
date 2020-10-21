@@ -43,7 +43,7 @@ public class MainClass {
 				List<String> parameters = new ArrayList<String>();
 				List<String> values = new ArrayList<String>();
 				for (int j = i + 1; j < args.length - 1; j += 2) {
-					if (args[j].equals("-translate") || args[j].equals("-oracle_temp_schema") || args[j].equals("-session_id"))
+					if (args[j].equals("-translate") || args[j].equals("-temp_emulation_schema") || args[j].equals("-session_id"))
 						break;
 					parameters.add(args[j]);
 					values.add(args[j + 1]);
@@ -52,10 +52,10 @@ public class MainClass {
 			}
 
 		// Translate
-		String oracleTempSchema = null;
+		String tempEmulationSchema = null;
 		for (int i = 2; i < args.length - 1; i++)
-			if (args[i].equals("-oracle_temp_schema")) {
-				oracleTempSchema = args[i + 1];
+			if (args[i].equals("-temp_emulation_schema")) {
+				tempEmulationSchema = args[i + 1];
 				break;
 			}
 		String sessionId = null;
@@ -68,7 +68,7 @@ public class MainClass {
 		for (int i = 2; i < args.length - 1; i++)
 			if (args[i].equals("-translate")) {
 				String targetDialect = args[i + 1];
-				sql = SqlTranslate.translateSql(sql, targetDialect, sessionId, oracleTempSchema);
+				sql = SqlTranslate.translateSql(sql, targetDialect, sessionId, tempEmulationSchema);
 			}
 		writeFile(sql, args[1]);
 	}
@@ -83,7 +83,7 @@ public class MainClass {
 		System.out.println("Options");
 		System.out.println("  -render {<name> <value>} ...    Render the SQL with a list of parameter name-value pairs");
 		System.out.println("  -translate <target dialect>     Translate the input SQL to the target dialect");
-		System.out.println("  -oracle_temp_schema <schema>    When translating to Oracle SQL, use this schema to emulate temp tables");
+		System.out.println("  -temp_emulation_schema <schema>  When translating to platforms that don't support tempt table, use this schema to emulate temp tables");
 		System.out.println("  -session_id <session id>        When translating to Oracle SQL, use this ID to make emulated temp table names unique. Should be 8 chars long");
 		System.out.println("");
 		System.out.println("Examples");
