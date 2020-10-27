@@ -13,7 +13,7 @@ A rendering tool for parameterized SQL that also translates into
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://ohdsi.github.io/SqlRender}
+  \item \url{https://ohdsi.github.io/SqlRender/}
   \item \url{https://github.com/OHDSI/SqlRender}
   \item Report bugs at \url{https://github.com/OHDSI/SqlRender/issues}
 }

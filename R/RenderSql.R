@@ -72,7 +72,7 @@ render <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
                                                           rJava::.jarray(names(parameters)), 
                                                           rJava::.jarray(as.character(parameters)))
     for (message in messages) {
-      warning(message)
+      warn(message)
     }
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlRender")$renderSql(as.character(sql), 
@@ -137,7 +137,7 @@ translate <- function(sql = "",
                       tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
                       oracleTempSchema = NULL) {
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
-    rlang::warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.", .frequency = "regularly", .frequency_id = "oracleTempSchema")
+    warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.", .frequency = "regularly", .frequency_id = "oracleTempSchema")
     tempEmulationSchema <- oracleTempSchema
   }
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
@@ -149,7 +149,7 @@ translate <- function(sql = "",
   messages <- rJava::J("org.ohdsi.sql.SqlTranslate")$check(as.character(sql), 
                                                            as.character(targetDialect))
   for (message in messages) {
-    warning(message)
+    warn(message)
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(as.character(sql), 
                                                                                as.character(targetDialect), 
@@ -216,7 +216,7 @@ translateSingleStatement <- function(sql = "",
                                      tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
                                      oracleTempSchema = NULL) {
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
-    rlang::warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.", .frequency = "regularly", .frequency_id = "oracleTempSchema")
+    warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.", .frequency = "regularly", .frequency_id = "oracleTempSchema")
     tempEmulationSchema <- oracleTempSchema
   }
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
@@ -228,7 +228,7 @@ translateSingleStatement <- function(sql = "",
   messages <- rJava::J("org.ohdsi.sql.SqlTranslate")$check(as.character(sql), 
                                                            as.character(targetDialect))
   for (message in messages) {
-    warning(message)
+    warn(message)
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSingleStatementSqlWithPath(as.character(sql), 
                                                                                               as.character(targetDialect), 

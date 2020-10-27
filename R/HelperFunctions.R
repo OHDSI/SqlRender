@@ -196,7 +196,7 @@ loadRenderTranslateSql <- function(sqlFilename,
                              sqlFilename,
                              package = packageName)
     if (!file.exists(pathToSql)) {
-       stop("Cannot find '", sqlFilename, "' in the 'sql/sql_server' folder of the '", packageName , "' package.") 
+       abort(paste0("Cannot find '", sqlFilename, "' in the 'sql/sql_server' folder of the '", packageName , "' package.") )
     }
   }
   parameterizedSql <- readChar(pathToSql, file.info(pathToSql)$size)
@@ -315,14 +315,14 @@ createRWrapperForSql <- function(sqlFilename,
                            sqlFilename,
                            package = packageName)
   if (file.exists(pathToSql)) {
-    writeLines(paste("Reading SQL from package folder:", pathToSql))
+    inform(paste("Reading SQL from package folder:", pathToSql))
     parameterizedSql <- readSql(pathToSql)
   } else if (file.exists(sqlFilename)) {
-    writeLines(paste("Reading SQL from current folder:", file.path(getwd(), sqlFilename)))
-    writeLines("Note: make sure the SQL file is placed in the /inst/sql/sql_server folder when building the package")
+    inform(paste("Reading SQL from current folder:", file.path(getwd(), sqlFilename)))
+    inform("Note: make sure the SQL file is placed in the /inst/sql/sql_server folder when building the package")
     parameterizedSql <- readSql(sqlFilename)
   } else {
-    stop("Could not find SQL file")
+    abort("Could not find SQL file")
   }
   
   hasTempTables <- any(gregexpr("\\#", parameterizedSql)[[1]] != -1)
@@ -424,7 +424,7 @@ createRWrapperForSql <- function(sqlFilename,
   lines <- c(lines, "")
   lines <- c(lines, "  dummy <- RJDBC::dbDisconnect(conn)")
   lines <- c(lines, "}")
-  writeLines(paste("Writing R function to:", rFilename))
+  inform(paste("Writing R function to:", rFilename))
   sink(rFilename)
   cat(paste(lines, collapse = "\n"))
   sink()
