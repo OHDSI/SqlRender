@@ -78,17 +78,18 @@ writeSql <- function(sql, targetFile) {
 #' @details
 #' This function takes parameterized SQL and a list of parameter values and renders the SQL that can
 #' be send to the server. Parameterization syntax: \describe{ \item{@@parameterName}{Parameters are
-#' indicated using a @@ prefix, and are replaced with the actual values provided in the render
-#' call.} \item{\{DEFAULT @@parameterName = parameterValue\}}{Default values for parameters can be
-#' defined using curly and the DEFAULT keyword.} \item{\{if\}?\{then\}:\{else\}}{The if-then-else
-#' pattern is used to turn on or off blocks of SQL code.} }
+#' indicated using a @@ prefix, and are replaced with the actual values provided in the render call.}
+#' \item{\{DEFAULT @@parameterName = parameterValue\}}{Default values for parameters can be defined
+#' using curly and the DEFAULT keyword.} \item{\{if\}?\{then\}:\{else\}}{The if-then-else pattern is
+#' used to turn on or off blocks of SQL code.} }
 #'
 #'
-#' @param sourceFile   The source SQL file
-#' @param targetFile   The target SQL file
-#' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
-#'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
-#' @param ...          Parameter values
+#' @param sourceFile                The source SQL file
+#' @param targetFile                The target SQL file
+#' @param warnOnMissingParameters   Should a warning be raised when parameters provided to this
+#'                                  function do not appear in the parameterized SQL that is being
+#'                                  rendered? By default, this is TRUE.
+#' @param ...                       Parameter values
 #'
 #' @examples
 #' \dontrun{
@@ -109,14 +110,14 @@ renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE
 #' @details
 #' This function takes SQL and translates it to a different dialect.
 #'
-#' @param sourceFile         The source SQL file
-#' @param targetFile         The target SQL file
-#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "sqlite", "netezza", "bigquery", and
-#'                           "redshift" are supported.
-#' @param oracleTempSchema    DEPRECATED: use \code{tempEmulationSchema} instead.
-#' @param tempEmulationSchema Some database platforms like Oracle and Impala do not truly support temp tables. To
-#'                            emulate temp tables, provide a schema with write privileges where temp tables
-#'                            can be created.
+#' @param sourceFile            The source SQL file
+#' @param targetFile            The target SQL file
+#' @param targetDialect         The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
+#'                              "sqlite", "netezza", "bigquery", and "redshift" are supported.
+#' @param oracleTempSchema      DEPRECATED: use \code{tempEmulationSchema} instead.
+#' @param tempEmulationSchema   Some database platforms like Oracle and Impala do not truly support
+#'                              temp tables. To emulate temp tables, provide a schema with write
+#'                              privileges where temp tables can be created.
 #'
 #' @examples
 #' \dontrun{
@@ -131,11 +132,15 @@ translateSqlFile <- function(sourceFile,
                              tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
                              oracleTempSchema = NULL) {
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
-    rlang::warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.", .frequency = "regularly", .frequency_id = "oracleTempSchema")
+    warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
+         .frequency = "regularly",
+         .frequency_id = "oracleTempSchema")
     tempEmulationSchema <- oracleTempSchema
   }
   sql <- readSql(sourceFile)
-  sql <- translate(sql = sql, targetDialect = targetDialect, tempEmulationSchema = tempEmulationSchema)
+  sql <- translate(sql = sql,
+                   targetDialect = targetDialect,
+                   tempEmulationSchema = tempEmulationSchema)
   writeSql(sql, targetFile)
 }
 
@@ -148,22 +153,23 @@ translateSqlFile <- function(sourceFile,
 #' @details
 #' This function looks for a SQL file with the specified name in the inst/sql/<dbms> folder of the
 #' specified package. If it doesn't find it in that folder, it will try and load the file from the
-#' inst/sql/sql_server folder and use the \code{translate} function to translate it to the
-#' requested dialect. It will subsequently call the \code{render} function with any of the
-#' additional specified parameters.
+#' inst/sql/sql_server folder and use the \code{translate} function to translate it to the requested
+#' dialect. It will subsequently call the \code{render} function with any of the additional specified
+#' parameters.
 #'
 #'
-#' @param sqlFilename                 The source SQL file
-#' @param packageName                 The name of the package that contains the SQL file
-#' @param dbms                        The target dialect. Currently 'sql server', 'oracle', 'postgres', and
-#'                                    'redshift' are supported
-#' @param ...                         Parameter values used for \code{render}
-#' @param oracleTempSchema    DEPRECATED: use \code{tempEmulationSchema} instead.
-#' @param tempEmulationSchema Some database platforms like Oracle and Impala do not truly support temp tables. To
-#'                            emulate temp tables, provide a schema with write privileges where temp tables
-#'                            can be created.
-#' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
-#'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
+#' @param sqlFilename               The source SQL file
+#' @param packageName               The name of the package that contains the SQL file
+#' @param dbms                      The target dialect. Currently 'sql server', 'oracle', 'postgres',
+#'                                  and 'redshift' are supported
+#' @param ...                       Parameter values used for \code{render}
+#' @param oracleTempSchema          DEPRECATED: use \code{tempEmulationSchema} instead.
+#' @param tempEmulationSchema       Some database platforms like Oracle and Impala do not truly support
+#'                                  temp tables. To emulate temp tables, provide a schema with write
+#'                                  privileges where temp tables can be created.
+#' @param warnOnMissingParameters   Should a warning be raised when parameters provided to this
+#'                                  function do not appear in the parameterized SQL that is being
+#'                                  rendered? By default, this is TRUE.
 #'
 #' @return
 #' Returns a string containing the rendered SQL.
@@ -183,7 +189,9 @@ loadRenderTranslateSql <- function(sqlFilename,
                                    oracleTempSchema = NULL,
                                    warnOnMissingParameters = TRUE) {
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
-    rlang::warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.", .frequency = "regularly", .frequency_id = "oracleTempSchema")
+    rlang::warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
+                .frequency = "regularly",
+                .frequency_id = "oracleTempSchema")
     tempEmulationSchema <- oracleTempSchema
   }
   pathToSql <- system.file(paste("sql/", gsub(" ", "_", dbms), sep = ""),
@@ -196,15 +204,23 @@ loadRenderTranslateSql <- function(sqlFilename,
                              sqlFilename,
                              package = packageName)
     if (!file.exists(pathToSql)) {
-       abort(paste0("Cannot find '", sqlFilename, "' in the 'sql/sql_server' folder of the '", packageName , "' package.") )
+      abort(paste0("Cannot find '",
+                   sqlFilename,
+                   "' in the 'sql/sql_server' folder of the '",
+                   packageName,
+                   "' package."))
     }
   }
   parameterizedSql <- readChar(pathToSql, file.info(pathToSql)$size)
   
-  renderedSql <- render(sql = parameterizedSql[1], warnOnMissingParameters = warnOnMissingParameters, ...)
+  renderedSql <- render(sql = parameterizedSql[1],
+                        warnOnMissingParameters = warnOnMissingParameters,
+                        ...)
   
   if (mustTranslate)
-    renderedSql <- translate(sql = renderedSql, targetDialect = dbms, tempEmulationSchema = tempEmulationSchema)
+    renderedSql <- translate(sql = renderedSql,
+                             targetDialect = dbms,
+                             tempEmulationSchema = tempEmulationSchema)
   
   renderedSql
 }
@@ -352,7 +368,7 @@ createRWrapperForSql <- function(sqlFilename,
     if (any(definitions[, 1] == databaseParameter))
       databaseParameters <- rbind(databaseParameters,
                                   definitions[definitions$sqlParameter == databaseParameter,
-                                              ])
+                                  ])
   }
   functionDefinitions <- definitions[!(definitions$sqlParameter %in% databaseParameters$sqlParameter), ]
   
@@ -380,7 +396,8 @@ createRWrapperForSql <- function(sqlFilename,
   lines <- c(lines,
              paste(gsub(".sql", "", sqlFilename), " <- function(connectionDetails,", sep = ""))
   if (hasTempTables)
-    lines <- c(lines, "                         tempEmulationSchema = getOption(\"sqlRenderTempEmulationSchema\"),")
+    lines <- c(lines,
+               "                         tempEmulationSchema = getOption(\"sqlRenderTempEmulationSchema\"),")
   for (i in 1:nrow(functionDefinitions)) {
     if (i == nrow(functionDefinitions))
       end <- ") {" else end <- ","

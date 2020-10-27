@@ -14,5 +14,6 @@ Note: copying to clipboard will not work in a Shiny window.}
 Launch the SqlRender Developer Shiny app
 }
 \details{
-Launches a Shiny app that allows the user to develop SQL and see how it translates to the supported dialects.
+Launches a Shiny app that allows the user to develop SQL and see how it translates to the supported
+dialects.
 }

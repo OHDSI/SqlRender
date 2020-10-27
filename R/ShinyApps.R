@@ -15,13 +15,14 @@
 # limitations under the License.
 
 #' Launch the SqlRender Developer Shiny app
-#' 
-#' @param launch.browser    Should the app be launched in your default browser, or in a Shiny window.
-#'                          Note: copying to clipboard will not work in a Shiny window.
-#' 
-#' @details 
-#' Launches a Shiny app that allows the user to develop SQL and see how it translates to the supported dialects.
-#' 
+#'
+#' @param launch.browser   Should the app be launched in your default browser, or in a Shiny window.
+#'                         Note: copying to clipboard will not work in a Shiny window.
+#'
+#' @details
+#' Launches a Shiny app that allows the user to develop SQL and see how it translates to the supported
+#' dialects.
+#'
 #' @export
 launchSqlRenderDeveloper <- function(launch.browser = TRUE) {
   ensure_installed("shinydashboard")
@@ -29,9 +30,8 @@ launchSqlRenderDeveloper <- function(launch.browser = TRUE) {
   shiny::runApp(appDir, display.mode = "normal", launch.browser = launch.browser)
 }
 
-is_installed <- function (pkg, version = 0) {
-  installed_version <- tryCatch(utils::packageVersion(pkg), 
-                                error = function(e) NA)
+is_installed <- function(pkg, version = 0) {
+  installed_version <- tryCatch(utils::packageVersion(pkg), error = function(e) NA)
   !is.na(installed_version) && installed_version >= version
 }
 
