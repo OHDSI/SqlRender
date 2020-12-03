@@ -5,6 +5,8 @@ Changes:
 
 1. Deprecating `oracleTempSchema` argument in various functions in favor of `tempEmulationSchema` schema, which can also be set globally using the `sqlRenderTempEmulationSchema` option.
 
+2. Adding translation of DATEDIFF(YEAR, ...) to all dialects.
+
 Bugfixes:
 
 1. Fixed translation of CTE without FROM or UNION in BigQuery. 

@@ -21,6 +21,9 @@ oracle,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 oracle,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+oracle,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+oracle,"DATEDIFF(yyyy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+oracle,"DATEDIFF(yy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
 oracle,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
 oracle,GETDATE(),SYSDATE
 oracle,+ '@a',|| '@a'
@@ -130,6 +133,9 @@ postgresql,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
 postgresql,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 postgresql,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 postgresql,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+postgresql,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+postgresql,"DATEDIFF(yyyy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+postgresql,"DATEDIFF(yy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
 postgresql,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
 postgresql,GETDATE(),CURRENT_DATE
 postgresql,+ '@a',|| '@a'
@@ -439,6 +445,9 @@ impala,"DATEADD(yy,@years,@date)","ADD_MONTHS(CAST(@date AS DATE), 12 * @years)"
 impala,"DATEDIFF(d,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(dd,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(day,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
+impala,"DATEDIFF(year,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
+impala,"DATEDIFF(yyyy,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
+impala,"DATEDIFF(yy,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
 impala,"DATEFROMPARTS(@year,@month,@day)","to_timestamp(CONCAT(CAST(@year AS VARCHAR),'-',CAST(@month AS VARCHAR),'-',CAST(@day AS VARCHAR)), 'yyyy-M-d')"
 impala,"eomonth(@date)","days_sub(add_months(trunc(CAST(@date AS TIMESTAMP), 'MM'),1),1)"
 impala,DAY(@date),DAY(CAST(@date AS DATE))
@@ -530,6 +539,9 @@ netezza,"DATEADD(year,@years,@date)",CAST((@date + @years*INTERVAL'1 year') AS D
 netezza,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 netezza,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 netezza,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+netezza,"DATEDIFF(year,@start, @end)","(DATE_PART('YEAR', CAST(@end AS DATE)) - DATE_PART('YEAR', CAST(@start AS DATE)))"
+netezza,"DATEDIFF(yyyy,@start, @end)","(DATE_PART('YEAR', CAST(@end AS DATE)) - DATE_PART('YEAR', CAST(@start AS DATE)))"
+netezza,"DATEDIFF(yy,@start, @end)","(DATE_PART('YEAR', CAST(@end AS DATE)) - DATE_PART('YEAR', CAST(@start AS DATE)))"
 netezza,GETDATE(),CURRENT_DATE
 netezza,+ '@a',|| '@a'
 netezza,'@a' +,'@a' ||
@@ -579,6 +591,9 @@ bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
+bigquery,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR from CAST(@end AS DATE)) - EXTRACT(YEAR from CAST(@start AS DATE)))
+bigquery,"DATEDIFF(yyyy,@start, @end)",(EXTRACT(YEAR from CAST(@end AS DATE)) - EXTRACT(YEAR from CAST(@start AS DATE)))
+bigquery,"DATEDIFF(yy,@start, @end)",(EXTRACT(YEAR from CAST(@end AS DATE)) - EXTRACT(YEAR from CAST(@start AS DATE)))
 bigquery,"DATEADD(d,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
 bigquery,"DATEADD(dd,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
 bigquery,"DATEADD(day,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
@@ -668,7 +683,11 @@ sqlite,"DATEADD(year,@years,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixep
 sqlite,"DATEDIFF(d,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
 sqlite,"DATEDIFF(dd,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
 sqlite,"DATEDIFF(day,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
+sqlite,"DATEDIFF(year,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
+sqlite,"DATEDIFF(yyyy,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
+sqlite,"DATEDIFF(yy,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
 sqlite,"JULIANDAY('@literal', 'unixepoch')","JULIANDAY(CAST(STRFTIME('%s', SUBSTR('@literal', 1, 4) || '-' || SUBSTR('@literal', 5, 2) || '-' || SUBSTR('@literal', 7)) AS REAL), 'unixepoch')"
+sqlite,"STRFTIME('%Y', '@literal', 'unixepoch')","CAST(SUBSTR('@literal', 1, 4) AS REAL)"
 sqlite,"CONVERT(VARCHAR,@date,112)","CAST(STRFTIME('%Y%m%d', @date) AS REAL)"
 sqlite,GETDATE(),"STRFTIME('%s','now')"
 sqlite,+ '@a',|| '@a'
@@ -755,6 +774,9 @@ hive,"DATEADD(yy,@years,@date)","CAST(ADD_MONTHS(CAST(@date AS TIMESTAMP), 12 * 
 hive,"DATEDIFF(d,@start, @end)","day(CAST(@end AS TIMESTAMP) - CAST(@start AS TIMESTAMP))"
 hive,"DATEDIFF(dd,@start, @end)","day(CAST(@end AS TIMESTAMP) - CAST(@start AS TIMESTAMP))"
 hive,"DATEDIFF(day,@start, @end)","day(CAST(@end AS TIMESTAMP) - CAST(@start AS TIMESTAMP))"
+hive,"DATEDIFF(year,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
+hive,"DATEDIFF(yyyy,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
+hive,"DATEDIFF(yy,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
 hive,"DATEFROMPARTS(@year,@month,@day)","CAST(CONCAT(CAST(@year AS STRING),'-',CAST(@month AS STRING),'-',CAST(@day AS STRING)) AS TIMESTAMP)"
 hive,"eomonth(@date)","CAST(last_day(@date) AS TIMESTAMP)"
 hive,GETDATE(),unix_timestamp()

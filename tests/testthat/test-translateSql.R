@@ -23,6 +23,13 @@ test_that("translate sql server -> Oracle DATEDIFF", {
                              "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
 })
 
+test_that("translate sql server -> Oracle DATEDIFF year", {
+  sql <- translate("SELECT DATEDIFF(YEAR,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                   targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql,
+                             "SELECT (EXTRACT(YEAR FROM CAST(drug_era_end_date AS DATE)) - EXTRACT(YEAR FROM CAST(drug_era_start_date AS DATE))) FROM drug_era;")
+})
+
 test_that("translate sql server -> Oracle DATEADD", {
   sql <- translate("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                    targetDialect = "oracle")
@@ -658,6 +665,13 @@ test_that("translate sql server -> Netezza DATEDIFF", {
                              "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
 })
 
+test_that("translate sql server -> Netezza DATEDIFF year", {
+  sql <- translate("SELECT DATEDIFF(YEAR,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                   targetDialect = "netezza")
+  expect_equal_ignore_spaces(sql,
+                             "SELECT (DATE_PART('YEAR', CAST(drug_era_end_date AS DATE)) - DATE_PART('YEAR', CAST(drug_era_start_date AS DATE))) FROM drug_era;")
+})
+
 test_that("translate sql server -> Netezza DATEADD", {
   sql <- translate("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                    targetDialect = "netezza")
@@ -1085,6 +1099,14 @@ test_that("translate sql server -> bigquery DATEDIFF", {
                              "select DATE_DIFF(IF(SAFE_CAST(drug_era_end_date AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(drug_era_end_date AS STRING)),SAFE_CAST(drug_era_end_date AS DATE)),IF(SAFE_CAST(drug_era_start_date AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(drug_era_start_date AS STRING)),SAFE_CAST(drug_era_start_date AS DATE)),DAY)from drug_era;")
 })
 
+test_that("translate sql server -> bigquery DATEDIFF year", {
+  sql <- translate("SELECT DATEDIFF(YEAR,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                   targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql,
+                             "select (EXTRACT(YEAR from IF(SAFE_CAST(drug_era_end_date  AS DATE) IS NULL,PARSE_DATE('%Y%m%d', cast(drug_era_end_date  AS STRING)),SAFE_CAST(drug_era_end_date  AS DATE))) - EXTRACT(YEAR from IF(SAFE_CAST(drug_era_start_date  AS DATE) IS NULL,PARSE_DATE('%Y%m%d', cast(drug_era_start_date  AS STRING)),SAFE_CAST(drug_era_start_date  AS DATE)))) from drug_era;")
+})
+
+
 test_that("translate sql server -> bigquery DATEADD", {
   sql <- translate("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                    targetDialect = "bigquery")
@@ -1364,6 +1386,14 @@ test_that("translate sql server -> RedShift DATEDIFF dd", {
   expect_equal_ignore_spaces(sql,
                              "SELECT DATEDIFF(day, drug_era_start_date, drug_era_end_date) FROM drug_era;")
 })
+
+test_that("translate sql server -> RedShift DATEDIFF year", {
+  sql <- translate("SELECT DATEDIFF(YEAR,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                   targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql,
+                             "SELECT DATEDIFF(YEAR,drug_era_start_date,drug_era_end_date) FROM drug_era;")
+})
+
 
 test_that("translate sql server -> RedShift DATEDIFF m", {
   sql <- translate("SELECT DATEDIFF(m, drug_era_start_date, drug_era_end_date) FROM drug_era;",
@@ -3087,4 +3117,3 @@ test_that("translate sql server -> BigQuery % operator", {
   expect_equal_ignore_spaces(sql,
                              "select (MOD(cast(person_id*EXTRACT(MONTH from cohort_start_date) as int64), 123))*(MOD(cast(EXTRACT(YEAR from cohort_start_date)*EXTRACT(DAY from cohort_start_date) as int64), 123))) from my_table;")
 })
-

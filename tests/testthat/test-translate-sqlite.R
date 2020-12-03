@@ -138,3 +138,15 @@ test_that("translate sql server -> sqlite DATEDIFF with date fields", {
   expect_equal_ignore_spaces(sql,
                              "SELECT JULIANDAY(date2, 'unixepoch') - JULIANDAY(date1, 'unixepoch');")
 })
+
+test_that("translate sql server -> sqlite DATEDIFF year with literals", {
+  sql <- translate("SELECT DATEDIFF(YEAR, '20000131', '20000101');", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql,
+                             "SELECT (CAST(SUBSTR('20000101', 1, 4) AS REAL) - CAST(SUBSTR('20000131', 1, 4) AS REAL));")
+})
+
+test_that("translate sql server -> sqlite DATEDIFF year with date fields", {
+  sql <- translate("SELECT DATEDIFF(YEAR, date1, date2);", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql,
+                             "SELECT (STRFTIME('%Y', date2, 'unixepoch') - STRFTIME('%Y', date1, 'unixepoch'));")
+})
