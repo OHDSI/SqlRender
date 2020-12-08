@@ -30,6 +30,12 @@ test_that("translate sql server -> Oracle DATEDIFF year", {
                              "SELECT (EXTRACT(YEAR FROM CAST(drug_era_end_date AS DATE)) - EXTRACT(YEAR FROM CAST(drug_era_start_date AS DATE))) FROM drug_era;")
 })
 
+test_that("translate sql server -> Oracle DATEDIFF(MONTH)", {
+  sql <- translate("SELECT DATEDIFF(month,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT MONTHS_BETWEEN(CAST(drug_era_end_date AS DATE), CAST(drug_era_start_date AS DATE)) FROM drug_era;")
+})
+
 test_that("translate sql server -> Oracle DATEADD", {
   sql <- translate("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                    targetDialect = "oracle")
@@ -142,6 +148,12 @@ test_that("translate sql server -> PostgreSQL string concat", {
 test_that("translate sql server -> PostgreSQL add month", {
   sql <- translate("DATEADD(mm,1,date)", targetDialect = "postgresql")
   expect_equal_ignore_spaces(sql, "(date + 1*INTERVAL'1 month')")
+})
+
+test_that("translate sql server -> PostgreSQL date diff (month)", {
+  sql <- translate("SELECT DATEDIFF(month,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "SELECT (extract(year from age(CAST(drug_era_end_date AS DATE), CAST(drug_era_start_date AS DATE)))*12 + extract(month from age(CAST(drug_era_end_date AS DATE), CAST(drug_era_start_date AS DATE))))  FROM drug_era;")
 })
 
 test_that("translate sql server -> Oracle multiple inserts in one statement", {
@@ -500,6 +512,12 @@ test_that("translate sql server -> Impala DATEDIFF", {
                              "SELECT DATEDIFF(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, CASE TYPEOF(drug_era_start_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_start_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_start_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_start_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_start_date  AS STRING), 7, 2)), 'UTC') END) FROM drug_era;")
 })
 
+test_that("translate sql server -> Impala DATEDIFF (MONTH)", {
+  sql <- translate("SELECT DATEDIFF(month,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "impala")
+  expect_equal_ignore_spaces(sql, "SELECT INT_MONTHS_BETWEEN(CASE TYPEOF(drug_era_end_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_end_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_end_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_end_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_end_date  AS STRING), 7, 2)), 'UTC') END, CASE TYPEOF(drug_era_start_date ) WHEN 'TIMESTAMP' THEN CAST(drug_era_start_date  AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(drug_era_start_date  AS STRING), 1, 4), SUBSTR(CAST(drug_era_start_date  AS STRING), 5, 2), SUBSTR(CAST(drug_era_start_date  AS STRING), 7, 2)), 'UTC') END) FROM drug_era;")
+})
+
 test_that("translate sql server -> Impala DATEADD", {
   sql <- translate("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
                    targetDialect = "impala")
@@ -670,6 +688,12 @@ test_that("translate sql server -> Netezza DATEDIFF year", {
                    targetDialect = "netezza")
   expect_equal_ignore_spaces(sql,
                              "SELECT (DATE_PART('YEAR', CAST(drug_era_end_date AS DATE)) - DATE_PART('YEAR', CAST(drug_era_start_date AS DATE))) FROM drug_era;")
+})
+
+test_that("translate sql server -> Netezza DATEDIFF(MONTH)", {
+  sql <- translate("SELECT DATEDIFF(month,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "netezza")
+  expect_equal_ignore_spaces(sql, "SELECT MONTHS_BETWEEN(CAST(drug_era_end_date AS DATE), CAST(drug_era_start_date AS DATE)) FROM drug_era;")
 })
 
 test_that("translate sql server -> Netezza DATEADD", {
@@ -2572,6 +2596,12 @@ test_that("translate sql server -> BigQuery modulus", {
 })
 
 # Hive tests
+
+test_that("translate sql server -> HIVE DATEDIFF(MONTH)", {
+  sql <- translate("SELECT DATEDIFF(Month,drug_era_start_date,drug_era_end_date) FROM drug_era;",
+                      targetDialect = "hive")
+  expect_equal_ignore_spaces(sql, "SELECT CAST(MONTHS_BETWEEN(CAST(drug_era_end_date AS TIMESTAMP ), CAST(drug_era_start_date AS TIMESTAMP )) AS INT) FROM drug_era;")
+})
 
 test_that("translate sql server -> Hive clustered index is not supported", {
   sql <- translate("CREATE CLUSTERED INDEX idx_raw_4000 ON #raw_4000 (cohort_definition_id, subject_id, op_start_date);",
