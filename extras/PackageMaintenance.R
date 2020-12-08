@@ -35,6 +35,8 @@ rmarkdown::render("vignettes/UsingSqlRender.Rmd",
 unlink("inst/doc/UsingSqlRender.tex")
 
 pkgdown::build_site()
+OhdsiRTools::fixHadesLogo()
+
 
 # Release package:
 devtools::check_win_devel()

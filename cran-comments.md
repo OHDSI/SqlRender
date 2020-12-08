@@ -1,10 +1,10 @@
-This update has 1 bugfix since 1.6.4 (see NEWS.md)
+This update has 1 change, 3 bugfixes (see NEWS.md)
 
 ---
 
 ## Test environments
-* Ubuntu 14.04.5 LTS (Travis), R 3.6.2
-* Windows 7, R 3.6.1
+* Ubuntu 16.04.6 LTS (Travis), R 4.0.3
+* Windows 10, R 4.0.3
 
 ## R CMD check results
 

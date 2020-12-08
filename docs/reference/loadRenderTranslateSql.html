@@ -73,7 +73,7 @@ to the specified dialect" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
       </span>
     </div>
 
@@ -88,6 +88,9 @@ to the specified dialect" />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
@@ -100,12 +103,12 @@ to the specified dialect" />
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://ohdsi.github.io/Hades"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
+</li>
+<li>
   <a href="https://github.com/OHDSI/SqlRender/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
@@ -134,14 +137,15 @@ to the specified dialect" />
 to the specified dialect</p>
     </div>
 
-    <pre class="usage"><span class='fu'>loadRenderTranslateSql</span>(
-  <span class='no'>sqlFilename</span>,
-  <span class='no'>packageName</span>,
-  <span class='kw'>dbms</span> <span class='kw'>=</span> <span class='st'>"sql server"</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>oracleTempSchema</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>warnOnMissingParameters</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>loadRenderTranslateSql</span><span class='op'>(</span>
+  <span class='va'>sqlFilename</span>,
+  <span class='va'>packageName</span>,
+  dbms <span class='op'>=</span> <span class='st'>"sql server"</span>,
+  <span class='va'>...</span>,
+  tempEmulationSchema <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"sqlRenderTempEmulationSchema"</span><span class='op'>)</span>,
+  oracleTempSchema <span class='op'>=</span> <span class='cn'>NULL</span>,
+  warnOnMissingParameters <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -156,21 +160,28 @@ to the specified dialect</p>
     </tr>
     <tr>
       <th>dbms</th>
-      <td><p>The target dialect. Currently 'sql server', 'oracle', 'postgres', and
-'redshift' are supported</p></td>
+      <td><p>The target dialect. Currently 'sql server', 'oracle', 'postgres',
+and 'redshift' are supported</p></td>
     </tr>
     <tr>
       <th>...</th>
       <td><p>Parameter values used for <code>render</code></p></td>
     </tr>
     <tr>
+      <th>tempEmulationSchema</th>
+      <td><p>Some database platforms like Oracle and Impala do not truly support
+temp tables. To emulate temp tables, provide a schema with write
+privileges where temp tables can be created.</p></td>
+    </tr>
+    <tr>
       <th>oracleTempSchema</th>
-      <td><p>A schema that can be used to create temp tables in when using Oracle.</p></td>
+      <td><p>DEPRECATED: use <code>tempEmulationSchema</code> instead.</p></td>
     </tr>
     <tr>
       <th>warnOnMissingParameters</th>
-      <td><p>Should a warning be raised when parameters provided to this function 
-do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.</p></td>
+      <td><p>Should a warning be raised when parameters provided to this
+function do not appear in the parameterized SQL that is being
+rendered? By default, this is TRUE.</p></td>
     </tr>
     </table>
 
@@ -181,17 +192,18 @@ do not appear in the parameterized SQL that is being rendered? By default, this 
 
     <p>This function looks for a SQL file with the specified name in the inst/sql/&lt;dbms&gt; folder of the
 specified package. If it doesn't find it in that folder, it will try and load the file from the
-inst/sql/sql_server folder and use the <code>translate</code> function to translate it to the
-requested dialect. It will subsequently call the <code>render</code> function with any of the
-additional specified parameters.</p>
+inst/sql/sql_server folder and use the <code>translate</code> function to translate it to the requested
+dialect. It will subsequently call the <code>render</code> function with any of the additional specified
+parameters.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>renderedSql</span> <span class='kw'>&lt;-</span> <span class='fu'>loadRenderTranslateSql</span>(<span class='st'>"CohortMethod.sql"</span>,
-                                      <span class='kw'>packageName</span> <span class='kw'>=</span> <span class='st'>"CohortMethod"</span>,
-                                      <span class='kw'>dbms</span> <span class='kw'>=</span> <span class='no'>connectionDetails</span>$<span class='no'>dbms</span>,
-                                      <span class='kw'>CDM_schema</span> <span class='kw'>=</span> <span class='st'>"cdmSchema"</span>)
-}</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>renderedSql</span> <span class='op'>&lt;-</span> <span class='fu'>loadRenderTranslateSql</span><span class='op'>(</span><span class='st'>"CohortMethod.sql"</span>,
+                                      packageName <span class='op'>=</span> <span class='st'>"CohortMethod"</span>,
+                                      dbms <span class='op'>=</span> <span class='va'>connectionDetails</span><span class='op'>$</span><span class='va'>dbms</span>,
+                                      CDM_schema <span class='op'>=</span> <span class='st'>"cdmSchema"</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -207,7 +219,7 @@ additional specified parameters.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

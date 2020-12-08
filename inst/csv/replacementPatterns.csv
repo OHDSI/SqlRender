@@ -21,9 +21,9 @@ oracle,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 oracle,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
-oracle,"DATEDIFF(year,@start, @end)","(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))/12)"
-oracle,"DATEDIFF(yyyy,@start, @end)","(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))/12)"
-oracle,"DATEDIFF(yy,@start, @end)","(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))/12)"
+oracle,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+oracle,"DATEDIFF(yyyy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+oracle,"DATEDIFF(yy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
 oracle,"DATEDIFF(month,@start, @end)","MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))"
 oracle,"DATEDIFF(mm,@start, @end)","MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))"
 oracle,"DATEDIFF(m,@start, @end)","MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))"
@@ -39,7 +39,7 @@ oracle,"CONVERT(DATE, @a)","TO_DATE(@a, 'YYYYMMDD')"
 oracle,CAST(@a AS VARCHAR),TO_CHAR(@a)
 oracle,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00'), 'YYYY-MM-DD')"
 oracle,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'0000')||'-'||TO_CHAR(@month,'00')||'-'||TO_CHAR(@day,'00')||' '||TO_CHAR(@hour,'00')||':'||TO_CHAR(@minute,'00')||':'||TO_CHAR(@second,'00'), 'YYYY-MM-DD HH24:MI:SS')"
-oracle,EOMONTH(@date),LAST_DAY(@date)
+oracle,EOMONTH(@date),"TO_DATE(to_char(last_day(@date),'YYYY-MM-DD')||' 23:59:59','YYYY-MM-DD HH24:MI:SS')"
 oracle,STDEV(@a),STDDEV(@a)
 oracle,VAR(@a),VARIANCE(@a)
 oracle,RAND(),DBMS_RANDOM.VALUE
@@ -136,9 +136,9 @@ postgresql,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
 postgresql,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 postgresql,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 postgresql,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
-postgresql,"DATEDIFF(year,@start, @end)","(DATE_PART('year', CAST(@end AS DATE)) - DATE_PART('year',  CAST(@start AS DATE)))"
-postgresql,"DATEDIFF(yyyy,@start, @end)","(DATE_PART('year', CAST(@end AS DATE)) - DATE_PART('year',  CAST(@start AS DATE)))"
-postgresql,"DATEDIFF(yy,@start, @end)","(DATE_PART('year', CAST(@end AS DATE)) - DATE_PART('year',  CAST(@start AS DATE)))"
+postgresql,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+postgresql,"DATEDIFF(yyyy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+postgresql,"DATEDIFF(yy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
 postgresql,"DATEDIFF(month,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
 postgresql,"DATEDIFF(mm,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
 postgresql,"DATEDIFF(m,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
@@ -451,9 +451,9 @@ impala,"DATEADD(yy,@years,@date)","ADD_MONTHS(CAST(@date AS DATE), 12 * @years)"
 impala,"DATEDIFF(d,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(dd,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(day,@start, @end)","DATEDIFF(CAST(@end AS DATE), CAST(@start AS DATE))"
-impala,"DATEDIFF(year,@start, @end)","(DATE_PART('year', CAST(@end AS DATE)) - DATE_PART('year',  CAST(@start AS DATE)))"
-impala,"DATEDIFF(yyyy,@start, @end)","(DATE_PART('year', CAST(@end AS DATE)) - DATE_PART('year',  CAST(@start AS DATE)))"
-impala,"DATEDIFF(yy,@start, @end)","(DATE_PART('year', CAST(@end AS DATE)) - DATE_PART('year',  CAST(@start AS DATE)))"
+impala,"DATEDIFF(year,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
+impala,"DATEDIFF(yyyy,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
+impala,"DATEDIFF(yy,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
 impala,"DATEDIFF(month,@start, @end)","INT_MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(mm,@start, @end)","INT_MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))"
 impala,"DATEDIFF(m,@start, @end)","INT_MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))"
@@ -548,9 +548,9 @@ netezza,"DATEADD(year,@years,@date)",CAST((@date + @years*INTERVAL'1 year') AS D
 netezza,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 netezza,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 netezza,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
-netezza,"DATEDIFF(year,@start, @end)","(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))/12)"
-netezza,"DATEDIFF(yyyy,@start, @end)","(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))/12)"
-netezza,"DATEDIFF(yy,@start, @end)","(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))/12)"
+netezza,"DATEDIFF(year,@start, @end)","(DATE_PART('YEAR', CAST(@end AS DATE)) - DATE_PART('YEAR', CAST(@start AS DATE)))"
+netezza,"DATEDIFF(yyyy,@start, @end)","(DATE_PART('YEAR', CAST(@end AS DATE)) - DATE_PART('YEAR', CAST(@start AS DATE)))"
+netezza,"DATEDIFF(yy,@start, @end)","(DATE_PART('YEAR', CAST(@end AS DATE)) - DATE_PART('YEAR', CAST(@start AS DATE)))"
 netezza,"DATEDIFF(month,@start, @end)","MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))"
 netezza,"DATEDIFF(mm,@start, @end)","MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))"
 netezza,"DATEDIFF(m,@start, @end)","MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE))"
@@ -603,6 +603,9 @@ bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
+bigquery,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR from CAST(@end AS DATE)) - EXTRACT(YEAR from CAST(@start AS DATE)))
+bigquery,"DATEDIFF(yyyy,@start, @end)",(EXTRACT(YEAR from CAST(@end AS DATE)) - EXTRACT(YEAR from CAST(@start AS DATE)))
+bigquery,"DATEDIFF(yy,@start, @end)",(EXTRACT(YEAR from CAST(@end AS DATE)) - EXTRACT(YEAR from CAST(@start AS DATE)))
 bigquery,"DATEADD(d,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
 bigquery,"DATEADD(dd,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
 bigquery,"DATEADD(day,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
@@ -616,6 +619,10 @@ bigquery,"STDEV(@a)","STDDEV(@a)"
 bigquery,"HASHBYTES('MD5',@a)","md5(@a)"
 bigquery,"LEN(@a)","LENGTH(@a)"
 bigquery,"COUNT_BIG(@a)","COUNT(@a)"
+bigquery,"cast(@a % @b as int)","CAST(MOD(@a, @b) AS INT64)"
+bigquery,"cast((@a % @b) as int)","CAST(MOD(@a, @b) AS INT64)"
+bigquery,"cast(@a) % @([0-9]+)b","MOD(CAST(@a), @b)"
+bigquery,"cast(@a) % cast(@b)","MOD(CAST(@a), CAST(@b))"
 bigquery,"CAST(@a as:string)","CAST(@a as string)"
 bigquery,"CAST(@a as:integer)","CAST(@a as int64)"
 bigquery,"CAST(@a as:float)","CAST(@a as float64)"
@@ -672,23 +679,28 @@ bigquery,UPDATE STATISTICS @a;,-- big query does not support such functionality
 sqlite,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
 sqlite,DATETIME,REAL
 sqlite,DATETIME2,REAL
-sqlite,"CONVERT(DATE, @a)","STRFTIME('%s', SUBSTR(@a, 1, 4) || '-' || SUBSTR(@a, 5, 2) || '-' || SUBSTR(@a, 7)))"
-sqlite,"DATEADD(second,@seconds,@datetime)","STRFTIME('%s', DATETIME(@datetime, 'unixepoch', '@seconds seconds'))"
-sqlite,"DATEADD(minute,@minutes,@datetime)","STRFTIME('%s', DATETIME(@datetime, 'unixepoch', '@minutes minutes'))"
-sqlite,"DATEADD(hour,@hours,@datetime)","STRFTIME('%s', DATETIME(@datetime, 'unixepoch', '@hours hours'))"
-sqlite,"DATEADD(d,@days,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@days days'))"
-sqlite,"DATEADD(dd,@days,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@days days'))"
-sqlite,"DATEADD(day,@days,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@days days'))"
-sqlite,"DATEADD(m,@months,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@months months'))"
-sqlite,"DATEADD(mm,@months,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@months months'))"
-sqlite,"DATEADD(months,@months,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@months months'))"
-sqlite,"DATEADD(yy,@years,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@years years'))"
-sqlite,"DATEADD(yyyy,@years,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@years years'))"
-sqlite,"DATEADD(year,@years,@date)","STRFTIME('%s', DATETIME(@date, 'unixepoch', '@years years'))"
+sqlite,"CONVERT(DATE, @a)","CAST(STRFTIME('%s', SUBSTR(@a, 1, 4) || '-' || SUBSTR(@a, 5, 2) || '-' || SUBSTR(@a, 7)) AS REAL)"
+sqlite,"DATEADD(second,@seconds,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@seconds)||' seconds')) AS REAL)"
+sqlite,"DATEADD(minute,@minutes,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@minutes)||' minutes')) AS REAL)"
+sqlite,"DATEADD(hour,@hours,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@hours)||' hours')) AS REAL)"
+sqlite,"DATEADD(d,@days,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@days)||' days')) AS REAL)"
+sqlite,"DATEADD(dd,@days,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@days)||' days')) AS REAL)"
+sqlite,"DATEADD(day,@days,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@days)||' days')) AS REAL)"
+sqlite,"DATEADD(m,@months,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@months)||' months')) AS REAL)"
+sqlite,"DATEADD(mm,@months,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@months)||' months')) AS REAL)"
+sqlite,"DATEADD(months,@months,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@months)||' months')) AS REAL)"
+sqlite,"DATEADD(yy,@years,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@years)||' years')) AS REAL)"
+sqlite,"DATEADD(yyyy,@years,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@years)||' years')) AS REAL)"
+sqlite,"DATEADD(year,@years,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@years)||' years')) AS REAL)"
 sqlite,"DATEDIFF(d,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
 sqlite,"DATEDIFF(dd,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
 sqlite,"DATEDIFF(day,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@start, 'unixepoch')"
-sqlite,"CONVERT(VARCHAR,@date,112)","STRFTIME('%Y%m%d', @date)"
+sqlite,"DATEDIFF(year,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
+sqlite,"DATEDIFF(yyyy,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
+sqlite,"DATEDIFF(yy,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
+sqlite,"JULIANDAY('@literal', 'unixepoch')","JULIANDAY(CAST(STRFTIME('%s', SUBSTR('@literal', 1, 4) || '-' || SUBSTR('@literal', 5, 2) || '-' || SUBSTR('@literal', 7)) AS REAL), 'unixepoch')"
+sqlite,"STRFTIME('%Y', '@literal', 'unixepoch')","CAST(SUBSTR('@literal', 1, 4) AS REAL)"
+sqlite,"CONVERT(VARCHAR,@date,112)","CAST(STRFTIME('%Y%m%d', @date) AS REAL)"
 sqlite,GETDATE(),"STRFTIME('%s','now')"
 sqlite,+ '@a',|| '@a'
 sqlite,'@a' +,'@a' ||
@@ -774,9 +786,9 @@ hive,"DATEADD(yy,@years,@date)","CAST(ADD_MONTHS(CAST(@date AS TIMESTAMP), 12 * 
 hive,"DATEDIFF(d,@start, @end)","day(CAST(@end AS TIMESTAMP) - CAST(@start AS TIMESTAMP))"
 hive,"DATEDIFF(dd,@start, @end)","day(CAST(@end AS TIMESTAMP) - CAST(@start AS TIMESTAMP))"
 hive,"DATEDIFF(day,@start, @end)","day(CAST(@end AS TIMESTAMP) - CAST(@start AS TIMESTAMP))"
-hive,"DATEDIFF(year,@start, @end)","(CAST(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE)) AS INT)/12)"
-hive,"DATEDIFF(yyyy,@start, @end)","(CAST(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE)) AS INT)/12)"
-hive,"DATEDIFF(yy,@start, @end)","(CAST(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE)) AS INT)/12)"
+hive,"DATEDIFF(year,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
+hive,"DATEDIFF(yyyy,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
+hive,"DATEDIFF(yy,@start, @end)",(YEAR(CAST(@end AS DATE)) - YEAR(CAST(@start AS DATE)))
 hive,"DATEDIFF(month,@start, @end)","CAST(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE)) AS INT)"
 hive,"DATEDIFF(mm,@start, @end)","CAST(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE)) AS INT)"
 hive,"DATEDIFF(m,@start, @end)","CAST(MONTHS_BETWEEN(CAST(@end AS DATE), CAST(@start AS DATE)) AS INT)"

@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
       </span>
     </div>
 
@@ -86,6 +86,9 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
@@ -98,12 +101,12 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://ohdsi.github.io/Hades"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
+</li>
+<li>
   <a href="https://github.com/OHDSI/SqlRender/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
@@ -126,9 +129,57 @@
       <small>Source: <a href='https://github.com/OHDSI/SqlRender/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="sqlrender-170" class="section level1">
+<h1 class="page-header" data-toc-text="1.7.0">
+<a href="#sqlrender-170" class="anchor"></a>SqlRender 1.7.0<small> Unreleased </small>
+</h1>
+<p>Changes:</p>
+<ol>
+<li>Deprecating <code>oracleTempSchema</code> argument in various functions in favor of <code>tempEmulationSchema</code> schema, which can also be set globally using the <code>sqlRenderTempEmulationSchema</code> option.</li>
+</ol>
+<p>Bugfixes:</p>
+<ol>
+<li><p>Fixed translation of CTE without FROM or UNION in BigQuery.</p></li>
+<li><p>Fixed translation of CONVERT(DATE…) in SQLite.</p></li>
+<li><p>Fixed translation of DATEDIFF with literals in SQLite.</p></li>
+</ol>
+</div>
+    <div id="sqlrender-168" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.8">
+<a href="#sqlrender-168" class="anchor"></a>SqlRender 1.6.8<small> 2020-07-31 </small>
+</h1>
+<p>Bugfixes:</p>
+<ol>
+<li>Fixing error when SQL is not a native character vector (e.g. when it has been created using glue).</li>
+</ol>
+</div>
+    <div id="sqlrender-167" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.7">
+<a href="#sqlrender-167" class="anchor"></a>SqlRender 1.6.7<small> Unreleased </small>
+</h1>
+<p>Changes:</p>
+<ol>
+<li>Throw a more informative error message when <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> cannot find the SQL file in the specified package.</li>
+</ol>
+<p>Bugfixes:</p>
+<ol>
+<li><p>On SQLite, DATEADD and CONVERT functions now cast to REAL (used to represent DATE / DATETIME).</p></li>
+<li><p>On SQLite, DATEADD function now works when amount to add is not a verbatim number.</p></li>
+</ol>
+</div>
+    <div id="sqlrender-166" class="section level1">
+<h1 class="page-header" data-toc-text="1.6.6">
+<a href="#sqlrender-166" class="anchor"></a>SqlRender 1.6.6<small> 2020-05-19 </small>
+</h1>
+<p>Changes:</p>
+<ol>
+<li><p>Adding rules for modulus operator for BigQuery.</p></li>
+<li><p>Deleting UPDATE STATISTICS statement for BigQuery.</p></li>
+</ol>
+</div>
     <div id="sqlrender-165" class="section level1">
 <h1 class="page-header" data-toc-text="1.6.5">
-<a href="#sqlrender-165" class="anchor"></a>SqlRender 1.6.5<small> Unreleased </small>
+<a href="#sqlrender-165" class="anchor"></a>SqlRender 1.6.5<small> 2020-04-01 </small>
 </h1>
 <p>Bugfixes:</p>
 <ol>
@@ -363,7 +414,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

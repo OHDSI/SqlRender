@@ -16,11 +16,6 @@ vignette: >
 
 ```{r, echo = FALSE, message = FALSE}
 library(SqlRender)
-knitr::opts_chunk$set(
-  cache = FALSE,
-  comment = "#>",
-  error = FALSE,
-  tidy = FALSE)
 ```
 
 # Introduction
@@ -33,37 +28,37 @@ One of the main functions of the package is to support parameterization of SQL. 
 ## Substituting parameter values
 The `@` character can be used to indicate parameter names that need to be exchange for actual parameter values when rendering. In the following example, a variable called `a` is mentioned in the SQL. In the call to the render function the value of this parameter is defined:
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "SELECT * FROM table WHERE id = @a;"
-render(sql, a=123)
+render(sql, a = 123)
 ```
 
 Note that, unlike the parameterization offered by most database management systems, it is just as easy to parameterize table or field names as values:
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "SELECT * FROM @x WHERE id = @a;"
-render(sql, x="my_table", a=123)
+render(sql, x = "my_table", a = 123)
 ```
 
 The parameter values can be numbers, strings, booleans, as well as vectors, which are converted to comma-delimited lists:
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "SELECT * FROM table WHERE id IN (@a);"
-render(sql,a = c(1,2,3))
+render(sql, a = c(1,2,3))
 ```
 
 ## Default parameter values
 For some or all parameters, it might make sense to define default values that will be used unless the user specifies another value. This can be done using the `{DEFAULT @parameter = value}` syntax:
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"
 render(sql)
-render(sql,a=2)
+render(sql, a = 2)
 ```
 
 Defaults for multiple variables can be defined:
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"
 render(sql)
 ```
@@ -71,34 +66,34 @@ render(sql)
 ## If-then-else 
 Sometimes blocks of codes need to be turned on or off based on the values of one or more parameters. This is done using the `{Condition} ? {if true} : {if false}` syntax. If the *condition* evaluates to true or 1, the *if true* block is used, else the *if false* block is shown (if present).
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "SELECT * FROM table {@x} ? {WHERE id = 1}"
-render(sql,x = FALSE)
-render(sql,x = TRUE)
+render(sql, x = FALSE)
+render(sql, x = TRUE)
 ```
 
 Simple comparisons are also supported:
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "SELECT * FROM table {@x == 1} ? {WHERE id = 1};"
-render(sql,x = 1)
-render(sql,x = 2)
+render(sql, x = 1)
+render(sql, x = 2)
 ```
 
 As well as the `IN` operator:
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1};"
-render(sql,x = 2)
+render(sql, x = 2)
 ```
 
 Clauses can combined with boolean operators:
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "SELECT * FROM table {@x IN (1,2,3) | @y != 3} ? {WHERE id = @x AND value = @y};"
-render(sql,x = 4, y = 4)
+render(sql, x = 4, y = 4)
 
 sql <- "SELECT * FROM table {(@x == 1 | @x == 3) & @y != 3} ? {WHERE id = @x AND val = @y};"
-render(sql,x = 3, y = 4)
+render(sql, x = 3, y = 4)
 
 ```
 
@@ -116,7 +111,7 @@ A last limitation is that not all functions supported in one dialect have an equ
 
 Below an example:
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "SELECT DATEDIFF(dd,a,b) FROM table; "
 translate(sql,targetDialect = "oracle")
 ```
@@ -218,22 +213,26 @@ However, Oracle will throw an error when the `AS` keyword is used. In the above 
 
 
 ## Temp tables
-Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In Postgres, PDW, RedShift and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. This is why, in Oracle, SqlRender will try to emulate temp tables by
+Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In platforms like Postgres, PDW, RedShift and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. Other platforms, like Impala, don't support temp tables at all. This is why for some platforms SqlRender will try to emulate temp tables by
 
 1. Adding a random string to the table name so tables from different users will not conflict.
 2. Allowing the user to specify the schema where the temp tables will be created. 
 
 For example:
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 sql <- "SELECT * FROM #children;"
-translate(sql, targetDialect = "oracle", oracleTempSchema = "temp_schema")
+translate(sql, targetDialect = "oracle", tempEmulationSchema = "temp_schema")
 ```
 
-Note that the user will need to have write privileges on `temp_schema`.
+Note that the user will need to have write privileges on `temp_schema`. You can also set the `tempEmulationSchema` globally by using 
+
+```{r echo=TRUE, eval=FALSE}
+options(sqlRenderTempEmulationSchema = "temp_schema")
+```
 
 Also note that because Oracle has a limit on table names of 30 characters, **temp table names are only allowed to be at most 22 characters long** because else the name will become too long after appending the session ID.
 
-Furthermore, remember that temp tables are not automatically dropped on Oracle, so you will need to explicitly ```TRUNCATE``` and ```DROP``` all temp tables once you're done with them to prevent orphan tables accumulating in the Oracle temp schema.
+Furthermore, remember that emulated temp tables are not automatically dropped, so you will need to explicitly ```TRUNCATE``` and ```DROP``` all temp tables once you're done with them to prevent orphan tables accumulating in the Oracle temp schema.
 
 If possible, try to avoid using temp tables altogether. Sometimes one could use Common Table Expressions (CTEs) when one would normally use a temp table. For example, instead of 
 
@@ -305,7 +304,7 @@ SELECT * FROM person
 
 we can set `database = "cdm_data"` and the other called `databaseSchema = "cdm_data.dbo"`. On platforms other than SQL Server, the two variables will hold the same value and only on SQL Server will they be different. Within an R function, it is even possible to derive one variable from the other, so the user of your function would need to specify only one value:
 
-```{r tidy=TRUE,echo=TRUE}
+```{r echo=TRUE}
 foo <- function(databaseSchema, dbms) {
   database <- strsplit(databaseSchema ,"\\.")[[1]][1]
   sql <- "SELECT * FROM @databaseSchema.person; USE @database; SELECT * FROM person;"
@@ -358,7 +357,7 @@ Debugging parameterized SQL can be a bit complicated; Only the rendered SQL can 
 
 A Shiny app is included in the SqlRender package for interactively editing source SQL and generating rendered and translated SQL. The app can be started using:
 
-```{r tidy=TRUE,eval=FALSE}
+```{r eval=FALSE}
 launchSqlRenderDeveloper()
 ```
 
@@ -366,7 +365,7 @@ Which will open the default browser with the app.
 
 In addition, two  functions have been developed to aid the debugging process: `renderFile()` and `translateFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
 
-```{r tidy=TRUE,eval=FALSE}
+```{r eval=FALSE}
 translateFile("parameterizedSql.txt","renderedSql.txt")
 ```
 
@@ -392,7 +391,7 @@ createRWrapperForSql(sqlFilename = "test.sql",
 
 would result in the file *test.R* being generated containing this R code:
 
-```{r tidy=TRUE,eval=FALSE}
+```{r eval=FALSE}
 #' Todo: add title
 #'
 #' @description

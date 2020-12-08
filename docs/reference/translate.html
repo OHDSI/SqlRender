@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
       </span>
     </div>
 
@@ -87,6 +87,9 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
@@ -99,12 +102,12 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://ohdsi.github.io/Hades"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
+</li>
+<li>
   <a href="https://github.com/OHDSI/SqlRender/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
@@ -132,7 +135,12 @@
     <p><code>translate</code> translates SQL from one dialect to another.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>translate</span>(<span class='kw'>sql</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>targetDialect</span>, <span class='kw'>oracleTempSchema</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>translate</span><span class='op'>(</span>
+  sql <span class='op'>=</span> <span class='st'>""</span>,
+  <span class='va'>targetDialect</span>,
+  tempEmulationSchema <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"sqlRenderTempEmulationSchema"</span><span class='op'>)</span>,
+  oracleTempSchema <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,12 +151,18 @@
     </tr>
     <tr>
       <th>targetDialect</th>
-      <td><p>The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
-"redshift" are supported</p></td>
+      <td><p>The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
+"sqlite", "netezza", "bigquery", and "redshift" are supported.</p></td>
+    </tr>
+    <tr>
+      <th>tempEmulationSchema</th>
+      <td><p>Some database platforms like Oracle and Impala do not truly support
+temp tables. To emulate temp tables, provide a schema with write
+privileges where temp tables can be created.</p></td>
     </tr>
     <tr>
       <th>oracleTempSchema</th>
-      <td><p>A schema that can be used to create temp tables in when using Oracle or Impala.</p></td>
+      <td><p>DEPRECATED: use <code>tempEmulationSchema</code> instead.</p></td>
     </tr>
     </table>
 
@@ -158,12 +172,13 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function takes SQL in one dialect and translates it into another. It uses simple pattern
-replacement, so its functionality is limited. Note that trailing semicolons are not removed 
-for Oracle, which is required before sending a statement through JDBC. This will be done by 
+replacement, so its functionality is limited. Note that trailing semicolons are not removed for
+Oracle, which is required before sending a statement through JDBC. This will be done by
 <code><a href='splitSql.html'>splitSql</a></code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>translate</span>(<span class='st'>"USE my_schema;"</span>, <span class='kw'>targetDialect</span> <span class='kw'>=</span> <span class='st'>"oracle"</span>)</div><div class='output co'>#&gt; [1] "ALTER SESSION SET current_schema = my_schema;"</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'>translate</span><span class='op'>(</span><span class='st'>"USE my_schema;"</span>, targetDialect <span class='op'>=</span> <span class='st'>"oracle"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "ALTER SESSION SET current_schema = my_schema;"</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -180,7 +195,7 @@ for Oracle, which is required before sending a statement through JDBC. This will
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
