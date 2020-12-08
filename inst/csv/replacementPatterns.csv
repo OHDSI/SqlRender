@@ -606,6 +606,9 @@ bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start
 bigquery,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR from CAST(@end AS DATE)) - EXTRACT(YEAR from CAST(@start AS DATE)))
 bigquery,"DATEDIFF(yyyy,@start, @end)",(EXTRACT(YEAR from CAST(@end AS DATE)) - EXTRACT(YEAR from CAST(@start AS DATE)))
 bigquery,"DATEDIFF(yy,@start, @end)",(EXTRACT(YEAR from CAST(@end AS DATE)) - EXTRACT(YEAR from CAST(@start AS DATE)))
+bigquery,"DATEDIFF(month,@start, @end)","((12 * EXTRACT(YEAR FROM CAST(@end AS DATE)) + EXTRACT(MONTH FROM CAST(@end AS DATE))) - (12 * EXTRACT(YEAR FROM CAST(@start AS DATE)) + EXTRACT(MONTH FROM CAST(@start AS DATE))) + IF(EXTRACT(DAY FROM CAST(@end AS DATE)) >= EXTRACT(DAY FROM CAST(@start AS DATE)), 0, -1))"
+bigquery,"DATEDIFF(mm,@start, @end)","((12 * EXTRACT(YEAR FROM CAST(@end AS DATE)) + EXTRACT(MONTH FROM CAST(@end AS DATE))) - (12 * EXTRACT(YEAR FROM CAST(@start AS DATE)) + EXTRACT(MONTH FROM CAST(@start AS DATE))) + IF(EXTRACT(DAY FROM CAST(@end AS DATE)) >= EXTRACT(DAY FROM CAST(@start AS DATE)), 0, -1))"
+bigquery,"DATEDIFF(m,@start, @end)","((12 * EXTRACT(YEAR FROM CAST(@end AS DATE)) + EXTRACT(MONTH FROM CAST(@end AS DATE))) - (12 * EXTRACT(YEAR FROM CAST(@start AS DATE)) + EXTRACT(MONTH FROM CAST(@start AS DATE))) + IF(EXTRACT(DAY FROM CAST(@end AS DATE)) >= EXTRACT(DAY FROM CAST(@start AS DATE)), 0, -1))"
 bigquery,"DATEADD(d,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
 bigquery,"DATEADD(dd,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
 bigquery,"DATEADD(day,@days,@date)","DATE_ADD(cast(@date as date), interval @days DAY)"
@@ -698,8 +701,11 @@ sqlite,"DATEDIFF(day,@start,@end)","JULIANDAY(@end, 'unixepoch') - JULIANDAY(@st
 sqlite,"DATEDIFF(year,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
 sqlite,"DATEDIFF(yyyy,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
 sqlite,"DATEDIFF(yy,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
+sqlite,"DATEDIFF(MONTH,@start, @end)","((STRFTIME('%Y', @end, 'unixepoch')*12 + STRFTIME('%m', @end, 'unixepoch')) - (STRFTIME('%Y', @start, 'unixepoch')*12 + STRFTIME('%m', @start, 'unixepoch')) + (CASE WHEN STRFTIME('%d', @end, 'unixepoch') >= STRFTIME('%d', @start, 'unixepoch') then 0 else -1 end))"
 sqlite,"JULIANDAY('@literal', 'unixepoch')","JULIANDAY(CAST(STRFTIME('%s', SUBSTR('@literal', 1, 4) || '-' || SUBSTR('@literal', 5, 2) || '-' || SUBSTR('@literal', 7)) AS REAL), 'unixepoch')"
 sqlite,"STRFTIME('%Y', '@literal', 'unixepoch')","CAST(SUBSTR('@literal', 1, 4) AS REAL)"
+sqlite,"STRFTIME('%m', '@literal', 'unixepoch')","CAST(SUBSTR('@literal', 5, 2) AS REAL)"
+sqlite,"STRFTIME('%d', '@literal', 'unixepoch')","CAST(SUBSTR('@literal', 7, 2) AS REAL)"
 sqlite,"CONVERT(VARCHAR,@date,112)","CAST(STRFTIME('%Y%m%d', @date) AS REAL)"
 sqlite,GETDATE(),"STRFTIME('%s','now')"
 sqlite,+ '@a',|| '@a'
