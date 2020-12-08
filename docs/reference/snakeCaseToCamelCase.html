@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
       </span>
     </div>
 
@@ -87,6 +87,9 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
@@ -99,12 +102,12 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://ohdsi.github.io/Hades"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
+</li>
+<li>
   <a href="https://github.com/OHDSI/SqlRender/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
@@ -132,7 +135,7 @@
     <p>Convert a snake case string to camel case</p>
     </div>
 
-    <pre class="usage"><span class='fu'>snakeCaseToCamelCase</span>(<span class='no'>string</span>)</pre>
+    <pre class="usage"><span class='fu'>snakeCaseToCamelCase</span><span class='op'>(</span><span class='va'>string</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -148,7 +151,8 @@
     <p>A string</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>snakeCaseToCamelCase</span>(<span class='st'>"exposure_concept_id_1"</span>)</div><div class='output co'>#&gt; [1] "exposureConceptId1"</div><div class='input'># > 'exposureConceptId1'
+    <pre class="examples"><div class='input'><span class='fu'>snakeCaseToCamelCase</span><span class='op'>(</span><span class='st'>"exposure_concept_id_1"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "exposureConceptId1"</div><div class='input'><span class='co'># &gt; 'exposureConceptId1'</span>
 
 </div></pre>
   </div>
@@ -166,7 +170,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

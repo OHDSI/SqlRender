@@ -1,3 +1,53 @@
+SqlRender 1.7.0
+===============
+
+Changes:
+
+1. Deprecating `oracleTempSchema` argument in various functions in favor of `tempEmulationSchema` schema, which can also be set globally using the `sqlRenderTempEmulationSchema` option.
+
+2. Adding translation of DATEDIFF(YEAR, ...) to all dialects.
+
+Bugfixes:
+
+1. Fixed translation of CTE without FROM or UNION in BigQuery. 
+
+2. Fixed translation of CONVERT(DATE...) in SQLite.
+
+3. Fixed translation of DATEDIFF with literals in SQLite.
+
+
+SqlRender 1.6.8
+===============
+
+Bugfixes:
+
+1. Fixing error when SQL is not a native character vector (e.g. when it has been created using glue).
+
+
+SqlRender 1.6.7
+===============
+
+Changes:
+
+1. Throw a more informative error message when `loadRenderTranslateSql()` cannot find the SQL file in the specified package.
+
+Bugfixes:
+
+1. On SQLite, DATEADD and CONVERT functions now cast to REAL (used to represent DATE / DATETIME). 
+
+2. On SQLite, DATEADD function now works when amount to add is not a verbatim number.
+
+
+SqlRender 1.6.6
+===============
+
+Changes:
+
+1. Adding rules for modulus operator for BigQuery.
+
+2. Deleting UPDATE STATISTICS statement for BigQuery.
+
+
 SqlRender 1.6.5
 ===============
 

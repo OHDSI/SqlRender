@@ -36,8 +36,7 @@ test_that("splitSql split with reserved word 'end' as field name", {
 
 test_that("splitSql split with last line containing comment and having no EOL", {
   sql <- splitSql("SELECT * FROM table;\n-- end")
-  expect_equal(sql,
-               c("SELECT * FROM table"))
+  expect_equal(sql, c("SELECT * FROM table"))
 })
 
 test_that("splitSql split with hint at start", {
@@ -48,8 +47,7 @@ test_that("splitSql split with hint at start", {
 
 test_that("splitSql split with hint in second statement", {
   sql <- splitSql("DROP TABLE blah;\n--HINT DISTRIBUTE_ON_KEY(analysis_id)\nCREATE TABLE results.achilles_results_dist;")
-  expect_equal(sql[1],
-               c("DROP TABLE blah"))
+  expect_equal(sql[1], c("DROP TABLE blah"))
   expect_equal(sql[2],
                c("--HINT DISTRIBUTE_ON_KEY(analysis_id)\nCREATE TABLE results.achilles_results_dist"))
 })

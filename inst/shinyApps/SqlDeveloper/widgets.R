@@ -13,8 +13,7 @@ menuItemDownloadLink <- function(inputId, label, icon = shiny::icon("floppy-o"))
                  target = "_blank",
                  download = NA,
                  icon,
-                 label)
-  )
+                 label))
 }
 
 menuItemCopyTextAreaToClipboard <- function(textAreaId, label, icon = shiny::icon("clipboard")) {
@@ -36,5 +35,5 @@ menuItemCopyDivToClipboard <- function(divId, label, icon = shiny::icon("clipboa
   return false;
   "
   script <- gsub("%id%", divId, script)
-  tags$li(class = "treeview",a(href = "#", onclick = script, icon, label))
+  tags$li(class = "treeview", a(href = "#", onclick = script, icon, label))
 }

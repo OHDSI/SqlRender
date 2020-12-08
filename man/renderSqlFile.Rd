@@ -11,8 +11,9 @@ renderSqlFile(sourceFile, targetFile, warnOnMissingParameters = TRUE, ...)
 
 \item{targetFile}{The target SQL file}
 
-\item{warnOnMissingParameters}{Should a warning be raised when parameters provided to this function 
-do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.}
+\item{warnOnMissingParameters}{Should a warning be raised when parameters provided to this
+function do not appear in the parameterized SQL that is being
+rendered? By default, this is TRUE.}
 
 \item{...}{Parameter values}
 }
@@ -23,10 +24,10 @@ and writes it to another file.
 \details{
 This function takes parameterized SQL and a list of parameter values and renders the SQL that can
 be send to the server. Parameterization syntax: \describe{ \item{@parameterName}{Parameters are
-indicated using a @ prefix, and are replaced with the actual values provided in the render
-call.} \item{\{DEFAULT @parameterName = parameterValue\}}{Default values for parameters can be
-defined using curly and the DEFAULT keyword.} \item{\{if\}?\{then\}:\{else\}}{The if-then-else
-pattern is used to turn on or off blocks of SQL code.} }
+indicated using a @ prefix, and are replaced with the actual values provided in the render call.}
+\item{\{DEFAULT @parameterName = parameterValue\}}{Default values for parameters can be defined
+using curly and the DEFAULT keyword.} \item{\{if\}?\{then\}:\{else\}}{The if-then-else pattern is
+used to turn on or off blocks of SQL code.} }
 }
 \examples{
 \dontrun{

@@ -1,8 +1,8 @@
 Package: SqlRender
 Type: Package
 Title: Rendering Parameterized SQL and Translation to Dialects
-Version: 1.6.5
-Date: 2020-04-01
+Version: 1.7.0
+Date: 2020-10-27
 Authors@R: c(
   person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
   person("Marc", "Suchard", role = c("aut"))
@@ -13,10 +13,11 @@ Description: A rendering tool for parameterized SQL that also translates into
   'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', and 'SQLite'.
 License: Apache License 2.0
 VignetteBuilder: knitr
-URL: https://ohdsi.github.io/SqlRender, https://github.com/OHDSI/SqlRender
+URL: https://ohdsi.github.io/SqlRender/, https://github.com/OHDSI/SqlRender
 BugReports: https://github.com/OHDSI/SqlRender/issues
 Imports:
-  rJava
+  rJava,
+  rlang
 Suggests:
   testthat,
   knitr,
@@ -24,5 +25,5 @@ Suggests:
   shiny,
   shinydashboard
 LazyData: false
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Encoding: UTF-8

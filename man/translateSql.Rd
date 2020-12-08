@@ -9,16 +9,17 @@ translateSql(sql = "", targetDialect, oracleTempSchema = NULL)
 \arguments{
 \item{sql}{The SQL to be translated}
 
-\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
-"redshift" are supported}
+\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
+"netezza", "bigquery", and "redshift" are supported}
 
-\item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle or Impala.}
+\item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle or
+Impala.}
 }
 \value{
 A list containing the following elements: \describe{ \item{originalSql}{The original parameterized
 SQL code} \item{sql}{The translated SQL} }
 }
 \description{
-This function has been deprecated. Use \code{\link{translate}} instead. This new 
-function returns a character vector instead of a list.
+This function has been deprecated. Use \code{\link{translate}} instead. This new function returns a
+character vector instead of a list.
 }

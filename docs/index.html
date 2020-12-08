@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
       </span>
     </div>
 
@@ -48,6 +48,9 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="news/index.html">Changelog</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
@@ -60,11 +63,11 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="news/index.html">Changelog</a>
-</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://ohdsi.github.io/Hades"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
+</li>
 <li>
   <a href="https://github.com/OHDSI/SqlRender/">
     <span class="fab fa fab fa-github fa-lg"></span>
@@ -88,7 +91,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#sqlrender" class="anchor"></a>SqlRender</h1></div>
 
-<p>SqlRender is part of the <a href="https://ohdsi.github.io/MethodsLibrary">OHDSI Methods Library</a>.</p>
+<p>SqlRender is part of <a href="https://ohdsi.github.io/Hades/">HADES</a>.</p>
 </div>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
@@ -110,11 +113,13 @@
 <h1 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h1>
 <p>This example shows the use of parameters, as well as SqlRender’s {if} ? {then} : {else} syntax:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="no">sql</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/render.html">render</a></span>(<span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, <span class="kw">a</span> <span class="kw">=</span> <span class="st">"my_table"</span>, <span class="kw">b</span> <span class="kw">=</span> <span class="st">"my_schema"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/render.html">render</a></span><span class="op">(</span><span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, a <span class="op">=</span> <span class="st">"my_table"</span>, b <span class="op">=</span> <span class="st">"my_schema"</span><span class="op">)</span></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; USE my_schema;"</code></pre>
 <p>subsequently running this code</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="no">sql</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/translate.html">translate</a></span>(<span class="no">sql</span>, <span class="st">"oracle"</span>)</pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, <span class="st">"oracle"</span><span class="op">)</span></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; ALTER SESSION SET current_schema =  my_schema;"</code></pre>
 </div>
@@ -136,13 +141,16 @@
 <h2 class="hasAnchor">
 <a href="#r-package" class="anchor"></a>R package</h2>
 <p>In R, to install the latest stable version, install from CRAN:</p>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"SqlRender"</span>)</pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"SqlRender"</span><span class="op">)</span></pre></div>
 <p>To install the latest development version, install from GitHub:</p>
-<div class="sourceCode" id="cb6"><pre class="r">install.packages("devtools")
-devtools::install_github("ohdsi/SqlRender")</pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"ohdsi/SqlRender"</span><span class="op">)</span></pre></div>
 <p>Once installed, you can try out SqlRender in a Shiny app that comes with the package:</p>
-<div class="sourceCode" id="cb7"><pre class="r">library(SqlRender)
-launchSqlRenderDeveloper()</pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ohdsi.github.io/SqlRender/">SqlRender</a></span><span class="op">)</span>
+<span class="fu"><a href="reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 </div>
 <div id="java-library" class="section level2">
 <h2 class="hasAnchor">
@@ -151,30 +159,30 @@ launchSqlRenderDeveloper()</pre></div>
 <ol>
 <li>First add the SqlRender repository so that maven can find and download the SqlRender artifact automatically:</li>
 </ol>
-<div class="sourceCode" id="cb8"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">&lt;repositories&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a>    <span class="kw">&lt;repository&gt;</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a>        <span class="kw">&lt;id&gt;</span>ohdsi<span class="kw">&lt;/id&gt;</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a>        <span class="kw">&lt;name&gt;</span>repo.ohdsi.org<span class="kw">&lt;/name&gt;</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a>        <span class="kw">&lt;url&gt;</span>http://repo.ohdsi.org:8085/nexus/content/repositories/releases<span class="kw">&lt;/url&gt;</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a>    <span class="kw">&lt;/repository&gt;</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a>    <span class="kw">&lt;repository&gt;</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a>        <span class="kw">&lt;id&gt;</span>ohdsi.snapshots<span class="kw">&lt;/id&gt;</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a>        <span class="kw">&lt;name&gt;</span>repo.ohdsi.org-snapshots<span class="kw">&lt;/name&gt;</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a>        <span class="kw">&lt;url&gt;</span>http://repo.ohdsi.org:8085/nexus/content/repositories/snapshots<span class="kw">&lt;/url&gt;</span></span>
-<span id="cb8-11"><a href="#cb8-11"></a>        <span class="kw">&lt;releases&gt;</span></span>
-<span id="cb8-12"><a href="#cb8-12"></a>            <span class="kw">&lt;enabled&gt;</span>false<span class="kw">&lt;/enabled&gt;</span></span>
-<span id="cb8-13"><a href="#cb8-13"></a>        <span class="kw">&lt;/releases&gt;</span></span>
-<span id="cb8-14"><a href="#cb8-14"></a>        <span class="kw">&lt;snapshots&gt;</span></span>
-<span id="cb8-15"><a href="#cb8-15"></a>            <span class="kw">&lt;enabled&gt;</span>true<span class="kw">&lt;/enabled&gt;</span></span>
-<span id="cb8-16"><a href="#cb8-16"></a>        <span class="kw">&lt;/snapshots&gt;</span></span>
-<span id="cb8-17"><a href="#cb8-17"></a>    <span class="kw">&lt;/repository&gt;</span></span>
-<span id="cb8-18"><a href="#cb8-18"></a><span class="kw">&lt;/repositories&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;repositories&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;repository&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;id&gt;</span>ohdsi<span class="kw">&lt;/id&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;name&gt;</span>repo.ohdsi.org<span class="kw">&lt;/name&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;url&gt;</span>http://repo.ohdsi.org:8085/nexus/content/repositories/releases<span class="kw">&lt;/url&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/repository&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;repository&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;id&gt;</span>ohdsi.snapshots<span class="kw">&lt;/id&gt;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;name&gt;</span>repo.ohdsi.org-snapshots<span class="kw">&lt;/name&gt;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;url&gt;</span>http://repo.ohdsi.org:8085/nexus/content/repositories/snapshots<span class="kw">&lt;/url&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;releases&gt;</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            <span class="kw">&lt;enabled&gt;</span>false<span class="kw">&lt;/enabled&gt;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;/releases&gt;</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;snapshots&gt;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            <span class="kw">&lt;enabled&gt;</span>true<span class="kw">&lt;/enabled&gt;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;/snapshots&gt;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/repository&gt;</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/repositories&gt;</span></span></code></pre></div>
 <p>2: Include the SqlRender dependency in your pom.xml</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">&lt;dependency&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a>    <span class="kw">&lt;groupId&gt;</span>org.ohdsi.sql<span class="kw">&lt;/groupId&gt;</span></span>
-<span id="cb9-3"><a href="#cb9-3"></a>    <span class="kw">&lt;artifactId&gt;</span>SqlRender<span class="kw">&lt;/artifactId&gt;</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a>    <span class="kw">&lt;version&gt;</span>1.0.0-SNAPSHOT<span class="kw">&lt;/version&gt;</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="kw">&lt;/dependency&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;dependency&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;groupId&gt;</span>org.ohdsi.sql<span class="kw">&lt;/groupId&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;artifactId&gt;</span>SqlRender<span class="kw">&lt;/artifactId&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;version&gt;</span>1.0.0-SNAPSHOT<span class="kw">&lt;/version&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/dependency&gt;</span></span></code></pre></div>
 </div>
 <div id="command-line-executable" class="section level2">
 <h2 class="hasAnchor">
@@ -186,6 +194,8 @@ launchSqlRenderDeveloper()</pre></div>
 <div id="user-documentation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#user-documentation" class="anchor"></a>User Documentation</h1>
+<p>Documentation can be found on the <a href="https://ohdsi.github.io/SqlRender">package website</a>.</p>
+<p>PDF versions of the documentation are also available:</p>
 <ul>
 <li>Vignette: <a href="https://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html">Using SqlRender</a>
 </li>
@@ -201,6 +211,11 @@ launchSqlRenderDeveloper()</pre></div>
 </li>
 <li>We use the <a href="https://github.com/OHDSI/SqlRender/issues">GitHub issue tracker</a> for all bugs/issues/enhancements</li>
 </ul>
+</div>
+<div id="contributing" class="section level1">
+<h1 class="hasAnchor">
+<a href="#contributing" class="anchor"></a>Contributing</h1>
+<p>Read <a href="https://ohdsi.github.io/Hades/contribute.html">here</a> how you can contribute to this package.</p>
 </div>
 <div id="license" class="section level1">
 <h1 class="hasAnchor">
@@ -273,7 +288,7 @@ launchSqlRenderDeveloper()</pre></div>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
