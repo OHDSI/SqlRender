@@ -9,8 +9,8 @@ home:
 
 navbar:
   structure:
-    right: [methodsLibrary, github]
+    right: [hades, github]
   components:
-    methodsLibrary:
+    hades:
       text: hadesLogo
       href: https://ohdsi.github.io/Hades

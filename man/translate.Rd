@@ -4,15 +4,24 @@
 \alias{translate}
 \title{Translates SQL from one dialect to another}
 \usage{
-translate(sql = "", targetDialect, oracleTempSchema = NULL)
+translate(
+  sql = "",
+  targetDialect,
+  tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
+  oracleTempSchema = NULL
+)
 }
 \arguments{
 \item{sql}{The SQL to be translated}
 
-\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
-"redshift" are supported}
+\item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
+"sqlite", "netezza", "bigquery", and "redshift" are supported.}
 
-\item{oracleTempSchema}{A schema that can be used to create temp tables in when using Oracle or Impala.}
+\item{tempEmulationSchema}{Some database platforms like Oracle and Impala do not truly support
+temp tables. To emulate temp tables, provide a schema with write
+privileges where temp tables can be created.}
+
+\item{oracleTempSchema}{DEPRECATED: use \code{tempEmulationSchema} instead.}
 }
 \value{
 A character string containing the translated SQL.
@@ -22,8 +31,8 @@ A character string containing the translated SQL.
 }
 \details{
 This function takes SQL in one dialect and translates it into another. It uses simple pattern
-replacement, so its functionality is limited. Note that trailing semicolons are not removed 
-for Oracle, which is required before sending a statement through JDBC. This will be done by 
+replacement, so its functionality is limited. Note that trailing semicolons are not removed for
+Oracle, which is required before sending a statement through JDBC. This will be done by
 \code{\link{splitSql}}.
 }
 \examples{

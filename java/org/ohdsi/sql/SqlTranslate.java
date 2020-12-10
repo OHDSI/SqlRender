@@ -34,19 +34,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SqlTranslate {
-	public static int							SESSION_ID_LENGTH				= 8;
-	public static int							MAX_ORACLE_TABLE_NAME_LENGTH	= 30;
-	private static Map<String, List<String[]>>	targetToReplacementPatterns		= null;
-	private static ReentrantLock				lock							= new ReentrantLock();
-	private static Random						random							= new Random();
-	private static String						globalSessionId					= null;
-	private static String						SOURCE_DIALECT					= "sql server";
-	private static String						BIG_QUERY						= "bigquery";
-	private static String 						IMPALA 							= "impala";
+	public static int SESSION_ID_LENGTH = 8;
+	public static int MAX_ORACLE_TABLE_NAME_LENGTH = 30;
+	private static Map<String, List<String[]>> targetToReplacementPatterns = null;
+	private static ReentrantLock lock = new ReentrantLock();
+	private static Random random = new Random();
+	private static String globalSessionId = null;
+	private static String SOURCE_DIALECT = "sql server";
+	private static String BIG_QUERY = "bigquery";
+	private static String IMPALA = "impala";
 
 	protected static class Block extends StringUtils.Token {
-		public boolean	isVariable;
-		public String	regEx;
+		public boolean isVariable;
+		public String regEx;
 
 		public Block(StringUtils.Token other) {
 			super(other);
@@ -55,10 +55,10 @@ public class SqlTranslate {
 	}
 
 	protected static class MatchedPattern {
-		public int					start;
-		public int					end;
-		public int					startToken;
-		public Map<String, String>	variableToValue	= new HashMap<String, String>();
+		public int start;
+		public int end;
+		public int startToken;
+		public Map<String, String> variableToValue = new HashMap<String, String>();
 	}
 
 	protected static List<Block> parseSearchPattern(String pattern) {
@@ -95,7 +95,8 @@ public class SqlTranslate {
 		}
 		if ((blocks.get(0).isVariable && blocks.get(0).regEx == null)
 				|| (blocks.get(blocks.size() - 1).isVariable && blocks.get(blocks.size() - 1).regEx == null)) {
-			throw new RuntimeException("Error in search pattern: pattern cannot start or end with a non-regex variable: " + pattern);
+			throw new RuntimeException(
+					"Error in search pattern: pattern cannot start or end with a non-regex variable: " + pattern);
 		}
 		return blocks;
 	}
@@ -111,16 +112,19 @@ public class SqlTranslate {
 		for (int cursor = startToken; cursor < tokens.size(); cursor++) {
 			StringUtils.Token token = tokens.get(cursor);
 			if (parsedPattern.get(matchCount).isVariable) {
-				if (parsedPattern.get(matchCount).regEx != null && (matchCount == parsedPattern.size() - 1 || parsedPattern.get(matchCount + 1).isVariable)) {
+				if (parsedPattern.get(matchCount).regEx != null
+						&& (matchCount == parsedPattern.size() - 1 || parsedPattern.get(matchCount + 1).isVariable)) {
 					// Regex variable at end of pattern, or has another variable following it
-					Pattern pattern = Pattern.compile(parsedPattern.get(matchCount).regEx, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
+					Pattern pattern = Pattern.compile(parsedPattern.get(matchCount).regEx,
+							Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 					Matcher matcher = pattern.matcher(sql.substring(token.start));
 					if (matcher.find() && matcher.start() == 0) {
 						if (matchCount == 0) {
 							matchedPattern.start = token.start;
 							matchedPattern.startToken = cursor;
 						}
-						matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(token.start, token.start + matcher.end()));
+						matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text,
+								sql.substring(token.start, token.start + matcher.end()));
 						matchCount++;
 						if (matchCount == parsedPattern.size()) {
 							matchedPattern.end = token.start + matcher.end();
@@ -135,15 +139,18 @@ public class SqlTranslate {
 					} else {
 						matchCount = 0;
 					}
-				} else if (nestStack.size() == 0 && matchCount < parsedPattern.size() - 1 && token.text.equals(parsedPattern.get(matchCount + 1).text)) {
+				} else if (nestStack.size() == 0 && matchCount < parsedPattern.size() - 1
+						&& token.text.equals(parsedPattern.get(matchCount + 1).text)) {
 					// Found the token after the variable
-					if (parsedPattern.get(matchCount).regEx != null && !matches(parsedPattern.get(matchCount).regEx, sql.substring(varStart, token.start))) {
+					if (parsedPattern.get(matchCount).regEx != null
+							&& !matches(parsedPattern.get(matchCount).regEx, sql.substring(varStart, token.start))) {
 						// Content didn't match regex
 						matchCount = 0;
 						cursor = matchedPattern.startToken;
 					} else {
 						// No regex or matched regex
-						matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text, sql.substring(varStart, token.start));
+						matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text,
+								sql.substring(varStart, token.start));
 						matchCount += 2;
 						if (matchCount == parsedPattern.size()) {
 							matchedPattern.end = token.end;
@@ -154,12 +161,15 @@ public class SqlTranslate {
 						if (token.text.equals("'") || token.text.equals("'"))
 							inPatternQuote = !inPatternQuote;
 					}
-				} else if (nestStack.size() == 0 && !inPatternQuote && (token.text.equals(";") || token.text.equals(")"))) { // Not allowed to span multiple SQL
+				} else if (nestStack.size() == 0 && !inPatternQuote
+						&& (token.text.equals(";") || token.text.equals(")"))) { // Not allowed to span multiple SQL
 					// statements or outside of nesting
 					matchCount = 0;
 					cursor = matchedPattern.startToken;
 				} else {
-					if (nestStack.size() != 0 && (nestStack.peek().equals("\"") || nestStack.peek().equals("'"))) { // inside quoted string
+					if (nestStack.size() != 0 && (nestStack.peek().equals("\"") || nestStack.peek().equals("'"))) { // inside
+																													// quoted
+																													// string
 						if (token.text.equals(nestStack.peek()))
 							nestStack.pop();
 					} else {
@@ -167,13 +177,15 @@ public class SqlTranslate {
 							nestStack.push(token.text);
 						} else if (!inPatternQuote && token.text.equals("(")) {
 							nestStack.push(token.text);
-						} else if (!inPatternQuote && nestStack.size() != 0 && token.text.equals(")") && nestStack.peek().equals("(")) {
+						} else if (!inPatternQuote && nestStack.size() != 0 && token.text.equals(")")
+								&& nestStack.peek().equals("(")) {
 							nestStack.pop();
 						}
 					}
 				}
 			} else {
-				// Check if token matches current part of pattern. But first part cannot be within quotes:
+				// Check if token matches current part of pattern. But first part cannot be
+				// within quotes:
 				if (token.text.equals(parsedPattern.get(matchCount).text) && (matchCount != 0 || !token.inQuotes)) {
 					if (matchCount == 0) {
 						matchedPattern.start = token.start;
@@ -193,7 +205,8 @@ public class SqlTranslate {
 					cursor = matchedPattern.startToken;
 				}
 			}
-			if (matchCount != 0 && cursor == tokens.size() - 1) { // If at end of sql and still didn't finish pattern, we're not going to finish it
+			if (matchCount != 0 && cursor == tokens.size() - 1) { // If at end of sql and still didn't finish pattern,
+																	// we're not going to finish it
 				matchCount = 0;
 				cursor = matchedPattern.startToken;
 			}
@@ -214,21 +227,25 @@ public class SqlTranslate {
 			String replacement = replacePattern;
 			for (Map.Entry<String, String> pair : matchedPattern.variableToValue.entrySet())
 				replacement = StringUtils.replaceAll(replacement, pair.getKey(), pair.getValue());
-			sql = sql.substring(0, matchedPattern.start) + replacement + sql.substring(matchedPattern.end, sql.length());
+			sql = sql.substring(0, matchedPattern.start) + replacement
+					+ sql.substring(matchedPattern.end, sql.length());
 			// System.out.println(sql);
 			int delta = 1;
 			if (StringUtils.tokenizeSql(replacement).size() == 0)
 				delta = 0;
-			// Special situation: if replacement pattern starts with variable, and variable content starts with start of search pattern, don't
+			// Special situation: if replacement pattern starts with variable, and variable
+			// content starts with start of search pattern, don't
 			// skip first token:
-			if (delta > 0 && replacePattern.startsWith("@@") && replacement.toLowerCase().trim().startsWith(parsedPattern.get(0).text))
+			if (delta > 0 && replacePattern.startsWith("@@")
+					&& replacement.toLowerCase().trim().startsWith(parsedPattern.get(0).text))
 				delta = 0;
 			matchedPattern = search(sql, parsedPattern, matchedPattern.startToken + delta);
 		}
 		return sql;
 	}
 
-	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId, String oracleTempPrefix) {
+	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId,
+			String oracleTempPrefix) {
 		for (int i = 0; i < replacementPatterns.size(); i++) {
 			String[] pair = replacementPatterns.get(i).clone();
 			pair[1] = pair[1].replace("%session_id%", sessionId);
@@ -240,14 +257,14 @@ public class SqlTranslate {
 	}
 
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * This function takes SQL in one dialect and translates it into another. It
+	 * uses simple pattern replacement, so its functionality is limited.
 	 * 
-	 * @param sql
-	 *            The SQL to be translated
-	 * @param sourceDialect
-	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
-	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @param sql           The SQL to be translated
+	 * @param sourceDialect The source dialect. Currently, only "sql server" for
+	 *                      Microsoft SQL Server is supported
+	 * @param targetDialect The target dialect. Currently "oracle", "postgresql",
+	 *                      and "redshift" are supported
 	 * @return The translated SQL
 	 */
 	@Deprecated
@@ -256,14 +273,15 @@ public class SqlTranslate {
 	}
 
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.The source 
-	 * dialect is always SQL Server. Note that trailing semicolons are not removed for Oracle, which is required before sending a statement through JDBC. This
+	 * This function takes SQL in one dialect and translates it into another. It
+	 * uses simple pattern replacement, so its functionality is limited.The source
+	 * dialect is always SQL Server. Note that trailing semicolons are not removed
+	 * for Oracle, which is required before sending a statement through JDBC. This
 	 * will be done by splitSql.
 	 * 
-	 * @param sql
-	 *            The SQL to be translated
-	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @param sql           The SQL to be translated
+	 * @param targetDialect The target dialect. Currently "oracle", "postgresql",
+	 *                      and "redshift" are supported
 	 * @return The translated SQL
 	 */
 	public static String translateSql(String sql, String targetDialect) {
@@ -271,135 +289,172 @@ public class SqlTranslate {
 	}
 
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.
+	 * This function takes SQL in one dialect and translates it into another. It
+	 * uses simple pattern replacement, so its functionality is limited.
 	 * 
-	 * @param sql
-	 *            The SQL to be translated
-	 * @param sourceDialect
-	 *            The source dialect. Currently, only "sql server" for Microsoft SQL Server is supported
-	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
-	 * @param sessionId
-	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
-	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
-	 *            calls to translateSql.
-	 * @param oracleTempSchema
-	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
-	 *            name is prefixed to the temp table name).
+	 * @param sql              The SQL to be translated
+	 * @param sourceDialect    The source dialect. Currently, only "sql server" for
+	 *                         Microsoft SQL Server is supported
+	 * @param targetDialect    The target dialect. Currently "oracle", "postgresql",
+	 *                         and "redshift" are supported
+	 * @param sessionId        An alphanumeric string to be used when generating
+	 *                         unique table names (specifically for Oracle temp
+	 *                         tables). This ID should preferably be generated using
+	 *                         the SqlTranslate.generateSessionId() function. If
+	 *                         null, a global session ID will be generated and used
+	 *                         for all subsequent calls to translateSql.
+	 * @param oracleTempSchema The name of a schema where temp tables can be created
+	 *                         in platforms that do not natively support temp
+	 *                         tables. When null, the current schema is assumed to
+	 *                         be the temp schema (ie. no schema name is prefixed to
+	 *                         the temp table name).
 	 * @return The translated SQL
 	 */
 	@Deprecated
-	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId, String oracleTempSchema) {
+	public static String translateSql(String sql, String sourceDialect, String targetDialect, String sessionId,
+			String oracleTempSchema) {
 		return translateSql(sql, targetDialect, sessionId, oracleTempSchema);
 	}
 
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited. The source 
-	 * dialect is always SQL Server. Note that trailing semicolons are not removed for Oracle, which is required before sending a statement through JDBC. This
+	 * This function takes SQL in one dialect and translates it into another. It
+	 * uses simple pattern replacement, so its functionality is limited. The source
+	 * dialect is always SQL Server. Note that trailing semicolons are not removed
+	 * for Oracle, which is required before sending a statement through JDBC. This
 	 * will be done by splitSql.
 	 * 
-	 * @param sql
-	 *            The SQL to be translated
-	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
-	 * @param sessionId
-	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
-	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
-	 *            calls to translateSql.
-	 * @param oracleTempSchema
-	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
-	 *            name is prefixed to the temp table name).
+	 * @param sql                 The SQL to be translated
+	 * @param targetDialect       The target dialect. Currently "oracle",
+	 *                            "postgresql", and "redshift" are supported
+	 * @param sessionId           An alphanumeric string to be used when generating
+	 *                            unique table names (specifically for Oracle temp
+	 *                            tables). This ID should preferably be generated
+	 *                            using the SqlTranslate.generateSessionId()
+	 *                            function. If null, a global session ID will be
+	 *                            generated and used for all subsequent calls to
+	 *                            translateSql.
+	 * @param tempEmulationSchema The name of a schema where temp tables can be
+	 *                            created in Oracle. When null, the current schema
+	 *                            is assumed to be the temp schema (ie. no schema
+	 *                            name is prefixed to the temp table name).
 	 * @return The translated SQL
 	 */
-	public static String translateSql(String sql, String targetDialect, String sessionId, String oracleTempSchema) {
-		return translateSqlWithPath(sql, targetDialect, sessionId, oracleTempSchema, null);
+	public static String translateSql(String sql, String targetDialect, String sessionId, String tempEmulationSchema) {
+		return translateSqlWithPath(sql, targetDialect, sessionId, tempEmulationSchema, null);
 	}
-	
+
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited. The source 
-	 * dialect is always SQL Server. This removes any trailing semicolon as required by Oracle when sending through JDBC. A runtime exception is thrown if 
-	 * more than one statement is encountered in the SQL.
+	 * This function takes SQL in one dialect and translates it into another. It
+	 * uses simple pattern replacement, so its functionality is limited. The source
+	 * dialect is always SQL Server. This removes any trailing semicolon as required
+	 * by Oracle when sending through JDBC. A runtime exception is thrown if more
+	 * than one statement is encountered in the SQL.
 	 * 
-	 * @param sql
-	 *            The SQL to be translated
-	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
+	 * @param sql           The SQL to be translated
+	 * @param targetDialect The target dialect. Currently "oracle", "postgresql",
+	 *                      and "redshift" are supported
 	 * @return The translated SQL
 	 */
 	public static String translateSingleStatementSql(String sql, String targetDialect) {
 		return translateSingleStatementSql(sql, targetDialect, null, null);
 	}
-	
+
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.The source 
-	 * dialect is always SQL Server. This removes any trailing semicolon as required by Oracle when sending through JDBC. A runtime exception is thrown if 
-	 * more than one statement is encountered in the SQL.
+	 * This function takes SQL in one dialect and translates it into another. It
+	 * uses simple pattern replacement, so its functionality is limited.The source
+	 * dialect is always SQL Server. This removes any trailing semicolon as required
+	 * by Oracle when sending through JDBC. A runtime exception is thrown if more
+	 * than one statement is encountered in the SQL.
 	 * 
-	 * @param sql
-	 *            The SQL to be translated
-	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
-	 * @param sessionId
-	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
-	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
-	 *            calls to translateSql.
-	 * @param oracleTempSchema
-	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
-	 *            name is prefixed to the temp table name).
+	 * @param sql                 The SQL to be translated
+	 * @param targetDialect       The target dialect. Currently "oracle",
+	 *                            "postgresql", and "redshift" are supported
+	 * @param sessionId           An alphanumeric string to be used when generating
+	 *                            unique table names (specifically for Oracle temp
+	 *                            tables). This ID should preferably be generated
+	 *                            using the SqlTranslate.generateSessionId()
+	 *                            function. If null, a global session ID will be
+	 *                            generated and used for all subsequent calls to
+	 *                            translateSql.
+	 * @param tempEmulationSchema The name of a schema where temp tables can be
+	 *                            created for those platforms that don't support
+	 *                            temp tables natively. When null, the current
+	 *                            schema is assumed to be the temp schema (ie. no
+	 *                            schema name is prefixed to the temp table name).
 	 * @return The translated SQL
 	 */
-	public static String translateSingleStatementSql(String sql, String targetDialect, String sessionId, String oracleTempSchema) {
-		return translateSingleStatementSqlWithPath(sql, targetDialect, sessionId, oracleTempSchema, null);
+	public static String translateSingleStatementSql(String sql, String targetDialect, String sessionId,
+			String tempEmulationSchema) {
+		return translateSingleStatementSqlWithPath(sql, targetDialect, sessionId, tempEmulationSchema, null);
 	}
-	
+
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.The source 
-	 * dialect is always SQL Server. This removes any trailing semicolon as required by Oracle when sending through JDBC. A runtime exception is thrown if 
-	 * more than one statement is encountered in the SQL.
+	 * This function takes SQL in one dialect and translates it into another. It
+	 * uses simple pattern replacement, so its functionality is limited.The source
+	 * dialect is always SQL Server. This removes any trailing semicolon as required
+	 * by Oracle when sending through JDBC. A runtime exception is thrown if more
+	 * than one statement is encountered in the SQL.
 	 * 
-	 * @param sql
-	 *            The SQL to be translated
-	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
-	 * @param sessionId
-	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
-	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
-	 *            calls to translateSql.
-	 * @param oracleTempSchema
-	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
-	 *            name is prefixed to the temp table name).
-	 * @param pathToReplacementPatterns
-	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
+	 * @param sql                       The SQL to be translated
+	 * @param targetDialect             The target dialect. Currently "oracle",
+	 *                                  "postgresql", and "redshift" are supported
+	 * @param sessionId                 An alphanumeric string to be used when
+	 *                                  generating unique table names (specifically
+	 *                                  for Oracle temp tables). This ID should
+	 *                                  preferably be generated using the
+	 *                                  SqlTranslate.generateSessionId() function.
+	 *                                  If null, a global session ID will be
+	 *                                  generated and used for all subsequent calls
+	 *                                  to translateSql.
+	 * @param tempEmulationSchema       The name of a schema where temp tables can
+	 *                                  be created for those platforms that don't
+	 *                                  support temp tables natively. When null, the
+	 *                                  current schema is assumed to be the temp
+	 *                                  schema (ie. no schema name is prefixed to
+	 *                                  the temp table name).
+	 * @param pathToReplacementPatterns The absolute path of the csv file containing
+	 *                                  the replacement patterns. If null, the csv
+	 *                                  file inside the jar is used.
 	 * @return The translated SQL
 	 */
-	public static String translateSingleStatementSqlWithPath(String sql, String targetDialect, String sessionId, String oracleTempSchema, String pathToReplacementPatterns) {
-		sql = translateSqlWithPath(sql, targetDialect, sessionId, oracleTempSchema, pathToReplacementPatterns);
+	public static String translateSingleStatementSqlWithPath(String sql, String targetDialect, String sessionId,
+			String tempEmulationSchema, String pathToReplacementPatterns) {
+		sql = translateSqlWithPath(sql, targetDialect, sessionId, tempEmulationSchema, pathToReplacementPatterns);
 		String[] sqlStatements = SqlSplit.splitSql(sql);
 		if (sqlStatements.length > 1)
 			throw new RuntimeException("SQL contains more than one statement: " + sql);
 		return sqlStatements[0];
 	}
-	
+
 	/**
-	 * This function takes SQL in one dialect and translates it into another. It uses simple pattern replacement, so its functionality is limited.The source 
+	 * This function takes SQL in one dialect and translates it into another. It
+	 * uses simple pattern replacement, so its functionality is limited.The source
 	 * dialect is always SQL Server.
 	 * 
-	 * @param sql
-	 *            The SQL to be translated
-	 * @param targetDialect
-	 *            The target dialect. Currently "oracle", "postgresql", and "redshift" are supported
-	 * @param sessionId
-	 *            An alphanumeric string to be used when generating unique table names (specifically for Oracle temp tables). This ID should preferably be
-	 *            generated using the SqlTranslate.generateSessionId() function. If null, a global session ID will be generated and used for all subsequent
-	 *            calls to translateSql.
-	 * @param oracleTempSchema
-	 *            The name of a schema where temp tables can be created in Oracle. When null, the current schema is assumed to be the temp schema (ie. no schema
-	 *            name is prefixed to the temp table name).
-	 * @param pathToReplacementPatterns
-	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
+	 * @param sql                       The SQL to be translated
+	 * @param targetDialect             The target dialect. Currently "oracle",
+	 *                                  "postgresql", and "redshift" are supported
+	 * @param sessionId                 An alphanumeric string to be used when
+	 *                                  generating unique table names (specifically
+	 *                                  for Oracle temp tables). This ID should
+	 *                                  preferably be generated using the
+	 *                                  SqlTranslate.generateSessionId() function.
+	 *                                  If null, a global session ID will be
+	 *                                  generated and used for all subsequent calls
+	 *                                  to translateSql.
+	 * @param tempEmulationSchema       The name of a schema where temp tables can
+	 *                                  be created for those platforms that don't
+	 *                                  support temp tables natively. When null, the
+	 *                                  current schema is assumed to be the temp
+	 *                                  schema (ie. no schema name is prefixed to
+	 *                                  the temp table name).
+	 * @param pathToReplacementPatterns The absolute path of the csv file containing
+	 *                                  the replacement patterns. If null, the csv
+	 *                                  file inside the jar is used.
 	 * @return The translated SQL
 	 */
-	public static String translateSqlWithPath(String sql, String targetDialect, String sessionId, String oracleTempSchema, String pathToReplacementPatterns) {
+	public static String translateSqlWithPath(String sql, String targetDialect, String sessionId,
+			String tempEmulationSchema, String pathToReplacementPatterns) {
 		ensurePatternsAreLoaded(pathToReplacementPatterns);
 		if (sessionId == null) {
 			if (globalSessionId == null)
@@ -408,10 +463,10 @@ public class SqlTranslate {
 		} else
 			validateSessionId(sessionId);
 		String oracleTempPrefix;
-		if (oracleTempSchema == null)
+		if (tempEmulationSchema == null)
 			oracleTempPrefix = "";
 		else
-			oracleTempPrefix = oracleTempSchema + ".";
+			oracleTempPrefix = tempEmulationSchema + ".";
 
 		List<String[]> replacementPatterns = targetToReplacementPatterns.get(targetDialect);
 		if (replacementPatterns == null) {
@@ -423,8 +478,8 @@ public class SqlTranslate {
 				for (String sourceTarget : targetToReplacementPatterns.keySet())
 					if (sourceTarget.split("\t")[0].equals(SOURCE_DIALECT))
 						allowedDialects.add(sourceTarget.split("\t")[1]);
-				throw new RuntimeException("Don't know how to translate from " + SOURCE_DIALECT + " to " + targetDialect + ". Valid target dialects are "
-						+ StringUtils.join(allowedDialects, ", "));
+				throw new RuntimeException("Don't know how to translate from " + SOURCE_DIALECT + " to " + targetDialect
+						+ ". Valid target dialects are " + StringUtils.join(allowedDialects, ", "));
 			}
 		} else if (targetDialect.equalsIgnoreCase(BIG_QUERY)) {
 			sql = BigQueryTranslate.translatebigQuery(sql);
@@ -438,7 +493,8 @@ public class SqlTranslate {
 
 	private static void validateSessionId(String sessionId) {
 		if (sessionId.length() != SESSION_ID_LENGTH)
-			throw new RuntimeException("Session ID has length " + sessionId.length() + ", should be " + SESSION_ID_LENGTH);
+			throw new RuntimeException(
+					"Session ID has length " + sessionId.length() + ", should be " + SESSION_ID_LENGTH);
 		if (!Character.isLetter(sessionId.charAt(0)))
 			throw new RuntimeException("Session ID does not start with a letter");
 		for (int i = 1; i < sessionId.length(); i++)
@@ -503,7 +559,8 @@ public class SqlTranslate {
 							replacementPatterns = new ArrayList<String[]>();
 							targetToReplacementPatterns.put(target, replacementPatterns);
 						}
-						replacementPatterns.add(new String[] { row.get(1).replaceAll("@", "@@"), row.get(2).replaceAll("@", "@@") });
+						replacementPatterns.add(
+								new String[] { row.get(1).replaceAll("@", "@@"), row.get(2).replaceAll("@", "@@") });
 					}
 				} catch (UnsupportedEncodingException e) {
 					System.err.println("Computer does not support UTF-8 encoding");
@@ -529,7 +586,8 @@ public class SqlTranslate {
 
 		for (String longName : longTempNames)
 			warnings.add("Temp table name '" + longName + "' is too long. Temp table names should be shorter than "
-					+ (MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH) + " characters to prevent Oracle from crashing.");
+					+ (MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH)
+					+ " characters to prevent Oracle from crashing.");
 
 		// normal table names:
 		pattern = Pattern.compile("(create|drop|truncate)\\s+table +[0-9a-zA-Z_]+");
@@ -541,17 +599,19 @@ public class SqlTranslate {
 				longNames.add(name);
 		}
 		for (String longName : longNames)
-			warnings.add("Table name '" + longName + "' is too long. Table names should be shorter than " + MAX_ORACLE_TABLE_NAME_LENGTH
-					+ " characters to prevent Oracle from crashing.");
+			warnings.add("Table name '" + longName + "' is too long. Table names should be shorter than "
+					+ MAX_ORACLE_TABLE_NAME_LENGTH + " characters to prevent Oracle from crashing.");
 
 		return warnings.toArray(new String[warnings.size()]);
 	}
 
 	/**
-	 * Forces the replacement patterns to be loaded from the specified path. Useful for debugging.
+	 * Forces the replacement patterns to be loaded from the specified path. Useful
+	 * for debugging.
 	 * 
-	 * @param pathToReplacementPatterns
-	 *            The absolute path of the csv file containing the replacement patterns. If null, the csv file inside the jar is used.
+	 * @param pathToReplacementPatterns The absolute path of the csv file containing
+	 *                                  the replacement patterns. If null, the csv
+	 *                                  file inside the jar is used.
 	 */
 	public static void setReplacementPatterns(String pathToReplacementPatterns) {
 		targetToReplacementPatterns = null;

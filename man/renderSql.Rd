@@ -9,8 +9,9 @@ renderSql(sql = "", warnOnMissingParameters = TRUE, ...)
 \arguments{
 \item{sql}{The parameterized SQL}
 
-\item{warnOnMissingParameters}{Should a warning be raised when parameters provided to this function 
-do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.}
+\item{warnOnMissingParameters}{Should a warning be raised when parameters provided to this
+function do not appear in the parameterized SQL that is being
+rendered? By default, this is TRUE.}
 
 \item{...}{Parameter values}
 }
@@ -19,6 +20,6 @@ A list containing the following elements: \describe{ \item{parameterizedSql}{The
 parameterized SQL code} \item{sql}{The rendered sql} }
 }
 \description{
-This function has been deprecated. Use \code{\link{render}} instead. This new 
-function returns a character vector instead of a list.
+This function has been deprecated. Use \code{\link{render}} instead. This new function returns a
+character vector instead of a list.
 }

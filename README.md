@@ -6,7 +6,7 @@ SqlRender
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SqlRender)](https://cran.r-project.org/package=SqlRender)
 [![CRAN_Status_Badge](http://cranlogs.r-pkg.org/badges/SqlRender)](https://cran.r-project.org/package=SqlRender)
 
-SqlRender is part of [HADES](https://ohdsi.github.io/Hades).
+SqlRender is part of [HADES](https://ohdsi.github.io/Hades/).
 
 Introduction
 ============
