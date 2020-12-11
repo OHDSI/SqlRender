@@ -20,7 +20,7 @@ test_that("translate sql server -> Oracle DATEDIFF", {
   sql <- translate("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                    targetDialect = "oracle")
   expect_equal_ignore_spaces(sql,
-                             "SELECT (CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
+                             "SELECT CEIL(CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) FROM drug_era;")
 })
 
 test_that("translate sql server -> Oracle DATEDIFF year", {
