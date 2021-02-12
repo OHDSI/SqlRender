@@ -588,6 +588,7 @@ bigquery,"DATEADD(month,@months,@date)","DATE_ADD(cast(@date as date), interval 
 bigquery,"DATEADD(yy,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
 bigquery,"DATEADD(yyyy,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
 bigquery,"DATEADD(year,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
+bigquery,"datepart(@part,@date)", "extract(@part from @date)"
 bigquery,"STDEV(@a)","STDDEV(@a)"
 bigquery,"HASHBYTES('MD5',@a)","md5(@a)"
 bigquery,"LEN(@a)","LENGTH(@a)"

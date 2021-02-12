@@ -3044,3 +3044,10 @@ test_that("translate sql server -> BigQuery % operator", {
   expect_equal_ignore_spaces(sql, "select (MOD(cast(person_id*EXTRACT(MONTH from cohort_start_date) as int64), 123))*(MOD(cast(EXTRACT(YEAR from cohort_start_date)*EXTRACT(DAY from cohort_start_date) as int64), 123))) from my_table;")
 })
 
+test_that("translate sql server -> BigQuery datepart to extract #2", {
+  sql <- translate("select year_of_birth,datepart(year,birth_datetime) as year_of_birth FROM table1",
+      targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, 
+    "select year_of_birth,\"extract(year from birth_datetime)\" as year_of_birth from table1")
+})
+
