@@ -5,7 +5,7 @@ Changes:
 
 1. Deprecating `oracleTempSchema` argument in various functions in favor of `tempEmulationSchema` schema, which can also be set globally using the `sqlRenderTempEmulationSchema` option.
 
-2. Adding translation of DATEDIFF(YEAR, ...) to all dialects.
+2. Adding translation of DATEDIFF(YEAR, ...) and DATEDIFF(MONTH, ...) to all dialects.
 
 Bugfixes:
 

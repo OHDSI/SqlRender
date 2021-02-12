@@ -140,13 +140,25 @@ test_that("translate sql server -> sqlite DATEDIFF with date fields", {
 })
 
 test_that("translate sql server -> sqlite DATEDIFF year with literals", {
-  sql <- translate("SELECT DATEDIFF(YEAR, '20000131', '20000101');", targetDialect = "sqlite")
+  sql <- translate("SELECT DATEDIFF(YEAR, '20010131', '20000101');", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql,
-                             "SELECT (CAST(SUBSTR('20000101', 1, 4) AS REAL) - CAST(SUBSTR('20000131', 1, 4) AS REAL));")
+                             "SELECT (CAST(SUBSTR('20000101', 1, 4) AS REAL) - CAST(SUBSTR('20010131', 1, 4) AS REAL));")
 })
 
 test_that("translate sql server -> sqlite DATEDIFF year with date fields", {
   sql <- translate("SELECT DATEDIFF(YEAR, date1, date2);", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql,
                              "SELECT (STRFTIME('%Y', date2, 'unixepoch') - STRFTIME('%Y', date1, 'unixepoch'));")
+})
+
+test_that("translate sql server -> sqlite DATEDIFF month literals", {
+  sql <- translate("SELECT DATEDIFF(MONTH, '20000115', '20010116');", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql,
+                             "SELECT ((CAST(SUBSTR('20010116', 1, 4) AS REAL)*12 + CAST(SUBSTR('20010116', 5, 2) AS REAL)) - (CAST(SUBSTR('20000115', 1, 4) AS REAL)*12 + CAST(SUBSTR('20000115', 5, 2) AS REAL)) + (CASE WHEN CAST(SUBSTR('20010116', 7, 2) AS REAL) >= CAST(SUBSTR('20000115', 7, 2) AS REAL) then 0 else -1 end));")
+})
+
+test_that("translate sql server -> sqlite DATEDIFF monthdate fields", {
+  sql <- translate("SELECT DATEDIFF(MONTH, date1, date2);", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql,
+                             "SELECT ((STRFTIME('%Y', date2, 'unixepoch')*12 + STRFTIME('%m', date2, 'unixepoch')) - (STRFTIME('%Y', date1, 'unixepoch')*12 + STRFTIME('%m', date1, 'unixepoch')) + (CASE WHEN STRFTIME('%d', date2, 'unixepoch') >= STRFTIME('%d', date1, 'unixepoch') then 0 else -1 end));")
 })
