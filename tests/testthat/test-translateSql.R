@@ -391,6 +391,13 @@ test_that("translate sql server -> Redshift select random row using hash", {
                              "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY MD5(CAST(person_id AS varchar))) tmp WHERE rn <= 1")
 })
 
+test_that("translate sql server -> Netezza select random row", {
+    sql <- translate("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RAND()) AS rn FROM table) tmp WHERE rn <= 1",
+                   targetDialect = "netezza")
+    expect_equal_ignore_spaces(sql,
+                             "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn FROM table) tmp WHERE rn <= 1")
+})
+
 test_that("translate sql server -> Big Query select random row using hash", {
   sql <- translate("SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY HASHBYTES('MD5',CAST(person_id AS varchar))) tmp WHERE rn <= 1",
                    targetDialect = "bigquery")
