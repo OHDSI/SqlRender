@@ -22,12 +22,12 @@ test_that("translate: warning when using old function", {
 })
 
 test_that("translate: warning when using oracleTempSchema", {
-  remove("oracleTempSchema", envir = rlang:::warning_freq_env)
+  clearWarningBlock()
   expect_warning(translate("SELECT * FROM #my_table", targetDialect = "oracle", oracleTempSchema = "scratch"))
 })
 
 test_that("translateSingleStatement: warning when using oracleTempSchema", {
-  remove("oracleTempSchema", envir = rlang:::warning_freq_env)
+  clearWarningBlock()
   expect_warning(translateSingleStatement("SELECT * FROM #my_table", targetDialect = "oracle", oracleTempSchema = "scratch"))
 })
 
