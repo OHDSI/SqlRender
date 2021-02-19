@@ -16,6 +16,21 @@ expect_match_ignore_spaces <- function(string1, regexp) {
   expect_match(string1, regexp)
 }
 
+
+test_that("translate: warning when using old function", {
+  expect_warning(translateSql("SELECT * FROM my_table", "postgresql"))
+})
+
+test_that("translate: warning when using oracleTempSchema", {
+  remove("oracleTempSchema", envir = rlang:::warning_freq_env)
+  expect_warning(translate("SELECT * FROM #my_table", targetDialect = "oracle", oracleTempSchema = "scratch"))
+})
+
+test_that("translateSingleStatement: warning when using oracleTempSchema", {
+  remove("oracleTempSchema", envir = rlang:::warning_freq_env)
+  expect_warning(translateSingleStatement("SELECT * FROM #my_table", targetDialect = "oracle", oracleTempSchema = "scratch"))
+})
+
 test_that("translate sql server -> Oracle DATEDIFF", {
   sql <- translate("SELECT DATEDIFF(dd,drug_era_start_date,drug_era_end_date) FROM drug_era;",
                    targetDialect = "oracle")

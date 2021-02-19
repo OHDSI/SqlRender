@@ -67,20 +67,20 @@ test_that("camelCaseToTitleCase ", {
 test_that("loadRenderTranslateSql ", {
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "sql server")
   sql <- gsub("[\r\n]", "", sql)
-  expect_equal(sql, "SELECT * FROM table;")
+  expect_equal(sql, "SELECT a FROM #my_table WHERE my_id = 123;")
 
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "postgresql")
   sql <- gsub("[\r\n]", "", sql)
-  expect_equal(sql, "SELECT * FROM table;")
+  expect_equal(sql, "SELECT a FROM my_table WHERE my_id = 123;")
 
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "oracle")
   sql <- gsub("[\r\n]", "", sql)
-  expect_equal(sql, "SELECT a FROM table;")
+  expect_equal(sql, "SELECT a FROM my_table WHERE my_id = 123;")
 })
 
 test_that("createRWrapperForSql", {
   fileName <- tempfile()
-  createRWrapperForSql("test.sql", fileName, "SqlRender", createRoxygenTemplate = TRUE)
+  createRWrapperForSql(sqlFilename = "test.sql", rFilename = fileName, packageName = "SqlRender", createRoxygenTemplate = TRUE)
   expect_true(file.exists(fileName))
   file.remove(fileName)
 })

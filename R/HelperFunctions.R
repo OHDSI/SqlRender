@@ -359,18 +359,6 @@ createRWrapperForSql <- function(sqlFilename,
     c(sqlParameter = parameter, rParameter = ccParameter, value = value)
   }
   definitions <- as.data.frame(t(apply(hits, 1, FUN = f)))
-  databaseSchemaParameters <- definitions[grepl("database_schema$", definitions$sqlParameter), ]
-  databaseParameters <- c()
-  for (databaseSchemaParameter in databaseSchemaParameters$sqlParameter) {
-    databaseParameter <- substr(databaseSchemaParameter,
-                                1,
-                                nchar(databaseSchemaParameter) - nchar("_schema"))
-    if (any(definitions[, 1] == databaseParameter))
-      databaseParameters <- rbind(databaseParameters,
-                                  definitions[definitions$sqlParameter == databaseParameter,
-                                  ])
-  }
-  functionDefinitions <- definitions[!(definitions$sqlParameter %in% databaseParameters$sqlParameter), ]
   
   lines <- c()
   if (createRoxygenTemplate) {
@@ -387,8 +375,8 @@ createRWrapperForSql <- function(sqlFilename,
     if (hasTempTables)
       lines <- c(lines,
                  "#' @param tempEmulationSchema\t\tSome database platforms like Oracle and Impala do not truly support temp tables. To emulate temp tables, provide a schema with write privileges where temp tables can be created.")
-    for (i in 1:nrow(functionDefinitions)) {
-      lines <- c(lines, paste("#' @param", functionDefinitions$rParameter[i], "\t\t"))
+    for (i in 1:nrow(definitions)) {
+      lines <- c(lines, paste("#' @param", definitions$rParameter[i], "\t\t"))
     }
     lines <- c(lines, "#'")
     lines <- c(lines, "#' @export")
@@ -398,23 +386,15 @@ createRWrapperForSql <- function(sqlFilename,
   if (hasTempTables)
     lines <- c(lines,
                "                         tempEmulationSchema = getOption(\"sqlRenderTempEmulationSchema\"),")
-  for (i in 1:nrow(functionDefinitions)) {
-    if (i == nrow(functionDefinitions))
+  for (i in 1:nrow(definitions)) {
+    if (i == nrow(definitions))
       end <- ") {" else end <- ","
       lines <- c(lines, paste("                         ",
-                              functionDefinitions$rParameter[i],
+                              definitions$rParameter[i],
                               " = ",
-                              functionDefinitions$value[i],
+                              definitions$value[i],
                               end,
                               sep = ""))
-  }
-  for (databaseParameter in databaseParameters$rParameter) {
-    lines <- c(lines, paste("  ",
-                            databaseParameter,
-                            " <- strsplit(",
-                            databaseParameter,
-                            "Schema ,\"\\\\.\")[[1]][1]",
-                            sep = ""))
   }
   lines <- c(lines,
              paste("  renderedSql <- SqlRender::loadRenderTranslateSql(\"", sqlFilename, "\",",
@@ -433,13 +413,13 @@ createRWrapperForSql <- function(sqlFilename,
                               end,
                               sep = ""))
   }
-  lines <- c(lines, "  conn <- DatabaseConnector::connect(connectionDetails)")
+  lines <- c(lines, "  connection <- DatabaseConnector::connect(connectionDetails)")
+  lines <- c(lines, "  on.exit(DatabaseConnector::disconnect(connection))")
   lines <- c(lines, "")
   lines <- c(lines, "  writeLines(\"Executing multiple queries. This could take a while\")")
-  lines <- c(lines, "  DatabaseConnector::executeSql(conn,renderedSql)")
+  lines <- c(lines, "  DatabaseConnector::executeSql(connection,renderedSql)")
   lines <- c(lines, "  writeLines(\"Done\")")
   lines <- c(lines, "")
-  lines <- c(lines, "  dummy <- RJDBC::dbDisconnect(conn)")
   lines <- c(lines, "}")
   inform(paste("Writing R function to:", rFilename))
   sink(rFilename)

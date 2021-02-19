@@ -154,7 +154,6 @@ test_that("Dollar in parameter is handled correctly", {
   expect_equal(sql, "SELECT * FROM table WHERE name = 'NA$joe';")
 })
 
-
 test_that("If-then-else: error on bad boolean logic syntax", {
   # Note there's only one equals sign:
   expect_error(render("{true = true} ? {true} : {false}"))
@@ -168,4 +167,8 @@ test_that("rendering: warning on parameter name mismatch", {
 test_that("rendering: no problem when not providing parameters", {
   # Note wrong parameter name:
   expect_equal(render("SELECT * FROM @my_table"), "SELECT * FROM @my_table")
+})
+
+test_that("rendering: warning when using old function", {
+  expect_warning(renderSql("SELECT * FROM @my_table"))
 })

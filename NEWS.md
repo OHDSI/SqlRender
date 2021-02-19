@@ -7,6 +7,8 @@ Changes:
 
 2. Adding translation of DATEDIFF(YEAR, ...) and DATEDIFF(MONTH, ...) to all dialects.
 
+3. Updated `createRWrapperForSql()` to latest SqlRender standards.
+
 Bugfixes:
 
 1. Fixed translation of CTE without FROM or UNION in BigQuery. 
