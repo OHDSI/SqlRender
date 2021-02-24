@@ -69,8 +69,8 @@ install.packages("SqlRender")
 To install the latest development version, install from GitHub:
 
 ```r
-install.packages("devtools")
-devtools::install_github("ohdsi/SqlRender")
+install.packages("remotes")
+remotes::install_github("ohdsi/SqlRender", ref = "develop")
 ```
 
 Once installed, you can try out SqlRender in a Shiny app that comes with the package:
@@ -109,7 +109,7 @@ You can fetch the JAR file in the inst/java folder of this repository, or use Ma
 <dependency>
 	<groupId>org.ohdsi.sql</groupId>
 	<artifactId>SqlRender</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.7.0-SNAPSHOT</version>
 </dependency>
 ```
 

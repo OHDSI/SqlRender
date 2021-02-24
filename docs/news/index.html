@@ -79,7 +79,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -108,7 +108,7 @@
 </li>
 <li>
   <a href="https://github.com/OHDSI/SqlRender/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -135,7 +135,9 @@
 </h1>
 <p>Changes:</p>
 <ol>
-<li>Deprecating <code>oracleTempSchema</code> argument in various functions in favor of <code>tempEmulationSchema</code> schema, which can also be set globally using the <code>sqlRenderTempEmulationSchema</code> option.</li>
+<li><p>Deprecating <code>oracleTempSchema</code> argument in various functions in favor of <code>tempEmulationSchema</code> schema, which can also be set globally using the <code>sqlRenderTempEmulationSchema</code> option.</p></li>
+<li><p>Adding translation of DATEDIFF(YEAR, …) and DATEDIFF(MONTH, …) to all dialects.</p></li>
+<li><p>Updated <code><a href="../reference/createRWrapperForSql.html">createRWrapperForSql()</a></code> to latest SqlRender standards.</p></li>
 </ol>
 <p>Bugfixes:</p>
 <ol>
