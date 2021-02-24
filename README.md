@@ -121,7 +121,7 @@ java -jar SqlRender.jar ?
 
 User Documentation
 ==================
-Documentation can be found on the [package website](https://ohdsi.github.io/SqlRender).
+Documentation can be found on the [package website](https://ohdsi.github.io/SqlRender/).
 
 PDF versions of the documentation are also available:
 * Vignette: [Using SqlRender](https://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html)
