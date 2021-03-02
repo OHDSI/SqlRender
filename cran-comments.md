@@ -14,4 +14,4 @@ There were no ERRORs or WARNINGs.
 
 ## Downstream dependencies
 
-- DatabaseConnector depends on SqlRender, and has been tested with this new version. No problems were found.
+- DatabaseConnector and Eunomia depend on SqlRender, and have been tested with this new version. No problems were found.
