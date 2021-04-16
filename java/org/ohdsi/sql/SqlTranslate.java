@@ -43,6 +43,7 @@ public class SqlTranslate {
 	private static String SOURCE_DIALECT = "sql server";
 	private static String BIG_QUERY = "bigquery";
 	private static String IMPALA = "impala";
+	private static String SPARK = "spark";
 
 	protected static class Block extends StringUtils.Token {
 		public boolean isVariable;
@@ -482,10 +483,12 @@ public class SqlTranslate {
 						+ ". Valid target dialects are " + StringUtils.join(allowedDialects, ", "));
 			}
 		} else if (targetDialect.equalsIgnoreCase(BIG_QUERY)) {
-			sql = BigQueryTranslate.translatebigQuery(sql);
+			sql = BigQuerySparkTranslate.translatebigQuery(sql);
+		} else if (targetDialect.equalsIgnoreCase(SPARK)) {
+			sql = BigQuerySparkTranslate.translateSpark(sql);
 		}
 		sql = translateSql(sql, replacementPatterns, sessionId, oracleTempPrefix);
-		if (targetDialect.equalsIgnoreCase(IMPALA) || targetDialect.equalsIgnoreCase(BIG_QUERY)) {
+		if (targetDialect.equalsIgnoreCase(IMPALA) || targetDialect.equalsIgnoreCase(BIG_QUERY) || targetDialect.equals(SPARK)) {
 			sql = StringUtils.replaceWithConcat(sql);
 		}
 		return sql;

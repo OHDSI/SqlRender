@@ -9,6 +9,8 @@ Changes:
 
 3. Updated `createRWrapperForSql()` to latest SqlRender standards.
 
+4. Added Apache Spark dialect ("spark")
+
 Bugfixes:
 
 1. Fixed translation of CTE without FROM or UNION in BigQuery. 

@@ -113,7 +113,7 @@ renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE
 #' @param sourceFile            The source SQL file
 #' @param targetFile            The target SQL file
 #' @param targetDialect         The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                              "sqlite", "netezza", "bigquery", and "redshift" are supported.
+#'                              "sqlite", "netezza", "bigquery", "spark", and "redshift" are supported.
 #' @param oracleTempSchema      DEPRECATED: use \code{tempEmulationSchema} instead.
 #' @param tempEmulationSchema   Some database platforms like Oracle and Impala do not truly support
 #'                              temp tables. To emulate temp tables, provide a schema with write

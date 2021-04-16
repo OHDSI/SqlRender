@@ -118,7 +118,7 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 #'
 #' @param sql                   The SQL to be translated
 #' @param targetDialect         The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                              "sqlite", "netezza", "bigquery", and "redshift" are supported.
+#'                              "sqlite", "netezza", "bigquery", "spark", and "redshift" are supported.
 #' @param oracleTempSchema      DEPRECATED: use \code{tempEmulationSchema} instead.
 #' @param tempEmulationSchema   Some database platforms like Oracle and Impala do not truly support
 #'                              temp tables. To emulate temp tables, provide a schema with write
@@ -163,7 +163,7 @@ translate <- function(sql = "",
 #'
 #' @param sql                The SQL to be translated
 #' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                           "netezza", "bigquery", and "redshift" are supported
+#'                           "netezza", "bigquery", "spark", and "redshift" are supported
 #' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or
 #'                           Impala.
 #'
@@ -192,7 +192,7 @@ translateSql <- function(sql = "", targetDialect, oracleTempSchema = NULL) {
 #'
 #' @param sql                   The SQL to be translated
 #' @param targetDialect         The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                              "sqlite", "netezza", "bigquery", and "redshift" are supported.
+#'                              "sqlite", "netezza", "bigquery", "spark", and "redshift" are supported.
 #' @param oracleTempSchema      DEPRECATED: use \code{tempEmulationSchema} instead.
 #' @param tempEmulationSchema   Some database platforms like Oracle and Impala do not truly support
 #'                              temp tables. To emulate temp tables, provide a schema with write
