@@ -103,7 +103,7 @@ SQL for one platform (e.g. Microsoft SQL Server) will not always execute on othe
 
 A first limitation is that **the starting dialect has to be SQL Server**. The reason for this is that this dialect is in general the most specific. For example, the number of days between two dates in SQL Server has to be computed using the DATEDIFF function: `DATEDIFF(dd,a,b)`. In other languages one can simply subtract the two dates: `b-a`. Since you'd need to know a and b are dates, it is not possible to go from other languages to SQL Server, only the other way around.
 
-A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, **Microsoft PDW (Parallel Data Warehouse)**, **Impala**, **Netezza**, **Google BigQuery**, **Amazon Redhift**, and **SQLite**.
+A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, **Microsoft PDW (Parallel Data Warehouse)**, **Impala**, **Netezza**, **Google BigQuery**, **Amazon Redhift**, **Apache Spark** and **SQLite**.
 
 A third limitation is that only a limited set of translation rules have currently been implemented, although adding them to the [list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) should not be hard.
 
@@ -125,6 +125,7 @@ The `targetDialect` parameter can have the following values:
   - "impala"
   - "netezza"
   - "bigquery"
+  - "spark"
   - "sqlite"
   - "sql server" (no translation)
 
@@ -213,7 +214,7 @@ However, Oracle will throw an error when the `AS` keyword is used. In the above 
 
 
 ## Temp tables
-Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In platforms like Postgres, PDW, RedShift and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. Other platforms, like Impala, don't support temp tables at all. This is why for some platforms SqlRender will try to emulate temp tables by
+Temp tables can be very useful to store intermediate results, and when used correctly can be used to dramatically improve performance of queries. In platforms like Postgres, PDW, RedShift and SQL Server temp tables have very nice properties: they're only visible to the current user, are automatically dropped when the session ends, and can be created even when the user has no write access. Unfortunately, in Oracle temp tables are basically permanent tables, with the only difference that the data inside the table is only visible to the current user. Other platforms, like Impala and Spark, don't support temp tables at all. This is why for some platforms SqlRender will try to emulate temp tables by
 
 1. Adding a random string to the table name so tables from different users will not conflict.
 2. Allowing the user to specify the schema where the temp tables will be created. 
