@@ -141,7 +141,7 @@ translate <- function(sql = "",
     tempEmulationSchema <- oracleTempSchema
   }
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
-  if (missing(tempEmulationSchema) || is.null(tempEmulationSchema)) {
+  if (is.null(tempEmulationSchema)) {
     tempEmulationSchema <- rJava::.jnull()
   } else {
     tempEmulationSchema <- as.character(tempEmulationSchema)
@@ -214,7 +214,7 @@ translateSingleStatement <- function(sql = "",
     tempEmulationSchema <- oracleTempSchema
   }
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
-  if (missing(tempEmulationSchema) || is.null(tempEmulationSchema)) {
+  if (is.null(tempEmulationSchema)) {
     tempEmulationSchema <- rJava::.jnull()
   } else {
     tempEmulationSchema <- as.character(tempEmulationSchema)

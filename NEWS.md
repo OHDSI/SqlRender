@@ -1,6 +1,14 @@
 SqlRender 1.7.0
 ===============
 
+Bugfixes:
+
+1. Fixing setting of global `tempEmulationSchema` option.
+
+
+SqlRender 1.7.0
+===============
+
 Changes:
 
 1. Deprecating `oracleTempSchema` argument in various functions in favor of `tempEmulationSchema` schema, which can also be set globally using the `sqlRenderTempEmulationSchema` option.
