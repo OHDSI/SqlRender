@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
       </span>
     </div>
 
@@ -48,9 +48,6 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="news/index.html">Changelog</a>
-</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
@@ -62,6 +59,12 @@
       <a href="articles/UsingSqlRender.html">Using SqlRender</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="https://data.ohdsi.org/SqlDeveloper/">SqlDeveloper</a>
+</li>
+<li>
+  <a href="news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -122,6 +125,11 @@
 <code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, <span class="st">"oracle"</span><span class="op">)</span></code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
 <pre><code>"SELECT * FROM my_table; ALTER SESSION SET current_schema =  my_schema;"</code></pre>
+<div id="sqldeveloper" class="section level2">
+<h2 class="hasAnchor">
+<a href="#sqldeveloper" class="anchor"></a>SqlDeveloper</h2>
+<p>The SqlDeveloper Shiny app is included in the SqlRender R package, and allows viewing the rendering and translation on the fly as you develop your SQL. The SqlDeveloper app is also available online <a href="https://data.ohdsi.org/SqlDeveloper/">here</a>.</p>
+</div>
 </div>
 <div id="technology" class="section level1">
 <h1 class="hasAnchor">
@@ -194,7 +202,7 @@
 <div id="user-documentation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#user-documentation" class="anchor"></a>User Documentation</h1>
-<p>Documentation can be found on the <a href="https://ohdsi.github.io/SqlRender">package website</a>.</p>
+<p>Documentation can be found on the <a href="https://ohdsi.github.io/SqlRender/">package website</a>.</p>
 <p>PDF versions of the documentation are also available:</p>
 <ul>
 <li>Vignette: <a href="https://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html">Using SqlRender</a>
