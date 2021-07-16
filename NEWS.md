@@ -7,6 +7,8 @@ Bugfixes:
 
 2. Adding support for SQLite with extended types (DATE and DATETIME).
 
+3. Workaround for `SUBSTR()` function bug in newer versions of SQLite (by explicitly casting string to type `STRING`).
+
 
 SqlRender 1.7.0
 ===============
