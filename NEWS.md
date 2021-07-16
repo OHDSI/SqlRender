@@ -1,9 +1,11 @@
-SqlRender 1.7.0
+SqlRender 1.8.0
 ===============
 
 Bugfixes:
 
 1. Fixing setting of global `tempEmulationSchema` option.
+
+2. Adding support for SQLite with extended types (DATE and DATETIME).
 
 
 SqlRender 1.7.0

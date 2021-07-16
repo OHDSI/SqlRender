@@ -885,3 +885,47 @@ hive,"ISNUMERIC(@a)","case when cast(@a as double) is not null then 1 else 0 end
 hive,as \"@a\",as @a
 hive,"HASHBYTES('MD5',@a)","hash(@a)"
 hive,"CONVERT(VARBINARY, @a, 1)","@a"
+sqlite extended,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
+sqlite extended,+ '@a',|| '@a'
+sqlite extended,'@a' +,'@a' ||
+sqlite extended,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
+sqlite extended,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
+sqlite extended,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
+sqlite extended,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
+sqlite extended,VAR(@a),VARIANCE(@a)
+sqlite extended,RAND(),RANDOM()
+sqlite extended,LEN(@a),LENGTH(@a)
+sqlite extended,"LOG(@expression,@base)","(LOG(@expression)/LOG(@base))"
+sqlite extended,"ISNULL(@a,@b)","COALESCE(@a,@b)"
+sqlite extended,"ISNUMERIC(@a)","CASE WHEN @a GLOB '[0-9]*' OR @a GLOB '[0-9]*.[0-9]*' OR @a GLOB '.[0-9]*' THEN 1 ELSE 0 END"
+sqlite extended,COUNT_BIG(@a),COUNT(@a)
+sqlite extended,NEWID(),RANDOM()
+sqlite extended,"RIGHT(@a,@b)","SUBSTR(@a,-@b)"
+sqlite extended,"LEFT(@str,@chars)","SUBSTR(@str,1,@chars)"
+sqlite extended,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+sqlite extended,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+sqlite extended,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+sqlite extended,.dbo.,.
+sqlite extended,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
+sqlite extended,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);
+sqlite extended,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
+sqlite extended,CREATE INDEX @index_name ON @schema.@table (@variable);,CREATE INDEX @index_name ON @table (@variable);
+sqlite extended,CREATE UNIQUE INDEX @index_name ON @schema.@table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
+sqlite extended,DROP INDEX @schema.@index_name;,DROP INDEX @index_name;
+sqlite extended,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
+sqlite extended,VARCHAR(@a),TEXT
+sqlite extended,VARCHAR,TEXT
+sqlite extended,FLOAT,REAL
+sqlite extended,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nANALYZE @d;
+sqlite extended,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+sqlite extended,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;\nANALYZE @b;
+sqlite extended,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+sqlite extended,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+sqlite extended,#,temp.
+sqlite extended,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+sqlite extended,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+sqlite extended,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
+sqlite extended,UPDATE STATISTICS @a;,ANALYZE @a;
+sqlite extended,TRUNCATE TABLE @a;,DELETE FROM @a;
+sqlite extended,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
+sqlite extended,"CONCAT(@a, @b)","@a || @b"
