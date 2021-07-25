@@ -46,6 +46,10 @@ will produce the variable `sql` containing this value:
 "SELECT * FROM my_table; ALTER SESSION SET current_schema =  my_schema;"
 ```
 
+## SqlDeveloper
+
+The SqlDeveloper Shiny app is included in the SqlRender R package, and allows viewing the rendering and translation on the fly as you develop your SQL. The SqlDeveloper app is also available online [here](https://data.ohdsi.org/SqlDeveloper/).
+
 Technology
 ==========
 The SqlRender package is an R package wrapped around a Java library. The rJava package is used as interface.

@@ -118,7 +118,7 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 #'
 #' @param sql                   The SQL to be translated
 #' @param targetDialect         The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                              "sqlite", "netezza", "bigquery", "spark", and "redshift" are supported.
+#'                              "sqlite", "sqlite extended", "netezza", "bigquery", "spark", and "redshift" are supported.
 #' @param oracleTempSchema      DEPRECATED: use \code{tempEmulationSchema} instead.
 #' @param tempEmulationSchema   Some database platforms like Oracle and Impala do not truly support
 #'                              temp tables. To emulate temp tables, provide a schema with write
@@ -141,7 +141,7 @@ translate <- function(sql = "",
     tempEmulationSchema <- oracleTempSchema
   }
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
-  if (missing(tempEmulationSchema) || is.null(tempEmulationSchema)) {
+  if (is.null(tempEmulationSchema)) {
     tempEmulationSchema <- rJava::.jnull()
   } else {
     tempEmulationSchema <- as.character(tempEmulationSchema)
@@ -192,7 +192,7 @@ translateSql <- function(sql = "", targetDialect, oracleTempSchema = NULL) {
 #'
 #' @param sql                   The SQL to be translated
 #' @param targetDialect         The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                              "sqlite", "netezza", "bigquery", "spark", and "redshift" are supported.
+#'                              "sqlite", "sqlite extended", "netezza", "bigquery", "spark", and "redshift" are supported.
 #' @param oracleTempSchema      DEPRECATED: use \code{tempEmulationSchema} instead.
 #' @param tempEmulationSchema   Some database platforms like Oracle and Impala do not truly support
 #'                              temp tables. To emulate temp tables, provide a schema with write
@@ -214,7 +214,7 @@ translateSingleStatement <- function(sql = "",
     tempEmulationSchema <- oracleTempSchema
   }
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
-  if (missing(tempEmulationSchema) || is.null(tempEmulationSchema)) {
+  if (is.null(tempEmulationSchema)) {
     tempEmulationSchema <- rJava::.jnull()
   } else {
     tempEmulationSchema <- as.character(tempEmulationSchema)

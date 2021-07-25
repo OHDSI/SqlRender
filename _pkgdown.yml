@@ -9,8 +9,17 @@ home:
 
 navbar:
   structure:
+    left:
+    - home
+    - reference
+    - articles
+    - SqlDeveloper
+    - news
     right: [hades, github]
   components:
+    SqlDeveloper:
+      text: SqlDeveloper
+      href: https://data.ohdsi.org/SqlDeveloper/ 
     hades:
       text: hadesLogo
       href: https://ohdsi.github.io/Hades

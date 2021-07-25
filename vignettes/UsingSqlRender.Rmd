@@ -127,6 +127,7 @@ The `targetDialect` parameter can have the following values:
   - "bigquery"
   - "spark"
   - "sqlite"
+  - "sqlite extended"
   - "sql server" (no translation)
 
 ## Functions and structures supported by translate
