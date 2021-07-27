@@ -15,12 +15,13 @@
  ******************************************************************************/
 package org.ohdsi.sql;
 
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import org.ohdsi.sql.SqlTranslate.Block;
 import org.ohdsi.sql.SqlTranslate.MatchedPattern;
 
-public class BigQueryTranslate {
+public class BigQuerySparkTranslate {
 
 	/**
 	 * Iterates the elements of a comma-separated list of expressions (SELECT, GROUP BY, or ORDER BY).
@@ -379,6 +380,268 @@ public class BigQueryTranslate {
 		sql = bigQueryConvertSelectListReferences(sql, orderBy + ";", CommaListIterator.ListType.ORDER_BY);
 		sql = bigQueryConvertSelectListReferences(sql, orderBy + ")", CommaListIterator.ListType.ORDER_BY);
 
+		return sql;
+	}
+
+	private static String sparkCreateTable(String sql) {
+
+		if (!sql.endsWith(";")) {
+			sql += ";";
+		}
+
+		String pattern = "CREATE TABLE @@table (@@definition)";
+		String if_pattern = "IF OBJECT_ID('@@table', 'U') IS NULL";
+
+		List<Block> create_table_pattern = SqlTranslate.parseSearchPattern(pattern);
+		List<Block> if_prefix_pattern = SqlTranslate.parseSearchPattern(if_pattern);
+
+		sql = sql.trim().replaceAll("\t", " ").replaceAll(" +", " ");
+
+		MatchedPattern create_table_match = SqlTranslate.search(sql, create_table_pattern, 0);
+
+		String table_name = create_table_match.variableToValue.get("@@table");
+		String definition_list = create_table_match.variableToValue.get("@@definition");
+
+		if (table_name != null && definition_list != null) {
+
+			table_name = table_name.replaceAll("\r\n", "");
+			definition_list = definition_list.toLowerCase().replaceAll("\r\n", "").replaceAll(" as ", " ");
+
+			List<String> column_names = new ArrayList<String>();
+			for (String f : definition_list.split(",")) {
+				column_names.add("\tCAST(NULL AS " + f.trim().split(" ")[1] + ") AS " + f.trim().split(" ")[0]);
+			}
+
+			String prefix = sql.substring(0, create_table_match.start);
+
+			MatchedPattern if_prefix_match = SqlTranslate.search(prefix, if_prefix_pattern, 0);
+
+			if (if_prefix_match.start == 0) {
+				sql = "CREATE TABLE IF NOT EXISTS " + table_name + "\r\nUSING DELTA\r\nAS\r\nSELECT "
+						+ String.join(",\r\n", column_names) + " WHERE 1 = 0";
+			} else {
+				sql = prefix
+						+ "CREATE TABLE " + table_name + "\r\nUSING DELTA\r\nAS\r\nSELECT "
+						+ String.join(",\r\n", column_names) + " WHERE 1 = 0";
+			}
+		}
+
+		return sql.replaceAll(";", "");
+	}
+
+	private static List<String> getMetaFields(String target_table_name, Connection connection) throws SQLException {
+
+		Statement statement = connection.createStatement();
+		ResultSet rs = statement.executeQuery("show columns in " + target_table_name);
+
+		List<String> metaFields = new ArrayList<String>();
+		while (rs.next()) {
+			metaFields.add(rs.getString("COL_NAME").toLowerCase());
+		}
+
+		return metaFields;
+	}
+
+	private static Map<String, String> sparkInsertGetMappings(String sql, String pattern, Boolean isValue) {
+		List<Block> insert_select_pattern = SqlTranslate.parseSearchPattern(pattern);
+
+		MatchedPattern cte_match = SqlTranslate.search(sql, insert_select_pattern, 0);
+
+		CommaListIterator insert_list_iter = new CommaListIterator(cte_match.variableToValue.get("@@columns"), CommaListIterator.ListType.WITH_COLUMNS);
+		CommaListIterator select_list_iter = new CommaListIterator(cte_match.variableToValue.get("@@definition"), CommaListIterator.ListType.SELECT);
+
+		Map<String, String> mappings = new HashMap<String, String>();
+
+		// Iterates the insert column list and the SELECT list in parallel
+		while (!insert_list_iter.IsDone()) {
+			if (select_list_iter.IsDone()) {
+				break;
+			}
+			final String column_expr = insert_list_iter.GetFullExpression().toLowerCase();
+			String select_expr = select_list_iter.GetExpressionPrefix();
+
+			if (!isValue) {
+				select_expr += " as " + column_expr;
+			}
+
+			mappings.put(column_expr.trim(), select_expr.trim());
+
+			insert_list_iter.Next();
+			select_list_iter.Next();
+		}
+		return mappings;
+	}
+
+	private static String sparkInsertValues(String sql, Connection connection) throws SQLException {
+		if (!sql.endsWith(";")) {
+			sql += ";";
+		}
+
+		String this_pattern = "INSERT INTO @@target (@@columns) VALUES (@@definition);";
+		List<Block> insert_values_pattern = SqlTranslate.parseSearchPattern(this_pattern);
+
+		sql = sql.trim().replaceAll("\t", " ").replaceAll(" +", " ");
+
+		MatchedPattern insert_into_match = SqlTranslate.search(sql, insert_values_pattern,
+				0);
+
+		String target_table_name = insert_into_match.variableToValue.get("@@target");
+		String columns_list = insert_into_match.variableToValue.get("@@columns");
+		String values_list = insert_into_match.variableToValue.get("@@definition");
+
+		if (target_table_name != null
+				&& columns_list != null
+				&& values_list != null) {
+
+			target_table_name = target_table_name.replaceAll("\r\n", "");
+
+			List<String> metaFields;
+			try {
+				metaFields = getMetaFields(target_table_name, connection);
+			} catch (SQLException e) {
+				return sql;
+			}
+
+			Map<String, String> mappings = sparkInsertGetMappings(sql, this_pattern, true);
+
+			List<String> definition_sql = new ArrayList<String>();
+			for (String mf : metaFields) {
+				if (mappings.containsKey(mf)) {
+					definition_sql.add(mappings.get(mf));
+				} else {
+					definition_sql.add("NULL");
+				}
+			}
+
+			sql = "INSERT INTO " + target_table_name + "\r\n" + "VALUES\r\n"
+					+ "(\r\n\t"
+					+ String.join(",\r\n\t", definition_sql)
+					+ "\r\n)";
+		}
+		return sql.replaceAll(";", "");
+	}
+
+
+	private static String sparkInsertSelect(String sql, Connection connection) throws SQLException {
+
+		sql = sql.trim().replaceAll("\t", " ").replaceAll(" +", " ");
+
+		if (!sql.trim().endsWith(";")) {
+			sql += ";";
+		}
+
+		String insert_select_from_pattern = "INSERT INTO @@target (@@columns) SELECT @@definition FROM @@source;";
+		List<Block> insert_select_from_parsed = SqlTranslate.parseSearchPattern(insert_select_from_pattern);
+		MatchedPattern insert_select_from_match = SqlTranslate.search(sql, insert_select_from_parsed, 0);
+
+		String target = insert_select_from_match.variableToValue.get("@@target");
+		String source = insert_select_from_match.variableToValue.get("@@source");
+		String columns = insert_select_from_match.variableToValue.get("@@columns");
+		String definition = insert_select_from_match.variableToValue.get("@@definition");
+
+		if ((target != null) &&
+				(source != null) &&
+				(columns != null) &&
+				(definition != null)) {
+			String suffix = sql.substring(insert_select_from_match.end);
+
+			// attempt to get table metadata
+			List<String> metaFields;
+			try {
+				metaFields = getMetaFields(target, connection);
+			} catch (SQLException e) {
+				return sql;
+			}
+
+			Map<String, String> mappings = sparkInsertGetMappings(sql, insert_select_from_pattern, false);
+
+			// re-construct the definitions to explicitly match table structure
+			List<String> definition_sql = new ArrayList<String>();
+			for (String mf : metaFields) {
+				if (mappings.containsKey(mf)) {
+					definition_sql.add(mappings.get(mf));
+				} else {
+					definition_sql.add("NULL AS " + mf);
+				}
+			}
+
+			sql = "INSERT INTO " + target + "\r\n\t"
+					+ "SELECT " + String.join(",\r\n\t", definition_sql)
+					+ "\r\nFROM " + source + " \r\n " + suffix;
+
+		}
+
+		return sql.replaceAll(";", "");
+	}
+
+	/**
+	 * Handles insert into commands by checking table metadata
+	 * then writes a create delta table syntax for Spark.
+	 * This is necessary due to limitation in Spark that prevents inserts without the full table specification from working.
+	 * Needed by Atlas for cohort logic.
+	 *
+	 * @param sql - the query to translate
+	 * @param connectionString - a JDBC connection string
+	 * @return the query after translation
+	 */
+	public static String sparkHandleInsert(String sql, String connectionString) throws SQLException {
+		Connection connection = DriverManager.getConnection(connectionString);
+		return sparkHandleInsert(sql, connection);
+	}
+
+	/**
+	 * Handles insert into commands by checking table metadata
+	 * then writes a create delta table syntax for Spark.
+	 * This is necessary due to limitation in Spark that prevents inserts without the full table specification from working.
+	 * Needed by Atlas for cohort logic.
+	 *
+	 * @param sql - the query to translate
+	 * @param connection - a Java connection object
+	 * @return the query after translation
+	 */
+	public static String sparkHandleInsert(String sql, Connection connection) throws SQLException {
+
+		List<String> splits = new ArrayList<String>(Arrays.asList(SqlSplit.splitSql(sql)));
+
+		for (int i = 0; i < splits.size(); i++) {
+			splits.set(i, sparkInsertSelect(splits.get(i), connection));
+			splits.set(i, sparkInsertValues(splits.get(i), connection));
+		}
+
+		splits.removeAll(Arrays.asList("", null));
+		if (splits.size() > 1 || sql.trim().endsWith(";")) {
+			sql = String.join(";\r\n", splits).trim() + ";";
+		} else {
+			sql = String.join(";\r\n", splits).trim();
+		}
+
+		return sql;
+	}
+
+	/**
+	 * spark specific operations
+	 *
+	 * @param sql - the query to translate
+	 * @return the query after translation
+	 * @throws SQLException
+	 */
+	public static String translateSpark(String sql) {
+		// effectively removes comments; comments have sometimes thrown errors in Databricks
+		String[] splits = SqlSplit.splitSql(sql);
+
+		// translate create table statements
+		for (int i = 0; i < splits.length; i++) {
+			splits[i] = sparkCreateTable(splits[i]);
+		}
+
+		// if this is a batch command or the SQL originally ended with a semicolon
+		// ensure the semicolon is back in the SQL
+
+		if (splits.length > 1 || sql.trim().endsWith(";")) {
+			sql = String.join(";\r\n", splits).trim() + ";";
+		} else {
+			sql = String.join(";\r\n", splits).trim();
+		}
 		return sql;
 	}
 }

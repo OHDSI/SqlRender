@@ -6,7 +6,7 @@ public class TestSqlRender {
 		
 		String sql = "WITH data(x) AS (SELECT (CAST(1 AS INT) x)) SELECT x INTO my_table FROM data;";
 		String path = "inst/csv/replacementPatterns.csv";
-		sql = SqlTranslate.translateSqlWithPath(sql, "bigquery", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sql, "spark", null, null, path);
 		System.out.println(sql);
 		
 //		Pattern pattern = Pattern.compile("^((?!FROM).)*$");
