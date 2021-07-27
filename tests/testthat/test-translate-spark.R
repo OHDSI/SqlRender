@@ -226,13 +226,13 @@ test_that("translate sql server -> spark NEWID", {
 
 
 test_that("translate sql server -> spark if object_id", {
-  sql <- translate("IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",
+  sql <- translate("IF OBJECT_ID('some_table', 'U') IS NULL CREATE TABLE some_table (id int);",
                    targetDialect = "spark")
-  expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS @table  (@definition);")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE IF NOT EXISTS some_table \r\nUSING DELTA\r\nAS\r\nSELECT \tCAST(NULL AS int) AS id WHERE 1 = 0;")
   
-  sql <- translate("IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",
+  sql <- translate("IF OBJECT_ID('some_table', 'U') IS NOT NULL DROP TABLE some_table;",
                    targetDialect = "spark")
-  expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS @table;")
+  expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS some_table;")
 })
 
 test_that("translate sql server -> spark dbo", {
@@ -243,11 +243,11 @@ test_that("translate sql server -> spark dbo", {
 
 
 test_that("translate sql server -> spark table admin", {
-  sql <- translate("CREATE CLUSTERED INDEX @index_name ON @table (@variable);",
+  sql <- translate("CREATE CLUSTERED INDEX index_name ON some_table (variable);",
                    targetDialect = "spark")  
   expect_equal_ignore_spaces(sql, "")
   
-  sql <- translate("CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);",
+  sql <- translate("CREATE UNIQUE CLUSTERED INDEX index_name ON some_table (variable);",
                    targetDialect = "spark")  
   expect_equal_ignore_spaces(sql, "")
   
@@ -286,26 +286,26 @@ test_that("translate sql server -> spark varchar", {
 })
 
 test_that("translate sql server -> spark cte ctas", {
-  sql <- translate(sql = "WITH @a AS @b SELECT @c INTO @d FROM @e;",
+  sql <- translate(sql = "WITH a AS (select b) SELECT c INTO d FROM e;",
                    targetDialect = "spark")
-  expect_equal_ignore_spaces(sql, "CREATE TABLE @d \n USING DELTA \n AS \n WITH @a  AS @b  SELECT\n@c \nFROM\n@e;")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE d \n USING DELTA \n AS \n WITH a  AS (select b)  SELECT\nc \nFROM\ne;")
 })
 
 test_that("translate sql server -> spark ctas", {
-  sql <- translate(sql = "SELECT @a INTO @b FROM @c;",
+  sql <- translate(sql = "SELECT a INTO b FROM c;",
                    targetDialect = "spark")
-  expect_equal_ignore_spaces(sql, "CREATE TABLE @b \n USING DELTA \n  AS\nSELECT\n@a \nFROM\n@c;")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE b \n USING DELTA \n  AS\nSELECT\na \nFROM\nc;")
 })
 
 test_that("translate sql server -> spark ctas with distribute_on_key", {
   sql <- translate(sql = "--HINT DISTRIBUTE_ON_KEY(key)
-                          SELECT @a INTO @b FROM @c;",
+                          SELECT a INTO b FROM c;",
                    targetDialect = "spark")
-  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(key) \nCREATE TABLE @b \nUSING DELTA\nAS\nSELECT\n@a \nFROM\n@c;\nOPTIMIZE @b  ZORDER BY key;")
+  expect_equal_ignore_spaces(sql, "--HINT DISTRIBUTE_ON_KEY(key) \nCREATE TABLE b \nUSING DELTA\nAS\nSELECT\na \nFROM\nc;\nOPTIMIZE b  ZORDER BY key;")
 })
 
 test_that("translate sql server -> spark cross join", {
-  sql <- translate(sql = "SELECT @a from (@b) x, (@c) y;",
+  sql <- translate(sql = "SELECT a from (select b) x, (select c) y;",
                    targetDialect = "spark")
-  expect_equal_ignore_spaces(sql, "SELECT @a  FROM (@b) x cross join (@c) y;")
+  expect_equal_ignore_spaces(sql, "SELECT a  FROM (select b) x cross join (select c) y;")
 })
