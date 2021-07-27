@@ -8,7 +8,7 @@
 \description{
 A rendering tool for parameterized SQL that also translates into
   different SQL dialects.  These dialects include 'Microsoft Sql Server', 'Oracle', 
-  'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', and 'SQLite'.
+  'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', 'Apache Spark', and 'SQLite'.
 }
 \seealso{
 Useful links:

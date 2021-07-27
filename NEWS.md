@@ -9,6 +9,8 @@ Bugfixes:
 
 3. Workaround for `SUBSTR()` function bug in newer versions of SQLite (by explicitly casting string to type `STRING`).
 
+4. Added Apache Spark dialect ("spark")
+
 
 SqlRender 1.7.0
 ===============
@@ -21,7 +23,6 @@ Changes:
 
 3. Updated `createRWrapperForSql()` to latest SqlRender standards.
 
-4. Added Apache Spark dialect ("spark")
 
 Bugfixes:
 
