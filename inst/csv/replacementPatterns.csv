@@ -758,6 +758,7 @@ sqlite,UPDATE STATISTICS @a;,ANALYZE @a;
 sqlite,TRUNCATE TABLE @a;,DELETE FROM @a;
 sqlite,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
 sqlite,"CONCAT(@a, @b)","@a || @b"
+sqlite,CEILING(@a),CEIL(@a)
 hive,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- hive does not support indexes
 hive,CREATE INDEX @index_name ON @table (@variable);,-- hive does not support indexes
 hive,CREATE INDEX @index_name ON @table (@variable) WHERE @c;,-- hive does not support indexes
