@@ -163,3 +163,8 @@ test_that("translate sql server -> sqlite DATEDIFF monthdate fields", {
                              "SELECT ((STRFTIME('%Y', date2, 'unixepoch')*12 + STRFTIME('%m', date2, 'unixepoch')) - (STRFTIME('%Y', date1, 'unixepoch')*12 + STRFTIME('%m', date1, 'unixepoch')) + (CASE WHEN STRFTIME('%d', date2, 'unixepoch') >= STRFTIME('%d', date1, 'unixepoch') then 0 else -1 end));")
 })
 
+test_that("translate sql server -> sqlite CEILING", {
+  sql <- translate("SELECT CEILING(0.1);", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "SELECT CEIL(0.1);")
+})
+

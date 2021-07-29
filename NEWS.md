@@ -9,6 +9,8 @@ Changes:
 
 3. Adding automated check whether correct Java Jar file is loaded, throws warning if not.
 
+4. Adding translation of `CEILING()` for SQLite.
+
 
 Bugfixes:
 
