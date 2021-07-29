@@ -1,15 +1,20 @@
 SqlRender 1.8.0
 ===============
 
+Changes:
+
+1. Adding support for SQLite with extended types (DATE and DATETIME).
+
+2. Added Apache Spark dialect ("spark")
+
+3. Adding automated check whether correct Java Jar file is loaded, throws warning if not.
+
+
 Bugfixes:
 
 1. Fixing setting of global `tempEmulationSchema` option.
 
-2. Adding support for SQLite with extended types (DATE and DATETIME).
-
-3. Workaround for `SUBSTR()` function bug in newer versions of SQLite (by explicitly casting string to type `STRING`).
-
-4. Added Apache Spark dialect ("spark")
+2. Workaround for `SUBSTR()` function bug in newer versions of SQLite (by explicitly casting string to type `STRING`).
 
 
 SqlRender 1.7.0

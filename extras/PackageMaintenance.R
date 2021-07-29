@@ -37,6 +37,10 @@ unlink("inst/doc/UsingSqlRender.tex")
 pkgdown::build_site()
 OhdsiRTools::fixHadesLogo()
 
+# Store JAR checksum --------------------------------------------------------------
+checksum <- rJava::J("org.ohdsi.sql.JarChecksum", "computeJarChecksum")
+write(checksum, file.path("inst", "csv", "jarChecksum.txt"))
+
 
 # Release package:
 devtools::check_win_devel()
