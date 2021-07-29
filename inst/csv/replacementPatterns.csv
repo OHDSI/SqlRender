@@ -683,7 +683,7 @@ bigquery,UPDATE STATISTICS @a;,-- big query does not support such functionality
 sqlite,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
 sqlite,DATETIME,REAL
 sqlite,DATETIME2,REAL
-sqlite,"CONVERT(DATE, @a)","CAST(STRFTIME('%s', SUBSTR(CAST(@a AS STRING), 1, 4) || '-' || SUBSTR(CAST(@a AS STRING), 5, 2) || '-' || SUBSTR(CAST(@a AS STRING), 7)) AS REAL)"
+sqlite,"CONVERT(DATE, @a)","CAST(STRFTIME('%s', SUBSTR(CAST(@a AS TEXT), 1, 4) || '-' || SUBSTR(CAST(@a AS TEXT), 5, 2) || '-' || SUBSTR(CAST(@a AS TEXT), 7)) AS REAL)"
 sqlite,"DATEADD(second,@seconds,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@seconds)||' seconds')) AS REAL)"
 sqlite,"DATEADD(minute,@minutes,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@minutes)||' minutes')) AS REAL)"
 sqlite,"DATEADD(hour,@hours,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@hours)||' hours')) AS REAL)"
@@ -703,7 +703,7 @@ sqlite,"DATEDIFF(year,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFT
 sqlite,"DATEDIFF(yyyy,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
 sqlite,"DATEDIFF(yy,@start, @end)","(STRFTIME('%Y', @end, 'unixepoch') - STRFTIME('%Y', @start, 'unixepoch'))"
 sqlite,"DATEDIFF(MONTH,@start, @end)","((STRFTIME('%Y', @end, 'unixepoch')*12 + STRFTIME('%m', @end, 'unixepoch')) - (STRFTIME('%Y', @start, 'unixepoch')*12 + STRFTIME('%m', @start, 'unixepoch')) + (CASE WHEN STRFTIME('%d', @end, 'unixepoch') >= STRFTIME('%d', @start, 'unixepoch') then 0 else -1 end))"
-sqlite,"JULIANDAY('@literal', 'unixepoch')","JULIANDAY(CAST(STRFTIME('%s', SUBSTR(CAST('@literal' AS STRING), 1, 4) || '-' || SUBSTR(CAST('@literal' AS STRING), 5, 2) || '-' || SUBSTR(CAST('@literal' AS STRING), 7)) AS REAL), 'unixepoch')"
+sqlite,"JULIANDAY('@literal', 'unixepoch')","JULIANDAY(CAST(STRFTIME('%s', SUBSTR(CAST('@literal' AS TEXT), 1, 4) || '-' || SUBSTR(CAST('@literal' AS TEXT), 5, 2) || '-' || SUBSTR(CAST('@literal' AS TEXT), 7)) AS REAL), 'unixepoch')"
 sqlite,"STRFTIME('%Y', '@literal', 'unixepoch')","CAST(SUBSTR('@literal', 1, 4) AS REAL)"
 sqlite,"STRFTIME('%m', '@literal', 'unixepoch')","CAST(SUBSTR('@literal', 5, 2) AS REAL)"
 sqlite,"STRFTIME('%d', '@literal', 'unixepoch')","CAST(SUBSTR('@literal', 7, 2) AS REAL)"
@@ -715,8 +715,8 @@ sqlite,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
 sqlite,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
 sqlite,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
 sqlite,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
-sqlite,"DATEFROMPARTS(@year,@month,@day)","STRFTIME('%s', SUBSTR(CAST('0000'||@year AS STRING),-4) || '-' || SUBSTR(CAST('00'||@month AS STRING),-2) || '-' || SUBSTR(CAST('00'||@day AS STRING),-2))"
-sqlite,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","STRFTIME('%s', SUBSTR(CAST('0000'||@year AS STRING),-4) || '-' || SUBSTR(CAST('00'||@month AS STRING),-2) || '-' || SUBSTR(CAST('00'||@day AS STRING),-2) || ' ' || SUBSTR(CAST('00'||@hour AS STRING),-2) || ':' || SUBSTR(CAST('00'||@minute AS STRING),-2) || ':' || SUBSTR('00'||@second,-2) || '.' || SUBSTR('000'||@ms,-3))"
+sqlite,"DATEFROMPARTS(@year,@month,@day)","STRFTIME('%s', SUBSTR(CAST('0000'||@year AS TEXT),-4) || '-' || SUBSTR(CAST('00'||@month AS TEXT),-2) || '-' || SUBSTR(CAST('00'||@day AS TEXT),-2))"
+sqlite,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","STRFTIME('%s', SUBSTR(CAST('0000'||@year AS TEXT),-4) || '-' || SUBSTR(CAST('00'||@month AS TEXT),-2) || '-' || SUBSTR(CAST('00'||@day AS TEXT),-2) || ' ' || SUBSTR(CAST('00'||@hour AS TEXT),-2) || ':' || SUBSTR(CAST('00'||@minute AS TEXT),-2) || ':' || SUBSTR('00'||@second,-2) || '.' || SUBSTR('000'||@ms,-3))"
 sqlite,YEAR(@date),"STRFTIME('%Y', @date, 'unixepoch')"
 sqlite,MONTH(@date),"STRFTIME('%m', @date, 'unixepoch')"
 sqlite,DAY(@date),"STRFTIME('%d', @date, 'unixepoch')"
@@ -729,8 +729,8 @@ sqlite,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 sqlite,"ISNUMERIC(@a)","CASE WHEN @a GLOB '[0-9]*' OR @a GLOB '[0-9]*.[0-9]*' OR @a GLOB '.[0-9]*' THEN 1 ELSE 0 END"
 sqlite,COUNT_BIG(@a),COUNT(@a)
 sqlite,NEWID(),RANDOM()
-sqlite,"RIGHT(@a,@b)","SUBSTR(CAST(@a AS STRING),-@b)"
-sqlite,"LEFT(@str,@chars)","SUBSTR(CAST(@str AS STRING),1,@chars)"
+sqlite,"RIGHT(@a,@b)","SUBSTR(CAST(@a AS TEXT),-@b)"
+sqlite,"LEFT(@str,@chars)","SUBSTR(CAST(@str AS TEXT),1,@chars)"
 sqlite,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 sqlite,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
 sqlite,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;

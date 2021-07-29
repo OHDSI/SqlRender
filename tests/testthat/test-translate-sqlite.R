@@ -89,7 +89,7 @@ test_that("translate sql server -> sqlite date to string", {
 test_that("translate sql server -> sqlite CONVERT(AS DATE)", {
   sql <- translate("CONVERT(DATE, '20000101');", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql,
-                             "CAST(STRFTIME('%s', SUBSTR(CAST('20000101' AS STRING), 1, 4) || '-' || SUBSTR(CAST('20000101' AS STRING), 5, 2) || '-' || SUBSTR(CAST('20000101' AS STRING), 7)) AS REAL);")
+                             "CAST(STRFTIME('%s', SUBSTR(CAST('20000101' AS TEXT), 1, 4) || '-' || SUBSTR(CAST('20000101' AS TEXT), 5, 2) || '-' || SUBSTR(CAST('20000101' AS TEXT), 7)) AS REAL);")
 })
 
 test_that("translate sql server -> sqlite log any base", {
@@ -130,7 +130,7 @@ test_that("translate sql server -> sqlite CREATE INDEX", {
 test_that("translate sql server -> sqlite DATEDIFF with literals", {
   sql <- translate("SELECT DATEDIFF(DAY, '20000131', '20000101');", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql,
-                             "SELECT JULIANDAY(CAST(STRFTIME('%s', SUBSTR(CAST('20000101' AS STRING), 1, 4) || '-' || SUBSTR(CAST('20000101' AS STRING), 5, 2) || '-' || SUBSTR(CAST('20000101' AS STRING), 7)) AS REAL), 'unixepoch') - JULIANDAY(CAST(STRFTIME('%s', SUBSTR(CAST('20000131' AS STRING), 1, 4) || '-' || SUBSTR(CAST('20000131' AS STRING), 5, 2) || '-' || SUBSTR(CAST('20000131' AS STRING), 7)) AS REAL), 'unixepoch');")
+                             "SELECT JULIANDAY(CAST(STRFTIME('%s', SUBSTR(CAST('20000101' AS TEXT), 1, 4) || '-' || SUBSTR(CAST('20000101' AS TEXT), 5, 2) || '-' || SUBSTR(CAST('20000101' AS TEXT), 7)) AS REAL), 'unixepoch') - JULIANDAY(CAST(STRFTIME('%s', SUBSTR(CAST('20000131' AS TEXT), 1, 4) || '-' || SUBSTR(CAST('20000131' AS TEXT), 5, 2) || '-' || SUBSTR(CAST('20000131' AS TEXT), 7)) AS REAL), 'unixepoch');")
 })
 
 test_that("translate sql server -> sqlite DATEDIFF with date fields", {
