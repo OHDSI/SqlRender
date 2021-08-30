@@ -3,13 +3,11 @@ SqlRender 1.8.0
 
 Changes:
 
-1. Adding support for SQLite with extended types (DATE and DATETIME).
+1. Added Apache Spark dialect ("spark")
 
-2. Added Apache Spark dialect ("spark")
+2. Adding automated check whether correct Java Jar file is loaded, throws warning if not.
 
-3. Adding automated check whether correct Java Jar file is loaded, throws warning if not.
-
-4. Adding translation of `CEILING()` for SQLite.
+3. Adding translation of `CEILING()` for SQLite.
 
 
 Bugfixes:

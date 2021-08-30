@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.8.0</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -67,11 +67,11 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://ohdsi.github.io/Hades">hadesLogo</a>
+  <a href="https://ohdsi.github.io/Hades"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
 </li>
 <li>
   <a href="https://github.com/OHDSI/SqlRender/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -85,14 +85,13 @@
 
       
 
-      </header><script src="UsingSqlRender_files/header-attrs-2.5/header-attrs.js"></script><link href="UsingSqlRender_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="UsingSqlRender_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="UsingSqlRender_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using SqlRender</h1>
                         <h4 class="author">Martijn J. Schuemie</h4>
             
-            <h4 class="date">2021-05-25</h4>
+            <h4 class="date">2021-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/SqlRender/blob/master/vignettes/UsingSqlRender.Rmd"><code>vignettes/UsingSqlRender.Rmd</code></a></small>
       <div class="hidden name"><code>UsingSqlRender.Rmd</code></div>
@@ -205,6 +204,7 @@
 <li>“bigquery”</li>
 <li>“spark”</li>
 <li>“sqlite”</li>
+<li>“sqlite extended”</li>
 <li>“sql server” (no translation)</li>
 </ul>
 <div id="functions-and-structures-supported-by-translate" class="section level2">
@@ -379,7 +379,7 @@
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM #children;"</span>
 <span class="fu"><a href="../reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, targetDialect <span class="op">=</span> <span class="st">"oracle"</span>, tempEmulationSchema <span class="op">=</span> <span class="st">"temp_schema"</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "SELECT * FROM temp_schema.zvlgs4dfchildren ;"</code></pre>
+<pre><code>## [1] "SELECT * FROM temp_schema.ak1lxg8zchildren ;"</code></pre>
 <p>Note that the user will need to have write privileges on <code>temp_schema</code>. You can also set the <code>tempEmulationSchema</code> globally by using</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>sqlRenderTempEmulationSchema <span class="op">=</span> <span class="st">"temp_schema"</span><span class="op">)</span></code></pre></div>
