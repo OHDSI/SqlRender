@@ -3,7 +3,7 @@ SqlRender 1.8.0
 
 Changes:
 
-1. Added Apache Spark dialect ("spark")
+1. Added Apache Spark dialect ("spark").
 
 2. Adding automated check whether correct Java Jar file is loaded, throws warning if not.
 
