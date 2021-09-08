@@ -1,4 +1,4 @@
-This update has 3 changes, 2 bugfixes (see NEWS.md)
+Some of the CRAN testing environments do not meet the documented system requirements of this package (specifically, the Solaris environment is running a Java version that was discontinued years ago). We are putting a lot of effort in making our many unit tests pass on these environments. It would be helpful if instead the testing environments were updated or discontinued.
 
 ---
 

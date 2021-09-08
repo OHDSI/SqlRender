@@ -1,3 +1,9 @@
+SqlRender 1.8.1
+===============
+
+1. Provide informative error message when Java is outdated.
+
+
 SqlRender 1.8.0
 ===============
 

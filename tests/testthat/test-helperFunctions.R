@@ -1,5 +1,9 @@
 library("testthat")
 
+# test_that("Designed to fail", {
+#   expect_true(FALSE)
+# })
+
 test_that("SQL read write", {
   fileName <- tempfile()
   sql1 <- "SELECT * FROM table"

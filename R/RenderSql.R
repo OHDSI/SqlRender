@@ -65,6 +65,10 @@
 #' @import rJava
 #' @export
 render <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
+  if (!supportsJava8()) {
+    warning("Java 8 or higher is required, but older version was found. ")
+    return("")
+  }
   parameters <- lapply(list(...), function(x) {
     paste(x, collapse = ",")
   })
@@ -134,6 +138,10 @@ translate <- function(sql = "",
                       targetDialect,
                       tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
                       oracleTempSchema = NULL) {
+  if (!supportsJava8()) {
+    warning("Java 8 or higher is required, but older version was found. ")
+    return("")
+  }
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
     warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
          .frequency = "regularly",
@@ -207,6 +215,10 @@ translateSingleStatement <- function(sql = "",
                                      targetDialect,
                                      tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
                                      oracleTempSchema = NULL) {
+  if (!supportsJava8()) {
+    warning("Java 8 or higher is required, but older version was found. ")
+    return("")
+  }
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
     warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
          .frequency = "regularly",
@@ -246,5 +258,9 @@ translateSingleStatement <- function(sql = "",
 #'
 #' @export
 splitSql <- function(sql) {
+  if (!supportsJava8()) {
+    warning("Java 8 or higher is required, but older version was found. ")
+    return("")
+  }
   rJava::J("org.ohdsi.sql.SqlSplit")$splitSql(as.character(sql))
 }
