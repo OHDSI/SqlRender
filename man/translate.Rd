@@ -15,7 +15,8 @@ translate(
 \item{sql}{The SQL to be translated}
 
 \item{targetDialect}{The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-"sqlite", "sqlite extended", "netezza", "bigquery", "spark", and "redshift" are supported.}
+"sqlite", "sqlite extended", "netezza", "bigquery", "spark", and "redshift" are supported. 
+Use \code{\link{listSupportedDialects}} to get the list of supported dialects.}
 
 \item{tempEmulationSchema}{Some database platforms like Oracle and Impala do not truly support
 temp tables. To emulate temp tables, provide a schema with write

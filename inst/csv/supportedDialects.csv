@@ -1,0 +1,11 @@
+dialect,description
+sql server,Microsoft SQL Server
+oracle,Oracle
+postgresql,PostgreSQL
+pdw,Microsoft Parallel Data Warehouse
+impala,Apache Impala
+netezza,IBM Netezza
+bigquery,Google BigQuery
+spark,Apache Spark
+sqlite,SQLite
+redshift,Amazon RedShift

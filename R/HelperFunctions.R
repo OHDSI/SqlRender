@@ -455,3 +455,21 @@ supportsJava8 <- function() {
   support <- majorVersion >= 8
   return(support)
 }
+
+#' List the supported target dialects
+#'
+#' @description 
+#' List the target dialects supported by the \code{\link{translate}} function.
+#'
+#' @return
+#' A data frame with two columns. The 'dialect' column contains the abbreviation used in SqlRender, and the 
+#' 'descripion' column contains a more human-readable description.
+#'
+#' @examples
+#' listSupportedDialects()
+#'
+#' @export
+listSupportedDialects <- function() {
+  pathToCsv <- system.file("csv", "supportedDialects.csv", package = "SqlRender")
+  return(read.csv(pathToCsv))
+}

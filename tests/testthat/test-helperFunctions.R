@@ -98,11 +98,15 @@ test_that("Warning using loadRenderTranslateSql with oracleTempSchema", {
   expect_warning(loadRenderTranslateSql(sqlFilename = "test.sql", packageName = "SqlRender", dbms = "oracle", oracleTempSchema = "scratch"))
 })
 
-
-
 test_that("createRWrapperForSql", {
   fileName <- tempfile()
   createRWrapperForSql(sqlFilename = "test.sql", rFilename = fileName, packageName = "SqlRender", createRoxygenTemplate = TRUE)
   expect_true(file.exists(fileName))
   file.remove(fileName)
+})
+
+test_that("listSupportedDialects", {
+  dialects <- listSupportedDialects()
+  expect_s3_class(dialects, "data.frame")
+  expect_true("dialect" %in% colnames(dialects))
 })

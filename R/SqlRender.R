@@ -17,7 +17,7 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' @importFrom utils install.packages menu
+#' @importFrom utils install.packages menu read.csv
 #' @importFrom rlang abort warn inform
 NULL
 

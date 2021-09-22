@@ -1,3 +1,9 @@
+SqlRender 1.8.2
+===============
+
+1. Adding `listSupportedDialects()` function.
+
+
 SqlRender 1.8.1
 ===============
 
