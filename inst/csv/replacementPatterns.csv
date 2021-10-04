@@ -715,8 +715,8 @@ sqlite,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
 sqlite,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
 sqlite,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
 sqlite,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
-sqlite,"DATEFROMPARTS(@year,@month,@day)","STRFTIME('%s', SUBSTR(CAST('0000'||@year AS TEXT),-4) || '-' || SUBSTR(CAST('00'||@month AS TEXT),-2) || '-' || SUBSTR(CAST('00'||@day AS TEXT),-2))"
-sqlite,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","STRFTIME('%s', SUBSTR(CAST('0000'||@year AS TEXT),-4) || '-' || SUBSTR(CAST('00'||@month AS TEXT),-2) || '-' || SUBSTR(CAST('00'||@day AS TEXT),-2) || ' ' || SUBSTR(CAST('00'||@hour AS TEXT),-2) || ':' || SUBSTR(CAST('00'||@minute AS TEXT),-2) || ':' || SUBSTR('00'||@second,-2) || '.' || SUBSTR('000'||@ms,-3))"
+sqlite,"DATEFROMPARTS(@year,@month,@day)","STRFTIME('%s', SUBSTR(CAST('0000'||CAST(@year AS INT) AS TEXT),-4) || '-' || SUBSTR(CAST('00'||CAST(@month AS INT) AS TEXT),-2) || '-' || SUBSTR(CAST('00'||CAST(@day AS INT) AS TEXT),-2))"
+sqlite,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","STRFTIME('%s', SUBSTR(CAST('0000'||CAST(@year AS INT) AS TEXT),-4) || '-' || SUBSTR(CAST('00'||CAST(@month AS INT) AS TEXT),-2) || '-' || SUBSTR(CAST('00'||CAST(@day AS INT) AS TEXT),-2) || ' ' || SUBSTR(CAST('00'||CAST(@hour AS INT) AS TEXT),-2) || ':' || SUBSTR(CAST('00'||CAST(@minute AS INT) AS TEXT),-2) || ':' || SUBSTR(CAST('00'||CAST(@second AS INT) AS TEXT),-2) || '.' || SUBSTR(CAST('000'||CAST(@ms AS INT) AS TEXT),-3))"
 sqlite,YEAR(@date),"STRFTIME('%Y', @date, 'unixepoch')"
 sqlite,MONTH(@date),"STRFTIME('%m', @date, 'unixepoch')"
 sqlite,DAY(@date),"STRFTIME('%d', @date, 'unixepoch')"
