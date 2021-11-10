@@ -365,15 +365,16 @@ launchSqlRenderDeveloper()
 
 Which will open the default browser with the app.
 
-In addition, two  functions have been developed to aid the debugging process: `renderFile()` and `translateFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
+In addition, two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
 
 ```{r eval=FALSE}
-translateFile("parameterizedSql.txt","renderedSql.txt")
+renderSqlFile("parameterizedSql.txt","renderedSql.txt")
 ```
 
 will render the file, using the default parameter values specified in the SQL. What works well for us is editing in the parameterized file, (re)running the command above, and have the rendered SQL file open in a SQL client for testing. Any problems reported by the server can be dealt with in the source SQL, and can quickly be re-rendered.
 
 # Developing R packages that contain parameterized SQL
+
 Often, the SQL code will become part of an R package, where it might be used to perform initial data-preprocessing and extraction before further analysis. We've developed the following practice for doing so: The parameterized SQL should be located in the *inst/sql/* folder of the package. The parameterized SQL for SQL Server should be in the *inst/sql/sql_server/* folder. If for some reason you do not want to use the translation functions to generate the SQL for some dialect (e.g because dialect specific code might be written that gives better performance), a dialect-specific version of the parameterized SQL should be placed in a folder with the name of that dialect, for example *inst/sql/oracle/*. SqlRender has a function `loadRenderTranslateSql()` that will first check if a dialect-specific version is available for the target dialect. If it is, that version will be rendered, else the SQL Server version will be rendered and subsequently translated to the target dialect.
 
 The `createRWrapperForSql()` function can be used to create an R wrapper around a rendered SQL file, using the `loadRenderTranslateSql()` function . For example, suppose we have a text file called *test.sql* containing the following parameterized SQL:
