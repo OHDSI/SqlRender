@@ -1,3 +1,11 @@
+SqlRender 1.8.3
+===============
+
+Changes:
+
+1. Added rules for translating implicit string concatenation to BigQuery.
+
+
 SqlRender 1.8.2
 ===============
 

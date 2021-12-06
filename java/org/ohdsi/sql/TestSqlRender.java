@@ -4,9 +4,10 @@ public class TestSqlRender {
 
 	public static void main(String[] args) {
 		
-		String sql = "WITH data(x) AS (SELECT (CAST(1 AS INT) x)) SELECT x INTO my_table FROM data;";
+	
+		String sql = "SELECT first_name + CAST(middle_initial AS VARCHAR) + last_name FROM my_table;";
 		String path = "inst/csv/replacementPatterns.csv";
-		sql = SqlTranslate.translateSqlWithPath(sql, "spark", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sql, "test", null, null, path);
 		System.out.println(sql);
 		
 //		Pattern pattern = Pattern.compile("^((?!FROM).)*$");

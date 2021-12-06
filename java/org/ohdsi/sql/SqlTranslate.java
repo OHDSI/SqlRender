@@ -143,7 +143,25 @@ public class SqlTranslate {
 				} else if (nestStack.size() == 0 && matchCount < parsedPattern.size() - 1
 						&& token.text.equals(parsedPattern.get(matchCount + 1).text)) {
 					// Found the token after the variable
-					if (parsedPattern.get(matchCount).regEx != null
+					if (parsedPattern.get(matchCount).regEx != null && matchCount == 0) {
+						// First element of pattern is a regEx. Find last part of string prior to subsequent token that matches regEx:
+						int start = matchesEnd(parsedPattern.get(matchCount).regEx, sql.substring(varStart, token.start));
+						if (start != -1) {
+							matchedPattern.variableToValue.put(parsedPattern.get(matchCount).text,
+									sql.substring(start + varStart, token.start));
+							matchedPattern.start = start + varStart;
+							matchedPattern.startToken = cursor;
+							matchCount += 2;
+							if (matchCount == parsedPattern.size()) {
+								matchedPattern.end = token.end;
+								return matchedPattern;
+							} else if (parsedPattern.get(matchCount).isVariable) {
+								varStart = (cursor < tokens.size() - 1) ? tokens.get(cursor + 1).start : -1;
+							}
+							if (token.text.equals("'") || token.text.equals("'"))
+								inPatternQuote = !inPatternQuote;
+						}
+					} else if (parsedPattern.get(matchCount).regEx != null
 							&& !matches(parsedPattern.get(matchCount).regEx, sql.substring(varStart, token.start))) {
 						// Content didn't match regex
 						matchCount = 0;
@@ -162,7 +180,7 @@ public class SqlTranslate {
 						if (token.text.equals("'") || token.text.equals("'"))
 							inPatternQuote = !inPatternQuote;
 					}
-				} else if (nestStack.size() == 0 && !inPatternQuote
+				} else if (matchCount != 0 && nestStack.size() == 0 && !inPatternQuote
 						&& (token.text.equals(";") || token.text.equals(")"))) { // Not allowed to span multiple SQL
 					// statements or outside of nesting
 					matchCount = 0;
@@ -220,6 +238,18 @@ public class SqlTranslate {
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 		Matcher matcher = pattern.matcher(string);
 		return (matcher.matches());
+	}
+	
+	private static int matchesEnd(String regex, String string) {
+		string = string.replaceAll("\\s$", "");
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
+		Matcher matcher = pattern.matcher(string);
+		int start = -1;
+		while (matcher.find()) {
+			if (matcher.end() == string.length())
+				start = matcher.start();
+        }
+		return start;
 	}
 
 	private static String searchAndReplace(String sql, List<Block> parsedPattern, String replacePattern) {
