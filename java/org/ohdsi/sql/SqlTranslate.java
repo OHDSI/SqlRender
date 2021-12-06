@@ -75,9 +75,11 @@ public class SqlTranslate {
 				boolean escape = false;
 				int nesting = 0;
 				for (int j = i + 2; j < tokens.size(); j++) {
-					if (tokens.get(j).text.equals("\\"))
-						escape = !escape;
-					else if (!escape && tokens.get(j).text.equals("("))
+					if (escape)
+						escape = false;
+					else if (tokens.get(j).text.equals("\\"))
+						escape = true;
+					else if (!escape && tokens.get(j).text.equals("(")) 
 						nesting++;
 					else if (!escape && tokens.get(j).text.equals(")")) {
 						if (nesting == 0) {

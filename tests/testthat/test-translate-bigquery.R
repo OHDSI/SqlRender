@@ -380,3 +380,12 @@ test_that("translate sql server -> String concatenation", {
   expect_equal_ignore_spaces(sql,
                              "select CONCAT(first_name, CAST(middle_initial AS STRING), last_name) from my_table;")
 })
+
+test_that("translate sql server -> String concatenation", {
+  sql <- translate("SELECT subgroup_id, 'Persons aged ' + cast(age_low as varchar) + ' to ' + cast(age_high as varchar) + ' with gender = ' + gender_name FROM subgroups;",
+                   targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql,
+                             "select subgroup_id, CONCAT('Persons aged ', CONCAT(cast(age_low as STRING), 'to ', cast(age_high as STRING), 'with gender = '), gender_name) from subgroups;")
+})
+
+

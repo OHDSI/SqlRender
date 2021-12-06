@@ -1,11 +1,21 @@
 package org.ohdsi.sql;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class TestSqlRender {
 
 	public static void main(String[] args) {
 		
+		String regex = "([a-z]+\\(.*\\))|([a-z0-9_]+)";
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
+		String string = "SELECT CAST(middle_initial AS VARCHAR)";
+		Matcher matcher = pattern.matcher(string);
+		while (matcher.find())
+			if (matcher.end() == string.length())
+				System.out.println("check");
 	
-		String sql = "SELECT first_name + CAST(middle_initial AS VARCHAR) + last_name FROM my_table;";
+		String sql = "SELECT CAST(middle_initial AS VARCHAR) + 'abc' FROM my_table;";
 		String path = "inst/csv/replacementPatterns.csv";
 		sql = SqlTranslate.translateSqlWithPath(sql, "test", null, null, path);
 		System.out.println(sql);
