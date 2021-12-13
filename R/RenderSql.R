@@ -265,3 +265,22 @@ splitSql <- function(sql) {
   }
   rJava::J("org.ohdsi.sql.SqlSplit")$splitSql(as.character(sql))
 }
+
+#' Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle, 
+#' BigQuery). 
+#' 
+#' @examples
+#' getTempTablePrefix()
+#'
+#' @return
+#' The prefix string.
+#' 
+#' @export
+getTempTablePrefix <- function() {
+  if (!supportsJava8()) {
+    warning("Java 8 or higher is required, but older version was found. ")
+    return("")
+  }
+  return(rJava::J("org.ohdsi.sql.SqlTranslate")$getGlobalSessionId())
+}
+

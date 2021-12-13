@@ -5,6 +5,8 @@ Changes:
 
 1. Added rules for translating implicit string concatenation to BigQuery.
 
+2. Added `getTempTablePrefix()` function.
+
 
 SqlRender 1.8.2
 ===============

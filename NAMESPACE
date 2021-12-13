@@ -3,6 +3,7 @@
 export(camelCaseToSnakeCase)
 export(camelCaseToTitleCase)
 export(createRWrapperForSql)
+export(getTempTablePrefix)
 export(launchSqlRenderDeveloper)
 export(listSupportedDialects)
 export(loadRenderTranslateSql)
