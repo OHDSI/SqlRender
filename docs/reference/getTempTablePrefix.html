@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Determine if Java virtual machine supports Java — supportsJava8 • SqlRender</title>
+<title>Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle, 
+BigQuery). — getTempTablePrefix • SqlRender</title>
 
 
 <!-- jquery -->
@@ -39,8 +40,10 @@
 
 
 
-<meta property="og:title" content="Determine if Java virtual machine supports Java — supportsJava8" />
-<meta property="og:description" content="Tests Java virtual machine (JVM) java.version system property to check if version &amp;gt;= 8." />
+<meta property="og:title" content="Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle, 
+BigQuery). — getTempTablePrefix" />
+<meta property="og:description" content="Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle, 
+BigQuery)." />
 
 
 
@@ -129,25 +132,27 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Determine if Java virtual machine supports Java</h1>
-    <small class="dont-index">Source: <a href='https://github.com/OHDSI/SqlRender/blob/master/R/HelperFunctions.R'><code>R/HelperFunctions.R</code></a></small>
-    <div class="hidden name"><code>supportsJava8.Rd</code></div>
+    <h1>Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle, 
+BigQuery).</h1>
+    <small class="dont-index">Source: <a href='https://github.com/OHDSI/SqlRender/blob/master/R/RenderSql.R'><code>R/RenderSql.R</code></a></small>
+    <div class="hidden name"><code>getTempTablePrefix.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Tests Java virtual machine (JVM) java.version system property to check if version &gt;= 8.</p>
+    <p>Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle, 
+BigQuery).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>supportsJava8</span><span class='op'>(</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>getTempTablePrefix</span><span class='op'>(</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Returns TRUE if JVM supports Java &gt;= 8.</p>
+    <p>The prefix string.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='fu'>supportsJava8</span><span class='op'>(</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
+    <pre class="examples"><span class='r-in'><span class='fu'>getTempTablePrefix</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "yte9xuwe"</span>
 <span class='r-in'></span>
 </pre>
   </div>

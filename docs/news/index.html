@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.8.3</span>
       </span>
     </div>
 
@@ -132,10 +132,34 @@
       <small>Source: <a href='https://github.com/OHDSI/SqlRender/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="sqlrender-183" class="section level1">
+<h1 class="page-header" data-toc-text="1.8.3">
+<a href="#sqlrender-183" class="anchor"></a>SqlRender 1.8.3<small> Unreleased </small>
+</h1>
+<p>Changes:</p>
+<ol>
+<li><p>Added rules for translating implicit string concatenation to BigQuery.</p></li>
+<li><p>Added <code><a href="../reference/getTempTablePrefix.html">getTempTablePrefix()</a></code> function.</p></li>
+</ol>
+</div>
+    <div id="sqlrender-182" class="section level1">
+<h1 class="page-header" data-toc-text="1.8.2">
+<a href="#sqlrender-182" class="anchor"></a>SqlRender 1.8.2<small> Unreleased </small>
+</h1>
+<p>Changes:</p>
+<ol>
+<li>Adding <code><a href="../reference/listSupportedDialects.html">listSupportedDialects()</a></code> function.</li>
+</ol>
+<p>Bugfixes:</p>
+<ol>
+<li>Fix <code>DATEFROMPARTS</code> and <code>DATETIMEFROMPARTS</code> translation for newer SQLite versions by first converting to <code>INT</code> before converting to <code>TEXT</code>.</li>
+</ol>
+</div>
     <div id="sqlrender-181" class="section level1">
 <h1 class="page-header" data-toc-text="1.8.1">
-<a href="#sqlrender-181" class="anchor"></a>SqlRender 1.8.1<small> Unreleased </small>
+<a href="#sqlrender-181" class="anchor"></a>SqlRender 1.8.1<small> 2021-09-15 </small>
 </h1>
+<p>Changes:</p>
 <ol>
 <li>Provide informative error message when Java is outdated.</li>
 </ol>
