@@ -1,3 +1,11 @@
+SqlRender 1.9.0
+===============
+
+Changes:
+
+1. Added additional logic for `INSERT` statements on Spark, including the new `sparkHandleInsert()` function.
+
+
 SqlRender 1.8.3
 ===============
 

@@ -1903,21 +1903,21 @@ test_that("translate sql server -> redshift hint SORTKEY on CREATE TABLE", {
   sql <- translate("--HINT SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date);",
                    targetDialect = "redshift")
   expect_equal_ignore_spaces(sql,
-                             "--HINT SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date)\n\nINTERLEAVED SORTKEY(start_date);")
+                             "--HINT SORT_ON_KEY(INTERLEAVED:start_date)\nCREATE TABLE cdm.my_table (row_id INT, start_date)\nINTERLEAVED SORTKEY(start_date);")
 })
 
 test_that("translate sql server -> pdw hint DISTKEY + SORTKEY on CREATE TABLE", {
   sql <- translate("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nCREATE TABLE my_table (row_id INT, start_date DATE);",
                    targetDialect = "pdw")
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE my_table (row_id INT, start_date DATE)\nWITH (DISTRIBUTION = HASH(row_id));")
+                             "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE my_table (row_id INT, start_date DATE)\nWITH (DISTRIBUTION = HASH(row_id));")
 })
 
 test_that("translate sql server -> pdw hint DISTKEY + SORTKEY on CTAS", {
   sql <- translate("--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nSELECT * INTO #my_table FROM other_table;",
                    targetDialect = "pdw")
   expect_equal_ignore_spaces(sql,
-                             "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\n\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
+                             "--HINT DISTRIBUTE_ON_KEY(row_id) SORT_ON_KEY(start_date)\nIF XACT_STATE() = 1 COMMIT; CREATE TABLE #my_table WITH (LOCATION = USER_DB, DISTRIBUTION = HASH(row_id)) AS\nSELECT\n * \nFROM\n other_table;")
 })
 
 test_that("translate sql server -> redshift CONVERT to DATE", {
@@ -2689,7 +2689,6 @@ select o.coh_id, 706 as analysis_id into #results_dist_706 from valueStats s
 join overallStats o on s.coh_id = o.coh_id;", targetDialect = "hive")
   expect_equal_ignore_spaces(sql,
                              "DROP TABLE IF EXISTS cteRawData; DROP TABLE IF EXISTS overallStats; DROP TABLE IF EXISTS valueStats;
-
   CREATE TEMPORARY TABLE cteRawData AS select coh_id FROM raw_706;
   CREATE TEMPORARY TABLE overallStats AS select coh_id from cteRawData;
   CREATE TEMPORARY TABLE valueStats AS select total FROM (select coh_id FROM cteRawData GROUP BY coh_id) D;
