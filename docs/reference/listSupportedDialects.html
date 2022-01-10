@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Determine if Java virtual machine supports Java — supportsJava8 • SqlRender</title>
+<title>List the supported target dialects — listSupportedDialects • SqlRender</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Determine if Java virtual machine supports Java — supportsJava8" />
-<meta property="og:description" content="Tests Java virtual machine (JVM) java.version system property to check if version &amp;gt;= 8." />
+<meta property="og:title" content="List the supported target dialects — listSupportedDialects" />
+<meta property="og:description" content="List the target dialects supported by the translate function." />
 
 
 
@@ -129,25 +129,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Determine if Java virtual machine supports Java</h1>
+    <h1>List the supported target dialects</h1>
     <small class="dont-index">Source: <a href='https://github.com/OHDSI/SqlRender/blob/master/R/HelperFunctions.R'><code>R/HelperFunctions.R</code></a></small>
-    <div class="hidden name"><code>supportsJava8.Rd</code></div>
+    <div class="hidden name"><code>listSupportedDialects.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Tests Java virtual machine (JVM) java.version system property to check if version &gt;= 8.</p>
+    <p>List the target dialects supported by the <code><a href='translate.html'>translate</a></code> function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>supportsJava8</span><span class='op'>(</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>listSupportedDialects</span><span class='op'>(</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Returns TRUE if JVM supports Java &gt;= 8.</p>
+    <p>A data frame with two columns. The 'dialect' column contains the abbreviation used in SqlRender, and the 
+'descripion' column contains a more human-readable description.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='fu'>supportsJava8</span><span class='op'>(</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
+    <pre class="examples"><span class='r-in'><span class='fu'>listSupportedDialects</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       dialect                       description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1  sql server              Microsoft SQL Server</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2      oracle                            Oracle</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3  postgresql                        PostgreSQL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4         pdw Microsoft Parallel Data Warehouse</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5      impala                     Apache Impala</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6     netezza                       IBM Netezza</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7    bigquery                   Google BigQuery</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8       spark                      Apache Spark</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9      sqlite                            SQLite</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10   redshift                   Amazon RedShift</span>
 <span class='r-in'></span>
 </pre>
   </div>
