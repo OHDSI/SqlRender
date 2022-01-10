@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,24 +44,24 @@ public class SqlTranslate {
 	private static String BIG_QUERY = "bigquery";
 	private static String IMPALA = "impala";
 	private static String SPARK = "spark";
-	
+
 	protected static class Block extends StringUtils.Token {
 		public boolean isVariable;
 		public String regEx;
-		
+
 		public Block(StringUtils.Token other) {
 			super(other);
 			isVariable = false;
 		}
 	}
-	
+
 	protected static class MatchedPattern {
 		public int start;
 		public int end;
 		public int startToken;
 		public Map<String, String> variableToValue = new HashMap<String, String>();
 	}
-	
+
 	protected static List<Block> parseSearchPattern(String pattern) {
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(pattern.toLowerCase());
 		List<Block> blocks = new ArrayList<Block>();
@@ -79,7 +79,7 @@ public class SqlTranslate {
 						escape = false;
 					else if (tokens.get(j).text.equals("\\"))
 						escape = true;
-					else if (!escape && tokens.get(j).text.equals("(")) 
+					else if (!escape && tokens.get(j).text.equals("("))
 						nesting++;
 					else if (!escape && tokens.get(j).text.equals(")")) {
 						if (nesting == 0) {
@@ -103,7 +103,7 @@ public class SqlTranslate {
 		}
 		return blocks;
 	}
-	
+
 	protected static MatchedPattern search(String sql, List<Block> parsedPattern, int startToken) {
 		String lowercaseSql = sql.toLowerCase();
 		List<StringUtils.Token> tokens = StringUtils.tokenizeSql(lowercaseSql);
@@ -235,13 +235,13 @@ public class SqlTranslate {
 		matchedPattern.start = -1;
 		return matchedPattern;
 	}
-	
+
 	private static boolean matches(String regex, String string) {
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 		Matcher matcher = pattern.matcher(string);
 		return (matcher.matches());
 	}
-	
+
 	private static int matchesEnd(String regex, String string) {
 		string = string.replaceAll("\\s$", "");
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
@@ -253,7 +253,7 @@ public class SqlTranslate {
 		}
 		return start;
 	}
-	
+
 	private static String searchAndReplace(String sql, List<Block> parsedPattern, String replacePattern) {
 		MatchedPattern matchedPattern = search(sql, parsedPattern, 0);
 		while (matchedPattern.start != -1) {
@@ -276,7 +276,7 @@ public class SqlTranslate {
 		}
 		return sql;
 	}
-	
+
 	private static String translateSql(String sql, List<String[]> replacementPatterns, String sessionId,
 			String oracleTempPrefix) {
 		for (int i = 0; i < replacementPatterns.size(); i++) {
@@ -284,15 +284,15 @@ public class SqlTranslate {
 			pair[1] = pair[1].replace("%session_id%", sessionId);
 			pair[1] = pair[1].replace("%temp_prefix%", oracleTempPrefix);
 			List<Block> parsedPattern = parseSearchPattern(pair[0]);
-			sql = searchAndReplace(sql, parsedPattern, pair[1]);
+			sql = searchAndReplace(sql, parsedPattern, pair[1]).replaceAll("(?m)^[ \t]*\r?\n", ""); // removes blank lines from each sql statement
 		}
-		return sql;
+		return sql.replaceAll("(?m)^[ \t]*\r?\n", ""); // removes blank lines from final sql statement
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It
 	 * uses simple pattern replacement, so its functionality is limited.
-	 * 
+	 *
 	 * @param sql           The SQL to be translated
 	 * @param sourceDialect The source dialect. Currently, only "sql server" for
 	 *                      Microsoft SQL Server is supported
@@ -304,14 +304,14 @@ public class SqlTranslate {
 	public static String translateSql(String sql, String sourceDialect, String targetDialect) {
 		return translateSql(sql, sourceDialect, targetDialect, null, null);
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It
 	 * uses simple pattern replacement, so its functionality is limited.The source
 	 * dialect is always SQL Server. Note that trailing semicolons are not removed
 	 * for Oracle, which is required before sending a statement through JDBC. This
 	 * will be done by splitSql.
-	 * 
+	 *
 	 * @param sql           The SQL to be translated
 	 * @param targetDialect The target dialect. Currently "oracle", "postgresql",
 	 *                      and "redshift" are supported
@@ -320,11 +320,11 @@ public class SqlTranslate {
 	public static String translateSql(String sql, String targetDialect) {
 		return translateSql(sql, targetDialect, null, null);
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It
 	 * uses simple pattern replacement, so its functionality is limited.
-	 * 
+	 *
 	 * @param sql              The SQL to be translated
 	 * @param sourceDialect    The source dialect. Currently, only "sql server" for
 	 *                         Microsoft SQL Server is supported
@@ -348,14 +348,14 @@ public class SqlTranslate {
 			String oracleTempSchema) {
 		return translateSql(sql, targetDialect, sessionId, oracleTempSchema);
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It
 	 * uses simple pattern replacement, so its functionality is limited. The source
 	 * dialect is always SQL Server. Note that trailing semicolons are not removed
 	 * for Oracle, which is required before sending a statement through JDBC. This
 	 * will be done by splitSql.
-	 * 
+	 *
 	 * @param sql                 The SQL to be translated
 	 * @param targetDialect       The target dialect. Currently "oracle",
 	 *                            "postgresql", and "redshift" are supported
@@ -375,14 +375,14 @@ public class SqlTranslate {
 	public static String translateSql(String sql, String targetDialect, String sessionId, String tempEmulationSchema) {
 		return translateSqlWithPath(sql, targetDialect, sessionId, tempEmulationSchema, null);
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It
 	 * uses simple pattern replacement, so its functionality is limited. The source
 	 * dialect is always SQL Server. This removes any trailing semicolon as required
 	 * by Oracle when sending through JDBC. A runtime exception is thrown if more
 	 * than one statement is encountered in the SQL.
-	 * 
+	 *
 	 * @param sql           The SQL to be translated
 	 * @param targetDialect The target dialect. Currently "oracle", "postgresql",
 	 *                      and "redshift" are supported
@@ -391,14 +391,14 @@ public class SqlTranslate {
 	public static String translateSingleStatementSql(String sql, String targetDialect) {
 		return translateSingleStatementSql(sql, targetDialect, null, null);
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It
 	 * uses simple pattern replacement, so its functionality is limited.The source
 	 * dialect is always SQL Server. This removes any trailing semicolon as required
 	 * by Oracle when sending through JDBC. A runtime exception is thrown if more
 	 * than one statement is encountered in the SQL.
-	 * 
+	 *
 	 * @param sql                 The SQL to be translated
 	 * @param targetDialect       The target dialect. Currently "oracle",
 	 *                            "postgresql", and "redshift" are supported
@@ -420,14 +420,14 @@ public class SqlTranslate {
 			String tempEmulationSchema) {
 		return translateSingleStatementSqlWithPath(sql, targetDialect, sessionId, tempEmulationSchema, null);
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It
 	 * uses simple pattern replacement, so its functionality is limited.The source
 	 * dialect is always SQL Server. This removes any trailing semicolon as required
 	 * by Oracle when sending through JDBC. A runtime exception is thrown if more
 	 * than one statement is encountered in the SQL.
-	 * 
+	 *
 	 * @param sql                       The SQL to be translated
 	 * @param targetDialect             The target dialect. Currently "oracle",
 	 *                                  "postgresql", and "redshift" are supported
@@ -458,12 +458,12 @@ public class SqlTranslate {
 			throw new RuntimeException("SQL contains more than one statement: " + sql);
 		return sqlStatements[0];
 	}
-	
+
 	/**
 	 * This function takes SQL in one dialect and translates it into another. It
 	 * uses simple pattern replacement, so its functionality is limited.The source
 	 * dialect is always SQL Server.
-	 * 
+	 *
 	 * @param sql                       The SQL to be translated
 	 * @param targetDialect             The target dialect. Currently "oracle",
 	 *                                  "postgresql", and "redshift" are supported
@@ -498,7 +498,7 @@ public class SqlTranslate {
 			oracleTempPrefix = "";
 		else
 			oracleTempPrefix = tempEmulationSchema + ".";
-		
+
 		List<String[]> replacementPatterns = targetToReplacementPatterns.get(targetDialect);
 		if (replacementPatterns == null) {
 			if (SOURCE_DIALECT.equals(targetDialect))
@@ -523,7 +523,7 @@ public class SqlTranslate {
 		}
 		return sql;
 	}
-	
+
 	private static void validateSessionId(String sessionId) {
 		if (sessionId.length() != SESSION_ID_LENGTH)
 			throw new RuntimeException(
@@ -534,10 +534,10 @@ public class SqlTranslate {
 			if (!Character.isLetterOrDigit(sessionId.charAt(i)))
 				throw new RuntimeException("Illegal character in session ID");
 	}
-	
+
 	/**
 	 * Generates a random string that can be used as a unique session identifier
-	 * 
+	 *
 	 * @return
 	 */
 	public static String generateSessionId() {
@@ -550,7 +550,7 @@ public class SqlTranslate {
 		}
 		return sb.toString();
 	}
-	
+
 	private static List<String> line2columns(String line) {
 		List<String> columns = StringUtils.safeSplit(line, ',');
 		for (int i = 0; i < columns.size(); i++) {
@@ -563,7 +563,7 @@ public class SqlTranslate {
 		}
 		return columns;
 	}
-	
+
 	private static void ensurePatternsAreLoaded(String pathToReplacementPatterns) {
 		if (targetToReplacementPatterns != null)
 			return;
@@ -605,10 +605,10 @@ public class SqlTranslate {
 			lock.unlock();
 		}
 	}
-	
+
 	public static String[] check(String sql, String targetDialect) {
 		List<String> warnings = new ArrayList<String>();
-		
+
 		// temp table names:
 		Pattern pattern = Pattern.compile("#[0-9a-zA-Z_]+");
 		Matcher matcher = pattern.matcher(sql);
@@ -616,12 +616,12 @@ public class SqlTranslate {
 		while (matcher.find())
 			if (matcher.group().length() > MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH - 1)
 				longTempNames.add(matcher.group());
-		
+
 		for (String longName : longTempNames)
 			warnings.add("Temp table name '" + longName + "' is too long. Temp table names should be shorter than "
 					+ (MAX_ORACLE_TABLE_NAME_LENGTH - SESSION_ID_LENGTH)
 					+ " characters to prevent Oracle from crashing.");
-		
+
 		// normal table names:
 		pattern = Pattern.compile("(create|drop|truncate)\\s+table +[0-9a-zA-Z_]+");
 		matcher = pattern.matcher(sql.toLowerCase());
@@ -634,14 +634,14 @@ public class SqlTranslate {
 		for (String longName : longNames)
 			warnings.add("Table name '" + longName + "' is too long. Table names should be shorter than "
 					+ MAX_ORACLE_TABLE_NAME_LENGTH + " characters to prevent Oracle from crashing.");
-		
+
 		return warnings.toArray(new String[warnings.size()]);
 	}
-	
+
 	/**
 	 * Forces the replacement patterns to be loaded from the specified path. Useful
 	 * for debugging.
-	 * 
+	 *
 	 * @param pathToReplacementPatterns The absolute path of the csv file containing
 	 *                                  the replacement patterns. If null, the csv
 	 *                                  file inside the jar is used.
@@ -650,13 +650,13 @@ public class SqlTranslate {
 		targetToReplacementPatterns = null;
 		ensurePatternsAreLoaded(pathToReplacementPatterns);
 	}
-	
+
 	/**
 	 * Get the global session ID. This ID is prefixed to all table names in the temp
 	 * emulation schema to avoid collisions between sessions.
 	 */
 	public static String getGlobalSessionId() {
-		if (globalSessionId == null) 
+		if (globalSessionId == null)
 			globalSessionId = generateSessionId();
 		return(globalSessionId);
 	}

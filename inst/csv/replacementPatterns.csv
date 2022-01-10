@@ -406,14 +406,14 @@ pdw,CREATE TABLE #@table (@definition) WITH (DISTRIBUTION = @distribution);,"CRE
 pdw,[ person_id ],[person_id]
 pdw,[ subject_id ],[subject_id]
 pdw,[ analysis_id ],[analysis_id]
-pdw,TRUNCATE TABLE ,IF XACT_STATE() = 1 COMMIT; TR*NC*T* TABLE 
-pdw,DROP TABLE ,IF XACT_STATE() = 1 COMMIT; DR*P TABLE 
-pdw,CREATE TABLE ,IF XACT_STATE() = 1 COMMIT; CR**T* TABLE 
+pdw,TRUNCATE TABLE ,IF XACT_STATE() = 1 COMMIT; TR*NC*T* TABLE
+pdw,DROP TABLE ,IF XACT_STATE() = 1 COMMIT; DR*P TABLE
+pdw,CREATE TABLE ,IF XACT_STATE() = 1 COMMIT; CR**T* TABLE
 pdw,TR*NC*T*,TRUNCATE
 pdw,DR*P,DROP
 pdw,CR**T*,CREATE
-pdw,IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL 
-pdw,IF OBJECT_ID(@a) IS NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NULL 
+pdw,IF OBJECT_ID(@a) IS NOT NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NOT NULL
+pdw,IF OBJECT_ID(@a) IS NULL IF XACT_STATE() = 1 COMMIT;,IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID(@a) IS NULL
 pdw,"CONSTRAINT @a DEFAULT GETDATE()",""
 pdw,"DEFAULT GETDATE()",""
 pdw,CREATE INDEX @index_name ON @table (@variable) WHERE @b;,CREATE INDEX @index_name ON @table (@variable);
@@ -896,25 +896,34 @@ hive,"ISNUMERIC(@a)","case when cast(@a as double) is not null then 1 else 0 end
 hive,as \"@a\",as @a
 hive,"HASHBYTES('MD5',@a)","hash(@a)"
 hive,"CONVERT(VARBINARY, @a, 1)","@a"
+spark,tempdb..#@table +,%temp_prefix%%session_id% ||
 spark,#,%temp_prefix%%session_id%
+spark,"--HINT BUCKET(@a, @b)",
+spark,"--HINT PARTITION(@a @b)",
+spark,"HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;","HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;\nOPTIMIZE @table ZORDER BY @key;"
+spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@d', 'U') IS NULL WITH @a AS @b SELECT @c INTO @d FROM @e;",HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE IF NOT EXISTS @d\nUSING DELTA\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nOPTIMIZE @d ZORDER BY @key;
+spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@b', 'U') IS NULL SELECT @a INTO @b FROM @c;",HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE IF NOT EXISTS @b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;\nOPTIMIZE @b ZORDER BY @key;
+spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@b', 'U') IS NULL SELECT @a INTO @b WHERE @c;",HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE IF NOT EXISTS @b\nUSING DELTA\nAS\nSELECT\n@a WHERE @c;\nOPTIMIZE @b ZORDER BY @key;
+spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@b', 'U') IS NULL SELECT @a INTO @b GROUP BY @c;",HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE IF NOT EXISTS @b\nUSING DELTA\nAS\nSELECT\n@a\nGROUP BY\n@c;\nOPTIMIZE @b ZORDER BY @key;
 spark,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE @d\nUSING DELTA\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nOPTIMIZE @d ZORDER BY @key;
 spark,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE @b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;\nOPTIMIZE @b ZORDER BY @key;
-spark,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TABLE %temp_prefix%%session_id%@d\nUSING DELTA\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+spark,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b WHERE @c;,HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE @b\nUSING DELTA\nAS\nSELECT\n@a WHERE @c;\nOPTIMIZE @b ZORDER BY @key;
+spark,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b GROUP BY @c;,HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE @b\nUSING DELTA\nAS\nSELECT\n@a\nGROUP BY\n@c;\nOPTIMIZE @b ZORDER BY @key;
 spark,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nUSING DELTA\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
-spark,SELECT @a INTO #@b FROM @c;,CREATE TABLE %temp_prefix%%session_id%@b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;
 spark,SELECT @a INTO @b FROM @c;,CREATE TABLE @b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;
-spark,SELECT @a INTO @b;,CREATE TABLE @b\nUSING DELTA\n AS\nSELECT\n@a;
+spark,SELECT @a INTO @b WHERE @c;,CREATE TABLE @b\nUSING DELTA\n AS\nSELECT\n@a WHERE @c;
+spark,SELECT @a INTO @b GROUP BY @c;,CREATE TABLE @b\nUSING DELTA\n AS\nSELECT\n@a GROUP BY @c;
+spark,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table\nUSING DELTA\nAS\n@definition;",CREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;
+spark,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+spark,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
 spark,\"@a\",@a
 spark,+ '@a',|| '@a'
 spark,'@a' +,'@a' ||
 spark,CREATE INDEX @index_name ON @table (@variable);,-- spark does not support indexes
-spark,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
-spark,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
-spark,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS %temp_prefix%%session_id%@table;
 spark,"ROUND(@a,@b)","ROUND(CAST(@a AS float),@b)"
 spark,"HASHBYTES('MD5',@a)","MD5(@a)"
 spark,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","CAST(CONCAT('x', @a) AS BIT(32))"
-spark,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyyMMdd')"
+spark,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyy-MM-dd')"
 spark,"DATEADD(second,@seconds,@datetime)",(@datetime + INTERVAL @seconds second)
 spark,"DATEADD(minute,@minutes,@datetime)",(@datetime + INTERVAL @minutes minute)
 spark,"DATEADD(hour,@hours,@datetime)",(@datetime + INTERVAL @hours hour)
@@ -930,7 +939,7 @@ spark,"DATEADD(year,@years,@date)",(@date + INTERVAL @years year)
 spark,"DATEDIFF(d,@start, @end)","datediff(@end,@start)"
 spark,"DATEDIFF(dd,@start, @end)","datediff(@end,@start)"
 spark,"DATEDIFF(day,@start, @end)","datediff(@end,@start)"
-spark,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'yyyyMMdd')"
+spark,"CONVERT(VARCHAR,@date,112)","@date"
 spark,GETDATE(),CURRENT_DATE
 spark,"+ LEFT(@str,@chars)","SUBSTR(@str,@chars)"
 spark,"LEFT(@str,@chars)","SUBSTR(@str,@chars)"
