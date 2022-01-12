@@ -168,3 +168,7 @@ test_that("translate sql server -> sqlite CEILING", {
   expect_equal_ignore_spaces(sql, "SELECT CEIL(0.1);")
 })
 
+test_that("translate sql server -> sqlite DROP TABLE IF EXISTS", {
+  sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS test;")
+})

@@ -5,6 +5,8 @@ Changes:
 
 1. Added additional logic for `INSERT` statements on Spark, including the new `sparkHandleInsert()` function.
 
+2. Supporting `DROP TABLE IF EXISTS` translation across all dialects.
+
 
 SqlRender 1.8.3
 ===============

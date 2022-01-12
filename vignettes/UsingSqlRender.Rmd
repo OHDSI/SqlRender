@@ -163,13 +163,9 @@ INSERT INTO other_table (field_1) VALUES (1);               -- Inserting verbati
 
 INSERT INTO other_table (field_1) SELECT value FROM table;  -- Inserting from SELECT
   
-DROP TABLE table;                                           -- Simple drop commands
+DROP TABLE my_table;                                        -- Simple drop commands
 
-IF OBJECT_ID('ACHILLES_analysis', 'U') IS NOT NULL          -- Drop table if it exists
-  DROP TABLE ACHILLES_analysis;
-  
-IF OBJECT_ID('tempdb..#cohorts', 'U') IS NOT NULL           -- Drop temp table if it exists
-  DROP TABLE #cohorts;  
+DROP TABLE IF EXISTS ACHILLES_analysis;                     -- Drop table if it exists
 
 WITH cte AS (SELECT * FROM table) SELECT * FROM cte;        -- Common table expressions
 

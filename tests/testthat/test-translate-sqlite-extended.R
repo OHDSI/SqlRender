@@ -99,3 +99,8 @@ test_that("translate sql server -> sqlite CREATE INDEX", {
   sql <- translate("CREATE INDEX idx_1 ON main.person (person_id);", targetDialect = "sqlite extended")
   expect_equal_ignore_spaces(sql, "CREATE INDEX idx_1  ON person  (person_id);")
 })
+
+test_that("translate sql server -> sqlite extended DROP TABLE IF EXISTS", {
+  sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "sqlite extended")
+  expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS test;")
+})

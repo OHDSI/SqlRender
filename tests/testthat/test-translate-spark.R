@@ -309,3 +309,8 @@ test_that("translate sql server -> spark cross join", {
                    targetDialect = "spark")
   expect_equal_ignore_spaces(sql, "SELECT a  FROM (select b) x cross join (select c) y;")
 })
+
+test_that("translate sql server -> spark DROP TABLE IF EXISTS", {
+  sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS test;")
+})

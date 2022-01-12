@@ -2821,4 +2821,17 @@ test_that("translate sql server -> Hive HASHBYTES", {
   expect_equal_ignore_spaces(sql, "SELECT AVG(CAST(CAST(hash(line) AS INT) AS BIGINT)) as checksum")
 })
 
+test_that("translate sql server -> postgresql DROP TABLE IF EXISTS", {
+  sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS test;")
+})
 
+test_that("translate sql server -> redshift DROP TABLE IF EXISTS", {
+  sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS test;")
+})
+
+test_that("translate sql server -> oracle DROP TABLE IF EXISTS", {
+  sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "BEGIN\n EXECUTE IMMEDIATE 'TRUNCATE TABLE test';\n EXECUTE IMMEDIATE 'DROP TABLE test';\nEXCEPTION\n WHEN OTHERS THEN\n IF SQLCODE != -942 THEN\n RAISE;\n END IF;\nEND;")
+})

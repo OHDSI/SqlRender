@@ -389,3 +389,7 @@ test_that("translate sql server -> String concatenation", {
 })
 
 
+test_that("translate sql server -> bigquery DROP TABLE IF EXISTS", {
+  sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "drop table if exists test;")
+})
