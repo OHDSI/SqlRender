@@ -105,7 +105,7 @@ A first limitation is that **the starting dialect has to be SQL Server**. The re
 
 A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, **Microsoft PDW (Parallel Data Warehouse)**, **Impala**, **Netezza**, **Google BigQuery**, **Amazon Redhift**, **Apache Spark** and **SQLite**.
 
-A third limitation is that only a limited set of translation rules have currently been implemented, although adding them to the [list](https://github.com/OHDSI/SqlRender/blob/master/inst/csv/replacementPatterns.csv) should not be hard.
+A third limitation is that only a limited set of translation rules have currently been implemented, although adding them to the [list](https://github.com/OHDSI/SqlRender/blob/main/inst/csv/replacementPatterns.csv) should not be hard.
 
 A last limitation is that not all functions supported in one dialect have an equivalent in other dialects.
 
