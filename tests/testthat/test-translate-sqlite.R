@@ -92,6 +92,12 @@ test_that("translate sql server -> sqlite CONVERT(AS DATE)", {
                              "CAST(STRFTIME('%s', SUBSTR(CAST('20000101' AS TEXT), 1, 4) || '-' || SUBSTR(CAST('20000101' AS TEXT), 5, 2) || '-' || SUBSTR(CAST('20000101' AS TEXT), 7)) AS REAL);")
 })
 
+test_that("translate sql server -> sqlite CONVERT(AS DATE)", {
+  sql <- translate("CAST('20000101' AS DATE);", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql,
+                             "CAST(STRFTIME('%s', SUBSTR(CAST('20000101' AS TEXT), 1, 4) || '-' || SUBSTR(CAST('20000101' AS TEXT), 5, 2) || '-' || SUBSTR(CAST('20000101' AS TEXT), 7)) AS REAL);")
+})
+
 test_that("translate sql server -> sqlite log any base", {
   sql <- translate("SELECT LOG(number, base) FROM table", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT (LOG(number)/LOG(base)) FROM table")
