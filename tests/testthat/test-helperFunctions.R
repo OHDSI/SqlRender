@@ -110,3 +110,15 @@ test_that("listSupportedDialects", {
   expect_s3_class(dialects, "data.frame")
   expect_true("dialect" %in% colnames(dialects))
 })
+
+test_that("camelCaseToSnakeCaseNames", {
+  x <- data.frame(concept_id = 1, concept_name = 'b')
+  x <- snakeCaseToCamelCaseNames(x)
+  expect_equal(names(x), c("conceptId", "conceptName"))
+})
+
+test_that("snakeCaseToCamelCaseNames", {
+  x <- data.frame(conceptId = 1, conceptName = 'b')
+  x <- snakeCaseToCamelCaseNames(x)
+  expect_equal(names(x), c("conceptid", "conceptname"))
+})

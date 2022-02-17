@@ -288,6 +288,47 @@ camelCaseToTitleCase <- function(string) {
   return(string)
 }
 
+
+
+#' Convert the names of an object from snake case to camel case
+#'
+#' @param object   The object of which the names should be converted
+#'
+#' @return
+#' The same object, but with converted names.
+#'
+#' @examples
+#' x <- data.frame(concept_id = 1, concept_name = 'b')
+#' snakeCaseToCamelCaseNames(x)
+#' # conceptId conceptName
+#' # 1         1           b
+#'
+#' @export
+snakeCaseToCamelCaseNames <- function(object) {
+  names(object) <- snakeCaseToCamelCase(names(object))
+  return(object)
+}
+
+#' Convert the names of an object from camel case to snake case
+#'
+#' @param object   The object of which the names should be converted
+#'
+#' @return
+#' The same object, but with converted names.
+#'
+#' @examples
+#' x <- data.frame(conceptId = 1, conceptName = 'b')
+#' camelCaseToSnakeCaseNames(x)
+#' # concept_id concept_name
+#' # 1          1            b
+#'
+#' @export
+camelCaseToSnakeCaseNames <- function(object) {
+  names(object) <- camelCaseToSnakeCase(names(object))
+  return(object)
+}
+
+
 #' Create an R wrapper for SQL
 #'
 #' @description
