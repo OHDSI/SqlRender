@@ -21,6 +21,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -33,18 +35,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -61,7 +57,7 @@
   </ul>
 </li>
 <li>
-  <a href="https://data.ohdsi.org/SqlDeveloper/">SqlDeveloper</a>
+  <a href="https://data.ohdsi.org/SqlDeveloper/" class="external-link">SqlDeveloper</a>
 </li>
 <li>
   <a href="news/index.html">Changelog</a>
@@ -69,10 +65,10 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://ohdsi.github.io/Hades"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
+  <a href="https://ohdsi.github.io/Hades" class="external-link"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
 </li>
 <li>
-  <a href="https://github.com/OHDSI/SqlRender/">
+  <a href="https://github.com/OHDSI/SqlRender/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -90,82 +86,98 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<div id="sqlrender" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#sqlrender" class="anchor"></a>SqlRender</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="sqlrender">SqlRender<a class="anchor" aria-label="anchor" href="#sqlrender"></a>
+</h1></div>
 
-<p>SqlRender is part of <a href="https://ohdsi.github.io/Hades/">HADES</a>.</p>
+<p>SqlRender is part of <a href="https://ohdsi.github.io/Hades/" class="external-link">HADES</a>.</p>
 </div>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>This is an R package for rendering parameterized SQL, and translating it to different SQL dialects. SqlRender can also be used as a stand-alone Java library and a command-line executable.</p>
+<div class="section level1">
+<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h1>
+<p>This is an R package for rendering parameterized SQL, and translating
+it to different SQL dialects. SqlRender can also be used as a
+stand-alone Java library and a command-line executable.</p>
 </div>
-<div id="features" class="section level1">
-<h1 class="hasAnchor">
-<a href="#features" class="anchor"></a>Features</h1>
+<div class="section level1">
+<h1 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
+</h1>
 <ul>
-<li>Supports a simple markup syntax for making SQL parameterized, and renders parameterized SQL (containing the markup syntax) to executable SQL</li>
+<li>Supports a simple markup syntax for making SQL parameterized, and
+renders parameterized SQL (containing the markup syntax) to executable
+SQL</li>
 <li>The syntax supports defining default parameter values</li>
 <li>The syntax supports if-then-else structures</li>
-<li>Has functions for translating SQL from one dialect (Microsoft SQL Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift, Impala, IBM Netezza, Google BigQuery, Microsoft PDW, Apache Spark, and SQLite)</li>
-<li>Can be used as R package, Java library, or as stand-alone executable through a command-line interface</li>
+<li>Has functions for translating SQL from one dialect (Microsoft SQL
+Server) to other dialects (Oracle, PostgreSQL, Amazon RedShift, Impala,
+IBM Netezza, Google BigQuery, Microsoft PDW, Apache Spark, and
+SQLite)</li>
+<li>Can be used as R package, Java library, or as stand-alone executable
+through a command-line interface</li>
 </ul>
 </div>
-<div id="examples" class="section level1">
-<h1 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h1>
-<p>This example shows the use of parameters, as well as SqlRender’s {if} ? {then} : {else} syntax:</p>
+<div class="section level1">
+<h1 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h1>
+<p>This example shows the use of parameters, as well as SqlRender’s {if}
+? {then} : {else} syntax:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/render.html">render</a></span><span class="op">(</span><span class="st">"SELECT * FROM @a; {@b != ''}?{USE @b;}"</span>, a <span class="op">=</span> <span class="st">"my_table"</span>, b <span class="op">=</span> <span class="st">"my_schema"</span><span class="op">)</span></code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
-<pre><code>"SELECT * FROM my_table; USE my_schema;"</code></pre>
+<pre><code><span class="st">"SELECT * FROM my_table; USE my_schema;"</span></code></pre>
 <p>subsequently running this code</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, <span class="st">"oracle"</span><span class="op">)</span></code></pre></div>
 <p>will produce the variable <code>sql</code> containing this value:</p>
-<pre><code>"SELECT * FROM my_table; ALTER SESSION SET current_schema =  my_schema;"</code></pre>
-<div id="sqldeveloper" class="section level2">
-<h2 class="hasAnchor">
-<a href="#sqldeveloper" class="anchor"></a>SqlDeveloper</h2>
-<p>The SqlDeveloper Shiny app is included in the SqlRender R package, and allows viewing the rendering and translation on the fly as you develop your SQL. The SqlDeveloper app is also available online <a href="https://data.ohdsi.org/SqlDeveloper/">here</a>.</p>
+<pre><code><span class="st">"SELECT * FROM my_table; ALTER SESSION SET current_schema =  my_schema;"</span></code></pre>
+<div class="section level2">
+<h2 id="sqldeveloper">SqlDeveloper<a class="anchor" aria-label="anchor" href="#sqldeveloper"></a>
+</h2>
+<p>The SqlDeveloper Shiny app is included in the SqlRender R package,
+and allows viewing the rendering and translation on the fly as you
+develop your SQL. The SqlDeveloper app is also available online <a href="https://data.ohdsi.org/SqlDeveloper/" class="external-link">here</a>.</p>
 </div>
 </div>
-<div id="technology" class="section level1">
-<h1 class="hasAnchor">
-<a href="#technology" class="anchor"></a>Technology</h1>
-<p>The SqlRender package is an R package wrapped around a Java library. The rJava package is used as interface.</p>
+<div class="section level1">
+<h1 id="technology">Technology<a class="anchor" aria-label="anchor" href="#technology"></a>
+</h1>
+<p>The SqlRender package is an R package wrapped around a Java library.
+The rJava package is used as interface.</p>
 <p>The Java library is available as a JAR file.</p>
 </div>
-<div id="system-requirements" class="section level1">
-<h1 class="hasAnchor">
-<a href="#system-requirements" class="anchor"></a>System Requirements</h1>
-<p>Running the package requires R with the package rJava installed. Also requires Java 1.6 or higher.</p>
+<div class="section level1">
+<h1 id="system-requirements">System Requirements<a class="anchor" aria-label="anchor" href="#system-requirements"></a>
+</h1>
+<p>Running the package requires R with the package rJava installed. Also
+requires Java 1.6 or higher.</p>
 </div>
-<div id="installation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
-<div id="r-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#r-package" class="anchor"></a>R package</h2>
+<div class="section level1">
+<h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h1>
+<div class="section level2">
+<h2 id="r-package">R package<a class="anchor" aria-label="anchor" href="#r-package"></a>
+</h2>
 <p>In R, to install the latest stable version, install from CRAN:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"SqlRender"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"SqlRender"</span><span class="op">)</span></code></pre></div>
 <p>To install the latest development version, install from GitHub:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/remotes/man/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"ohdsi/SqlRender"</span>, ref <span class="op">=</span> <span class="st">"develop"</span><span class="op">)</span></code></pre></div>
-<p>Once installed, you can try out SqlRender in a Shiny app that comes with the package:</p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/remotes/man/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ohdsi/SqlRender"</span>, ref <span class="op">=</span> <span class="st">"develop"</span><span class="op">)</span></code></pre></div>
+<p>Once installed, you can try out SqlRender in a Shiny app that comes
+with the package:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ohdsi.github.io/SqlRender/">SqlRender</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ohdsi.github.io/SqlRender/" class="external-link">SqlRender</a></span><span class="op">)</span>
 <span class="fu"><a href="reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="java-library" class="section level2">
-<h2 class="hasAnchor">
-<a href="#java-library" class="anchor"></a>Java library</h2>
-<p>You can fetch the JAR file in the inst/java folder of this repository, or use Maven:</p>
-<ol>
-<li>First add the SqlRender repository so that maven can find and download the SqlRender artifact automatically:</li>
+<div class="section level2">
+<h2 id="java-library">Java library<a class="anchor" aria-label="anchor" href="#java-library"></a>
+</h2>
+<p>You can fetch the JAR file in the inst/java folder of this
+repository, or use Maven:</p>
+<ol style="list-style-type: decimal">
+<li>First add the SqlRender repository so that maven can find and
+download the SqlRender artifact automatically:</li>
 </ol>
 <div class="sourceCode" id="cb8"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">repositories</span>&gt;</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">repository</span>&gt;</span>
@@ -192,59 +204,62 @@
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">version</span>&gt;1.7.0-SNAPSHOT&lt;/<span class="kw">version</span>&gt;</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dependency</span>&gt;</span></code></pre></div>
 </div>
-<div id="command-line-executable" class="section level2">
-<h2 class="hasAnchor">
-<a href="#command-line-executable" class="anchor"></a>Command-line executable</h2>
-<p>You can fetch the JAR file in the inst/java folder of this repository, or use Maven as described above. Run this from the command line to get a list of options:</p>
+<div class="section level2">
+<h2 id="command-line-executable">Command-line executable<a class="anchor" aria-label="anchor" href="#command-line-executable"></a>
+</h2>
+<p>You can fetch the JAR file in the inst/java folder of this
+repository, or use Maven as described above. Run this from the command
+line to get a list of options:</p>
 <pre><code>java -jar SqlRender.jar ?</code></pre>
 </div>
 </div>
-<div id="user-documentation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#user-documentation" class="anchor"></a>User Documentation</h1>
-<p>Documentation can be found on the <a href="https://ohdsi.github.io/SqlRender/">package website</a>.</p>
-<p>PDF versions of the documentation are also available:</p>
+<div class="section level1">
+<h1 id="user-documentation">User Documentation<a class="anchor" aria-label="anchor" href="#user-documentation"></a>
+</h1>
+<p>Documentation can be found on the <a href="https://ohdsi.github.io/SqlRender/" class="external-link">package website</a>.</p>
+<p>PDF versions of the documentation are also available: * Vignette: <a href="https://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html" class="external-link">Using
+SqlRender</a> * Package manual: <a href="https://ohdsi.github.io/SqlRender/reference/index.html" class="external-link">SqlRender
+manual</a></p>
+</div>
+<div class="section level1">
+<h1 id="support">Support<a class="anchor" aria-label="anchor" href="#support"></a>
+</h1>
 <ul>
-<li>Vignette: <a href="https://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html">Using SqlRender</a>
+<li>Developer questions/comments/feedback:
+<a href="http://forums.ohdsi.org/c/developers" class="external-link">OHDSI Forum</a>
 </li>
-<li>Package manual: <a href="https://ohdsi.github.io/SqlRender/reference/index.html">SqlRender manual</a>
-</li>
+<li>We use the
+<a href="https://github.com/OHDSI/SqlRender/issues" class="external-link">GitHub issue
+tracker</a> for all bugs/issues/enhancements</li>
 </ul>
 </div>
-<div id="support" class="section level1">
-<h1 class="hasAnchor">
-<a href="#support" class="anchor"></a>Support</h1>
-<ul>
-<li>Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
-</li>
-<li>We use the <a href="https://github.com/OHDSI/SqlRender/issues">GitHub issue tracker</a> for all bugs/issues/enhancements</li>
-</ul>
+<div class="section level1">
+<h1 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
+</h1>
+<p>Read <a href="https://ohdsi.github.io/Hades/contribute.html" class="external-link">here</a>
+how you can contribute to this package.</p>
 </div>
-<div id="contributing" class="section level1">
-<h1 class="hasAnchor">
-<a href="#contributing" class="anchor"></a>Contributing</h1>
-<p>Read <a href="https://ohdsi.github.io/Hades/contribute.html">here</a> how you can contribute to this package.</p>
-</div>
-<div id="license" class="section level1">
-<h1 class="hasAnchor">
-<a href="#license" class="anchor"></a>License</h1>
+<div class="section level1">
+<h1 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h1>
 <p>SqlRender is licensed under Apache License 2.0</p>
 </div>
-<div id="development" class="section level1">
-<h1 class="hasAnchor">
-<a href="#development" class="anchor"></a>Development</h1>
+<div class="section level1">
+<h1 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
+</h1>
 <p>SqlRender is being developed in R Studio.</p>
-<div id="development-status" class="section level3">
-<h3 class="hasAnchor">
-<a href="#development-status" class="anchor"></a>Development status</h3>
+<div class="section level3">
+<h3 id="development-status">Development status<a class="anchor" aria-label="anchor" href="#development-status"></a>
+</h3>
 <p>Stable. The code is actively being used in several projects.</p>
 </div>
 </div>
-<div id="acknowledgements" class="section level1">
-<h1 class="hasAnchor">
-<a href="#acknowledgements" class="anchor"></a>Acknowledgements</h1>
+<div class="section level1">
+<h1 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h1>
 <ul>
-<li>This project is supported in part through the National Science Foundation grant IIS 1251151.</li>
+<li>This project is supported in part through the National Science
+Foundation grant IIS 1251151.</li>
 </ul>
 </div>
 
@@ -252,51 +267,61 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=SqlRender">https://​cloud.r-project.org/​package=SqlRender</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/OHDSI/SqlRender/">https://​github.com/​OHDSI/​SqlRender/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/OHDSI/SqlRender/issues">https://​github.com/​OHDSI/​SqlRender/​issues</a>
-</li>
-<li>Ask a question at <br><a href="http://forums.ohdsi.org">http://​forums.ohdsi.org</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=SqlRender" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/OHDSI/SqlRender/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/OHDSI/SqlRender/issues" class="external-link">Report a bug</a></li>
+<li><a href="http://forums.ohdsi.org" class="external-link">Ask a question</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>Apache License 2.0</li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing SqlRender</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Martijn Schuemie <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Marc Suchard <br><small class="roles"> Author </small>  </li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/OHDSI/SqlRender/actions?query=workflow%3AR-CMD-check"><img src="https://github.com/OHDSI/SqlRender/workflows/R-CMD-check/badge.svg" alt="Build Status"></a></li>
-<li><a href="https://codecov.io/github/OHDSI/SqlRender?branch=master"><img src="https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=master" alt="codecov.io"></a></li>
-<li><a href="https://cran.r-project.org/package=SqlRender"><img src="http://www.r-pkg.org/badges/version/SqlRender" alt="CRAN_Status_Badge"></a></li>
-<li><a href="https://cran.r-project.org/package=SqlRender"><img src="http://cranlogs.r-pkg.org/badges/SqlRender" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://github.com/OHDSI/SqlRender/actions?query=workflow%3AR-CMD-check" class="external-link"><img src="https://github.com/OHDSI/SqlRender/workflows/R-CMD-check/badge.svg" alt="Build Status"></a></li>
+<li><a href="https://codecov.io/github/OHDSI/SqlRender?branch=master" class="external-link"><img src="https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=master" alt="codecov.io"></a></li>
+<li><a href="https://cran.r-project.org/package=SqlRender" class="external-link"><img src="http://www.r-pkg.org/badges/version/SqlRender" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://cran.r-project.org/package=SqlRender" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/SqlRender" alt="CRAN_Status_Badge"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Martijn Schuemie, Marc Suchard.</p>
+  <p></p>
+<p>Developed by Martijn Schuemie, Marc Suchard.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>
@@ -304,6 +329,8 @@
 
   
 
+
+  
 
   </body>
 </html>

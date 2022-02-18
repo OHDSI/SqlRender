@@ -7,7 +7,7 @@
 sparkHandleInsert(sql, connection)
 }
 \arguments{
-\item{sql}{The SQL to be translated}
+\item{sql}{The SQL to be translated.}
 
 \item{connection}{The connection to the database server.}
 }
@@ -16,5 +16,5 @@ A sql string with INSERT command modified to contain the full column list, padde
 }
 \description{
 This function is for Spark connections only,
-it handles insert commands, as Spark cannot handle inserts with aliased or subset columns
+it handles insert commands, as Spark cannot handle inserts with aliased or subset columns.
 }

@@ -21,5 +21,4 @@ being sent as one execution.
 }
 \examples{
 splitSql("SELECT * INTO a FROM b; USE x; DROP TABLE c;")
-
 }

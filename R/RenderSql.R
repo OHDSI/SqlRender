@@ -3,13 +3,13 @@
 # Copyright 2022 Observational Health Data Sciences and Informatics
 #
 # This file is part of SqlRender
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,23 +45,28 @@
 #' A character string containing the rendered SQL.
 #'
 #' @examples
-#' render("SELECT * FROM @@a;", a = "myTable")
-#' render("SELECT * FROM @@a {@@b}?{WHERE x = 1};", a = "myTable", b = "true")
-#' render("SELECT * FROM @@a {@@b == ''}?{WHERE x = 1}:{ORDER BY x};", a = "myTable", b = "true")
-#' render("SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};", a = "myTable", b = "y")
-#' render("SELECT * FROM @@a {1 IN (@@c)}?{WHERE @@b = 1};",
-#'        a = "myTable",
-#'        b = "y",
-#'        c = c(1, 2, 3, 4))
-#' render("{DEFAULT @@b = \"someField\"}SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};",
-#'        a = "myTable")
-#' render("SELECT * FROM @@a {@@a == 'myTable' & @@b != 'x'}?{WHERE @@b = 1};",
-#'        a = "myTable",
-#'        b = "y")
-#' render(sql = "SELECT * FROM @@a;",
-#'        warnOnMissingParameters = FALSE,
-#'        a = "myTable",
-#'        b = "missingParameter")
+#' render("SELECT * FROM @a;", a = "myTable")
+#' render("SELECT * FROM @a {@b}?{WHERE x = 1};", a = "myTable", b = "true")
+#' render("SELECT * FROM @a {@b == ''}?{WHERE x = 1}:{ORDER BY x};", a = "myTable", b = "true")
+#' render("SELECT * FROM @a {@b != ''}?{WHERE @b = 1};", a = "myTable", b = "y")
+#' render("SELECT * FROM @a {1 IN (@c)}?{WHERE @b = 1};",
+#'   a = "myTable",
+#'   b = "y",
+#'   c = c(1, 2, 3, 4)
+#' )
+#' render("{DEFAULT @b = \"someField\"}SELECT * FROM @a {@b != ''}?{WHERE @b = 1};",
+#'   a = "myTable"
+#' )
+#' render("SELECT * FROM @a {@a == 'myTable' & @b != 'x'}?{WHERE @b = 1};",
+#'   a = "myTable",
+#'   b = "y"
+#' )
+#' render(
+#'   sql = "SELECT * FROM @a;",
+#'   warnOnMissingParameters = FALSE,
+#'   a = "myTable",
+#'   b = "missingParameter"
+#' )
 #' @import rJava
 #' @export
 render <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
@@ -122,7 +127,7 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 #'
 #' @param sql                   The SQL to be translated
 #' @param targetDialect         The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                              "sqlite", "sqlite extended", "netezza", "bigquery", "spark", and "redshift" are supported. 
+#'                              "sqlite", "sqlite extended", "netezza", "bigquery", "spark", and "redshift" are supported.
 #'                              Use \code{\link{listSupportedDialects}} to get the list of supported dialects.
 #' @param oracleTempSchema      DEPRECATED: use \code{tempEmulationSchema} instead.
 #' @param tempEmulationSchema   Some database platforms like Oracle and Impala do not truly support
@@ -133,7 +138,6 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 #'
 #' @examples
 #' translate("USE my_schema;", targetDialect = "oracle")
-#'
 #' @export
 translate <- function(sql = "",
                       targetDialect,
@@ -145,8 +149,9 @@ translate <- function(sql = "",
   }
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
     warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
-         .frequency = "regularly",
-         .frequency_id = "oracleTempSchema")
+      .frequency = "regularly",
+      .frequency_id = "oracleTempSchema"
+    )
     tempEmulationSchema <- oracleTempSchema
   }
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
@@ -210,7 +215,6 @@ translateSql <- function(sql = "", targetDialect, oracleTempSchema = NULL) {
 #' A character vector with the translated SQL.
 #' @examples
 #' translateSingleStatement("USE my_schema;", targetDialect = "oracle")
-#'
 #' @export
 translateSingleStatement <- function(sql = "",
                                      targetDialect,
@@ -222,8 +226,9 @@ translateSingleStatement <- function(sql = "",
   }
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
     warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
-         .frequency = "regularly",
-         .frequency_id = "oracleTempSchema")
+      .frequency = "regularly",
+      .frequency_id = "oracleTempSchema"
+    )
     tempEmulationSchema <- oracleTempSchema
   }
   pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SqlRender")
@@ -256,7 +261,6 @@ translateSingleStatement <- function(sql = "",
 #' A vector of strings, one for each SQL statement
 #' @examples
 #' splitSql("SELECT * INTO a FROM b; USE x; DROP TABLE c;")
-#'
 #' @export
 splitSql <- function(sql) {
   if (!supportsJava8()) {
@@ -266,15 +270,14 @@ splitSql <- function(sql) {
   rJava::J("org.ohdsi.sql.SqlSplit")$splitSql(as.character(sql))
 }
 
-#' Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle, 
-#' BigQuery). 
-#' 
+#' Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle,
+#' BigQuery).
+#'
 #' @examples
 #' getTempTablePrefix()
-#'
 #' @return
 #' The prefix string.
-#' 
+#'
 #' @export
 getTempTablePrefix <- function() {
   if (!supportsJava8()) {
@@ -283,4 +286,3 @@ getTempTablePrefix <- function() {
   }
   return(rJava::J("org.ohdsi.sql.SqlTranslate")$getGlobalSessionId())
 }
-

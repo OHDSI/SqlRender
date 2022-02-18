@@ -432,7 +432,7 @@ Spark SQL v3.1 improves the ANSI SQL compliance of Spark, however, at this time,
 
 - INSERT commands must feature a full column list in both the parenthetical column list and in the actual data to be inserted. A full column list here means that every column in the destination table must be present. 
 
-- The column list does not need to be in the correct order as the destination table, provided the parenthetical column list explicitly states the column names you're targetting.
+- The column list does not need to be in the correct order as the destination table, provided the parenthetical column list explicitly states the column names you're targeting.
 
 To mitigate this issue, SqlRender has a Java function with R wrapper named `sparkHandleInsert()`, which will connect to the database and interrogate it for the full column list of a destination table used in an INSERT command, to then reconstitute the command to have the full column list.
 

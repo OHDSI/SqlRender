@@ -3,13 +3,13 @@
 # Copyright 2022 Observational Health Data Sciences and Informatics
 #
 # This file is part of SqlRender
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,9 +61,11 @@ readSql <- function(sourceFile) {
 #' @export
 writeSql <- function(sql, targetFile) {
   sink(targetFile)
-  sql <- gsub("\r",
-              "",
-              sql)  #outputting to file duplicates carriage returns, so remove them beforehand (still got newline)
+  sql <- gsub(
+    "\r",
+    "",
+    sql
+  ) # outputting to file duplicates carriage returns, so remove them beforehand (still got newline)
   cat(sql)
   sink()
 }
@@ -122,8 +124,9 @@ renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE
 #' @examples
 #' \dontrun{
 #' translateSqlFile("myRenderedStatement.sql",
-#'                  "myTranslatedStatement.sql",
-#'                  targetDialect = "postgresql")
+#'   "myTranslatedStatement.sql",
+#'   targetDialect = "postgresql"
+#' )
 #' }
 #' @export
 translateSqlFile <- function(sourceFile,
@@ -133,14 +136,17 @@ translateSqlFile <- function(sourceFile,
                              oracleTempSchema = NULL) {
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
     warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
-         .frequency = "regularly",
-         .frequency_id = "oracleTempSchema")
+      .frequency = "regularly",
+      .frequency_id = "oracleTempSchema"
+    )
     tempEmulationSchema <- oracleTempSchema
   }
   sql <- readSql(sourceFile)
-  sql <- translate(sql = sql,
-                   targetDialect = targetDialect,
-                   tempEmulationSchema = tempEmulationSchema)
+  sql <- translate(
+    sql = sql,
+    targetDialect = targetDialect,
+    tempEmulationSchema = tempEmulationSchema
+  )
   writeSql(sql, targetFile)
 }
 
@@ -176,9 +182,10 @@ translateSqlFile <- function(sourceFile,
 #' @examples
 #' \dontrun{
 #' renderedSql <- loadRenderTranslateSql("CohortMethod.sql",
-#'                                       packageName = "CohortMethod",
-#'                                       dbms = connectionDetails$dbms,
-#'                                       CDM_schema = "cdmSchema")
+#'   packageName = "CohortMethod",
+#'   dbms = connectionDetails$dbms,
+#'   CDM_schema = "cdmSchema"
+#' )
 #' }
 #' @export
 loadRenderTranslateSql <- function(sqlFilename,
@@ -190,38 +197,48 @@ loadRenderTranslateSql <- function(sqlFilename,
                                    warnOnMissingParameters = TRUE) {
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
     rlang::warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
-                .frequency = "regularly",
-                .frequency_id = "oracleTempSchema")
+      .frequency = "regularly",
+      .frequency_id = "oracleTempSchema"
+    )
     tempEmulationSchema <- oracleTempSchema
   }
   pathToSql <- system.file(paste("sql/", gsub(" ", "_", dbms), sep = ""),
-                           sqlFilename,
-                           package = packageName)
+    sqlFilename,
+    package = packageName
+  )
   mustTranslate <- !file.exists(pathToSql)
   if (mustTranslate) {
     # If DBMS-specific code does not exists, load SQL Server code and translate after rendering
     pathToSql <- system.file(paste("sql/", "sql_server", sep = ""),
-                             sqlFilename,
-                             package = packageName)
+      sqlFilename,
+      package = packageName
+    )
     if (!file.exists(pathToSql)) {
-      abort(paste0("Cannot find '",
-                   sqlFilename,
-                   "' in the 'sql/sql_server' folder of the '",
-                   packageName,
-                   "' package."))
+      abort(paste0(
+        "Cannot find '",
+        sqlFilename,
+        "' in the 'sql/sql_server' folder of the '",
+        packageName,
+        "' package."
+      ))
     }
   }
   parameterizedSql <- readChar(pathToSql, file.info(pathToSql)$size)
-  
-  renderedSql <- render(sql = parameterizedSql[1],
-                        warnOnMissingParameters = warnOnMissingParameters,
-                        ...)
-  
-  if (mustTranslate)
-    renderedSql <- translate(sql = renderedSql,
-                             targetDialect = dbms,
-                             tempEmulationSchema = tempEmulationSchema)
-  
+
+  renderedSql <- render(
+    sql = parameterizedSql[1],
+    warnOnMissingParameters = warnOnMissingParameters,
+    ...
+  )
+
+  if (mustTranslate) {
+    renderedSql <- translate(
+      sql = renderedSql,
+      targetDialect = dbms,
+      tempEmulationSchema = tempEmulationSchema
+    )
+  }
+
   renderedSql
 }
 
@@ -238,7 +255,6 @@ trim <- function(string) {
 #'
 #' @examples
 #' snakeCaseToCamelCase("exposure_concept_id_1")
-#' # > 'exposureConceptId1'
 #'
 #' @export
 snakeCaseToCamelCase <- function(string) {
@@ -259,7 +275,6 @@ snakeCaseToCamelCase <- function(string) {
 #'
 #' @examples
 #' camelCaseToSnakeCase("exposureConceptId1")
-#' # > 'exposure_concept_id_1'
 #'
 #' @export
 camelCaseToSnakeCase <- function(string) {
@@ -278,7 +293,6 @@ camelCaseToSnakeCase <- function(string) {
 #'
 #' @examples
 #' camelCaseToTitleCase("exposureConceptId1")
-#' # > 'Exposure Concept Id 1'
 #'
 #' @export
 camelCaseToTitleCase <- function(string) {
@@ -298,11 +312,9 @@ camelCaseToTitleCase <- function(string) {
 #' The same object, but with converted names.
 #'
 #' @examples
-#' x <- data.frame(concept_id = 1, concept_name = 'b')
+#' x <- data.frame(concept_id = 1, concept_name = "b")
 #' snakeCaseToCamelCaseNames(x)
-#' # conceptId conceptName
-#' # 1         1           b
-#'
+#' 
 #' @export
 snakeCaseToCamelCaseNames <- function(object) {
   names(object) <- snakeCaseToCamelCase(names(object))
@@ -317,11 +329,9 @@ snakeCaseToCamelCaseNames <- function(object) {
 #' The same object, but with converted names.
 #'
 #' @examples
-#' x <- data.frame(conceptId = 1, conceptName = 'b')
+#' x <- data.frame(conceptId = 1, conceptName = "b")
 #' camelCaseToSnakeCaseNames(x)
-#' # concept_id concept_name
-#' # 1          1            b
-#'
+#' 
 #' @export
 camelCaseToSnakeCaseNames <- function(object) {
   names(object) <- camelCaseToSnakeCase(names(object))
@@ -363,14 +373,15 @@ createRWrapperForSql <- function(sqlFilename,
     if (length(periodIndex) == 0) {
       rFilename <- paste(sqlFilename, "R", sep = ".")
     } else {
-      periodIndex <- periodIndex[length(periodIndex)]  #pick last one
+      periodIndex <- periodIndex[length(periodIndex)] # pick last one
       rFilename <- paste(substr(sqlFilename, 1, periodIndex), "R", sep = "")
     }
   }
-  
+
   pathToSql <- system.file(paste("sql/", "sql_server", sep = ""),
-                           sqlFilename,
-                           package = packageName)
+    sqlFilename,
+    package = packageName
+  )
   if (file.exists(pathToSql)) {
     inform(paste("Reading SQL from package folder:", pathToSql))
     parameterizedSql <- readSql(pathToSql)
@@ -381,7 +392,7 @@ createRWrapperForSql <- function(sqlFilename,
   } else {
     abort("Could not find SQL file")
   }
-  
+
   hasTempTables <- any(gregexpr("\\#", parameterizedSql)[[1]] != -1)
   hits <- gregexpr("\\{DEFAULT @[^}]*\\}", parameterizedSql)
   hits <- cbind(hits[[1]], attr(hits[[1]], "match.length"))
@@ -392,15 +403,17 @@ createRWrapperForSql <- function(sqlFilename,
     end <- regexpr("\\}", x) - 1
     parameter <- trim(substr(x, start, equalSign - 1))
     value <- trim(substr(x, equalSign + 1, end))
-    if (grepl(",", value) & substr(value, 1, 1) != "'")
+    if (grepl(",", value) & substr(value, 1, 1) != "'") {
       value <- paste("c(", value, ")", sep = "")
-    if (substr(value, 1, 1) == "'" & substr(value, nchar(value), nchar(value)) == "'")
+    }
+    if (substr(value, 1, 1) == "'" & substr(value, nchar(value), nchar(value)) == "'") {
       value <- paste("\"", substr(value, 2, nchar(value) - 1), "\"", sep = "")
+    }
     ccParameter <- snakeCaseToCamelCase(parameter)
     c(sqlParameter = parameter, rParameter = ccParameter, value = value)
   }
   definitions <- as.data.frame(t(apply(hits, 1, FUN = f)))
-  
+
   lines <- c()
   if (createRoxygenTemplate) {
     lines <- c(lines, "#' Todo: add title")
@@ -411,48 +424,70 @@ createRWrapperForSql <- function(sqlFilename,
     lines <- c(lines, "#' @details")
     lines <- c(lines, "#' Todo: add details")
     lines <- c(lines, "#'")
-    lines <- c(lines,
-               "#' @param connectionDetails\t\tAn R object of type \\code{ConnectionDetails} created using the function \\code{createConnectionDetails} in the \\code{DatabaseConnector} package.")
-    if (hasTempTables)
-      lines <- c(lines,
-                 "#' @param tempEmulationSchema\t\tSome database platforms like Oracle and Impala do not truly support temp tables. To emulate temp tables, provide a schema with write privileges where temp tables can be created.")
+    lines <- c(
+      lines,
+      "#' @param connectionDetails\t\tAn R object of type \\code{ConnectionDetails} created using the function \\code{createConnectionDetails} in the \\code{DatabaseConnector} package."
+    )
+    if (hasTempTables) {
+      lines <- c(
+        lines,
+        "#' @param tempEmulationSchema\t\tSome database platforms like Oracle and Impala do not truly support temp tables. To emulate temp tables, provide a schema with write privileges where temp tables can be created."
+      )
+    }
     for (i in 1:nrow(definitions)) {
       lines <- c(lines, paste("#' @param", definitions$rParameter[i], "\t\t"))
     }
     lines <- c(lines, "#'")
     lines <- c(lines, "#' @export")
   }
-  lines <- c(lines,
-             paste(gsub(".sql", "", sqlFilename), " <- function(connectionDetails,", sep = ""))
-  if (hasTempTables)
-    lines <- c(lines,
-               "                         tempEmulationSchema = getOption(\"sqlRenderTempEmulationSchema\"),")
-  for (i in 1:nrow(definitions)) {
-    if (i == nrow(definitions))
-      end <- ") {" else end <- ","
-      lines <- c(lines, paste("                         ",
-                              definitions$rParameter[i],
-                              " = ",
-                              definitions$value[i],
-                              end,
-                              sep = ""))
+  lines <- c(
+    lines,
+    paste(gsub(".sql", "", sqlFilename), " <- function(connectionDetails,", sep = "")
+  )
+  if (hasTempTables) {
+    lines <- c(
+      lines,
+      "                         tempEmulationSchema = getOption(\"sqlRenderTempEmulationSchema\"),"
+    )
   }
-  lines <- c(lines,
-             paste("  renderedSql <- SqlRender::loadRenderTranslateSql(\"", sqlFilename, "\",",
-                   sep = ""))
+  for (i in 1:nrow(definitions)) {
+    if (i == nrow(definitions)) {
+      end <- ") {"
+    } else {
+      end <- ","
+    }
+    lines <- c(lines, paste("                         ",
+      definitions$rParameter[i],
+      " = ",
+      definitions$value[i],
+      end,
+      sep = ""
+    ))
+  }
+  lines <- c(
+    lines,
+    paste("  renderedSql <- SqlRender::loadRenderTranslateSql(\"", sqlFilename, "\",",
+      sep = ""
+    )
+  )
   lines <- c(lines, paste("              packageName = \"", packageName, "\",", sep = ""))
   lines <- c(lines, "              dbms = connectionDetails$dbms,")
-  if (hasTempTables)
+  if (hasTempTables) {
     lines <- c(lines, "              tempEmulationSchema = tempEmulationSchema,")
+  }
   for (i in 1:nrow(definitions)) {
-    if (i == nrow(definitions))
-      end <- ")" else end <- ","
-      lines <- c(lines, paste("              ",
-                              definitions$sqlParameter[i],
-                              " = ",
-                              definitions$rParameter[i],
-                              end,
-                              sep = ""))
+    if (i == nrow(definitions)) {
+      end <- ")"
+    } else {
+      end <- ","
+    }
+    lines <- c(lines, paste("              ",
+      definitions$sqlParameter[i],
+      " = ",
+      definitions$rParameter[i],
+      end,
+      sep = ""
+    ))
   }
   lines <- c(lines, "  connection <- DatabaseConnector::connect(connectionDetails)")
   lines <- c(lines, "  on.exit(DatabaseConnector::disconnect(connection))")
@@ -472,7 +507,7 @@ createRWrapperForSql <- function(sqlFilename,
 
 #' Determine if Java virtual machine supports Java
 #'
-#' @description 
+#' @description
 #' Tests Java virtual machine (JVM) java.version system property to check if version >= 8.
 #'
 #' @return
@@ -480,18 +515,23 @@ createRWrapperForSql <- function(sqlFilename,
 #'
 #' @examples
 #' supportsJava8()
-#'
 #' @export
 supportsJava8 <- function() {
   # return(FALSE)
   javaVersionText <- rJava::.jcall("java/lang/System", "S", "getProperty", "java.version")
-  majorVersion <- as.integer(regmatches(javaVersionText,
-                                        regexpr(pattern = "^\\d+", text = javaVersionText)))
+  majorVersion <- as.integer(regmatches(
+    javaVersionText,
+    regexpr(pattern = "^\\d+", text = javaVersionText)
+  ))
   if (majorVersion == 1) {
-    twoDigitVersion <- regmatches(javaVersionText,
-                                  regexpr(pattern = "^\\d+\\.\\d+", text = javaVersionText))
-    majorVersion <- as.integer(regmatches(twoDigitVersion,
-                                          regexpr("\\d+$", text = twoDigitVersion)))
+    twoDigitVersion <- regmatches(
+      javaVersionText,
+      regexpr(pattern = "^\\d+\\.\\d+", text = javaVersionText)
+    )
+    majorVersion <- as.integer(regmatches(
+      twoDigitVersion,
+      regexpr("\\d+$", text = twoDigitVersion)
+    ))
   }
   support <- majorVersion >= 8
   return(support)
@@ -499,16 +539,15 @@ supportsJava8 <- function() {
 
 #' List the supported target dialects
 #'
-#' @description 
+#' @description
 #' List the target dialects supported by the \code{\link{translate}} function.
 #'
 #' @return
-#' A data frame with two columns. The 'dialect' column contains the abbreviation used in SqlRender, and the 
-#' 'descripion' column contains a more human-readable description.
+#' A data frame with two columns. The 'dialect' column contains the abbreviation used in SqlRender, and the
+#' 'description' column contains a more human-readable description.
 #'
 #' @examples
 #' listSupportedDialects()
-#'
 #' @export
 listSupportedDialects <- function() {
   pathToCsv <- system.file("csv", "supportedDialects.csv", package = "SqlRender")

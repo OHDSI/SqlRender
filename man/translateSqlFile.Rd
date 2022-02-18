@@ -35,7 +35,8 @@ This function takes SQL and translates it to a different dialect.
 \examples{
 \dontrun{
 translateSqlFile("myRenderedStatement.sql",
-                 "myTranslatedStatement.sql",
-                 targetDialect = "postgresql")
+  "myTranslatedStatement.sql",
+  targetDialect = "postgresql"
+)
 }
 }

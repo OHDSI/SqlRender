@@ -17,6 +17,5 @@ Convert a camel case string to title case
 }
 \examples{
 camelCaseToTitleCase("exposureConceptId1")
-# > 'Exposure Concept Id 1'
 
 }

@@ -17,7 +17,7 @@
 # limitations under the License.
 
 # Format and check codeP
-OhdsiRTools::formatRFolder()
+styler::style_pkg()
 OhdsiRTools::checkUsagePackage("SqlRender")
 OhdsiRTools::updateCopyrightYearFolder()
 devtools::spell_check()

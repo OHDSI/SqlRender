@@ -2,7 +2,7 @@
 % Please edit documentation in R/RenderSql.R
 \name{getTempTablePrefix}
 \alias{getTempTablePrefix}
-\title{Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle, 
+\title{Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle,
 BigQuery).}
 \usage{
 getTempTablePrefix()
@@ -11,10 +11,9 @@ getTempTablePrefix()
 The prefix string.
 }
 \description{
-Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle, 
+Get the prefix used for emulated temp tables for DBMSs that do not support temp tables (e.g. Oracle,
 BigQuery).
 }
 \examples{
 getTempTablePrefix()
-
 }

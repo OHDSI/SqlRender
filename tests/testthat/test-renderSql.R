@@ -33,7 +33,6 @@ test_that("If-then-else: boolean parameter interpreted as character", {
 
   sql <- render("SELECT * FROM table {@a}?{WHERE x = 1}", a = TRUE)
   expect_equal(sql, "SELECT * FROM table WHERE x = 1")
-
 })
 
 

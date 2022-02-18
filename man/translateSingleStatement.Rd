@@ -37,5 +37,4 @@ the SQL.
 }
 \examples{
 translateSingleStatement("USE my_schema;", targetDialect = "oracle")
-
 }

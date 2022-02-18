@@ -51,8 +51,9 @@ parameters.
 \examples{
 \dontrun{
 renderedSql <- loadRenderTranslateSql("CohortMethod.sql",
-                                      packageName = "CohortMethod",
-                                      dbms = connectionDetails$dbms,
-                                      CDM_schema = "cdmSchema")
+  packageName = "CohortMethod",
+  dbms = connectionDetails$dbms,
+  CDM_schema = "cdmSchema"
+)
 }
 }

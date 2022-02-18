@@ -14,5 +14,4 @@ Tests Java virtual machine (JVM) java.version system property to check if versio
 }
 \examples{
 supportsJava8()
-
 }

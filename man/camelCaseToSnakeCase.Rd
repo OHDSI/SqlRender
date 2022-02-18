@@ -17,6 +17,5 @@ Convert a camel case string to snake case
 }
 \examples{
 camelCaseToSnakeCase("exposureConceptId1")
-# > 'exposure_concept_id_1'
 
 }

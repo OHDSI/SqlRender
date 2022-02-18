@@ -34,8 +34,10 @@ test_that("translateSqlFile", {
   sql2 <- readSql(fileName2)
   file.remove(fileName1)
   file.remove(fileName2)
-  expect_equal(sql2,
-               "SELECT (observation_period_start_date + 1*INTERVAL'1 day') FROM observation_period")
+  expect_equal(
+    sql2,
+    "SELECT (observation_period_start_date + 1*INTERVAL'1 day') FROM observation_period"
+  )
 })
 
 test_that("Warning in translateSqlFile when using oracleTempSchema", {
@@ -53,7 +55,7 @@ test_that("snakeCaseToCamelCase", {
   string1 <- "cdm_database_schema"
   string2 <- snakeCaseToCamelCase(string1)
   expect_equal(string2, "cdmDatabaseSchema")
-  
+
   string1 <- "EXPOSURE_ID_1"
   string2 <- snakeCaseToCamelCase(string1)
   expect_equal(string2, "exposureId1")
@@ -63,7 +65,7 @@ test_that("camelCaseToSnakeCase ", {
   string1 <- "cdmDatabaseSchema"
   string2 <- camelCaseToSnakeCase(string1)
   expect_equal(string2, "cdm_database_schema")
-  
+
   string1 <- "exposureId1"
   string2 <- camelCaseToSnakeCase(string1)
   expect_equal(string2, "exposure_id_1")
@@ -73,7 +75,7 @@ test_that("camelCaseToTitleCase ", {
   string1 <- "cdmDatabaseSchema"
   string2 <- camelCaseToTitleCase(string1)
   expect_equal(string2, "Cdm Database Schema")
-  
+
   string1 <- "exposureId1"
   string2 <- camelCaseToTitleCase(string1)
   expect_equal(string2, "Exposure Id 1")
@@ -83,11 +85,11 @@ test_that("loadRenderTranslateSql ", {
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "sql server")
   sql <- gsub("[\r\n]", "", sql)
   expect_equal(sql, "SELECT a FROM #my_table WHERE my_id = 123;")
-  
+
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "postgresql")
   sql <- gsub("[\r\n]", "", sql)
   expect_equal(sql, "SELECT a FROM my_table WHERE my_id = 123;")
-  
+
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "oracle")
   sql <- gsub("[\r\n]", "", sql)
   expect_equal(sql, "SELECT a FROM my_table WHERE my_id = 123;")
@@ -111,14 +113,14 @@ test_that("listSupportedDialects", {
   expect_true("dialect" %in% colnames(dialects))
 })
 
-test_that("camelCaseToSnakeCaseNames", {
-  x <- data.frame(concept_id = 1, concept_name = 'b')
+test_that("snakeCaseToCamelCaseNames", {
+  x <- data.frame(concept_id = 1, concept_name = "b")
   x <- snakeCaseToCamelCaseNames(x)
   expect_equal(names(x), c("conceptId", "conceptName"))
 })
 
-test_that("snakeCaseToCamelCaseNames", {
-  x <- data.frame(conceptId = 1, conceptName = 'b')
-  x <- snakeCaseToCamelCaseNames(x)
-  expect_equal(names(x), c("conceptid", "conceptname"))
+test_that("camelCaseToSnakeCaseNames", {
+  x <- data.frame(conceptId = 1, conceptName = "b")
+  x <- camelCaseToSnakeCaseNames(x)
+  expect_equal(names(x), c("concept_id", "concept_name"))
 })
