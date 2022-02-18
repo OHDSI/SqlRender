@@ -2,7 +2,7 @@ SqlRender
 =========
 
 [![Build Status](https://github.com/OHDSI/SqlRender/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/SqlRender/actions?query=workflow%3AR-CMD-check)
-[![codecov.io](https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/SqlRender?branch=master)
+[![codecov.io](https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=main)](https://codecov.io/github/OHDSI/SqlRender?branch=main)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SqlRender)](https://cran.r-project.org/package=SqlRender)
 [![CRAN_Status_Badge](http://cranlogs.r-pkg.org/badges/SqlRender)](https://cran.r-project.org/package=SqlRender)
 
@@ -128,8 +128,8 @@ User Documentation
 Documentation can be found on the [package website](https://ohdsi.github.io/SqlRender/).
 
 PDF versions of the documentation are also available:
-* Vignette: [Using SqlRender](https://ohdsi.github.io/SqlRender/articles/UsingSqlRender.html)
-* Package manual: [SqlRender manual](https://ohdsi.github.io/SqlRender/reference/index.html) 
+* Vignette: [Using SqlRender](https://github.com/OHDSI/SqlRender/raw/main/inst/doc/UsingSqlRender.pdf)
+* Package manual: [SqlRender manual](https://github.com/OHDSI/SqlRender/raw/main/extras/SqlRender.pdf) 
 
 Support
 =======
