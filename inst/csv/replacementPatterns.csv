@@ -639,7 +639,7 @@ bigquery,"cast(@a % @b as int)","CAST(MOD(@a, @b) AS INT64)"
 bigquery,"cast((@a % @b) as int)","CAST(MOD(@a, @b) AS INT64)"
 bigquery,"cast(@a) % @([0-9]+)b","MOD(CAST(@a), @b)"
 bigquery,"cast(@a) % cast(@b)","MOD(CAST(@a), CAST(@b))"
-bigquery,"CAST(@a as:string)","CAST(@a as string)"
+bigquery,"CAST(@a as:string)",CAST(@a as string)
 bigquery,"CAST(@a as:integer)","CAST(@a as int64)"
 bigquery,"CAST(@a as:float)","CAST(@a as float64)"
 bigquery,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
