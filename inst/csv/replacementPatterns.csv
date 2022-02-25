@@ -639,7 +639,7 @@ bigquery,"cast(@a % @b as int)","CAST(MOD(@a, @b) AS INT64)"
 bigquery,"cast((@a % @b) as int)","CAST(MOD(@a, @b) AS INT64)"
 bigquery,"cast(@a) % @([0-9]+)b","MOD(CAST(@a), @b)"
 bigquery,"cast(@a) % cast(@b)","MOD(CAST(@a), CAST(@b))"
-bigquery,"CAST(@a as:string)",CAST(@a as string)
+bigquery,"CAST(@a as:string)","CAST(@a as string)"
 bigquery,"CAST(@a as:integer)","CAST(@a as int64)"
 bigquery,"CAST(@a as:float)","CAST(@a as float64)"
 bigquery,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
@@ -695,6 +695,7 @@ bigquery,"DATEFROMPARTS(@year,@month,@day)","DATE(@year, @month, @day)"
 bigquery,EOMONTH(@date),"DATE_SUB(DATE_TRUNC(DATE_ADD(@date, INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY)"
 bigquery,"ISNUMERIC(@a)","CASE WHEN SAFE_CAST(@a AS FLOAT64) IS NULL THEN 0 ELSE 1 END"
 bigquery,UPDATE STATISTICS @a;,-- big query does not support such functionality
+bigquery,"offset",offset
 sqlite,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
 sqlite,DATETIME,REAL
 sqlite,DATETIME2,REAL
