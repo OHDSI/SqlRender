@@ -195,7 +195,6 @@ test_that("translate sql server -> bigquery DATEDIFF year", {
   )
 })
 
-
 test_that("translate sql server -> bigquery DATEADD", {
   sql <- translate("SELECT DATEADD(dd,30,drug_era_end_date) FROM drug_era;",
     targetDialect = "bigquery"
@@ -387,6 +386,11 @@ test_that("translate sql server -> bigquery DATEFROMPARTS", {
   expect_equal_ignore_spaces(sql, "select DATE(2019,1,30)")
 })
 
+test_that('translate sql server -> bigquery offset literal'{
+  sql <- translate('create table test_that ("offset" STRING);', targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "create table test_that (offset STRING);")
+})
+
 test_that("translate sql server -> bigquery EOMONTH()", {
   sql <- translate("select eomonth(payer_plan_period_start_date)", targetDialect = "bigquery")
   expect_equal_ignore_spaces(
@@ -486,7 +490,6 @@ test_that("translate sql server -> String concatenation", {
     "select subgroup_id, CONCAT('Persons aged ', CONCAT(cast(age_low as STRING), 'to ', cast(age_high as STRING), 'with gender = '), gender_name) from subgroups;"
   )
 })
-
 
 test_that("translate sql server -> bigquery DROP TABLE IF EXISTS", {
   sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "bigquery")
