@@ -59,3 +59,4 @@ test_that("splitSql split with hint in second statement", {
     c("--HINT DISTRIBUTE_ON_KEY(analysis_id)\nCREATE TABLE results.achilles_results_dist")
   )
 })
+

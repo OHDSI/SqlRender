@@ -9,3 +9,4 @@ bigquery,Google BigQuery
 spark,Apache Spark
 sqlite,SQLite
 redshift,Amazon RedShift
+snowflake,Snowflake

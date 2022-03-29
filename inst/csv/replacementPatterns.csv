@@ -1027,3 +1027,63 @@ sqlite extended,UPDATE STATISTICS @a;,ANALYZE @a;
 sqlite extended,TRUNCATE TABLE @a;,DELETE FROM @a;
 sqlite extended,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
 sqlite extended,"CONCAT(@a, @b)","@a || @b"
+snowflake,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
+snowflake,"HASHBYTES('MD5',@a)","MD5(@a)"
+snowflake,"CONVERT(VARBINARY, @a, 1)","CAST(CONCAT('x', @a) AS BIT(32))"
+snowflake,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
+snowflake,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
+snowflake,GETDATE(),CURRENT_DATE
+snowflake,+ '@a',|| '@a'
+snowflake,'@a' +,'@a' ||
+snowflake,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
+snowflake,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
+snowflake,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
+snowflake,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
+snowflake,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'FM0000')||'-'||TO_CHAR(@month,'FM00')||'-'||TO_CHAR(@day,'FM00'), 'YYYY-MM-DD')"
+snowflake,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_DATE(TO_CHAR(@year,'FM0000')||'-'||TO_CHAR(@month,'FM00')||'-'||TO_CHAR(@day,'FM00')||' '||TO_CHAR(@hour,'FM00')||':'||TO_CHAR(@minute,'FM00')||':'||TO_CHAR(@second,'FM00'), 'YYYY-MM-DD HH24:MI:SS')"
+snowflake,YEAR(@date),EXTRACT(YEAR FROM @date)
+snowflake,MONTH(@date),EXTRACT(MONTH FROM @date)
+snowflake,DAY(@date),EXTRACT(DAY FROM @date)
+snowflake,EOMONTH(@date),last_day(@date)
+snowflake,STDEV(@a),STDDEV(@a)
+snowflake,VAR(@a),VARIANCE(@a)
+snowflake,RAND(),RANDOM()
+snowflake,"LOG(@expression,@base)","<L_O_G>(CAST((@base) AS NUMERIC),CAST((@expression) AS NUMERIC))"
+snowflake,LOG(@expression),LN(CAST((@expression) AS REAL))
+snowflake,<L_O_G>,LOG
+snowflake,LOG10(@expression),"LOG(10,TRY_CAST((@expression) AS NUMERIC))"
+snowflake,"ISNULL(@a,@b)","COALESCE(@a,@b)"
+snowflake,"ISNUMERIC(@a)","IS_REAL(TRY_TO_NUMERIC(@a))"
+snowflake,CAST(@a AS INTEGER),TRY_CAST(CAST(@a AS TEXT) AS INTEGER)
+snowflake,COUNT_BIG(@a),COUNT(@a)
+snowflake,NEWID(),UUID_STRING()
+snowflake,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+snowflake,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+snowflake,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",DROP TABLE IF EXISTS @table;
+snowflake,.dbo.,.
+snowflake,CREATE TABLE #@table (@definition),CREATE TEMP TABLE #@table (@definition)
+snowflake,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
+snowflake,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
+snowflake,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
+snowflake,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- snowflake does not support indexes
+snowflake,CREATE INDEX @index_name ON @table (@variable);,-- snowflake does not support indexes
+snowflake,CREATE INDEX @index_name ON @table (@variable) WHERE @c;,-- snowflake does not support indexes
+snowflake,DROP INDEX @index_name;,-- snowflake does not support indexes
+snowflake,DATETIME,TIMESTAMP
+snowflake,DATETIME2,TIMESTAMP
+snowflake,VARCHAR(MAX),TEXT
+snowflake,FLOAT,NUMERIC
+snowflake,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE #@d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+snowflake,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+snowflake,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE #@b\nAS\nSELECT\n@a\nFROM\n@c;
+snowflake,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+snowflake,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+snowflake,SELECT @a INTO #@b;,CREATE TEMP TABLE #@b AS\nSELECT\n@a;
+snowflake,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+snowflake,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+snowflake,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
+snowflake,UPDATE STATISTICS @a;,
+snowflake,"--HINT BUCKET(@a, @b)",
+snowflake,"--HINT PARTITION(@a @b)",
+snowflake,"--HINT DISTRIBUTE_ON_KEY(@key)",
+snowflake,#,%temp_prefix%%session_id%
