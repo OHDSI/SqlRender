@@ -1062,12 +1062,10 @@ snowflake,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABL
 snowflake,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",DROP TABLE IF EXISTS @table;
 snowflake,.dbo.,.
 snowflake,CREATE TABLE #@table (@definition),CREATE TEMP TABLE #@table (@definition)
-snowflake,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
-snowflake,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
-snowflake,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 snowflake,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- snowflake does not support indexes
 snowflake,CREATE INDEX @index_name ON @table (@variable);,-- snowflake does not support indexes
 snowflake,CREATE INDEX @index_name ON @table (@variable) WHERE @c;,-- snowflake does not support indexes
+snowflake,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,-- snowflake does not support indexes
 snowflake,DROP INDEX @index_name;,-- snowflake does not support indexes
 snowflake,DATETIME,TIMESTAMP
 snowflake,DATETIME2,TIMESTAMP

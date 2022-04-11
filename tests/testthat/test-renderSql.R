@@ -33,7 +33,6 @@ test_that("If-then-else: boolean parameter interpreted as character", {
 
   sql <- render("SELECT * FROM table {@a}?{WHERE x = 1}", a = TRUE)
   expect_equal(sql, "SELECT * FROM table WHERE x = 1")
-
 })
 
 
@@ -150,8 +149,8 @@ test_that("Backslash in parameter is handled correctly", {
 })
 
 test_that("Dollar in parameter is handled correctly", {
-    sql <- render("SELECT * FROM table WHERE name = '@name';", name = "NA$joe")
-    expect_equal(sql, "SELECT * FROM table WHERE name = 'NA$joe';")
+  sql <- render("SELECT * FROM table WHERE name = '@name';", name = "NA$joe")
+  expect_equal(sql, "SELECT * FROM table WHERE name = 'NA$joe';")
 })
 
 test_that("If-then-else: error on bad boolean logic syntax", {
