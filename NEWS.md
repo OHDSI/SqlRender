@@ -1,3 +1,11 @@
+SqlRender 1.9.1
+===============
+
+Bugfixes:
+
+1. Fixed translation of `CREATE TABLE` statements specifying a field can be NULL on BigQuery. 
+
+
 SqlRender 1.9.0
 ===============
 
