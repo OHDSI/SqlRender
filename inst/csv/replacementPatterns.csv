@@ -1067,6 +1067,7 @@ snowflake,CREATE INDEX @index_name ON @table (@variable);,-- snowflake does not 
 snowflake,CREATE INDEX @index_name ON @table (@variable) WHERE @c;,-- snowflake does not support indexes
 snowflake,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,-- snowflake does not support indexes
 snowflake,DROP INDEX @index_name;,-- snowflake does not support indexes
+snowflake,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 snowflake,DATETIME,TIMESTAMP
 snowflake,DATETIME2,TIMESTAMP
 snowflake,VARCHAR(MAX),TEXT
