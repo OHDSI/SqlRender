@@ -1055,6 +1055,7 @@ snowflake,LOG10(@expression),"LOG(10,TRY_CAST((@expression) AS NUMERIC))"
 snowflake,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 snowflake,"ISNUMERIC(@a)","IS_REAL(TRY_TO_NUMERIC(@a))"
 snowflake,CAST(@a AS INTEGER),TRY_CAST(CAST(@a AS TEXT) AS INTEGER)
+snowflake,CAST(@a AS int),TRY_CAST(CAST(@a AS TEXT) AS int)
 snowflake,COUNT_BIG(@a),COUNT(@a)
 snowflake,NEWID(),UUID_STRING()
 snowflake,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
