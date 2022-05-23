@@ -1169,3 +1169,8 @@ snowflake,"--HINT BUCKET(@a, @b)",
 snowflake,"--HINT PARTITION(@a @b)",
 snowflake,"--HINT DISTRIBUTE_ON_KEY(@key)",
 snowflake,#,%temp_prefix%%session_id%
+synapse,VARCHAR(MAX),VARCHAR(8000)
+synapse,CREATE INDEX @index_name ON #@table (@variable);,-- synapse does not support non-clustered index on temp tables.
+synapse,"CONSTRAINT @a DEFAULT GETDATE()",""
+synapse,"DEFAULT GETDATE()",""
+synapse,CREATE INDEX @index_name ON @table (@variable) WHERE @b;,CREATE INDEX @index_name ON @table (@variable);
