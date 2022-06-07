@@ -6,7 +6,7 @@
 	<groupId>org.ohdsi.sql</groupId>
 	<artifactId>SqlRender</artifactId>
 	<packaging>jar</packaging>
-	<version>1.9.100-SNAPSHOT</version>
+	<version>1.9.1-SNAPSHOT</version>
 	<name>SqlRender</name>
 	<scm>
 		<connection>scm:git:https://github.com/OHDSI/SqlRender</connection>
@@ -42,14 +42,14 @@
 		<!-- sourceDirectory does not follow maven project directory structure -->
 		<sourceDirectory>${src.dir}</sourceDirectory>
 		<resources>
-<!--			<resource>-->
-<!--				<directory>${src.dir}</directory>-->
-<!--				<excludes>-->
-<!--					<exclude>**/*.java</exclude>-->
-<!--					&lt;!&ndash; exclude .jardesc file from packaging &ndash;&gt;-->
-<!--					<exclude>**/*.jardesc</exclude>-->
-<!--				</excludes>-->
-<!--			</resource>-->
+			<resource>
+				<directory>${src.dir}</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+					<!-- exclude .jardesc file from packaging -->
+					<exclude>**/*.jardesc</exclude>
+				</excludes>
+			</resource>
 			<!-- Note: see resource dir configured via maven-resources-plugin (needed 
 				for m2e support) -->
 		</resources>
