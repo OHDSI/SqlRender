@@ -78,10 +78,9 @@ test_that("translate sql server -> Oracle DROP TABLE IF EXISTS", {
   )
 })
 
-
 test_that("translate sql server -> Oracle CAST(AS DATE)", {
   sql <- translate("CAST('20000101' AS DATE);", targetDialect = "oracle")
-  expect_equal_ignore_spaces(sql, "CAST('20000101' AS DATE);")
+  expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'YYYYMMDD');")
 })
 
 test_that("translate sql server -> Oracle CONVERT(AS DATE)", {

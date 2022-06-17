@@ -5,6 +5,8 @@ Bugfixes:
 
 1. Fixed translation of `CREATE TABLE` statements specifying a field can be NULL on BigQuery. 
 
+2. Fixes translation of `CAST('20000101' AS DATE)` on Oracle.
+
 
 SqlRender 1.9.0
 ===============
