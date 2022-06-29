@@ -9,3 +9,5 @@ bigquery,Google BigQuery
 spark,Apache Spark
 sqlite,SQLite
 redshift,Amazon RedShift
+hive,Apache Hive
+sqlite extended,SQLite Extended Syntax

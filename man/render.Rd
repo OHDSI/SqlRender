@@ -4,7 +4,7 @@
 \alias{render}
 \title{Render SQL code based on parameterized SQL and parameter values}
 \usage{
-render(sql = "", warnOnMissingParameters = TRUE, ...)
+render(sql, warnOnMissingParameters = TRUE, ...)
 }
 \arguments{
 \item{sql}{The parameterized SQL}
