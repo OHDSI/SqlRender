@@ -18,7 +18,7 @@ and writes it to another file."><!-- mathjax --><script src="https://cdnjs.cloud
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
       </span>
     </div>
 
@@ -27,7 +27,7 @@ and writes it to another file."><!-- mathjax --><script src="https://cdnjs.cloud
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -43,7 +43,7 @@ and writes it to another file."><!-- mathjax --><script src="https://cdnjs.cloud
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://ohdsi.github.io/Hades" class="external-link"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
+  <a href="https://ohdsi.github.io/Hades" class="external-link">hadesLogo</a>
 </li>
 <li>
   <a href="https://github.com/OHDSI/SqlRender/" class="external-link">
@@ -71,21 +71,28 @@ and writes it to another file.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">renderSqlFile</span><span class="op">(</span><span class="va">sourceFile</span>, <span class="va">targetFile</span>, warnOnMissingParameters <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">renderSqlFile</span><span class="op">(</span><span class="va">sourceFile</span>, <span class="va">targetFile</span>, warnOnMissingParameters <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>sourceFile</dt>
 <dd><p>The source SQL file</p></dd>
+
+
 <dt>targetFile</dt>
 <dd><p>The target SQL file</p></dd>
+
+
 <dt>warnOnMissingParameters</dt>
 <dd><p>Should a warning be raised when parameters provided to this
 function do not appear in the parameterized SQL that is being
 rendered? By default, this is TRUE.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Parameter values</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -105,9 +112,9 @@ used to turn on or off blocks of SQL code.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu">renderSqlFile</span><span class="op">(</span><span class="st">"myParamStatement.sql"</span>, <span class="st">"myRenderedStatement.sql"</span>, a <span class="op">=</span> <span class="st">"myTable"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu">renderSqlFile</span><span class="op">(</span><span class="st">"myParamStatement.sql"</span>, <span class="st">"myRenderedStatement.sql"</span>, a <span class="op">=</span> <span class="st">"myTable"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -122,8 +129,7 @@ used to turn on or off blocks of SQL code.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
