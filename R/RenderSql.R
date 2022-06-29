@@ -74,7 +74,7 @@ render <- function(sql, warnOnMissingParameters = TRUE, ...) {
   checkmate::assertCharacter(sql, len = 1, add = errorMessages)
   checkmate::assertLogical(warnOnMissingParameters, len = 1, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
     return("")
@@ -155,7 +155,7 @@ translate <- function(sql,
   checkmate::assertCharacter(tempEmulationSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
     return("")
@@ -240,7 +240,7 @@ translateSingleStatement <- function(sql = "",
   checkmate::assertCharacter(tempEmulationSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
     return("")
@@ -287,7 +287,7 @@ splitSql <- function(sql) {
   errorMessages <- checkmate::makeAssertCollection()
   checkmate::assertCharacter(sql, len = 1, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
     return("")

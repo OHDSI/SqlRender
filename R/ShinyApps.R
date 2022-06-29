@@ -28,7 +28,7 @@ launchSqlRenderDeveloper <- function(launch.browser = TRUE) {
   errorMessages <- checkmate::makeAssertCollection()
   checkmate::assertLogical(launch.browser, len = 1, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   ensure_installed("shinydashboard")
   appDir <- system.file("shinyApps", "SqlDeveloper", package = "SqlRender")
   shiny::runApp(appDir, display.mode = "normal", launch.browser = launch.browser)

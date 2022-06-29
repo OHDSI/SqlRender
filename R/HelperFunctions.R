@@ -42,7 +42,7 @@ readSql <- function(sourceFile) {
   errorMessages <- checkmate::makeAssertCollection()
   checkmate::assertCharacter(sourceFile, len = 1, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   readChar(sourceFile, file.info(sourceFile)$size)
 }
 
@@ -68,7 +68,7 @@ writeSql <- function(sql, targetFile) {
   checkmate::assertCharacter(sql, len = 1, add = errorMessages)
   checkmate::assertCharacter(targetFile, len = 1, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   sink(targetFile)
   sql <- gsub(
     "\r",
@@ -113,7 +113,7 @@ renderSqlFile <- function(sourceFile, targetFile, warnOnMissingParameters = TRUE
   checkmate::assertCharacter(targetFile, len = 1, add = errorMessages)
   checkmate::assertLogical(warnOnMissingParameters, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   sql <- readSql(sourceFile)
   sql <- render(sql, warnOnMissingParameters, ...)
   writeSql(sql, targetFile)
@@ -157,7 +157,7 @@ translateSqlFile <- function(sourceFile,
   checkmate::assertCharacter(tempEmulationSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
     warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
       .frequency = "regularly",
@@ -228,7 +228,7 @@ loadRenderTranslateSql <- function(sqlFilename,
   checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::assertLogical(warnOnMissingParameters, len = 1, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   if (!is.null(oracleTempSchema) && oracleTempSchema != "") {
     rlang::warn("The 'oracleTempSchema' argument is deprecated. Use 'tempEmulationSchema' instead.",
       .frequency = "regularly",
@@ -295,7 +295,7 @@ snakeCaseToCamelCase <- function(string) {
   errorMessages <- checkmate::makeAssertCollection()
   checkmate::assertCharacter(string, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   string <- tolower(string)
   for (letter in letters) {
     string <- gsub(paste("_", letter, sep = ""), toupper(letter), string)
@@ -319,7 +319,7 @@ camelCaseToSnakeCase <- function(string) {
   errorMessages <- checkmate::makeAssertCollection()
   checkmate::assertCharacter(string, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   string <- gsub("([A-Z])", "_\\1", string)
   string <- tolower(string)
   string <- gsub("([a-z])([0-9])", "\\1_\\2", string)
@@ -341,7 +341,7 @@ camelCaseToTitleCase <- function(string) {
   errorMessages <- checkmate::makeAssertCollection()
   checkmate::assertCharacter(string, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   string <- gsub("([A-Z])", " \\1", string)
   string <- gsub("([a-z])([0-9])", "\\1 \\2", string)
   substr(string, 1, 1) <- toupper(substr(string, 1, 1))
@@ -360,13 +360,13 @@ camelCaseToTitleCase <- function(string) {
 #' @examples
 #' x <- data.frame(concept_id = 1, concept_name = "b")
 #' snakeCaseToCamelCaseNames(x)
-#' 
+#'
 #' @export
 snakeCaseToCamelCaseNames <- function(object) {
   errorMessages <- checkmate::makeAssertCollection()
   checkmate::assertNamed(object, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   names(object) <- snakeCaseToCamelCase(names(object))
   return(object)
 }
@@ -381,13 +381,13 @@ snakeCaseToCamelCaseNames <- function(object) {
 #' @examples
 #' x <- data.frame(conceptId = 1, conceptName = "b")
 #' camelCaseToSnakeCaseNames(x)
-#' 
+#'
 #' @export
 camelCaseToSnakeCaseNames <- function(object) {
   errorMessages <- checkmate::makeAssertCollection()
   checkmate::assertNamed(object, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   names(object) <- camelCaseToSnakeCase(names(object))
   return(object)
 }
@@ -428,7 +428,7 @@ createRWrapperForSql <- function(sqlFilename,
   checkmate::assertCharacter(packageName, len = 1, add = errorMessages)
   checkmate::assertLogical(createRoxygenTemplate, len = 1, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   if (missing(rFilename)) {
     periodIndex <- which(strsplit(sqlFilename, "")[[1]] == ".")
     if (length(periodIndex) == 0) {
