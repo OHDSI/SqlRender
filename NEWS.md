@@ -1,3 +1,11 @@
+SqlRender 1.9.2
+===============
+
+Bugfixes:
+
+1. Fixed error about missing `checkmate` package.
+
+
 SqlRender 1.9.1
 ===============
 
