@@ -5,6 +5,8 @@ Bugfixes:
 
 1. Fixed error about missing `checkmate` package.
 
+2. Fixed error about `targetDialect` types not matching (character != factor) on older R versions (< 4).
+
 
 SqlRender 1.9.1
 ===============
