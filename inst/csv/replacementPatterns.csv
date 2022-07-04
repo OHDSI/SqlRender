@@ -908,6 +908,7 @@ spark,tempdb..#@table +,%temp_prefix%%session_id% ||
 spark,#,%temp_prefix%%session_id%
 spark,"--HINT BUCKET(@a, @b)",
 spark,"--HINT PARTITION(@a @b)",
+spark,"INSERT INTO @table (@columns) SELECT @values;","WITH insertion_temp AS (\n(SELECT @values) UNION ALL (SELECT @columns FROM @table))\nINSERT OVERWRITE TABLE @table SELECT * FROM insertion_temp;"
 spark,"HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;","HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;\nOPTIMIZE @table ZORDER BY @key;"
 spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@d', 'U') IS NULL WITH @a AS @b SELECT @c INTO @d FROM @e;",HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE IF NOT EXISTS @d\nUSING DELTA\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nOPTIMIZE @d ZORDER BY @key;
 spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@b', 'U') IS NULL SELECT @a INTO @b FROM @c;",HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE IF NOT EXISTS @b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;\nOPTIMIZE @b ZORDER BY @key;
@@ -917,7 +918,12 @@ spark,HINT DISTRIBUTE_ON_KEY(@key) WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT
 spark,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b FROM @c;,HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE @b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;\nOPTIMIZE @b ZORDER BY @key;
 spark,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b WHERE @c;,HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE @b\nUSING DELTA\nAS\nSELECT\n@a WHERE @c;\nOPTIMIZE @b ZORDER BY @key;
 spark,HINT DISTRIBUTE_ON_KEY(@key) SELECT @a INTO @b GROUP BY @c;,HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE @b\nUSING DELTA\nAS\nSELECT\n@a\nGROUP BY\n@c;\nOPTIMIZE @b ZORDER BY @key;
-spark,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nUSING DELTA\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+spark,WITH @with SELECT @c INTO @d FROM @e;,<START_WITH>@with<END_WITH>\n CREATE TABLE @d\nUSING DELTA\nAS\n(SELECT\n@c\nFROM\n@e);
+spark,<START_WITH>@a (@columns) AS (@b)<END_WITH>,<START_WITH>@a AS (@b)<END_WITH>
+spark,"<START_WITH>@a (@columns) AS (@b),@c (@columns) AS (@d)<END_WITH>",<START_WITH>@a AS (@b)<END_WITH><START_WITH>@c AS (@d)<END_WITH>
+spark,"<START_WITH>@a AS (@b)<END_WITH>",DROP VIEW IF EXISTS @a; CREATE TEMPORARY VIEW @a AS (@b);
+spark,WITH @a (@columns) AS @b SELECT @c INTO @d FROM @e;,DROP VIEW IF EXISTS @a;\n CREATE TEMPORARY VIEW @a AS (@b);\n CREATE TABLE @d\nUSING DELTA\nAS\n(SELECT\n@c\nFROM\n@e);
+spark,WITH @a AS @b SELECT @c INTO @d FROM @e;,DROP VIEW IF EXISTS @a;\n CREATE TEMPORARY VIEW @a AS (@b);\n CREATE TABLE @d\nUSING DELTA\nAS\n(SELECT\n@c\nFROM\n@e);
 spark,SELECT @a INTO @b FROM @c;,CREATE TABLE @b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;
 spark,SELECT @a INTO @b WHERE @c;,CREATE TABLE @b\nUSING DELTA\n AS\nSELECT\n@a WHERE @c;
 spark,SELECT @a INTO @b GROUP BY @c;,CREATE TABLE @b\nUSING DELTA\n AS\nSELECT\n@a GROUP BY @c;
@@ -988,6 +994,7 @@ spark,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 spark,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as STRING) @s2)"
 spark,UPDATE STATISTICS @a;,
 spark,"SELECT @columns FROM (@a) @x,(@b) @y;","SELECT @columns FROM (@a) @x cross join (@b) @y;"
+spark,DELETE FROM @a WHERE @b;,INSERT OVERWRITE TABLE @a SELECT * FROM @a WHERE NOT (@b);
 sqlite extended,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
 sqlite extended,+ '@a',|| '@a'
 sqlite extended,'@a' +,'@a' ||
