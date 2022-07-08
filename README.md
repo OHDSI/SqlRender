@@ -59,6 +59,7 @@ The Java library is available as a JAR file.
 System Requirements
 ===================
 Running the package requires R with the package rJava installed. Also requires Java 1.6 or higher.
+It is highly recommended for best performance to use a version of R that is at least version 4 or higher otherwise, unexpected bugs or errors may occur.
 
 Installation
 =============
