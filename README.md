@@ -89,31 +89,29 @@ You can fetch the JAR file in the inst/java folder of this repository, or use Ma
 
 1. First add the SqlRender repository so that maven can find and download the SqlRender artifact automatically:
 ```xml
-<repositories>
-	<repository>
-		<id>ohdsi</id>
-		<name>repo.ohdsi.org</name>
-		<url>http://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
-	</repository>
-	<repository>
-		<id>ohdsi.snapshots</id>
-		<name>repo.ohdsi.org-snapshots</name>
-		<url>http://repo.ohdsi.org:8085/nexus/content/repositories/snapshots</url>
-		<releases>
-			<enabled>false</enabled>
-		</releases>
-		<snapshots>
-			<enabled>true</enabled>
-		</snapshots>
-	</repository>
-</repositories>
+<repository>
+  <id>ohdsi</id>
+  <name>repo.ohdsi.org</name>
+  <url>https://repo.ohdsi.org/nexus/content/repositories/releases</url>
+</repository>
+<repository>
+  <id>ohdsi.snapshots</id>
+  <name>repo.ohdsi.org-snapshots</name>
+  <url>https://repo.ohdsi.org/nexus/content/repositories/snapshots</url>
+  <releases>
+      <enabled>false</enabled>
+  </releases>
+  <snapshots>
+      <enabled>true</enabled>
+  </snapshots>
+</repository>
 ```
 2: Include the SqlRender dependency in your pom.xml
 ```xml
 <dependency>
 	<groupId>org.ohdsi.sql</groupId>
 	<artifactId>SqlRender</artifactId>
-	<version>1.7.0-SNAPSHOT</version>
+	<version>1.9.2-SNAPSHOT</version>
 </dependency>
 ```
 
