@@ -7,6 +7,8 @@ Bugfixes:
 
 2. Fixed error about `targetDialect` types not matching (character != factor) on older R versions (< 4).
 
+3. Fixed warning about deprecated icon in Shiny app. 
+
 
 SqlRender 1.9.1
 ===============
