@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.2</span>
       </span>
     </div>
 
@@ -136,7 +136,7 @@
 <div class="section level1">
 <h1 id="system-requirements">System Requirements<a class="anchor" aria-label="anchor" href="#system-requirements"></a>
 </h1>
-<p>Running the package requires R with the package rJava installed. Also requires Java 1.6 or higher.</p>
+<p>Running the package requires R with the package rJava installed. Also requires Java 1.6 or higher. It is highly recommended for best performance to use a version of R that is at least version 4 or higher otherwise, unexpected bugs or errors may occur.</p>
 </div>
 <div class="section level1">
 <h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -163,29 +163,27 @@
 <ol style="list-style-type: decimal">
 <li>First add the SqlRender repository so that maven can find and download the SqlRender artifact automatically:</li>
 </ol>
-<div class="sourceCode" id="cb8"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">repositories</span>&gt;</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">repository</span>&gt;</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">id</span>&gt;ohdsi&lt;/<span class="kw">id</span>&gt;</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">name</span>&gt;repo.ohdsi.org&lt;/<span class="kw">name</span>&gt;</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">url</span>&gt;http://repo.ohdsi.org:8085/nexus/content/repositories/releases&lt;/<span class="kw">url</span>&gt;</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">repository</span>&gt;</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">repository</span>&gt;</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">id</span>&gt;ohdsi.snapshots&lt;/<span class="kw">id</span>&gt;</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">name</span>&gt;repo.ohdsi.org-snapshots&lt;/<span class="kw">name</span>&gt;</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">url</span>&gt;http://repo.ohdsi.org:8085/nexus/content/repositories/snapshots&lt;/<span class="kw">url</span>&gt;</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">releases</span>&gt;</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">enabled</span>&gt;false&lt;/<span class="kw">enabled</span>&gt;</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">releases</span>&gt;</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">snapshots</span>&gt;</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">enabled</span>&gt;true&lt;/<span class="kw">enabled</span>&gt;</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">snapshots</span>&gt;</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">repository</span>&gt;</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">repositories</span>&gt;</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">repository</span>&gt;</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">id</span>&gt;ohdsi&lt;/<span class="kw">id</span>&gt;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">name</span>&gt;repo.ohdsi.org&lt;/<span class="kw">name</span>&gt;</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">url</span>&gt;https://repo.ohdsi.org/nexus/content/repositories/releases&lt;/<span class="kw">url</span>&gt;</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">repository</span>&gt;</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">repository</span>&gt;</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">id</span>&gt;ohdsi.snapshots&lt;/<span class="kw">id</span>&gt;</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">name</span>&gt;repo.ohdsi.org-snapshots&lt;/<span class="kw">name</span>&gt;</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">url</span>&gt;https://repo.ohdsi.org/nexus/content/repositories/snapshots&lt;/<span class="kw">url</span>&gt;</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">releases</span>&gt;</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">enabled</span>&gt;false&lt;/<span class="kw">enabled</span>&gt;</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">releases</span>&gt;</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">snapshots</span>&gt;</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">enabled</span>&gt;true&lt;/<span class="kw">enabled</span>&gt;</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">snapshots</span>&gt;</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">repository</span>&gt;</span></code></pre></div>
 <p>2: Include the SqlRender dependency in your pom.xml</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dependency</span>&gt;</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">groupId</span>&gt;org.ohdsi.sql&lt;/<span class="kw">groupId</span>&gt;</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">artifactId</span>&gt;SqlRender&lt;/<span class="kw">artifactId</span>&gt;</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">version</span>&gt;1.7.0-SNAPSHOT&lt;/<span class="kw">version</span>&gt;</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">version</span>&gt;1.9.2-SNAPSHOT&lt;/<span class="kw">version</span>&gt;</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dependency</span>&gt;</span></code></pre></div>
 </div>
 <div class="section level2">
