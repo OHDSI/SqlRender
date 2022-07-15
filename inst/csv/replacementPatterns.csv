@@ -383,6 +383,7 @@ redshift,^,#
 redshift,"CONVERT(DATE, @a)","CAST(@a as DATE)"
 redshift,"CONVERT(TIMESTAMPTZ, @a)","CONVERT(TIMESTAMP WITH TIME ZONE, @a)"
 redshift,UPDATE STATISTICS @a;,ANALYZE @a;
+redshift,#,
 pdw,CREATE INDEX @index_name ON #@table (@variable);,-- PDW does not support non-clustered index on temp tables.
 pdw,VARCHAR(MAX),VARCHAR(1000)
 pdw,HINT DISTRIBUTE_ON_KEY(@key) @hint WITH @a AS @b SELECT @c INTO @d FROM @e;,HINT DISTRIBUTE_ON_KEY(@key) @hint\nCREATE TABLE @d WITH (DISTRIBUTION = HASH(@key))\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;

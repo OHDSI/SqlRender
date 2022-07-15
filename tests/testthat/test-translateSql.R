@@ -2372,6 +2372,14 @@ test_that("translate sql server -> Redshift window function NTILE no sort specif
   )
 })
 
+test_that("translate sql server -> Redshift temp table names", {
+  sql <- translate("select * from #temp", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "select * from temp")  
+  
+  sql <- translate("select * from ##temp", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "select * from temp")
+})
+
 test_that("translate sql server -> Netezza concat with more than two arguments", {
   sql <- translate("SELECT CONCAT(a,b,c,d,e) FROM x;", targetDialect = "netezza")
   expect_equal_ignore_spaces(sql, "SELECT a || b || c || d || e FROM x;")
