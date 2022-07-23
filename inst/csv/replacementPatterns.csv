@@ -953,8 +953,8 @@ spark,"+ LEFT(@str,@chars)","SUBSTR(@str,@chars)"
 spark,"LEFT(@str,@chars)","SUBSTR(@str,@chars)"
 spark,"+ RIGHT(@str,@chars)","|| SUBSTR(@str,-@chars)"
 spark,"RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
-spark,CAST(@a AS varchar(@b)) +,SUBSTRING(CAST(@a AS string), 0, @b) ||
-spark,+ CAST(@a AS varchar(@b)),|| SUBSTRING(CAST(@a AS string), 0, @b)
+spark,CAST(@a AS varchar(@b)) +,"SUBSTRING(CAST(@a AS string), 0, @b) ||"
+spark,+ CAST(@a AS varchar(@b)),"|| SUBSTRING(CAST(@a AS string), 0, @b)"
 spark,CAST(@a AS varchar) +,CAST(@a AS string) ||
 spark,+ CAST(@a AS varchar),|| CAST(@a AS string)
 spark,"DATEFROMPARTS(@year,@month,@day)","to_date(cast(@year as string) || '-' || cast(@month as string) || '-' || cast(@day as string))"
@@ -1056,7 +1056,7 @@ duckdb,"DATEDIFF(yy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTR
 duckdb,"DATEDIFF(month,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
 duckdb,"DATEDIFF(mm,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
 duckdb,"DATEDIFF(m,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
-duckdb,"CONVERT(VARCHAR,@date,112)","STRFTIME(@date, '%Y%m%d')" 
+duckdb,"CONVERT(VARCHAR,@date,112)","STRFTIME(@date, '%Y%m%d')"
 duckdb,GETDATE(),CURRENT_DATE
 duckdb,+ '@a',|| '@a'
 duckdb,'@a' +,'@a' ||
@@ -1074,7 +1074,7 @@ duckdb,STDEV(@a),STDDEV(@a)
 duckdb,VAR(@a),VARIANCE(@a)
 duckdb,RAND(),RANDOM()
 duckdb,LEN(@a),LENGTH(@a)
-duckdb,"CHARINDEX(@a,@b)","STRPOS(@b,@a)
+duckdb,"CHARINDEX(@a,@b)","STRPOS(@b,@a)"
 duckdb,"LOG(@expression,@base)",(LN(CAST((@expression) AS REAL))/LN(CAST((@base) AS REAL)))
 duckdb,LOG(@expression),LN(CAST((@expression) AS REAL))
 duckdb,<L_O_G>,LOG
