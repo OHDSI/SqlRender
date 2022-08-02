@@ -1107,3 +1107,4 @@ duckdb,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 duckdb,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 duckdb,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 duckdb,UPDATE STATISTICS @a;,ANALYZE @a;
+duckdb,TRUNCATE TABLE @a;,DELETE FROM @a;
