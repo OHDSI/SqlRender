@@ -375,3 +375,13 @@ test_that("translate sql server -> spark DROP TABLE IF EXISTS", {
   sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "spark")
   expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS test;")
 })
+
+test_that("translate sql server -> spark INSERT INTO SELECT", {
+  sql <- translate("INSERT INTO a (b int) SELECT c FROM cte1;",
+    targetDialect = "spark"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "WITH insertion_temp AS (\n(SELECT c FROM cte1) UNION ALL (SELECT b int FROM a ))\nINSERT OVERWRITE TABLE a  SELECT * FROM insertion_temp;"
+  )
+})
