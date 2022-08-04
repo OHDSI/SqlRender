@@ -612,5 +612,5 @@ supportsJava8 <- function() {
 #' @export
 listSupportedDialects <- function() {
   pathToCsv <- system.file("csv", "supportedDialects.csv", package = "SqlRender")
-  return(read.csv(pathToCsv))
+  return(read.csv(pathToCsv, stringsAsFactors = FALSE))
 }

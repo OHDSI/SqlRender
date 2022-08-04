@@ -6,8 +6,8 @@ dashboardPage(
   dashboardHeader(title = "SqlRender Developer"),
   dashboardSidebar(
     sidebarMenu(
-      menuItemFileInput("open", "Open file"),
-      menuItemDownloadLink("save", "Save"),
+      menuItemFileInput("open", "Open file", icon = shiny::icon("folder-open")),
+      menuItemDownloadLink("save", "Save", icon = shiny::icon("save")),
       menuItem("Open new tab", href = "", icon = shiny::icon("plus-square")),
       menuItemCopyTextAreaToClipboard("source", "Copy source to clipboard"),
       menuItemCopyDivToClipboard("target", "Copy target to clipboard")
