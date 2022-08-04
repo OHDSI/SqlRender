@@ -343,7 +343,7 @@ test_that("translate sql server -> spark cte ctas", {
     sql = "WITH a AS (select b) SELECT c INTO d FROM e;",
     targetDialect = "spark"
   )
-  expect_equal_ignore_spaces(sql, "CREATE TABLE d \n USING DELTA \n AS \n WITH a  AS (select b)  SELECT\nc \nFROM\ne;")
+  expect_equal_ignore_spaces(sql, "DROP VIEW IF EXISTS a ; CREATE TEMPORARY VIEW a  AS (select b);\n CREATE TABLE d \nUSING DELTA\nAS\n(SELECT\nc \nFROM\ne);")
 })
 
 test_that("translate sql server -> spark ctas", {
