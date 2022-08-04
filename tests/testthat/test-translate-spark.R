@@ -395,3 +395,13 @@ test_that("translate sql server -> spark INSERT INTO VALUES", {
     "WITH insertion_temp AS (\n(SELECT * FROM VALUES (1,0),(2,0),(3,1) T(key,value)) UNION ALL (SELECT key,value FROM my_table ))\nINSERT OVERWRITE TABLE my_table  SELECT * FROM insertion_temp;"
   )
 })
+
+test_that("translate sql server -> spark DELETE FROM WHERE", {
+  sql <- translate("DELETE FROM my_table WHERE a=1;",
+    targetDialect = "spark"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "INSERT OVERWRITE TABLE my_table  SELECT * FROM my_table  WHERE NOT (a=1);"
+  )
+})
