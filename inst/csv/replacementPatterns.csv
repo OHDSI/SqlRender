@@ -1034,7 +1034,6 @@ sqlite extended,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
 sqlite extended,"CONCAT(@a, @b)","@a || @b"
 duckdb,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 duckdb,"HASHBYTES('MD5',@a)","MD5(@a)"
-duckdb,"CONVERT(DATE, @a)","(SUBSTR(CAST(@a AS TEXT), 1, 4) || '-' || SUBSTR(CAST(@a AS TEXT), 5, 2) || '-' || SUBSTR(CAST(@a AS TEXT), 7)):: DATE"
 duckdb,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
 duckdb,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
 duckdb,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
@@ -1047,7 +1046,7 @@ duckdb,"DATEADD(month,@months,@date)",(@date + @months*INTERVAL'1 month')
 duckdb,"DATEADD(yy,@years,@date)",(@date + @years*INTERVAL'1 year')
 duckdb,"DATEADD(yyyy,@years,@date)",(@date + @years*INTERVAL'1 year')
 duckdb,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
-duckdb,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+duckdb,"DATEDIFF(d,@start, @end)",(CONVERT(DATE, @end) - CAST(@start AS DATE))
 duckdb,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 duckdb,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 duckdb,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
@@ -1058,6 +1057,8 @@ duckdb,"DATEDIFF(mm,@start, @end)","(extract(year from age(CAST(@end AS DATE), C
 duckdb,"DATEDIFF(m,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
 duckdb,"CONVERT(VARCHAR,@date,112)","STRFTIME(@date, '%Y%m%d')"
 duckdb,GETDATE(),CURRENT_DATE
+duckdb,"CONVERT(DATE, @a)","CAST(@a AS DATE)"
+duckdb,"CAST('@a' AS DATE)","CAST(strptime('@a', '%Y%m%d') AS DATE)"
 duckdb,+ '@a',|| '@a'
 duckdb,'@a' +,'@a' ||
 duckdb,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
