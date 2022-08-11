@@ -953,8 +953,8 @@ spark,"+ LEFT(@str,@chars)","SUBSTR(@str,@chars)"
 spark,"LEFT(@str,@chars)","SUBSTR(@str,@chars)"
 spark,"+ RIGHT(@str,@chars)","|| SUBSTR(@str,-@chars)"
 spark,"RIGHT(@str,@chars)","SUBSTR(@str,-@chars)"
-spark,CAST(@a AS varchar(@b)) +,SUBSTRING(CAST(@a AS string), 0, @b) ||
-spark,+ CAST(@a AS varchar(@b)),|| SUBSTRING(CAST(@a AS string), 0, @b)
+spark,CAST(@a AS varchar(@b)) +,"SUBSTRING(CAST(@a AS string), 0, @b) ||"
+spark,+ CAST(@a AS varchar(@b)),"|| SUBSTRING(CAST(@a AS string), 0, @b)"
 spark,CAST(@a AS varchar) +,CAST(@a AS string) ||
 spark,+ CAST(@a AS varchar),|| CAST(@a AS string)
 spark,"DATEFROMPARTS(@year,@month,@day)","to_date(cast(@year as string) || '-' || cast(@month as string) || '-' || cast(@day as string))"
@@ -1032,3 +1032,80 @@ sqlite extended,UPDATE STATISTICS @a;,ANALYZE @a;
 sqlite extended,TRUNCATE TABLE @a;,DELETE FROM @a;
 sqlite extended,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
 sqlite extended,"CONCAT(@a, @b)","@a || @b"
+duckdb,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
+duckdb,"HASHBYTES('MD5',@a)","MD5(@a)"
+duckdb,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
+duckdb,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
+duckdb,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
+duckdb,"DATEADD(d,@days,@date)",(@date + @days*INTERVAL'1 day')
+duckdb,"DATEADD(dd,@days,@date)",(@date + @days*INTERVAL'1 day')
+duckdb,"DATEADD(day,@days,@date)",(@date + @days*INTERVAL'1 day')
+duckdb,"DATEADD(m,@months,@date)",(@date + @months*INTERVAL'1 month')
+duckdb,"DATEADD(mm,@months,@date)",(@date + @months*INTERVAL'1 month')
+duckdb,"DATEADD(month,@months,@date)",(@date + @months*INTERVAL'1 month')
+duckdb,"DATEADD(yy,@years,@date)",(@date + @years*INTERVAL'1 year')
+duckdb,"DATEADD(yyyy,@years,@date)",(@date + @years*INTERVAL'1 year')
+duckdb,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
+duckdb,"DATEDIFF(d,@start, @end)",(CONVERT(DATE, @end) - CAST(@start AS DATE))
+duckdb,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+duckdb,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
+duckdb,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+duckdb,"DATEDIFF(yyyy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+duckdb,"DATEDIFF(yy,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
+duckdb,"DATEDIFF(month,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
+duckdb,"DATEDIFF(mm,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
+duckdb,"DATEDIFF(m,@start, @end)","(extract(year from age(CAST(@end AS DATE), CAST(@start AS DATE)))*12 + extract(month from age(CAST(@end AS DATE), CAST(@start AS DATE))))"
+duckdb,"CONVERT(VARCHAR,@date,112)","STRFTIME(@date, '%Y%m%d')"
+duckdb,GETDATE(),CURRENT_DATE
+duckdb,"CONVERT(DATE, @a)","CAST(@a AS DATE)"
+duckdb,"CAST('@a' AS DATE)","CAST(strptime('@a', '%Y%m%d') AS DATE)"
+duckdb,+ '@a',|| '@a'
+duckdb,'@a' +,'@a' ||
+duckdb,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
+duckdb,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
+duckdb,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
+duckdb,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
+duckdb,"DATEFROMPARTS(@year,@month,@day)","(CAST(@year AS VARCHAR) || '-' || CAST(@month AS VARCHAR) || '-' || CAST(@day AS VARCHAR)) :: DATE"
+duckdb,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","(CAST(@year AS VARCHAR) || '-' || CAST(@month AS VARCHAR) || '-' || CAST(@day AS VARCHAR) || '-' || CAST(@hour AS VARCHAR) || '-' || CAST(@minute AS VARCHAR) || '-' || CAST(@second AS VARCHAR)) :: DATE"
+duckdb,YEAR(@date),YEAR(CAST(@date AS DATE))
+duckdb,MONTH(@date),MONTH(CAST(@date AS DATE))
+duckdb,DAY(@date),DAY(CAST(@date AS DATE))
+duckdb,EOMONTH(@date),"(DATE_TRUNC('MONTH', @date) + INTERVAL '1 MONTH' - INTERVAL '1 day')::DATE"
+duckdb,STDEV(@a),STDDEV(@a)
+duckdb,VAR(@a),VARIANCE(@a)
+duckdb,RAND(),RANDOM()
+duckdb,LEN(@a),LENGTH(@a)
+duckdb,"CHARINDEX(@a,@b)","STRPOS(@b,@a)"
+duckdb,"LOG(@expression,@base)",(LN(CAST((@expression) AS REAL))/LN(CAST((@base) AS REAL)))
+duckdb,LOG(@expression),LN(CAST((@expression) AS REAL))
+duckdb,<L_O_G>,LOG
+duckdb,LOG10(@expression),"LOG(@expression)"
+duckdb,"ISNULL(@a,@b)","COALESCE(@a,@b)"
+duckdb,"ISNUMERIC(@a)","CASE WHEN (CAST(@a AS VARCHAR) ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
+duckdb,COUNT_BIG(@a),COUNT(@a)
+duckdb,SQUARE(@a),((@a)*(@a))
+duckdb,NEWID(),MD5(RANDOM()::TEXT || CLOCK_TIMESTAMP()::TEXT)
+duckdb,USE @schema;,SET search_path TO @schema;
+duckdb,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+duckdb,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+duckdb,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+duckdb,.dbo.,.
+duckdb,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
+duckdb,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);
+duckdb,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
+duckdb,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
+duckdb,DATETIME,TIMESTAMP
+duckdb,DATETIME2,TIMESTAMP
+duckdb,VARCHAR(MAX),TEXT
+duckdb,FLOAT,NUMERIC
+duckdb,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nANALYZE @d;
+duckdb,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
+duckdb,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;\nANALYZE @b;
+duckdb,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
+duckdb,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+duckdb,#,
+duckdb,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
+duckdb,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+duckdb,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
+duckdb,UPDATE STATISTICS @a;,ANALYZE @a;
+duckdb,TRUNCATE TABLE @a;,DELETE FROM @a;
