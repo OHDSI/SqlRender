@@ -5,7 +5,7 @@
 \title{Translates SQL from one dialect to another}
 \usage{
 translate(
-  sql = "",
+  sql,
   targetDialect,
   tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
   oracleTempSchema = NULL

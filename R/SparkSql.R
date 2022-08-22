@@ -29,6 +29,10 @@
 #'
 #' @export
 sparkHandleInsert <- function(sql, connection) {
+  errorMessages <- checkmate::makeAssertCollection()
+  checkmate::assertCharacter(sql, len = 1, add = errorMessages)
+  checkmate::reportAssertions(collection = errorMessages)
+
   sql <- rJava::J("org.ohdsi.sql.BigQuerySparkTranslate")$sparkHandleInsert(as.character(sql), connection@jConnection)
   return(sql)
 }

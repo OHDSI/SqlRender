@@ -18,7 +18,7 @@ character vector instead of a list."><!-- mathjax --><script src="https://cdnjs.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.2</span>
       </span>
     </div>
 
@@ -27,7 +27,7 @@ character vector instead of a list."><!-- mathjax --><script src="https://cdnjs.
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -71,23 +71,30 @@ character vector instead of a list.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">renderSql</span><span class="op">(</span>sql <span class="op">=</span> <span class="st">""</span>, warnOnMissingParameters <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">renderSql</span><span class="op">(</span>sql <span class="op">=</span> <span class="st">""</span>, warnOnMissingParameters <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>sql</dt>
 <dd><p>The parameterized SQL</p></dd>
+
+
 <dt>warnOnMissingParameters</dt>
 <dd><p>Should a warning be raised when parameters provided to this
 function do not appear in the parameterized SQL that is being
 rendered? By default, this is TRUE.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Parameter values</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list containing the following elements:</p><dl><dt>parameterizedSql</dt>
+    
+
+<p>A list containing the following elements:</p><dl><dt>parameterizedSql</dt>
 <dd><p>The original
 parameterized SQL code</p></dd>
  <dt>sql</dt>
@@ -107,8 +114,7 @@ parameterized SQL code</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.2</span>
       </span>
     </div>
 
@@ -43,7 +43,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -88,7 +88,7 @@
                         <h4 data-toc-skip class="author">Martijn J.
 Schuemie</h4>
             
-            <h4 data-toc-skip class="date">2022-02-18</h4>
+            <h4 data-toc-skip class="date">2022-07-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/SqlRender/blob/HEAD/vignettes/UsingSqlRender.Rmd" class="external-link"><code>vignettes/UsingSqlRender.Rmd</code></a></small>
       <div class="hidden name"><code>UsingSqlRender.Rmd</code></div>
@@ -121,22 +121,22 @@ the following example, a variable called <code>a</code> is mentioned in
 the SQL. In the call to the render function the value of this parameter
 is defined:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table WHERE id = @a;"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, a <span class="op">=</span> <span class="fl">123</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table WHERE id = 123;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table WHERE id = @a;"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, a <span class="op">=</span> <span class="fl">123</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table WHERE id = 123;"</span></span></code></pre>
 <p>Note that, unlike the parameterization offered by most database
 management systems, it is just as easy to parameterize table or field
 names as values:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM @x WHERE id = @a;"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="st">"my_table"</span>, a <span class="op">=</span> <span class="fl">123</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM my_table WHERE id = 123;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM @x WHERE id = @a;"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="st">"my_table"</span>, a <span class="op">=</span> <span class="fl">123</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM my_table WHERE id = 123;"</span></span></code></pre>
 <p>The parameter values can be numbers, strings, booleans, as well as
 vectors, which are converted to comma-delimited lists:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table WHERE id IN (@a);"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table WHERE id IN (1,2,3);"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table WHERE id IN (@a);"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table WHERE id IN (1,2,3);"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="default-parameter-values">Default parameter values<a class="anchor" aria-label="anchor" href="#default-parameter-values"></a>
@@ -146,17 +146,17 @@ values that will be used unless the user specifies another value. This
 can be done using the <code>{DEFAULT @parameter = value}</code>
 syntax:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table WHERE id = 1;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"{DEFAULT @a = 1} SELECT * FROM table WHERE id = @a;"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table WHERE id = 1;"</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, a <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table WHERE id = 2;"</span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, a <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table WHERE id = 2;"</span></span></code></pre>
 <p>Defaults for multiple variables can be defined:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM my_table WHERE id = 1;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"{DEFAULT @a = 1} {DEFAULT @x = 'my_table'} SELECT * FROM @x WHERE id = @a;"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM my_table WHERE id = 1;"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="if-then-else">If-then-else<a class="anchor" aria-label="anchor" href="#if-then-else"></a>
@@ -167,34 +167,34 @@ values of one or more parameters. This is done using the
 <em>condition</em> evaluates to true or 1, the <em>if true</em> block is
 used, else the <em>if false</em> block is shown (if present).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {@x} ? {WHERE id = 1}"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table "</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {@x} ? {WHERE id = 1}"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table "</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table WHERE id = 1"</span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table WHERE id = 1"</span></span></code></pre>
 <p>Simple comparisons are also supported:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {@x == 1} ? {WHERE id = 1};"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table WHERE id = 1;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {@x == 1} ? {WHERE id = 1};"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table WHERE id = 1;"</span></span></code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table ;"</span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table ;"</span></span></code></pre>
 <p>As well as the <code>IN</code> operator:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1};"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table WHERE id = 1;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {@x IN (1,2,3)} ? {WHERE id = 1};"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table WHERE id = 1;"</span></span></code></pre>
 <p>Clauses can combined with boolean operators:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {@x IN (1,2,3) | @y != 3} ? {WHERE id = @x AND value = @y};"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">4</span>, y <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table WHERE id = 4 AND value = 4;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {@x IN (1,2,3) | @y != 3} ? {WHERE id = @x AND value = @y};"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">4</span>, y <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table WHERE id = 4 AND value = 4;"</span></span></code></pre>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {(@x == 1 | @x == 3) &amp; @y != 3} ? {WHERE id = @x AND val = @y};"</span>
-<span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">3</span>, y <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM table WHERE id = 3 AND val = 4;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM table {(@x == 1 | @x == 3) &amp; @y != 3} ? {WHERE id = @x AND val = @y};"</span></span>
+<span><span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, x <span class="op">=</span> <span class="fl">3</span>, y <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM table WHERE id = 3 AND val = 4;"</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -225,9 +225,9 @@ should not be hard.</p>
 have an equivalent in other dialects.</p>
 <p>Below an example:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT DATEDIFF(dd,a,b) FROM table; "</span>
-<span class="fu"><a href="../reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>,targetDialect <span class="op">=</span> <span class="st">"oracle"</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT CEIL(CAST(b AS DATE) - CAST(a AS DATE)) FROM table ; "</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT DATEDIFF(dd,a,b) FROM table; "</span></span>
+<span><span class="fu"><a href="../reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>,targetDialect <span class="op">=</span> <span class="st">"oracle"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT CEIL(CAST(b AS DATE) - CAST(a AS DATE)) FROM table ; "</span></span></code></pre>
 <p>The <code>targetDialect</code> parameter can have the following
 values:</p>
 <ul>
@@ -451,14 +451,14 @@ be created.</li>
 </ol>
 <p>For example:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM #children;"</span>
-<span class="fu"><a href="../reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, targetDialect <span class="op">=</span> <span class="st">"oracle"</span>, tempEmulationSchema <span class="op">=</span> <span class="st">"temp_schema"</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM temp_schema.e693e6zlchildren ;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM #children;"</span></span>
+<span><span class="fu"><a href="../reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, targetDialect <span class="op">=</span> <span class="st">"oracle"</span>, tempEmulationSchema <span class="op">=</span> <span class="st">"temp_schema"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM temp_schema.ji9a1wb3children ;"</span></span></code></pre>
 <p>Note that the user will need to have write privileges on
 <code>temp_schema</code>. You can also set the
 <code>tempEmulationSchema</code> globally by using</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>sqlRenderTempEmulationSchema <span class="op">=</span> <span class="st">"temp_schema"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>sqlRenderTempEmulationSchema <span class="op">=</span> <span class="st">"temp_schema"</span><span class="op">)</span></span></code></pre></div>
 <p>Also note that because Oracle has a limit on table names of 30
 characters, <strong>temp table names are only allowed to be at most 22
 characters long</strong> because else the name will become too long
@@ -552,18 +552,18 @@ Server will they be different. Within an R function, it is even possible
 to derive one variable from the other, so the user of your function
 would need to specify only one value:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">foo</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">databaseSchema</span>, <span class="va">dbms</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">database</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">databaseSchema</span> ,<span class="st">"\\."</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
-  <span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM @databaseSchema.person; USE @database; SELECT * FROM person;"</span>
-  <span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, databaseSchema <span class="op">=</span> <span class="va">databaseSchema</span>, database <span class="op">=</span> <span class="va">database</span><span class="op">)</span>
-  <span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, targetDialect <span class="op">=</span> <span class="va">dbms</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">sql</span><span class="op">)</span>
-<span class="op">}</span>
-<span class="fu">foo</span><span class="op">(</span><span class="st">"cdm_data.dbo"</span>, <span class="st">"sql server"</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM cdm_data.dbo.person; USE cdm_data; SELECT * FROM person;"</span></code></pre>
+<code class="sourceCode R"><span><span class="va">foo</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">databaseSchema</span>, <span class="va">dbms</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">database</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">databaseSchema</span> ,<span class="st">"\\."</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>  <span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM @databaseSchema.person; USE @database; SELECT * FROM person;"</span></span>
+<span>  <span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/render.html">render</a></span><span class="op">(</span><span class="va">sql</span>, databaseSchema <span class="op">=</span> <span class="va">databaseSchema</span>, database <span class="op">=</span> <span class="va">database</span><span class="op">)</span></span>
+<span>  <span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, targetDialect <span class="op">=</span> <span class="va">dbms</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">sql</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">foo</span><span class="op">(</span><span class="st">"cdm_data.dbo"</span>, <span class="st">"sql server"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM cdm_data.dbo.person; USE cdm_data; SELECT * FROM person;"</span></span></code></pre>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">foo</span><span class="op">(</span><span class="st">"cdm_data"</span>, <span class="st">"postgresql"</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "SELECT * FROM cdm_data.person; SET search_path TO cdm_data; SELECT * FROM person;"</span></code></pre>
+<code class="sourceCode R"><span><span class="fu">foo</span><span class="op">(</span><span class="st">"cdm_data"</span>, <span class="st">"postgresql"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "SELECT * FROM cdm_data.person; SET search_path TO cdm_data; SELECT * FROM person;"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="optimization-for-massively-parallel-processing">Optimization for massively parallel processing<a class="anchor" aria-label="anchor" href="#optimization-for-massively-parallel-processing"></a>
@@ -611,7 +611,7 @@ code should be made in the parameterized (pre-rendered) SQL.</p>
 editing source SQL and generating rendered and translated SQL. The app
 can be started using:</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/launchSqlRenderDeveloper.html">launchSqlRenderDeveloper</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Which will open the default browser with the app.</p>
 <p>In addition, two functions have been developed to aid the debugging
 process: <code><a href="../reference/renderSqlFile.html">renderSqlFile()</a></code> and
@@ -619,7 +619,7 @@ process: <code><a href="../reference/renderSqlFile.html">renderSqlFile()</a></co
 file, render or translate it, and write it back to file. For
 example:</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/renderSqlFile.html">renderSqlFile</a></span><span class="op">(</span><span class="st">"parameterizedSql.txt"</span>,<span class="st">"renderedSql.txt"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/renderSqlFile.html">renderSqlFile</a></span><span class="op">(</span><span class="st">"parameterizedSql.txt"</span>,<span class="st">"renderedSql.txt"</span><span class="op">)</span></span></code></pre></div>
 <p>will render the file, using the default parameter values specified in
 the SQL. What works well for us is editing in the parameterized file,
 (re)running the command above, and have the rendered SQL file open in a
@@ -653,38 +653,38 @@ parameterized SQL:</p>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw">table</span> <span class="kw">INTO</span> result <span class="kw">where</span> x <span class="op">=</span> @selected_value;</span></code></pre></div>
 <p>Then the command</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/createRWrapperForSql.html">createRWrapperForSql</a></span><span class="op">(</span>sqlFilename <span class="op">=</span> <span class="st">"test.sql"</span>, 
-                     rFilename <span class="op">=</span> <span class="st">"test.R"</span>, 
-                     packageName <span class="op">=</span> <span class="st">"myPackage"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/createRWrapperForSql.html">createRWrapperForSql</a></span><span class="op">(</span>sqlFilename <span class="op">=</span> <span class="st">"test.sql"</span>, </span>
+<span>                     rFilename <span class="op">=</span> <span class="st">"test.R"</span>, </span>
+<span>                     packageName <span class="op">=</span> <span class="st">"myPackage"</span><span class="op">)</span></span></code></pre></div>
 <p>would result in the file <em>test.R</em> being generated containing
 this R code:</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#' Todo: add title</span>
-<span class="co">#'</span>
-<span class="co">#' @description</span>
-<span class="co">#' Todo: add description</span>
-<span class="co">#'</span>
-<span class="co">#' @details</span>
-<span class="co">#' Todo: add details</span>
-<span class="co">#'</span>
-<span class="co">#' @param connectionDetails   An R object of type \code{ConnectionDetails} created ...</span>
-<span class="co">#' @param selectedValue</span>
-<span class="co">#'</span>
-<span class="co">#' @export</span>
-<span class="va">test</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">connectionDetails</span>,
-                        <span class="va">selectedValue</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">renderedSql</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql</a></span><span class="op">(</span><span class="st">"test.txt"</span>,
-              packageName <span class="op">=</span> <span class="st">"myPackage"</span>,
-              dbms <span class="op">=</span> <span class="va">connectionDetails</span><span class="op">$</span><span class="va">dbms</span>,
-              selected_value <span class="op">=</span> <span class="va">selectedValue</span><span class="op">)</span>
-  <span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu">connect</span><span class="op">(</span><span class="va">connectionDetails</span><span class="op">)</span>
-
-  <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"Executing multiple queries. This could take a while"</span><span class="op">)</span>
-  <span class="fu">executeSql</span><span class="op">(</span><span class="va">conn</span>,<span class="va">renderedSql</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"Done"</span><span class="op">)</span>
-
-  <span class="va">dummy</span> <span class="op">&lt;-</span> <span class="fu">dbDisconnect</span><span class="op">(</span><span class="va">conn</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#' Todo: add title</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @description</span></span>
+<span><span class="co">#' Todo: add description</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @details</span></span>
+<span><span class="co">#' Todo: add details</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @param connectionDetails   An R object of type \code{ConnectionDetails} created ...</span></span>
+<span><span class="co">#' @param selectedValue</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @export</span></span>
+<span><span class="va">test</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">connectionDetails</span>,</span>
+<span>                        <span class="va">selectedValue</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">renderedSql</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql</a></span><span class="op">(</span><span class="st">"test.txt"</span>,</span>
+<span>              packageName <span class="op">=</span> <span class="st">"myPackage"</span>,</span>
+<span>              dbms <span class="op">=</span> <span class="va">connectionDetails</span><span class="op">$</span><span class="va">dbms</span>,</span>
+<span>              selected_value <span class="op">=</span> <span class="va">selectedValue</span><span class="op">)</span></span>
+<span>  <span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu">connect</span><span class="op">(</span><span class="va">connectionDetails</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"Executing multiple queries. This could take a while"</span><span class="op">)</span></span>
+<span>  <span class="fu">executeSql</span><span class="op">(</span><span class="va">conn</span>,<span class="va">renderedSql</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"Done"</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">dummy</span> <span class="op">&lt;-</span> <span class="fu">dbDisconnect</span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>This code expects the file <em>test.sql</em> to be located in the
 <em>inst/sql/sql_server/</em> folder of the package source.</p>
 <p>Note that the parameters are identified by the declaration of default
@@ -746,8 +746,7 @@ NULL values.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>

@@ -1,8 +1,8 @@
 Package: SqlRender
 Type: Package
 Title: Rendering Parameterized SQL and Translation to Dialects
-Version: 1.9.0
-Date: 2022-02-18
+Version: 1.9.2
+Date: 2022-07-11
 Authors@R: c(
   person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
   person("Marc", "Suchard", role = c("aut"))
@@ -18,12 +18,13 @@ URL: https://ohdsi.github.io/SqlRender/, https://github.com/OHDSI/SqlRender
 BugReports: https://github.com/OHDSI/SqlRender/issues
 Imports:
   rJava,
-  rlang
+  rlang,
+  checkmate
 Suggests:
   testthat,
   knitr,
   rmarkdown,
   shiny,
   shinydashboard
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Encoding: UTF-8

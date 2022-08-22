@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.2</span>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -69,29 +69,33 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">listSupportedDialects</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">listSupportedDialects</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="value">
     <h2>Value</h2>
-    <p>A data frame with two columns. The 'dialect' column contains the abbreviation used in SqlRender, and the
+    
+
+<p>A data frame with two columns. The 'dialect' column contains the abbreviation used in SqlRender, and the
 'description' column contains a more human-readable description.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">listSupportedDialects</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       dialect                       description</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  sql server              Microsoft SQL Server</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      oracle                            Oracle</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  postgresql                        PostgreSQL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         pdw Microsoft Parallel Data Warehouse</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5      impala                     Apache Impala</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     netezza                       IBM Netezza</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    bigquery                   Google BigQuery</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       spark                      Apache Spark</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9      sqlite                            SQLite</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   redshift                   Amazon RedShift</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">listSupportedDialects</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            dialect                       description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       sql server              Microsoft SQL Server</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           oracle                            Oracle</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       postgresql                        PostgreSQL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4              pdw Microsoft Parallel Data Warehouse</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5           impala                     Apache Impala</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          netezza                       IBM Netezza</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7         bigquery                   Google BigQuery</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            spark                      Apache Spark</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9           sqlite                            SQLite</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10        redshift                   Amazon RedShift</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11            hive                       Apache Hive</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 sqlite extended            SQLite Extended Syntax</span>
 </code></pre></div>
     </div>
   </div>
@@ -106,8 +110,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

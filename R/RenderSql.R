@@ -69,7 +69,12 @@
 #' )
 #' @import rJava
 #' @export
-render <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
+render <- function(sql, warnOnMissingParameters = TRUE, ...) {
+  errorMessages <- checkmate::makeAssertCollection()
+  checkmate::assertCharacter(sql, len = 1, add = errorMessages)
+  checkmate::assertLogical(warnOnMissingParameters, len = 1, add = errorMessages)
+  checkmate::reportAssertions(collection = errorMessages)
+
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
     return("")
@@ -139,10 +144,18 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 #' @examples
 #' translate("USE my_schema;", targetDialect = "oracle")
 #' @export
-translate <- function(sql = "",
+translate <- function(sql,
                       targetDialect,
                       tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
                       oracleTempSchema = NULL) {
+  errorMessages <- checkmate::makeAssertCollection()
+  checkmate::assertCharacter(sql, len = 1, add = errorMessages)
+  checkmate::assertCharacter(targetDialect, len = 1, add = errorMessages)
+  checkmate::assertChoice(targetDialect, listSupportedDialects()$dialect, add = errorMessages)
+  checkmate::assertCharacter(tempEmulationSchema, len = 1, null.ok = TRUE, add = errorMessages)
+  checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
+  checkmate::reportAssertions(collection = errorMessages)
+
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
     return("")
@@ -220,6 +233,14 @@ translateSingleStatement <- function(sql = "",
                                      targetDialect,
                                      tempEmulationSchema = getOption("sqlRenderTempEmulationSchema"),
                                      oracleTempSchema = NULL) {
+  errorMessages <- checkmate::makeAssertCollection()
+  checkmate::assertCharacter(sql, len = 1, add = errorMessages)
+  checkmate::assertCharacter(targetDialect, len = 1, add = errorMessages)
+  checkmate::assertChoice(targetDialect, listSupportedDialects()$dialect, add = errorMessages)
+  checkmate::assertCharacter(tempEmulationSchema, len = 1, null.ok = TRUE, add = errorMessages)
+  checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
+  checkmate::reportAssertions(collection = errorMessages)
+
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
     return("")
@@ -263,6 +284,10 @@ translateSingleStatement <- function(sql = "",
 #' splitSql("SELECT * INTO a FROM b; USE x; DROP TABLE c;")
 #' @export
 splitSql <- function(sql) {
+  errorMessages <- checkmate::makeAssertCollection()
+  checkmate::assertCharacter(sql, len = 1, add = errorMessages)
+  checkmate::reportAssertions(collection = errorMessages)
+
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
     return("")

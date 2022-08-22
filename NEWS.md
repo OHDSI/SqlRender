@@ -1,3 +1,29 @@
+SqlRender 1.9.2
+===============
+
+Bugfixes:
+
+1. Fixed error about missing `checkmate` package.
+
+2. Fixed error about `targetDialect` types not matching (character != factor) on older R versions (< 4).
+
+3. Fixed warning about deprecated icon in Shiny app. 
+
+
+SqlRender 1.9.1
+===============
+
+Changes:
+
+1. Adding input checks to all functions for more informative error messages.
+
+Bugfixes:
+
+1. Fixed translation of `CREATE TABLE` statements specifying a field can be NULL on BigQuery. 
+
+2. Fixes translation of `CAST('20000101' AS DATE)` on Oracle.
+
+
 SqlRender 1.9.0
 ===============
 
