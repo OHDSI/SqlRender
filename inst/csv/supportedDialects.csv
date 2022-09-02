@@ -13,3 +13,4 @@ hive,Apache Hive
 sqlite extended,SQLite Extended Syntax
 duckdb,DuckDB
 snowflake,Snowflake
+synapse,Azure Synapse Analytics Dedicated
