@@ -343,7 +343,7 @@ test_that("translate sql server -> spark cte ctas", {
     sql = "WITH a AS (select b) SELECT c INTO d FROM e;",
     targetDialect = "spark"
   )
-  expect_equal_ignore_spaces(sql, "CREATE TABLE d \n USING DELTA \n AS \n WITH a  AS (select b)  SELECT\nc \nFROM\ne;")
+  expect_equal_ignore_spaces(sql, "DROP VIEW IF EXISTS a ; CREATE TEMPORARY VIEW a  AS (select b);\n CREATE TABLE d \nUSING DELTA\nAS\n(SELECT\nc \nFROM\ne);")
 })
 
 test_that("translate sql server -> spark ctas", {
@@ -374,4 +374,34 @@ test_that("translate sql server -> spark cross join", {
 test_that("translate sql server -> spark DROP TABLE IF EXISTS", {
   sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "spark")
   expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS test;")
+})
+
+test_that("translate sql server -> spark INSERT INTO SELECT", {
+  sql <- translate("INSERT INTO a (b int) SELECT c FROM cte1;",
+    targetDialect = "spark"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "WITH insertion_temp AS (\n(SELECT c FROM cte1) UNION ALL (SELECT b int FROM a ))\nINSERT OVERWRITE TABLE a  SELECT * FROM insertion_temp;"
+  )
+})
+
+test_that("translate sql server -> spark INSERT INTO VALUES", {
+  sql <- translate("INSERT INTO my_table (key,value) VALUES (1,0),(2,0),(3,1);",
+    targetDialect = "spark"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "WITH insertion_temp AS (\n(SELECT * FROM VALUES (1,0),(2,0),(3,1) T(key,value)) UNION ALL (SELECT key,value FROM my_table ))\nINSERT OVERWRITE TABLE my_table  SELECT * FROM insertion_temp;"
+  )
+})
+
+test_that("translate sql server -> spark DELETE FROM WHERE", {
+  sql <- translate("DELETE FROM my_table WHERE a=1;",
+    targetDialect = "spark"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "INSERT OVERWRITE TABLE my_table  SELECT * FROM my_table  WHERE NOT (a=1);"
+  )
 })
