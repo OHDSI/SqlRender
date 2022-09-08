@@ -26,5 +26,5 @@ Suggests:
   rmarkdown,
   shiny,
   shinydashboard
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1.9000
 Encoding: UTF-8
