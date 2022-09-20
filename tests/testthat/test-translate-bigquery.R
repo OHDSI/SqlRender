@@ -500,3 +500,8 @@ test_that("translate sql server -> bigquery nullable field", {
   sql <- translate("CREATE TABLE test (x NUMERIC NULL, y NUMERIC NOT NULL);", targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "create table test (x NUMERIC, y numeric not null);")
 })
+
+test_that("translate sql server -> bigquery NEWID()", {
+  sql <- translate("SELECT *, NEWID() FROM my_table;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "select *, GENERATE_UUID() from my_table;")
+})

@@ -1,3 +1,19 @@
+SqlRender 1.10.0
+================
+
+Changes:
+
+1. Added translation to Snowflake.
+
+2. Added translation to Synapse.
+
+3. Added translation to DuckDb.
+
+Bigfixes:
+
+1. Fixed translation for NEWID() on BigQuery.
+
+
 SqlRender 1.9.2
 ===============
 
