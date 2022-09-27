@@ -19,12 +19,12 @@ BugReports: https://github.com/OHDSI/SqlRender/issues
 Imports:
     rJava,
     rlang,
-    checkmate,
-    stringr
+    checkmate
 Suggests:
   testthat,
   knitr,
   rmarkdown,
+  stringr,
   shiny,
   shinydashboard
 RoxygenNote: 7.2.0
