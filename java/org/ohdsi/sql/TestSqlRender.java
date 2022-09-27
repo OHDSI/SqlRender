@@ -6,18 +6,19 @@ import java.util.regex.Pattern;
 public class TestSqlRender {
 
 	public static void main(String[] args) {
-		
-		String regex = "([a-z]+\\(.*\\))|([a-z0-9_]+)";
-		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
-		String string = "SELECT CAST(middle_initial AS VARCHAR)";
-		Matcher matcher = pattern.matcher(string);
-		while (matcher.find())
-			if (matcher.end() == string.length())
-				System.out.println("check");
-	
-		String sql = "SELECT CAST(middle_initial AS VARCHAR) + 'abc' FROM my_table;";
+		String sql = "WITH cte_all\r\n" + 
+				"AS (\r\n" + 
+				"	SELECT * FROM @cdmSchema.MEASUREMENT m\r\n" + 
+				"		\r\n" + 
+				"	UNION ALL\r\n" + 
+				"	\r\n" + 
+				"	SELECT 	'(Glucose [Mass/volume] in Serum or Plasma --12 hours fasting)' AS check_description\r\n" + 
+				"	)\r\n" + 
+				"INSERT INTO @resultsSchema.@resultsTable\r\n" + 
+				"SELECT *\r\n" + 
+				"FROM cte_all;";
 		String path = "inst/csv/replacementPatterns.csv";
-		sql = SqlTranslate.translateSqlWithPath(sql, "test", null, null, path);
+		sql = SqlTranslate.translateSqlWithPath(sql, "postgresql", null, null, path);
 		System.out.println(sql);
 		
 //		Pattern pattern = Pattern.compile("^((?!FROM).)*$");

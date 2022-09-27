@@ -1,3 +1,11 @@
+SqlRender 1.10.1
+================
+
+Bugfixes:
+
+1. Fix erroneously identifying parts of quoted text as start of SQL comments.
+
+
 SqlRender 1.10.0
 ================
 
@@ -9,7 +17,7 @@ Changes:
 
 3. Added translation to DuckDb.
 
-Bigfixes:
+Bugfixes:
 
 1. Fixed translation for NEWID() on BigQuery.
 
