@@ -110,6 +110,7 @@ public class StringUtils {
 					tokens.add(token);
 				}
 				if (ch == '-' && cursor < sql.length() && sql.charAt(cursor + 1) == '-'
+						&& !inSingleQuotes && !inDoubleQuotes 
 						&& (sql.length() - cursor < 6 || !sql.substring(cursor + 2, cursor + 6).equals(HINT_KEY_WORD))) {
 					commentType1 = true;
 				} else if (ch == '/' && cursor < sql.length() && sql.charAt(cursor + 1) == '*') {

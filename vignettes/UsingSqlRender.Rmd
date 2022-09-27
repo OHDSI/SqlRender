@@ -103,7 +103,7 @@ SQL for one platform (e.g. Microsoft SQL Server) will not always execute on othe
 
 A first limitation is that **the starting dialect has to be SQL Server**. The reason for this is that this dialect is in general the most specific. For example, the number of days between two dates in SQL Server has to be computed using the DATEDIFF function: `DATEDIFF(dd,a,b)`. In other languages one can simply subtract the two dates: `b-a`. Since you'd need to know a and b are dates, it is not possible to go from other languages to SQL Server, only the other way around.
 
-A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, **Microsoft PDW (Parallel Data Warehouse)**, **Impala**, **Netezza**, **Google BigQuery**, **Amazon Redhift**, **Apache Spark** and **SQLite**.
+A second limitation is that currently only these dialects are supported as targets: **Oracle**, **PostgreSQL**, **Microsoft PDW (Parallel Data Warehouse)**, **Impala**, **Netezza**, **Google BigQuery**, **Amazon Redshift**, **Snowflake**, **Azure Synapse**, **Apache Spark** and **SQLite**.
 
 A third limitation is that only a limited set of translation rules have currently been implemented, although adding them to the [list](https://github.com/OHDSI/SqlRender/blob/main/inst/csv/replacementPatterns.csv) should not be hard.
 
@@ -125,6 +125,8 @@ The `targetDialect` parameter can have the following values:
   - "impala"
   - "netezza"
   - "bigquery"
+  - "snowflake"
+  - "synapse"
   - "spark"
   - "sqlite"
   - "sqlite extended"

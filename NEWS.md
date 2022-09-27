@@ -1,3 +1,27 @@
+SqlRender 1.10.1
+================
+
+Bugfixes:
+
+1. Fix erroneously identifying parts of quoted text as start of SQL comments.
+
+
+SqlRender 1.10.0
+================
+
+Changes:
+
+1. Added translation to Snowflake.
+
+2. Added translation to Synapse.
+
+3. Added translation to DuckDb.
+
+Bugfixes:
+
+1. Fixed translation for NEWID() on BigQuery.
+
+
 SqlRender 1.9.2
 ===============
 

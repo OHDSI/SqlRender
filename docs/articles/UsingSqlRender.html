@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.0</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
                         <h4 data-toc-skip class="author">Martijn J.
 Schuemie</h4>
             
-            <h4 data-toc-skip class="date">2022-07-11</h4>
+            <h4 data-toc-skip class="date">2022-09-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/SqlRender/blob/HEAD/vignettes/UsingSqlRender.Rmd" class="external-link"><code>vignettes/UsingSqlRender.Rmd</code></a></small>
       <div class="hidden name"><code>UsingSqlRender.Rmd</code></div>
@@ -216,7 +216,8 @@ Server, only the other way around.</p>
 supported as targets: <strong>Oracle</strong>,
 <strong>PostgreSQL</strong>, <strong>Microsoft PDW (Parallel Data
 Warehouse)</strong>, <strong>Impala</strong>, <strong>Netezza</strong>,
-<strong>Google BigQuery</strong>, <strong>Amazon Redhift</strong>,
+<strong>Google BigQuery</strong>, <strong>Amazon Redshift</strong>,
+<strong>Snowflake</strong>, <strong>Azure Synapse</strong>,
 <strong>Apache Spark</strong> and <strong>SQLite</strong>.</p>
 <p>A third limitation is that only a limited set of translation rules
 have currently been implemented, although adding them to the <a href="https://github.com/OHDSI/SqlRender/blob/main/inst/csv/replacementPatterns.csv" class="external-link">list</a>
@@ -238,6 +239,8 @@ values:</p>
 <li>“impala”</li>
 <li>“netezza”</li>
 <li>“bigquery”</li>
+<li>“snowflake”</li>
+<li>“synapse”</li>
 <li>“spark”</li>
 <li>“sqlite”</li>
 <li>“sqlite extended”</li>
@@ -453,7 +456,7 @@ be created.</li>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM #children;"</span></span>
 <span><span class="fu"><a href="../reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, targetDialect <span class="op">=</span> <span class="st">"oracle"</span>, tempEmulationSchema <span class="op">=</span> <span class="st">"temp_schema"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "SELECT * FROM temp_schema.ji9a1wb3children ;"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "SELECT * FROM temp_schema.oxk0ibx7children ;"</span></span></code></pre>
 <p>Note that the user will need to have write privileges on
 <code>temp_schema</code>. You can also set the
 <code>tempEmulationSchema</code> globally by using</p>
@@ -746,7 +749,7 @@ NULL values.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
