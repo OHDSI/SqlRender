@@ -18,9 +18,9 @@ VignetteBuilder: knitr
 URL: https://ohdsi.github.io/SqlRender/, https://github.com/OHDSI/SqlRender
 BugReports: https://github.com/OHDSI/SqlRender/issues
 Imports:
-    rJava,
-    rlang,
-    checkmate
+  rJava,
+  rlang,
+  checkmate
 Suggests:
   testthat,
   knitr,
