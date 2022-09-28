@@ -1055,7 +1055,7 @@ duckdb,"DATEADD(month,@months,@date)",(@date + @months*INTERVAL'1 month')
 duckdb,"DATEADD(yy,@years,@date)",(@date + @years*INTERVAL'1 year')
 duckdb,"DATEADD(yyyy,@years,@date)",(@date + @years*INTERVAL'1 year')
 duckdb,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
-duckdb,"DATEDIFF(d,@start, @end)",(CONVERT(DATE, @end) - CAST(@start AS DATE))
+duckdb,"DATEDIFF(d,@start, @end)","(CONVERT(DATE, @end) - CAST(@start AS DATE))"
 duckdb,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 duckdb,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 duckdb,"DATEDIFF(year,@start, @end)",(EXTRACT(YEAR FROM CAST(@end AS DATE)) - EXTRACT(YEAR FROM CAST(@start AS DATE)))
