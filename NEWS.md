@@ -3,7 +3,9 @@ SqlRender 1.10.1
 
 Bugfixes:
 
-1. Fix erroneously identifying parts of quoted text as start of SQL comments.
+1. Fixed erroneously identifying parts of quoted text as start of SQL comments.
+
+2. Fixed translation of INSERT INTO with more than one CTE for Spark.
 
 
 SqlRender 1.10.0
