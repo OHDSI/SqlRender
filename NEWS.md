@@ -1,6 +1,10 @@
 SqlRender 1.10.1
 ================
 
+Changes:
+
+1. Added translation for `SELECT *,` pattern for Oracle.
+
 Bugfixes:
 
 1. Fixed erroneously identifying parts of quoted text as start of SQL comments.

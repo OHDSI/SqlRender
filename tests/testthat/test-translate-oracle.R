@@ -458,3 +458,14 @@ test_that("translate sql server -> oracle DROP TABLE IF EXISTS", {
   sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "BEGIN\n EXECUTE IMMEDIATE 'TRUNCATE TABLE test';\n EXECUTE IMMEDIATE 'DROP TABLE test';\nEXCEPTION\n WHEN OTHERS THEN\n IF SQLCODE != -942 THEN\n RAISE;\n END IF;\nEND;")
 })
+
+test_that("translate sql server -> oracle SELECT *,", {
+  sql <- translate("SELECT *, 1 AS x FROM my_table;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT my_table .*, 1 AS x  FROM my_table ;")
+})
+
+test_that("translate sql server -> oracle SELECT *, FROM", {
+  sql <- translate("SELECT *, 1 AS x FROM my_table WHERE a = b;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT my_table   .*, 1 AS x  FROM my_table    WHERE a = b ;")
+})
+

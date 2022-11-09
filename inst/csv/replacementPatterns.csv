@@ -120,6 +120,8 @@ oracle,"FROM @a AS @b)","FROM @a @b)"
 oracle,"JOIN @a AS @b ON","JOIN @a @b ON"
 oracle,UPDATE STATISTICS @a;,-- ANALYZE should not be used to collect optimizer statistics
 oracle,"CONVERT(VARBINARY, @a, 1)","TO_NUMBER(@a, RPAD('X', LENGTH(@a), 'X'))"
+oracle,"SELECT *, @a FROM @b WHERE","SELECT @b.*, @a FROM @b WHERE"
+oracle,"SELECT *, @a FROM @b;","SELECT @b.*, @a FROM @b;"
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 postgresql,"HASHBYTES('MD5',@a)","MD5(@a)"
 postgresql,"CONVERT(VARBINARY, @a, 1)","CAST(CONCAT('x', @a) AS BIT(32))"
