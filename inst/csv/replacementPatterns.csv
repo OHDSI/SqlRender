@@ -103,10 +103,8 @@ oracle,##,<hash><hash>
 oracle,#,%temp_prefix%%session_id%
 oracle,"CREATE INDEX @a ON @b (@c,@d) WHERE @e;","CREATE INDEX @a ON @b (CASE WHEN @e THEN @c END, CASE WHEN @e THEN @d END);"
 oracle,<hash><hash>,##
-oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a WHERE ROWNUM <= @rows;
-oracle,(SELECT TOP @([0-9]+)rows @a),(SELECT @a WHERE ROWNUM <= @rows)
-oracle,SELECT @a WHERE @b WHERE ROWNUM <= @rows;,SELECT @a WHERE @b AND ROWNUM <= @rows;
-oracle,(SELECT @a WHERE @b WHERE ROWNUM <= @rows),(SELECT @a WHERE @b AND ROWNUM <= @rows)
+oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a FETCH FIRST @rows ROWS ONLY;
+oracle,(SELECT TOP @([0-9]+)rows @a),(SELECT @a FETCH FIRST @rows ROWS ONLY)
 oracle,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE @table (@definition)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
@@ -121,6 +119,9 @@ oracle,"JOIN @a AS @b ON","JOIN @a @b ON"
 oracle,UPDATE STATISTICS @a;,-- ANALYZE should not be used to collect optimizer statistics
 oracle,"CONVERT(VARBINARY, @a, 1)","TO_NUMBER(@a, RPAD('X', LENGTH(@a), 'X'))"
 oracle,"SELECT *, @a FROM @b WHERE","SELECT @b.*, @a FROM @b WHERE"
+oracle,"SELECT *, @a FROM @b ORDER BY","SELECT @b.*, @a FROM @b ORDER BY"
+oracle,"SELECT *, @a FROM @b FETCH FIRST","SELECT @b.*, @a FROM @b FETCH FIRST"
+oracle,"(SELECT *, @a FROM @b)","(SELECT @b.*, @a FROM @b)"
 oracle,"SELECT *, @a FROM @b;","SELECT @b.*, @a FROM @b;"
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 postgresql,"HASHBYTES('MD5',@a)","MD5(@a)"

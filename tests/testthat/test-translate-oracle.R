@@ -250,7 +250,7 @@ test_that("translate ## issue on oracle", {
 
 test_that("translate sql server -> Oracle TOP", {
   sql <- translate("SELECT TOP 10 * FROM my_table WHERE a = b;", targetDialect = "oracle")
-  expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b AND ROWNUM <= 10; ")
+  expect_equal_ignore_spaces(sql, "SELECT  * FROM my_table   WHERE a = b  FETCH FIRST 10 ROWS ONLY;")
 })
 
 test_that("translate sql server -> Oracle TOP subquery", {
@@ -259,7 +259,7 @@ test_that("translate sql server -> Oracle TOP subquery", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "SELECT name FROM (SELECT name FROM my_table WHERE a = b AND ROWNUM <= 1);"
+    "SELECT name FROM (SELECT  name FROM my_table   WHERE a = b  FETCH FIRST 1 ROWS ONLY) ;"
   )
 })
 
@@ -464,8 +464,22 @@ test_that("translate sql server -> oracle SELECT *,", {
   expect_equal_ignore_spaces(sql, "SELECT my_table .*, 1 AS x  FROM my_table ;")
 })
 
+test_that("translate sql server -> oracle SELECT TOP *,", {
+  sql <- translate("SELECT TOP 10 *, 1 AS x FROM my_table;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT my_table  .*, 1 AS x  FROM my_table   FETCH FIRST 10 ROWS ONLY;")
+})
+
 test_that("translate sql server -> oracle SELECT *, FROM", {
   sql <- translate("SELECT *, 1 AS x FROM my_table WHERE a = b;", targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "SELECT my_table   .*, 1 AS x  FROM my_table    WHERE a = b ;")
 })
 
+test_that("translate sql server -> oracle SELECT *, FROM ORDER BY", {
+  sql <- translate("SELECT *, 1 AS x FROM my_table WHERE a = b ORDER BY a;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT my_table   .*, 1 AS x  FROM my_table    WHERE a = b ORDER BY a ;")
+})
+
+test_that("translate sql server -> oracle nested SELECT *, FROM", {
+  sql <- translate("(SELECT *, 1 AS x FROM my_table)", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "(SELECT my_table .*, 1 AS x  FROM my_table )")
+})

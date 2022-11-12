@@ -5,11 +5,13 @@ Changes:
 
 1. Added translation for `SELECT *,` pattern for Oracle.
 
+2. Switched Oracle translation of `SELECT TOP` from `WHERE ROWNUM <=` to `FETCH FIRST ROWS ONLY`.
+
 Bugfixes:
 
 1. Fixed erroneously identifying parts of quoted text as start of SQL comments.
 
-2. Fixed translation of INSERT INTO with more than one CTE for Spark.
+2. Fixed translation of `INSERT INTO` with more than one CTE for Spark.
 
 
 SqlRender 1.10.0
