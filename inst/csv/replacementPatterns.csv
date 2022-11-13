@@ -83,6 +83,9 @@ oracle,GROUP BY @a GROUP BY 1,GROUP BY @a
 oracle,YEAR(@date),EXTRACT(YEAR FROM @date)
 oracle,MONTH(@date),EXTRACT(MONTH FROM @date)
 oracle,DAY(@date),EXTRACT(DAY FROM @date)
+oracle,"DATEPART(YEAR, @date)",EXTRACT(YEAR FROM @date)
+oracle,"DATEPART(MONTH, @date)",EXTRACT(MONTH FROM @date)
+oracle,"DATEPART(DAY, @date)",EXTRACT(DAY FROM @date)
 oracle,USE @schema;,ALTER SESSION SET current_schema = @schema;
 oracle,.dbo.,.
 oracle,CREATE CLUSTERED INDEX,CREATE INDEX
@@ -105,6 +108,8 @@ oracle,"CREATE INDEX @a ON @b (@c,@d) WHERE @e;","CREATE INDEX @a ON @b (CASE WH
 oracle,<hash><hash>,##
 oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a FETCH FIRST @rows ROWS ONLY;
 oracle,(SELECT TOP @([0-9]+)rows @a),(SELECT @a FETCH FIRST @rows ROWS ONLY)
+oracle,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a FETCH FIRST @rows ROWS ONLY;
+oracle,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a FETCH FIRST @rows ROWS ONLY)
 oracle,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE @table (@definition)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
@@ -161,6 +166,9 @@ postgresql,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_
 postgresql,YEAR(@date),EXTRACT(YEAR FROM @date)
 postgresql,MONTH(@date),EXTRACT(MONTH FROM @date)
 postgresql,DAY(@date),EXTRACT(DAY FROM @date)
+postgresql,"DATEPART(YEAR, @date)",EXTRACT(YEAR FROM @date)
+postgresql,"DATEPART(MONTH, @date)",EXTRACT(MONTH FROM @date)
+postgresql,"DATEPART(DAY, @date)",EXTRACT(DAY FROM @date)
 postgresql,EOMONTH(@date),"(DATE_TRUNC('MONTH', @date) + INTERVAL '1 MONTH - 1 day')::DATE"
 postgresql,STDEV(@a),STDDEV(@a)
 postgresql,VAR(@a),VARIANCE(@a)
@@ -285,6 +293,9 @@ redshift,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","CAST(
 redshift,YEAR(@date),EXTRACT(YEAR FROM @date)
 redshift,MONTH(@date),EXTRACT(MONTH FROM @date)
 redshift,DAY(@date),EXTRACT(DAY FROM @date)
+redshift,"DATEPART(YEAR, @date)",EXTRACT(YEAR FROM @date)
+redshift,"DATEPART(MONTH, @date)",EXTRACT(MONTH FROM @date)
+redshift,"DATEPART(DAY, @date)",EXTRACT(DAY FROM @date)
 redshift,EOMONTH(@date),LAST_DAY(@date)
 redshift,VAR(@a),VARIANCE(@a)
 redshift,STDEV(@a),STDDEV(@a)
@@ -469,6 +480,9 @@ impala,DAY(@date),DAY(CAST(@date AS DATE))
 impala,GETDATE(),NOW()
 impala,MONTH(@date),MONTH(CAST(@date AS DATE))
 impala,YEAR(@date),YEAR(CAST(@date AS DATE))
+impala,"DATEPART(YEAR, @date)",YEAR(CAST(@date AS DATE))
+impala,"DATEPART(MONTH, @date)",MONTH(CAST(@date AS DATE))
+impala,"DATEPART(DAY, @date)",DAY(CAST(@date AS DATE))
 impala,CAST(@a AS DATE),"CASE TYPEOF(@a) WHEN 'TIMESTAMP' THEN CAST(@a AS TIMESTAMP) ELSE TO_UTC_TIMESTAMP(CONCAT_WS('-', SUBSTR(CAST(@a AS STRING), 1, 4), SUBSTR(CAST(@a AS STRING), 5, 2), SUBSTR(CAST(@a AS STRING), 7, 2)), 'UTC') END"
 impala,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 impala,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
@@ -566,6 +580,9 @@ netezza,'@a' +,'@a' ||
 netezza,YEAR(@variable),"DATE_PART('YEAR', @variable)"
 netezza,MONTH(@variable),"DATE_PART('MONTH', @variable)"
 netezza,DAY(@variable),"DATE_PART('DAY', @variable)"
+netezza,"DATEPART(YEAR, @date)","DATEPART('YEAR', @date)"
+netezza,"DATEPART(MONTH, @date)","DATEPART('MONTH', @date)"
+netezza,"DATEPART(DAY, @date)","DATEPART('DAY', @date)"
 netezza,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
 netezza,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
 netezza,STDEV(@a),STDDEV(@a)
@@ -662,6 +679,9 @@ bigquery,"cast(@a as date)","IF(SAFE_CAST(@a AS DATE) IS NULL,PARSE_DATE('%Y%m%d
 bigquery,"YEAR(@date)","EXTRACT(YEAR from @date)"
 bigquery,"MONTH(@date)","EXTRACT(MONTH from @date)"
 bigquery,"DAY(@date)","EXTRACT(DAY from @date)"
+bigquery,"DATEPART(YEAR, @date)",EXTRACT(YEAR FROM @date)
+bigquery,"DATEPART(MONTH, @date)",EXTRACT(MONTH FROM @date)
+bigquery,"DATEPART(DAY, @date)",EXTRACT(DAY FROM @date)
 bigquery,"union select","union distinct select"
 bigquery,SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c;,SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2;
 bigquery,(SELECT DISTINCT @a FROM @b INTERSECT SELECT DISTINCT @a FROM @c),(SELECT t1.@a FROM (SELECT DISTINCT @a FROM @b UNION ALL SELECT DISTINCT @a FROM @c) AS t1 GROUP BY @a HAVING COUNT(*) >= 2)
@@ -742,6 +762,9 @@ sqlite,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","STRFTIM
 sqlite,YEAR(@date),"STRFTIME('%Y', @date, 'unixepoch')"
 sqlite,MONTH(@date),"STRFTIME('%m', @date, 'unixepoch')"
 sqlite,DAY(@date),"STRFTIME('%d', @date, 'unixepoch')"
+sqlite,"DATEPART(YEAR, @date)","STRFTIME('%Y', @date, 'unixepoch')"
+sqlite,"DATEPART(MONTH, @date)","STRFTIME('%m', @date, 'unixepoch')"
+sqlite,"DATEPART(DAY, @date)","STRFTIME('%d', @date, 'unixepoch')"
 sqlite,EOMONTH(@date),"STRFTIME('%s', DATETIME(@date, 'unixepoch', 'start of month', '+1 month', '-1 day'))"
 sqlite,VAR(@a),VARIANCE(@a)
 sqlite,RAND(),RANDOM()
@@ -826,6 +849,9 @@ hive,"DATEFROMPARTS(@year,@month,@day)","CAST(CONCAT(CAST(@year AS STRING),'-',C
 hive,"eomonth(@date)","CAST(last_day(@date) AS TIMESTAMP)"
 hive,GETDATE(),unix_timestamp()
 hive,year(unix_timestamp()),year(from_unixtime(unix_timestamp()))
+hive,"DATEPART(YEAR, @date)",year(from_unixtime(unix_timestamp()))
+hive,"DATEPART(MONTH, @date)",month(from_unixtime(unix_timestamp()))
+hive,"DATEPART(DAY, @date)",day(from_unixtime(unix_timestamp()))
 hive,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 hive,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
 hive,"HINT PARTITION(@p) @before CREATE TABLE IF NOT EXISTS @table(@pid,@fields) @after;",partitioned table \n@before CREATE TABLE IF NOT EXISTS @table (@fields) @after \n PARTITIONED BY(@p);
@@ -1081,6 +1107,9 @@ duckdb,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","(CAST(@
 duckdb,YEAR(@date),YEAR(CAST(@date AS DATE))
 duckdb,MONTH(@date),MONTH(CAST(@date AS DATE))
 duckdb,DAY(@date),DAY(CAST(@date AS DATE))
+duckdb,"DATEPART(YEAR, @date)",YEAR(CAST(@date AS DATE))
+duckdb,"DATEPART(MONTH, @date)",MONTH(CAST(@date AS DATE))
+duckdb,"DATEPART(DAY, @date)",DAY(CAST(@date AS DATE))
 duckdb,EOMONTH(@date),"(DATE_TRUNC('MONTH', @date) + INTERVAL '1 MONTH' - INTERVAL '1 day')::DATE"
 duckdb,STDEV(@a),STDDEV(@a)
 duckdb,VAR(@a),VARIANCE(@a)
@@ -1137,6 +1166,9 @@ snowflake,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_D
 snowflake,YEAR(@date),EXTRACT(YEAR FROM @date)
 snowflake,MONTH(@date),EXTRACT(MONTH FROM @date)
 snowflake,DAY(@date),EXTRACT(DAY FROM @date)
+snowflake,"DATEPART(YEAR, @date)",EXTRACT(YEAR FROM @date)
+snowflake,"DATEPART(MONTH, @date)",EXTRACT(MONTH FROM @date)
+snowflake,"DATEPART(DAY, @date)",EXTRACT(DAY FROM @date)
 snowflake,EOMONTH(@date),last_day(@date)
 snowflake,STDEV(@a),STDDEV(@a)
 snowflake,VAR(@a),VARIANCE(@a)

@@ -263,6 +263,12 @@ test_that("translate sql server -> Oracle TOP subquery", {
   )
 })
 
+test_that("translate sql server -> Oracle DISTINCT TOP", {
+  sql <- translate("SELECT DISTINCT TOP 10 a FROM my_table WHERE a = b;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT DISTINCT a FROM my_table   WHERE a = b  FETCH FIRST 10 ROWS ONLY;")
+})
+
+
 test_that("translate sql server -> oracle concat", {
   sql <- translate("SELECT CONCAT(a,\" , \",c,d,e) FROM x;", targetDialect = "oracle")
   expect_equal_ignore_spaces(
