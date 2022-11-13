@@ -7,6 +7,7 @@ Changes:
 
 2. Switched Oracle translation of `SELECT TOP` from `WHERE ROWNUM <=` to `FETCH FIRST ROWS ONLY`.
 
+3. Added translation of `DATEPART()` to all dialects.
 
 Bugfixes:
 
@@ -14,7 +15,8 @@ Bugfixes:
 
 2. Fixed translation of `INSERT INTO` with more than one CTE for Spark.
 
-3. Fixed translation of `SELECT TOP` on Oracle when using `DISTINCT`.
+3. Fixed translation of `SELECT TOP` on all platforms when using `DISTINCT`.
+
 
 SqlRender 1.10.0
 ================

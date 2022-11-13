@@ -123,11 +123,20 @@ oracle,"FROM @a AS @b)","FROM @a @b)"
 oracle,"JOIN @a AS @b ON","JOIN @a @b ON"
 oracle,UPDATE STATISTICS @a;,-- ANALYZE should not be used to collect optimizer statistics
 oracle,"CONVERT(VARBINARY, @a, 1)","TO_NUMBER(@a, RPAD('X', LENGTH(@a), 'X'))"
+oracle,"SELECT *, @a FROM (@c) @b WHERE","SELECT @b.*, @a FROM (@c) @b WHERE"
+oracle,"SELECT *, @a FROM (@c) @b ORDER BY","SELECT @b.*, @a FROM (@c) @b ORDER BY"
+oracle,"SELECT *, @a FROM (@c) @b FETCH FIRST","SELECT @b.*, @a FROM (@c) @b FETCH FIRST"
+oracle,"(SELECT *, @a FROM (@c) @b)","(SELECT @b.*, @a FROM (@c) @b)"
 oracle,"SELECT *, @a FROM @b WHERE","SELECT @b.*, @a FROM @b WHERE"
 oracle,"SELECT *, @a FROM @b ORDER BY","SELECT @b.*, @a FROM @b ORDER BY"
 oracle,"SELECT *, @a FROM @b FETCH FIRST","SELECT @b.*, @a FROM @b FETCH FIRST"
 oracle,"(SELECT *, @a FROM @b)","(SELECT @b.*, @a FROM @b)"
 oracle,"SELECT *, @a FROM @b;","SELECT @b.*, @a FROM @b;"
+oracle,"SELECT @a, * FROM @b WHERE","SELECT @a, @b.* FROM @b WHERE"
+oracle,"SELECT @a, * FROM @b ORDER BY","SELECT @a, @b.* FROM @b ORDER BY"
+oracle,"SELECT @a, * FROM @b FETCH FIRST","SELECT @a, @b.* FROM @b FETCH FIRST"
+oracle,"(SELECT @a, * FROM @b)","(SELECT @a, @b.* FROM @b)"
+oracle,"SELECT @a, * FROM @b;","SELECT @a, @b.* FROM @b;"
 postgresql,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 postgresql,"HASHBYTES('MD5',@a)","MD5(@a)"
 postgresql,"CONVERT(VARBINARY, @a, 1)","CAST(CONCAT('x', @a) AS BIT(32))"
@@ -205,6 +214,8 @@ postgresql,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 postgresql,#,
 postgresql,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 postgresql,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+postgresql,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+postgresql,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 postgresql,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 postgresql,UPDATE STATISTICS @a;,ANALYZE @a;
 redshift,CREATE INDEX @index_name ON @table (@variable);,-- redshift does not support indexes
@@ -501,6 +512,8 @@ impala,<hash><hash>,##
 impala,.location,.`location`
 impala,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 impala,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+impala,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+impala,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 impala,DATE,TIMESTAMP
 impala,DATETIME,TIMESTAMP
 impala,DATETIME2,TIMESTAMP
@@ -606,6 +619,8 @@ netezza,"LEFT(@variable,@b)","SUBSTR(@variable, 1, @b)"
 netezza,"RIGHT(@variable,@b)","SUBSTR(@variable, LENGTH(@variable)-@b+1, @b)"
 netezza,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 netezza,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+netezza,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+netezza,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 netezza,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
 netezza,"CONCAT(@a,@b)","@a || @b"
 netezza,"POWER(@a,@b)","POW(@a,@b)"
@@ -624,6 +639,8 @@ netezza,RAND(),RANDOM()
 bigquery,"CONVERT(VARBINARY, @a, 1)","safe_cast(concat('0x', @a) as int64)"
 bigquery,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 bigquery,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+bigquery,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+bigquery,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 bigquery,"DATEDIFF(d,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(dd,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
 bigquery,"DATEDIFF(day,@start, @end)","DATE_DIFF(cast(@end as date), cast(@start as date), DAY)"
@@ -798,6 +815,8 @@ sqlite,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 sqlite,#,temp.
 sqlite,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 sqlite,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+sqlite,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+sqlite,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 sqlite,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 sqlite,UPDATE STATISTICS @a;,ANALYZE @a;
 sqlite,TRUNCATE TABLE @a;,DELETE FROM @a;
@@ -886,6 +905,8 @@ hive,#.@table),@table)
 hive,<hash><hash>,##
 hive,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 hive,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+hive,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+hive,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 hive,DATE,TIMESTAMP
 hive,DATETIME,TIMESTAMP
 hive,DATETIME2,TIMESTAMP
@@ -1021,6 +1042,8 @@ spark,VARCHAR,STRING
 spark,DOUBLE PRECISION,FLOAT
 spark,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 spark,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+spark,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+spark,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 spark,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as STRING) @s2)"
 spark,UPDATE STATISTICS @a;,
 spark,"SELECT @columns FROM (@a) @x,(@b) @y;","SELECT @columns FROM (@a) @x cross join (@b) @y;"
@@ -1064,6 +1087,8 @@ sqlite extended,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 sqlite extended,#,temp.
 sqlite extended,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 sqlite extended,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+sqlite,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+sqlite,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 sqlite extended,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 sqlite extended,UPDATE STATISTICS @a;,ANALYZE @a;
 sqlite extended,TRUNCATE TABLE @a;,DELETE FROM @a;
@@ -1146,6 +1171,8 @@ duckdb,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 duckdb,#,
 duckdb,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 duckdb,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+duckdb,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+duckdb,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 duckdb,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 duckdb,UPDATE STATISTICS @a;,ANALYZE @a;
 duckdb,TRUNCATE TABLE @a;,DELETE FROM @a;
@@ -1206,6 +1233,8 @@ snowflake,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 snowflake,SELECT @a INTO #@b;,CREATE TEMP TABLE #@b AS\nSELECT\n@a;
 snowflake,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 snowflake,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
+snowflake,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
+snowflake,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 snowflake,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 snowflake,UPDATE STATISTICS @a;,
 snowflake,"--HINT BUCKET(@a, @b)",
