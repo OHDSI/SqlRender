@@ -9,6 +9,8 @@ Changes:
 
 3. Added translation of `DATEPART()` to all dialects.
 
+4. Added translation patterns to avoid alias conflicts when using dbplyr on BigQuery.
+
 Bugfixes:
 
 1. Fixed erroneously identifying parts of quoted text as start of SQL comments.

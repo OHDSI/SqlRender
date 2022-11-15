@@ -505,3 +505,11 @@ test_that("translate sql server -> bigquery NEWID()", {
   sql <- translate("SELECT *, NEWID() FROM my_table;", targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "select *, GENERATE_UUID() from my_table;")
 })
+
+test_that("translate sql server -> bigquery DBPLYR alias collision", {
+  sql <- translate("SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY RAND()) AS q01
+  FROM cdmv5.dbo.person) q01 WHERE (q01 <= 10)", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "select * from (select *, row_number() over (order by rand()) AS val_q01\n  from cdmv5.dbo.person) q01 where (val_q01 <= 10)")
+})
+
+
