@@ -1,4 +1,4 @@
-SqlRender 1.10.1
+SqlRender 1.11.0
 ================
 
 Changes:
