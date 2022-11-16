@@ -470,6 +470,11 @@ test_that("translate sql server -> oracle SELECT *,", {
   expect_equal_ignore_spaces(sql, "SELECT my_table .*, 1 AS x  FROM my_table ;")
 })
 
+test_that("translate sql server -> oracle SELECT *,", {
+  sql <- translate("SELECT *, 1 AS x FROM (SELECT a FROM b) q01;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT q01 .*, 1 AS x  FROM (SELECT a FROM b ) q01;")
+})
+
 test_that("translate sql server -> oracle SELECT TOP *,", {
   sql <- translate("SELECT TOP 10 *, 1 AS x FROM my_table;", targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "SELECT my_table  .*, 1 AS x  FROM my_table   FETCH FIRST 10 ROWS ONLY;")
