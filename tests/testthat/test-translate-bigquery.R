@@ -512,4 +512,8 @@ test_that("translate sql server -> bigquery DBPLYR alias collision", {
   expect_equal_ignore_spaces(sql, "select * from (select *, row_number() over (order by rand()) AS val_q01\n  from cdmv5.dbo.person) q01 where (val_q01 <= 10)")
 })
 
+test_that("translate sql server -> bigquery IIF", {
+  sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "select CASE WHEN a>b THEN 1 ELSE b END as max_val from table ;")
+})
 

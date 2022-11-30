@@ -423,3 +423,7 @@ test_that("translate sql server -> spark double CTE INSERT INTO", {
   )
 })
 
+test_that("translate sql server -> spark IIF", {
+  sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN a>b THEN 1 ELSE b END AS max_val FROM table ;")
+})

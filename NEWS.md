@@ -11,6 +11,8 @@ Changes:
 
 4. Added translation patterns to avoid alias conflicts when using dbplyr on BigQuery.
 
+5. Adding translation of SQL Server's `IIF()` shorthand for all dialects.
+
 Bugfixes:
 
 1. Fixed erroneously identifying parts of quoted text as start of SQL comments.

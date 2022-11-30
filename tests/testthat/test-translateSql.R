@@ -3258,3 +3258,13 @@ FROM cte_all;"
   sql <- translate(sql, targetDialect = "postgresql")
   expect_equal_ignore_spaces(sql, "WITH cte_all\n AS (SELECT * FROM my_table\n\tUNION ALL\n\tSELECT \t CAST('(/*12 hours fasting)' as TEXT) AS check_description\n\t)\nINSERT INTO cdm.main\nSELECT *\nFROM cte_all;")
 })
+
+test_that("translate sql server -> postgresql IIF", {
+  sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN a>b THEN 1 ELSE b END AS max_val FROM table ;")
+})
+
+test_that("translate sql server -> redshift IIF", {
+  sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN a>b THEN 1 ELSE b END AS max_val FROM table ;")
+})

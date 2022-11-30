@@ -494,3 +494,8 @@ test_that("translate sql server -> oracle nested SELECT *, FROM", {
   sql <- translate("(SELECT *, 1 AS x FROM my_table)", targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "(SELECT my_table .*, 1 AS x  FROM my_table )")
 })
+
+test_that("translate sql server -> oracle IIF", {
+  sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN a>b THEN 1 ELSE b END AS max_val FROM table ;")
+})
