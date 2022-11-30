@@ -40,7 +40,6 @@ public class SqlTranslate {
 	private static ReentrantLock lock = new ReentrantLock();
 	private static Random random = new Random();
 	private static String globalSessionId = null;
-	private static String SOURCE_DIALECT = "sql server";
 	private static String BIG_QUERY = "bigquery";
 	private static String IMPALA = "impala";
 	private static String SPARK = "spark";
@@ -501,17 +500,8 @@ public class SqlTranslate {
 
 		List<String[]> replacementPatterns = targetToReplacementPatterns.get(targetDialect);
 		if (replacementPatterns == null) {
-			if (SOURCE_DIALECT.equals(targetDialect))
-				return sql;
-			else {
-				Set<String> allowedDialects = new HashSet<String>();
-				allowedDialects.add(SOURCE_DIALECT);
-				for (String sourceTarget : targetToReplacementPatterns.keySet())
-					if (sourceTarget.split("\t")[0].equals(SOURCE_DIALECT))
-						allowedDialects.add(sourceTarget.split("\t")[1]);
-				throw new RuntimeException("Don't know how to translate from " + SOURCE_DIALECT + " to " + targetDialect
-						+ ". Valid target dialects are " + StringUtils.join(allowedDialects, ", "));
-			}
+			throw new RuntimeException("Don't know how to translate to " + targetDialect
+					+ ". Valid target dialects are " + StringUtils.join(targetToReplacementPatterns.keySet(), ", "));
 		} else if (targetDialect.equalsIgnoreCase(BIG_QUERY)) {
 			sql = BigQuerySparkTranslate.translatebigQuery(sql);
 		} else if (targetDialect.equalsIgnoreCase(SPARK)) {

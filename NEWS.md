@@ -13,6 +13,8 @@ Changes:
 
 5. Adding translation of SQL Server's `IIF()` shorthand for all dialects.
 
+6. As a temporary workaround for older SQL Server instances, translating `DROP TABLE IF EXISTS` and `CREATE TABLE IF NOT EXISTS` to old syntax.
+
 Bugfixes:
 
 1. Fixed erroneously identifying parts of quoted text as start of SQL comments.

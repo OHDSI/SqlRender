@@ -1258,3 +1258,6 @@ synapse,CREATE INDEX @index_name ON #@table (@variable);,-- synapse does not sup
 synapse,"CONSTRAINT @a DEFAULT GETDATE()",""
 synapse,"DEFAULT GETDATE()",""
 synapse,CREATE INDEX @index_name ON @table (@variable) WHERE @b;,CREATE INDEX @index_name ON @table (@variable);
+sql server,DROP TABLE IF EXISTS #@table;,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;"
+sql server,DROP TABLE IF EXISTS @table;,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;"
+sql server,CREATE TABLE IF NOT EXISTS @table (@definition);,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);"
