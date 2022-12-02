@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
       </span>
     </div>
 
@@ -64,14 +64,27 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.10.0" id="sqlrender-1100">SqlRender 1.10.0<a class="anchor" aria-label="anchor" href="#sqlrender-1100"></a></h2>
+<h2 class="page-header" data-toc-text="1.11.0" id="sqlrender-1110">SqlRender 1.11.0<a class="anchor" aria-label="anchor" href="#sqlrender-1110"></a></h2>
+<p>Changes:</p>
+<ol style="list-style-type: decimal"><li><p>Added translation for <code>SELECT *,</code> pattern for Oracle.</p></li>
+<li><p>Switched Oracle translation of <code>SELECT TOP</code> from <code>WHERE ROWNUM &lt;=</code> to <code>FETCH FIRST ROWS ONLY</code>.</p></li>
+<li><p>Added translation of <code>DATEPART()</code> to all dialects.</p></li>
+<li><p>Added translation patterns to avoid alias conflicts when using <code>dbplyr</code> on BigQuery.</p></li>
+<li><p>Adding translation of SQL Server’s <code>IIF()</code> shorthand for all dialects.</p></li>
+<li><p>As a temporary workaround for older SQL Server instances, translating <code>DROP TABLE IF EXISTS</code> and <code>CREATE TABLE IF NOT EXISTS</code> to old syntax.</p></li>
+</ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>Fixed erroneously identifying parts of quoted text as start of SQL comments.</p></li>
+<li><p>Fixed translation of <code>INSERT INTO</code> with more than one CTE for Spark.</p></li>
+<li><p>Fixed translation of <code>SELECT TOP</code> on all platforms when using <code>DISTINCT</code>.</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.10.0" id="sqlrender-1100">SqlRender 1.10.0<small>2022-09-20</small><a class="anchor" aria-label="anchor" href="#sqlrender-1100"></a></h2>
 <p>Changes:</p>
 <ol style="list-style-type: decimal"><li><p>Added translation to Snowflake.</p></li>
 <li><p>Added translation to Synapse.</p></li>
 <li><p>Added translation to DuckDb.</p></li>
-</ol><p>Bigfixes:</p>
-<ol style="list-style-type: decimal"><li>Fixed translation for NEWID() on BigQuery.</li>
-</ol></div>
+</ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li>Fixed translation for <code>NEWID()</code> on BigQuery.</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.9.2" id="sqlrender-192">SqlRender 1.9.2<small>2022-07-11</small><a class="anchor" aria-label="anchor" href="#sqlrender-192"></a></h2>
 <p>Bugfixes:</p>
@@ -82,8 +95,7 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.9.1" id="sqlrender-191">SqlRender 1.9.1<small>2022-06-29</small><a class="anchor" aria-label="anchor" href="#sqlrender-191"></a></h2>
 <p>Changes:</p>
-<ol style="list-style-type: decimal"><li>Adding input checks to all functions for more informative error messages.</li>
-</ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li>Adding input checks to all functions for more informative error messages.</li></ol><p>Bugfixes:</p>
 <ol style="list-style-type: decimal"><li><p>Fixed translation of <code>CREATE TABLE</code> statements specifying a field can be NULL on BigQuery.</p></li>
 <li><p>Fixes translation of <code>CAST('20000101' AS DATE)</code> on Oracle.</p></li>
 </ol></div>
@@ -104,15 +116,12 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.8.2" id="sqlrender-182">SqlRender 1.8.2<a class="anchor" aria-label="anchor" href="#sqlrender-182"></a></h2>
 <p>Changes:</p>
-<ol style="list-style-type: decimal"><li>Adding <code><a href="../reference/listSupportedDialects.html">listSupportedDialects()</a></code> function.</li>
-</ol><p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Fix <code>DATEFROMPARTS</code> and <code>DATETIMEFROMPARTS</code> translation for newer SQLite versions by first converting to <code>INT</code> before converting to <code>TEXT</code>.</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Adding <code><a href="../reference/listSupportedDialects.html">listSupportedDialects()</a></code> function.</li></ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li>Fix <code>DATEFROMPARTS</code> and <code>DATETIMEFROMPARTS</code> translation for newer SQLite versions by first converting to <code>INT</code> before converting to <code>TEXT</code>.</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.8.1" id="sqlrender-181">SqlRender 1.8.1<small>2021-09-15</small><a class="anchor" aria-label="anchor" href="#sqlrender-181"></a></h2>
 <p>Changes:</p>
-<ol style="list-style-type: decimal"><li>Provide informative error message when Java is outdated.</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Provide informative error message when Java is outdated.</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.8.0" id="sqlrender-180">SqlRender 1.8.0<small>2021-09-02</small><a class="anchor" aria-label="anchor" href="#sqlrender-180"></a></h2>
 <p>Changes:</p>
@@ -137,15 +146,13 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.8" id="sqlrender-168">SqlRender 1.6.8<small>2020-07-31</small><a class="anchor" aria-label="anchor" href="#sqlrender-168"></a></h2>
 <p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Fixing error when SQL is not a native character vector (e.g. when it has been created using glue).</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Fixing error when SQL is not a native character vector (e.g. when it has been created using glue).</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.7" id="sqlrender-167">SqlRender 1.6.7<a class="anchor" aria-label="anchor" href="#sqlrender-167"></a></h2>
 <p>Changes:</p>
-<ol style="list-style-type: decimal"><li>Throw a more informative error message when <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> cannot find the SQL file in the specified package.</li>
-</ol><p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li><p>On SQLite, DATEADD and CONVERT functions now cast to REAL (used to represent DATE / DATETIME).</p></li>
-<li><p>On SQLite, DATEADD function now works when amount to add is not a verbatim number.</p></li>
+<ol style="list-style-type: decimal"><li>Throw a more informative error message when <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> cannot find the SQL file in the specified package.</li></ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>On SQLite, <code>DATEADD</code> and <code>CONVERT</code> functions now cast to <code>REAL</code> (used to represent DATE / DATETIME).</p></li>
+<li><p>On SQLite, <code>DATEADD</code> function now works when amount to add is not a verbatim number.</p></li>
 </ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.6" id="sqlrender-166">SqlRender 1.6.6<small>2020-05-19</small><a class="anchor" aria-label="anchor" href="#sqlrender-166"></a></h2>
@@ -156,8 +163,7 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.5" id="sqlrender-165">SqlRender 1.6.5<small>2020-04-01</small><a class="anchor" aria-label="anchor" href="#sqlrender-165"></a></h2>
 <p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Fixed CAST(<a href="https://github.com/a" class="external-link">@a</a> as DATE) for YYYYMMDD string dates on BigQuery.</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Fixed <code>CAST(<a href="https://github.com/a" class="external-link">@a</a> as DATE)</code> for ‘YYYYMMDD’ string dates on BigQuery.</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.4" id="sqlrender-164">SqlRender 1.6.4<small>2020-03-17</small><a class="anchor" aria-label="anchor" href="#sqlrender-164"></a></h2>
 <p>Changes:</p>
@@ -170,35 +176,31 @@
 <ol style="list-style-type: decimal"><li><p>Added rules for SQLite for LEFT and RIGHT functions.</p></li>
 <li><p>SQLite now dropping schema name when creating and dropping index (as this throws an error if left).</p></li>
 <li><p>No longer automatically casting literal to TEXT in RedShift CTE. Users are required to do explicit casts instead.</p></li>
-<li><p>BigQuery insertTable now also uses CTAS hack.</p></li>
-<li><p>Added translation rules for HASHBYTES.</p></li>
+<li><p>BigQuery <code>insertTable()</code> now also uses CTAS hack.</p></li>
+<li><p>Added translation rules for <code>HASHBYTES</code>.</p></li>
 </ol><p>Bugfixes:</p>
 <ol style="list-style-type: decimal"><li><p>Fixing GETDATE translation for SQLite.</p></li>
-<li><p>When calling ‘render’, the replacement value can now contain a $ sign. (Previously this caused an error).</p></li>
+<li><p>When calling <code>render</code>, the replacement value can now contain a $ sign. (Previously this caused an error).</p></li>
 <li><p>isNumeric can now also be applied to numeric fields in Postgres.</p></li>
 <li><p>Better handling of illegal characters in Impala.</p></li>
 </ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.2" id="sqlrender-162">SqlRender 1.6.2<small>2019-06-24</small><a class="anchor" aria-label="anchor" href="#sqlrender-162"></a></h2>
 <p>Changes:</p>
-<ol style="list-style-type: decimal"><li>Added rules for Oracle for conditional indices.</li>
-</ol><p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Fixing erroneous variable name translation for BigQuery.</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Added rules for Oracle for conditional indices.</li></ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li>Fixing erroneous variable name translation for BigQuery.</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.1" id="sqlrender-161">SqlRender 1.6.1<a class="anchor" aria-label="anchor" href="#sqlrender-161"></a></h2>
 <p>Changes:</p>
-<ol style="list-style-type: decimal"><li>Added rules for Impala for INTEGER NOT NULL and DOUBLE PRECISION.</li>
-</ol><p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Fixed isNumeric check for Netezza</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Added rules for Impala for INTEGER NOT NULL and DOUBLE PRECISION.</li></ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li>Fixed isNumeric check for Netezza</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.6.0" id="sqlrender-160">SqlRender 1.6.0<small>2019-02-15</small><a class="anchor" aria-label="anchor" href="#sqlrender-160"></a></h2>
 <p>Changes:</p>
 <ol style="list-style-type: decimal"><li><p>Major overhaul of BigQuery translation.</p></li>
 <li><p>Added support for SQLite.</p></li>
-<li><p>ISNUMERIC translation implemented for Impala, Netezza, and BigQuery.</p></li>
-<li><p>Performance improvement for Impala temp tables (CREATE TABLE … STORED AS PARQUET).</p></li>
+<li><p><code>ISNUMERIC</code> translation implemented for Impala, Netezza, and BigQuery.</p></li>
+<li><p>Performance improvement for Impala temp tables (<code>CREATE TABLE ... STORED AS PARQUET</code>).</p></li>
 <li><p>Adding functions <code>render</code> and <code>translate</code> that output strings instead of lists. Deprecating <code>renderSql</code> and <code>translateSql</code>.</p></li>
 <li><p>Added function <code>translateSingleStatement</code>.</p></li>
 </ol><p>Bugfixes:</p>
@@ -208,18 +210,15 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.5.3" id="sqlrender-153">SqlRender 1.5.3<small>2018-11-23</small><a class="anchor" aria-label="anchor" href="#sqlrender-153"></a></h2>
 <p>Changes:</p>
-<ol style="list-style-type: decimal"><li>Added translation rules for DATETIME2.</li>
-</ol><p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Fixed misspelling of DISTRIBUTE in Netezza translation rules.</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Added translation rules for DATETIME2.</li></ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li>Fixed misspelling of DISTRIBUTE in Netezza translation rules.</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.5.2" id="sqlrender-152">SqlRender 1.5.2<small>2018-08-17</small><a class="anchor" aria-label="anchor" href="#sqlrender-152"></a></h2>
 <p>Changes:</p>
 <ol style="list-style-type: decimal"><li>Translation for indexes for RedShift and Impala.</li>
 <li>Translation for UPDATE STATISTICS.</li>
 </ol><p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Fixed translation of AS when used for table names in Oracle.</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Fixed translation of AS when used for table names in Oracle.</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.5.0" id="sqlrender-150">SqlRender 1.5.0<small>2018-05-28</small><a class="anchor" aria-label="anchor" href="#sqlrender-150"></a></h2>
 <p>Changes:</p>
@@ -228,8 +227,7 @@
 <li><p>Improved MPP index translation for PDW and Netezza.</p></li>
 <li><p>Warnings about missing parameters when rendering SQL can now be turned off.</p></li>
 </ol><p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Translation of camelCase to snake_case now adds underscore before numbers.</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Translation of camelCase to snake_case now adds underscore before numbers.</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.4.8" id="sqlrender-148">SqlRender 1.4.8<small>2018-02-26</small><a class="anchor" aria-label="anchor" href="#sqlrender-148"></a></h2>
 <p>Changes:</p>
@@ -252,13 +250,11 @@
 <li><p>Added many more rules for Amazon RedShift, including support for optimization hints.</p></li>
 <li><p>Added rules for DELETE FROM translation for Impala.</p></li>
 </ol><p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Fixed issue when splitting SQL containing hints.</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Fixed issue when splitting SQL containing hints.</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.3.7" id="sqlrender-137">SqlRender 1.3.7<small>2017-05-03</small><a class="anchor" aria-label="anchor" href="#sqlrender-137"></a></h2>
 <p>Changes:</p>
-<ol style="list-style-type: decimal"><li>Added translation rules for ISNUMERIC and LOG(<a href="https://github.com/expression" class="external-link">@expression</a>, <a href="https://github.com/base" class="external-link">@base</a>)</li>
-</ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li>Added translation rules for ISNUMERIC and LOG(<a href="https://github.com/expression" class="external-link">@expression</a>, <a href="https://github.com/base" class="external-link">@base</a>)</li></ol><p>Bugfixes:</p>
 <ol style="list-style-type: decimal"><li><p>Fixed bug when trying to split SQL where reserved word ‘end’ is used as a field name.</p></li>
 <li><p>Fixes for Impala translations.</p></li>
 <li><p>Fixed translation issues for Oracle involving ‘FROM DUAL’.</p></li>
@@ -269,10 +265,10 @@
 <h2 class="page-header" data-toc-text="1.3.0" id="sqlrender-130">SqlRender 1.3.0<small>2017-03-24</small><a class="anchor" aria-label="anchor" href="#sqlrender-130"></a></h2>
 <p>Changes:</p>
 <ol style="list-style-type: decimal"><li><p>Added ability to use regular expression in translation patterns. This allowed SELECT TOP n to be translated.</p></li>
-<li><p>Deprecated sourceDialect argument.</p></li>
-<li><p>Added translation for CONCAT function with &gt;2 arguments to Oracle (which only allows 2 arguments)</p></li>
+<li><p>Deprecated <code>sourceDialect</code> argument.</p></li>
+<li><p>Added translation for <code>CONCAT</code> function with &gt;2 arguments to Oracle (which only allows 2 arguments)</p></li>
 <li><p>Added hints for translation optimization to massive parallel platforms like RedShift</p></li>
-<li><p>Throw warnings when translateSql is called with variable names that are not in the SQL</p></li>
+<li><p>Throw warnings when <code><a href="../reference/translateSql.html">translateSql()</a></code> is called with variable names that are not in the SQL</p></li>
 <li><p>Throw warnings when table names are too long for Oracle</p></li>
 </ol><p>Bugfixes:</p>
 <ol style="list-style-type: decimal"><li>Fixed translation for date functions so they will now work properly with datetime fields as well.</li>
@@ -281,10 +277,8 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.2.0" id="sqlrender-120">SqlRender 1.2.0<small>2017-01-16</small><a class="anchor" aria-label="anchor" href="#sqlrender-120"></a></h2>
 <p>Changes:</p>
-<ol style="list-style-type: decimal"><li>Added support for Impala</li>
-</ol><p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Fixed translation for DATEFROMPARTS for RedShift</li>
-</ol></div>
+<ol style="list-style-type: decimal"><li>Added support for Impala</li></ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li>Fixed translation for DATEFROMPARTS for RedShift</li></ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.1.7" id="sqlrender-117">SqlRender 1.1.7<small>2016-08-16</small><a class="anchor" aria-label="anchor" href="#sqlrender-117"></a></h2>
 <p>Changes: initial submission to CRAN</p>
@@ -303,7 +297,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>
