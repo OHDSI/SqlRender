@@ -202,7 +202,7 @@ test_that("translate sql server -> DuckDB DATEDIFF month date fields", {
   expect_equal_ignore_spaces(
     sql,
     "SELECT (extract(year from age(CAST(date2 AS DATE), CAST(date1 AS DATE)))*12 + extract(month from age(CAST(date2 AS DATE), CAST(date1 AS DATE))));"
-    )
+  )
 })
 
 test_that("translate sql server -> DuckDB CEILING", {
