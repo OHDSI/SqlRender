@@ -1,15 +1,15 @@
 Package: SqlRender
 Type: Package
 Title: Rendering Parameterized SQL and Translation to Dialects
-Version: 1.10.1
-Date: 2022-09-27
+Version: 1.11.0
+Date: 2022-12-02
 Authors@R: c(
   person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
   person("Marc", "Suchard", role = c("aut"))
   )
 Maintainer: Martijn Schuemie <schuemie@ohdsi.org>
 Description: A rendering tool for parameterized SQL that also translates into
-  different SQL dialects.  These dialects include 'Microsoft Sql Server', 'Oracle', 
+  different SQL dialects.  These dialects include 'Microsoft SQL Server', 'Oracle', 
   'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', 'Snowflake', 
   'Azure Synapse Analytics Dedicated', 'Apache Spark', and 'SQLite'.
 SystemRequirements: Java version 8 or higher (https://www.java.com/)
@@ -28,5 +28,5 @@ Suggests:
   stringr,
   shiny,
   shinydashboard
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.2
 Encoding: UTF-8

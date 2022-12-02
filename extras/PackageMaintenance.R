@@ -1,5 +1,3 @@
-# @file PackageMaintenance
-#
 # Copyright 2022 Observational Health Data Sciences and Informatics
 #
 # This file is part of SqlRender
@@ -16,13 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Format and check codeP
+# Format and check code --------------------------------------------------------
 styler::style_pkg()
 OhdsiRTools::checkUsagePackage("SqlRender")
 OhdsiRTools::updateCopyrightYearFolder()
 devtools::spell_check()
 
-# Create manual and vignettes:
+# Create manual and vignettes --------------------------------------------------
 unlink("extras/SqlRender.pdf")
 shell("R CMD Rd2pdf ./ --output=extras/SqlRender.pdf")
 
@@ -37,12 +35,11 @@ unlink("inst/doc/UsingSqlRender.tex")
 pkgdown::build_site()
 OhdsiRTools::fixHadesLogo()
 
-# Store JAR checksum --------------------------------------------------------------
+# Store JAR checksum -----------------------------------------------------------
 checksum <- rJava::J("org.ohdsi.sql.JarChecksum", "computeJarChecksum")
 write(checksum, file.path("inst", "csv", "jarChecksum.txt"))
 
-
-# Release package:
+# Release package --------------------------------------------------------------
 devtools::check_win_devel()
 
 devtools::check_rhub()
