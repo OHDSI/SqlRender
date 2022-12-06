@@ -830,6 +830,9 @@ sqlite,TRUNCATE TABLE @a;,DELETE FROM @a;
 sqlite,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
 sqlite,"CONCAT(@a, @b)","@a || @b"
 sqlite,CEILING(@a),CEIL(@a)
+sqlite,(@a) UNION,@a UNION
+sqlite,UNION (@a),UNION @a
+sqlite,UNION ALL (@a),UNION ALL @a
 hive,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 hive,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- hive does not support indexes
 hive,CREATE INDEX @index_name ON @table (@variable);,-- hive does not support indexes

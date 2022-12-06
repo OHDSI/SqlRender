@@ -219,3 +219,13 @@ test_that("translate sql server -> sqlite IIF", {
   sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT CASE WHEN a>b THEN 1 ELSE b END AS max_val FROM table ;")
 })
+
+test_that("translate sql server -> sqlite UNION ALL parentheses", {
+  sql <- translate("SELECT * FROM ((SELECT * FROM a) UNION ALL (SELECT * FROM b));", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "SELECT * FROM (SELECT * FROM a UNION ALL SELECT * FROM b);")
+})
+
+test_that("translate sql server -> sqlite UNION parentheses", {
+  sql <- translate("SELECT * FROM ((SELECT * FROM a) UNION (SELECT * FROM b));", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "SELECT * FROM (SELECT * FROM a UNION SELECT * FROM b);")
+})

@@ -1,3 +1,10 @@
+SqlRender 1.11.1
+================
+
+Changes:
+
+1. Removing parentheses around subqueries for `UNION` and `UNION ALL` on SQLite, which otherwise would cause an error.
+
 SqlRender 1.11.0
 ================
 
