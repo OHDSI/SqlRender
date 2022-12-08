@@ -314,7 +314,7 @@ test_that("translate sql server -> bigquery intersect distinct", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "SELECT t1.a FROM (SELECT DISTINCT a FROM t UNION ALL SELECT DISTINCT a FROM s) AS t1 GROUP BY a HAVING COUNT(*) >= 2;"
+    "select distinct a from t INTERSECT DISTINCT select distinct a from s;"
   )
 })
 
@@ -324,7 +324,7 @@ test_that("translate sql server -> bigquery bracketed intersect distinct", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "(SELECT t1.a FROM (SELECT DISTINCT a FROM t UNION ALL SELECT DISTINCT a FROM s) AS t1 GROUP BY a HAVING COUNT(*) >= 2)"
+    "(select distinct a from t INTERSECT DISTINCT select distinct a from s)"
   )
 })
 
@@ -516,3 +516,4 @@ test_that("translate sql server -> bigquery IIF", {
   sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "select CASE WHEN a>b THEN 1 ELSE b END as max_val from table ;")
 })
+

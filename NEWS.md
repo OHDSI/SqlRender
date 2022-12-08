@@ -5,6 +5,10 @@ Changes:
 
 1. Removing parentheses around subqueries for `UNION` and `UNION ALL` on SQLite, which otherwise would cause an error.
 
+Bugfixes:
+
+1. Fixing tranlation of `INTERSECT` on BigQuery.
+
 SqlRender 1.11.0
 ================
 
