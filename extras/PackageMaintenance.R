@@ -40,6 +40,11 @@ checksum <- rJava::J("org.ohdsi.sql.JarChecksum", "computeJarChecksum")
 write(checksum, file.path("inst", "csv", "jarChecksum.txt"))
 
 # Release package --------------------------------------------------------------
+# Check if DESCRIPTION verison matches POM version:
+descriptionVersion <- stringr::str_extract(readLines("DESCRIPTION")[grepl("^Version:", readLines("DESCRIPTION"))], "(?<=Version: ).*$")
+pomVersion <- stringr::str_extract(readLines("pom.xml")[grepl("SNAPSHOT</version>", readLines("pom.xml"))], "(?<=<version>).*(?=-SNAPSHOT</version>)")
+if (descriptionVersion != pomVersion) stop("DESCRIPTION version does not match POM version")
+
 devtools::check_win_devel()
 
 devtools::check_rhub()
