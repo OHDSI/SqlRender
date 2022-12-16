@@ -10,5 +10,17 @@ test_that("translate: warning on table name that is too long", {
 
 
 test_that("translate sql server throws error when invalid target is given", {
-  expect_error(translate("iSELECT * FROM a;", targetDialect = "pwd"))
+  expect_error(translate("SELECT * FROM a;", targetDialect = "pwd"))
+})
+
+test_that("don't translate twice", {
+  clearWarningBlock()
+  sql <- "SELECT * INTO #temp FROM my_table;"
+  sql <- translate(sql, targetDialect = "oracle")
+  expect_warning(
+    sql <- translate(sql, targetDialect = "postgresql"),
+    "Input SQL has already been translated"
+  )
+  
+  expect_equal(attr(sql, "sqlDialect"), "oracle")
 })

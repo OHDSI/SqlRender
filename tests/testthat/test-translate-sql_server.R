@@ -8,7 +8,7 @@ expect_equal_ignore_spaces <- function(string1, string2) {
   string2 <- gsub("([;()'+-/|*\n])", " \\1 ", string2)
   string1 <- gsub(" +", " ", string1)
   string2 <- gsub(" +", " ", string2)
-  expect_equal(string1, string2)
+  expect_equivalent(string1, string2)
 }
 
 test_that("translate  -> sql server DROP TABLE IF EXISTS temp", {

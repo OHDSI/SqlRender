@@ -155,6 +155,13 @@ translate <- function(sql,
   checkmate::assertCharacter(tempEmulationSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
+  
+  if (!is.null(attr(sql, "sqlDialect"))) {
+    warn("Input SQL has already been translated, so not translating again",
+         .frequency = "regularly",
+         .frequency_id = "alreadyTranslated")
+    return(sql)
+  }
 
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
@@ -178,6 +185,7 @@ translate <- function(sql,
     warn(message)
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(as.character(sql), as.character(targetDialect), rJava::.jnull(), tempEmulationSchema, as.character(pathToReplacementPatterns))
+  attr(translatedSql, "sqlDialect") <-targetDialect
   return(translatedSql)
 }
 
@@ -240,6 +248,13 @@ translateSingleStatement <- function(sql = "",
   checkmate::assertCharacter(tempEmulationSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
+  
+  if (!is.null(attr(sql, "sqlDialect"))) {
+    warn("Input SQL has already been translated, so not translating again",
+         .frequency = "regularly",
+         .frequency_id = "alreadyTranslated")
+    return(sql)
+  }
 
   if (!supportsJava8()) {
     warning("Java 8 or higher is required, but older version was found. ")
@@ -263,6 +278,7 @@ translateSingleStatement <- function(sql = "",
     warn(message)
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSingleStatementSqlWithPath(as.character(sql), as.character(targetDialect), rJava::.jnull(), tempEmulationSchema, as.character(pathToReplacementPatterns))
+  attr(translatedSql, "sqlDialect") <-targetDialect
   return(translatedSql)
 }
 

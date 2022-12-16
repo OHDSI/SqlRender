@@ -34,7 +34,7 @@ test_that("translateSqlFile", {
   sql2 <- readSql(fileName2)
   file.remove(fileName1)
   file.remove(fileName2)
-  expect_equal(
+  expect_equivalent(
     sql2,
     "SELECT (observation_period_start_date + 1*INTERVAL'1 day') FROM observation_period"
   )
@@ -84,15 +84,15 @@ test_that("camelCaseToTitleCase ", {
 test_that("loadRenderTranslateSql ", {
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "sql server")
   sql <- gsub("[\r\n]", "", sql)
-  expect_equal(sql, "SELECT a FROM #my_table WHERE my_id = 123;")
+  expect_equivalent(sql, "SELECT a FROM #my_table WHERE my_id = 123;")
 
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "postgresql")
   sql <- gsub("[\r\n]", "", sql)
-  expect_equal(sql, "SELECT a FROM my_table WHERE my_id = 123;")
+  expect_equivalent(sql, "SELECT a FROM my_table WHERE my_id = 123;")
 
   sql <- loadRenderTranslateSql("test.sql", "SqlRender", "oracle")
   sql <- gsub("[\r\n]", "", sql)
-  expect_equal(sql, "SELECT a FROM my_table WHERE my_id = 123;")
+  expect_equivalent(sql, "SELECT a FROM my_table WHERE my_id = 123;")
 })
 
 test_that("Warning using loadRenderTranslateSql with oracleTempSchema", {
