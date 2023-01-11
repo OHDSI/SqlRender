@@ -229,3 +229,8 @@ test_that("translate sql server -> sqlite UNION parentheses", {
   sql <- translate("SELECT * FROM ((SELECT * FROM a) UNION (SELECT * FROM b));", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT * FROM (SELECT * FROM a UNION SELECT * FROM b);")
 })
+
+test_that("translate sql server -> sqlite UNION parentheses with IN", {
+  sql <- translate("SELECT * FROM x WHERE y IN (SELECT * FROM a) UNION SELECT * FROM z;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "SELECT * FROM x WHERE y IN ((SELECT * FROM a)) UNION SELECT * FROM z;")
+})
