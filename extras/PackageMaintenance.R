@@ -1,4 +1,4 @@
-# Copyright 2022 Observational Health Data Sciences and Informatics
+# Copyright 2023 Observational Health Data Sciences and Informatics
 #
 # This file is part of SqlRender
 # 
@@ -30,7 +30,6 @@ rmarkdown::render("vignettes/UsingSqlRender.Rmd",
                   rmarkdown::pdf_document(latex_engine = "pdflatex",
                                           toc = TRUE,
                                           number_sections = TRUE))
-unlink("inst/doc/UsingSqlRender.tex")
 
 pkgdown::build_site()
 OhdsiRTools::fixHadesLogo()

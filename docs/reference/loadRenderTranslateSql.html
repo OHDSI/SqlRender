@@ -18,7 +18,7 @@ to the specified dialect"><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.1</span>
       </span>
     </div>
 
@@ -71,42 +71,57 @@ to the specified dialect</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">loadRenderTranslateSql</span><span class="op">(</span>
-  <span class="va">sqlFilename</span>,
-  <span class="va">packageName</span>,
-  dbms <span class="op">=</span> <span class="st">"sql server"</span>,
-  <span class="va">...</span>,
-  tempEmulationSchema <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sqlRenderTempEmulationSchema"</span><span class="op">)</span>,
-  oracleTempSchema <span class="op">=</span> <span class="cn">NULL</span>,
-  warnOnMissingParameters <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">loadRenderTranslateSql</span><span class="op">(</span></span>
+<span>  <span class="va">sqlFilename</span>,</span>
+<span>  <span class="va">packageName</span>,</span>
+<span>  dbms <span class="op">=</span> <span class="st">"sql server"</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  tempEmulationSchema <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sqlRenderTempEmulationSchema"</span><span class="op">)</span>,</span>
+<span>  oracleTempSchema <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  warnOnMissingParameters <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>sqlFilename</dt>
 <dd><p>The source SQL file</p></dd>
+
+
 <dt>packageName</dt>
 <dd><p>The name of the package that contains the SQL file</p></dd>
+
+
 <dt>dbms</dt>
 <dd><p>The target dialect. Currently 'sql server', 'oracle', 'postgres',
 and 'redshift' are supported</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Parameter values used for <code>render</code></p></dd>
+
+
 <dt>tempEmulationSchema</dt>
 <dd><p>Some database platforms like Oracle and Impala do not truly support
 temp tables. To emulate temp tables, provide a schema with write
 privileges where temp tables can be created.</p></dd>
+
+
 <dt>oracleTempSchema</dt>
 <dd><p>DEPRECATED: use <code>tempEmulationSchema</code> instead.</p></dd>
+
+
 <dt>warnOnMissingParameters</dt>
 <dd><p>Should a warning be raised when parameters provided to this
 function do not appear in the parameterized SQL that is being
 rendered? By default, this is TRUE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Returns a string containing the rendered SQL.</p>
+    
+
+<p>Returns a string containing the rendered SQL.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -119,13 +134,13 @@ parameters.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">renderedSql</span> <span class="op">&lt;-</span> <span class="fu">loadRenderTranslateSql</span><span class="op">(</span><span class="st">"CohortMethod.sql"</span>,</span>
-<span class="r-in">  packageName <span class="op">=</span> <span class="st">"CohortMethod"</span>,</span>
-<span class="r-in">  dbms <span class="op">=</span> <span class="va">connectionDetails</span><span class="op">$</span><span class="va">dbms</span>,</span>
-<span class="r-in">  CDM_schema <span class="op">=</span> <span class="st">"cdmSchema"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">renderedSql</span> <span class="op">&lt;-</span> <span class="fu">loadRenderTranslateSql</span><span class="op">(</span><span class="st">"CohortMethod.sql"</span>,</span></span>
+<span class="r-in"><span>  packageName <span class="op">=</span> <span class="st">"CohortMethod"</span>,</span></span>
+<span class="r-in"><span>  dbms <span class="op">=</span> <span class="va">connectionDetails</span><span class="op">$</span><span class="va">dbms</span>,</span></span>
+<span class="r-in"><span>  CDM_schema <span class="op">=</span> <span class="st">"cdmSchema"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -140,7 +155,7 @@ parameters.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

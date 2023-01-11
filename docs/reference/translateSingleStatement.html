@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.1</span>
       </span>
     </div>
 
@@ -69,31 +69,40 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">translateSingleStatement</span><span class="op">(</span>
-  sql <span class="op">=</span> <span class="st">""</span>,
-  <span class="va">targetDialect</span>,
-  tempEmulationSchema <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sqlRenderTempEmulationSchema"</span><span class="op">)</span>,
-  oracleTempSchema <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">translateSingleStatement</span><span class="op">(</span></span>
+<span>  sql <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  <span class="va">targetDialect</span>,</span>
+<span>  tempEmulationSchema <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"sqlRenderTempEmulationSchema"</span><span class="op">)</span>,</span>
+<span>  oracleTempSchema <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>sql</dt>
 <dd><p>The SQL to be translated</p></dd>
+
+
 <dt>targetDialect</dt>
 <dd><p>The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
 "sqlite", "sqlite extended", "netezza", "bigquery", "snowflake", "synapse", "spark", and "redshift" are supported.</p></dd>
+
+
 <dt>tempEmulationSchema</dt>
 <dd><p>Some database platforms like Oracle and Impala do not truly support
 temp tables. To emulate temp tables, provide a schema with write
 privileges where temp tables can be created.</p></dd>
+
+
 <dt>oracleTempSchema</dt>
 <dd><p>DEPRECATED: use <code>tempEmulationSchema</code> instead.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A character vector with the translated SQL.</p>
+    
+
+<p>A character vector with the translated SQL.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -105,8 +114,10 @@ the SQL.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">translateSingleStatement</span><span class="op">(</span><span class="st">"USE my_schema;"</span>, targetDialect <span class="op">=</span> <span class="st">"oracle"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">translateSingleStatement</span><span class="op">(</span><span class="st">"USE my_schema;"</span>, targetDialect <span class="op">=</span> <span class="st">"oracle"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ALTER SESSION SET current_schema = my_schema"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"sqlDialect")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "oracle"</span>
 </code></pre></div>
     </div>
   </div>
@@ -121,7 +132,7 @@ the SQL.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
