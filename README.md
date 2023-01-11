@@ -2,7 +2,7 @@ SqlRender
 =========
 
 [![Build Status](https://github.com/OHDSI/SqlRender/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/SqlRender/actions?query=workflow%3AR-CMD-check)
-[![codecov.io](https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=main)](https://codecov.io/github/OHDSI/SqlRender?branch=main)
+[![codecov.io](https://codecov.io/github/OHDSI/SqlRender/coverage.svg?branch=main)](https://app.codecov.io/github/OHDSI/SqlRender)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SqlRender)](https://cran.r-project.org/package=SqlRender)
 [![CRAN_Status_Badge](http://cranlogs.r-pkg.org/badges/SqlRender)](https://cran.r-project.org/package=SqlRender)
 
