@@ -1,3 +1,11 @@
+SqlRender 1.11.2
+================
+
+Changes:
+
+1. Adding translation of `TRY_CAST()`.
+
+
 SqlRender 1.11.1
 ================
 
