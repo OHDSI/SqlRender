@@ -183,9 +183,9 @@ translateSqlFile <- function(sourceFile,
 #' @details
 #' This function looks for a SQL file with the specified name in the inst/sql/<dbms> folder of the
 #' specified package. If it doesn't find it in that folder, it will try and load the file from the
-#' inst/sql/sql_server folder and use the \code{translate} function to translate it to the requested
-#' dialect. It will subsequently call the \code{render} function with any of the additional specified
-#' parameters.
+#' inst/sql or inst/sql/sql_server folder and use the \code{translate} function to translate it to the 
+#' requested dialect. It will subsequently call the \code{render} function with any of the additional 
+#' specified parameters.
 #'
 #'
 #' @param sqlFilename               The source SQL file
@@ -236,24 +236,19 @@ loadRenderTranslateSql <- function(sqlFilename,
     )
     tempEmulationSchema <- oracleTempSchema
   }
-  pathToSql <- system.file(paste("sql/", gsub(" ", "_", dbms), sep = ""),
-    sqlFilename,
-    package = packageName
-  )
-  mustTranslate <- !file.exists(pathToSql)
+  pathToSql <- system.file("sql", gsub(" ", "_", dbms), sqlFilename, package = packageName)
+  mustTranslate <- pathToSql == ""
   if (mustTranslate) {
     # If DBMS-specific code does not exists, load SQL Server code and translate after rendering
-    pathToSql <- system.file(paste("sql/", "sql_server", sep = ""),
-      sqlFilename,
-      package = packageName
-    )
-    if (!file.exists(pathToSql)) {
-      abort(paste0(
-        "Cannot find '",
+    pathToSql <- system.file("sql", "sql_server", sqlFilename, package = packageName)
+    if (pathToSql == "") {
+      pathToSql <- system.file("sql", sqlFilename, package = packageName)
+    }
+    if (pathToSql == "") {
+      abort(sprintf(
+        "Cannot find '%s' in the 'sql' or 'sql/sql_server' folder of the '%s' package.",
         sqlFilename,
-        "' in the 'sql/sql_server' folder of the '",
-        packageName,
-        "' package."
+        packageName
       ))
     }
   }

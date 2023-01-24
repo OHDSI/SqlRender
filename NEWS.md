@@ -1,9 +1,11 @@
-SqlRender 1.11.2
+SqlRender 1.12.0
 ================
 
 Changes:
 
 1. Adding translation of `TRY_CAST()`.
+
+2. The `loadRenderTranslateSql()` function now also looks in the `sql` folder of the package, so SQL files no longer have to be in the `sql/sql_server` subfolder.
 
 
 SqlRender 1.11.1

@@ -95,6 +95,12 @@ test_that("loadRenderTranslateSql ", {
   expect_equivalent(sql, "SELECT a FROM my_table WHERE my_id = 123;")
 })
 
+test_that("loadRenderTranslateSql from sql folder", {
+  sql <- loadRenderTranslateSql(sqlFilename = "test2.sql", packageName = "SqlRender", dbms = "postgresql")
+  sql <- gsub("[\r\n]", "", sql)
+  expect_equivalent(sql, "SELECT a FROM my_table WHERE my_id = 123;")
+})
+
 test_that("Warning using loadRenderTranslateSql with oracleTempSchema", {
   clearWarningBlock()
   expect_warning(loadRenderTranslateSql(sqlFilename = "test.sql", packageName = "SqlRender", dbms = "oracle", oracleTempSchema = "scratch"))
