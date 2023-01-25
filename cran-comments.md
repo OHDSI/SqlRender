@@ -1,4 +1,4 @@
-There are 2 changes and 1 bugfix (see NEWS.md)
+There are 4 changes (see NEWS.md)
 
 ---
 

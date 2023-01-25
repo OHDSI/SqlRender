@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0</span>
       </span>
     </div>
 
@@ -64,7 +64,15 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.11.1" id="sqlrender-1111">SqlRender 1.11.1<a class="anchor" aria-label="anchor" href="#sqlrender-1111"></a></h2>
+<h2 class="page-header" data-toc-text="1.12.0" id="sqlrender-1120">SqlRender 1.12.0<a class="anchor" aria-label="anchor" href="#sqlrender-1120"></a></h2>
+<p>Changes:</p>
+<ol style="list-style-type: decimal"><li><p>Adding translation of <code>TRY_CAST()</code>.</p></li>
+<li><p>The <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> function now also looks in the <code>sql</code> folder of the package, so SQL files no longer have to be in the <code>sql/sql_server</code> subfolder.</p></li>
+<li><p>Ensuring result of <code>YEAR()</code>, <code>MONTH()</code>, <code>DAY()</code>, and <code>DATEPART()</code> equivalents return integers on SQLite.</p></li>
+<li><p>Ensuring interval is integer on BigQuery.</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.11.1" id="sqlrender-1111">SqlRender 1.11.1<small>2023-01-11</small><a class="anchor" aria-label="anchor" href="#sqlrender-1111"></a></h2>
 <p>Changes:</p>
 <ol style="list-style-type: decimal"><li><p>Removing parentheses around subqueries for <code>UNION</code> and <code>UNION ALL</code> on SQLite, which otherwise would cause an error.</p></li>
 <li><p>Preventing translating SQL twice by adding attribute to output string.</p></li>
