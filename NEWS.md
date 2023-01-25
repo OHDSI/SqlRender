@@ -7,6 +7,10 @@ Changes:
 
 2. The `loadRenderTranslateSql()` function now also looks in the `sql` folder of the package, so SQL files no longer have to be in the `sql/sql_server` subfolder.
 
+3. Ensuring result of `YEAR()`, `MONTH()`, `DAY()`, and `DATEPART()` equivalents return integers on SQLite.
+
+4. Ensuring interval is integer on BigQuery.
+
 
 SqlRender 1.11.1
 ================

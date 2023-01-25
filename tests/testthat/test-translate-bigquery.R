@@ -201,7 +201,17 @@ test_that("translate sql server -> bigquery DATEADD", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "select DATE_ADD(IF(SAFE_CAST(drug_era_end_date AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(drug_era_end_date AS STRING)),SAFE_CAST(drug_era_end_date AS DATE)), interval 30 DAY) from drug_era;"
+    "select DATE_ADD(IF(SAFE_CAST(drug_era_end_date AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(drug_era_end_date AS STRING)),SAFE_CAST(drug_era_end_date AS DATE)), INTERVAL 30 DAY) from drug_era;"
+  )
+})
+
+test_that("translate sql server -> bigquery DATEADD non-integer", {
+  sql <- translate("SELECT DATEADD(dd,30.0,drug_era_end_date) FROM drug_era;",
+                   targetDialect = "bigquery"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "select DATE_ADD(IF(SAFE_CAST(drug_era_end_date AS DATE) IS NULL,PARSE_DATE('%Y%m%d',cast(drug_era_end_date AS STRING)),SAFE_CAST(drug_era_end_date AS DATE)), INTERVAL 30 DAY) from drug_era;"
   )
 })
 
