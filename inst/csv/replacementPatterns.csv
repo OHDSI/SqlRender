@@ -1203,7 +1203,6 @@ duckdb,UPDATE STATISTICS @a;,ANALYZE @a;
 duckdb,TRUNCATE TABLE @a;,DELETE FROM @a;
 snowflake,TRY_CAST(@a),CAST(@a)
 snowflake,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
-snowflake,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 snowflake,"HASHBYTES('MD5',@a)","MD5(@a)"
 snowflake,"CONVERT(VARBINARY, @a, 1)","CAST(CONCAT('x', @a) AS BIT(32))"
 snowflake,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
