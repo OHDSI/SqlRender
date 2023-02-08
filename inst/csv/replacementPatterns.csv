@@ -1227,10 +1227,10 @@ snowflake,EOMONTH(@date),last_day(@date)
 snowflake,STDEV(@a),STDDEV(@a)
 snowflake,VAR(@a),VARIANCE(@a)
 snowflake,RAND(),RANDOM()
-snowflake,"LOG(@expression,@base)","<L_O_G>(CAST((@base) AS NUMERIC),CAST((@expression) AS NUMERIC))"
+snowflake,"LOG(@expression,@base)","<L_O_G>(@base,@expression)"
 snowflake,LOG(@expression),LN(CAST((@expression) AS REAL))
 snowflake,<L_O_G>,LOG
-snowflake,LOG10(@expression),"LOG(10,TRY_CAST((@expression) AS NUMERIC))"
+snowflake,LOG10(@expression),"LOG(10,@expression)"
 snowflake,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 snowflake,"ISNUMERIC(@a)","IS_REAL(TRY_TO_NUMERIC(@a))"
 snowflake,CAST(@a AS INTEGER),TRY_CAST(CAST(@a AS TEXT) AS INTEGER)
