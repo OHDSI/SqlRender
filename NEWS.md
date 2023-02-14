@@ -1,3 +1,13 @@
+SqlRender 1.12.1
+================
+
+Bugfixes:
+
+1. Fixed translation of `WITH ... INSERT` on Snowflake.
+
+2. Fixed translation of some functions on Snowflake casting to `NUMERIC` instead of `FLOAT`.
+
+
 SqlRender 1.12.0
 ================
 
