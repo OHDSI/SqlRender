@@ -1203,7 +1203,6 @@ duckdb,UPDATE STATISTICS @a;,ANALYZE @a;
 duckdb,TRUNCATE TABLE @a;,DELETE FROM @a;
 snowflake,TRY_CAST(@a),CAST(@a)
 snowflake,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
-snowflake,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 snowflake,"HASHBYTES('MD5',@a)","MD5(@a)"
 snowflake,"CONVERT(VARBINARY, @a, 1)","CAST(CONCAT('x', @a) AS BIT(32))"
 snowflake,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
@@ -1227,10 +1226,10 @@ snowflake,EOMONTH(@date),last_day(@date)
 snowflake,STDEV(@a),STDDEV(@a)
 snowflake,VAR(@a),VARIANCE(@a)
 snowflake,RAND(),RANDOM()
-snowflake,"LOG(@expression,@base)","<L_O_G>(CAST((@base) AS NUMERIC),CAST((@expression) AS NUMERIC))"
+snowflake,"LOG(@expression,@base)","<L_O_G>(@base,@expression)"
 snowflake,LOG(@expression),LN(CAST((@expression) AS REAL))
 snowflake,<L_O_G>,LOG
-snowflake,LOG10(@expression),"LOG(10,TRY_CAST((@expression) AS NUMERIC))"
+snowflake,LOG10(@expression),"LOG(10,@expression)"
 snowflake,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 snowflake,"ISNUMERIC(@a)","IS_REAL(TRY_TO_NUMERIC(@a))"
 snowflake,CAST(@a AS INTEGER),TRY_CAST(CAST(@a AS TEXT) AS INTEGER)
@@ -1251,7 +1250,6 @@ snowflake,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 snowflake,DATETIME,TIMESTAMP
 snowflake,DATETIME2,TIMESTAMP
 snowflake,VARCHAR(MAX),TEXT
-snowflake,FLOAT,NUMERIC
 snowflake,WITH @a AS @b SELECT @c INTO #@d FROM @e;,CREATE TEMP TABLE #@d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 snowflake,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
 snowflake,WITH @a INSERT INTO @b SELECT @c;,INSERT INTO @b WITH @a SELECT @c;
