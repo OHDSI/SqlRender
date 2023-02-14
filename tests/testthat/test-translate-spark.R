@@ -382,7 +382,7 @@ test_that("translate sql server -> spark INSERT INTO SELECT", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "WITH insertion_temp AS (\n(SELECT c FROM cte1) UNION ALL (SELECT b int FROM a ))\nINSERT OVERWRITE TABLE a (b) SELECT * FROM insertion_temp;"
+    "WITH insertion_temp AS (\n(SELECT c FROM cte1) UNION ALL (SELECT b int FROM a ))\nINSERT OVERWRITE TABLE a (b int) SELECT * FROM insertion_temp;"
   )
 })
 
