@@ -55,6 +55,12 @@ test_that("translate sql server -> Snowflake USE", {
   expect_equal_ignore_spaces(sql, "USE vocabulary;")
 })
 
+test_that("translate sql server -> Snowflake INSERT INTO WITH ", {
+  sql <- translate("WITH a AS (SELECT * FROM b) INSERT INTO c SELECT * FROM a;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "INSERT INTO c WITH a AS (SELECT * FROM b) SELECT * FROM a;")
+})
+
+
 test_that("translate sql server -> Snowflake WITH SELECT INTO", {
   sql <- translate("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
     targetDialect = "snowflake"
