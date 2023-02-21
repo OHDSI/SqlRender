@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.1</span>
       </span>
     </div>
 
@@ -64,7 +64,13 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.12.0" id="sqlrender-1120">SqlRender 1.12.0<a class="anchor" aria-label="anchor" href="#sqlrender-1120"></a></h2>
+<h2 class="page-header" data-toc-text="1.12.1" id="sqlrender-1121">SqlRender 1.12.1<a class="anchor" aria-label="anchor" href="#sqlrender-1121"></a></h2>
+<p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>Fixed translation of <code>WITH ... INSERT</code> on Snowflake.</p></li>
+<li><p>Fixed translation of some functions on Snowflake casting to <code>NUMERIC</code> instead of <code>FLOAT</code>.</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.12.0" id="sqlrender-1120">SqlRender 1.12.0<small>2023-01-26</small><a class="anchor" aria-label="anchor" href="#sqlrender-1120"></a></h2>
 <p>Changes:</p>
 <ol style="list-style-type: decimal"><li><p>Adding translation of <code>TRY_CAST()</code>.</p></li>
 <li><p>The <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> function now also looks in the <code>sql</code> folder of the package, so SQL files no longer have to be in the <code>sql/sql_server</code> subfolder.</p></li>
