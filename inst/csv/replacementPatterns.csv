@@ -750,6 +750,7 @@ bigquery,UPDATE STATISTICS @a;,-- big query does not support such functionality
 bigquery,NEWID(),GENERATE_UUID()
 bigquery,"AS @(q[0-9]+)a","AS val_@a"
 bigquery,"(@(q[0-9]+)a","(val_@a"
+bigquery,"CHARINDEX(@a,@b)","STRPOS(@b,@a)"
 sqlite,TRY_CAST(@a),CAST(@a)
 sqlite,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 sqlite,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
