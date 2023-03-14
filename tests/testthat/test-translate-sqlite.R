@@ -72,7 +72,7 @@ test_that("translate sql server -> SQLite select random row", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY RANDOM()) AS rn FROM table) tmp WHERE rn <= 1"
+    "SELECT column FROM (SELECT column, ROW_NUMBER() OVER (ORDER BY ((RANDOM()+9223372036854775808) / 18446744073709551615)) AS rn FROM table) tmp WHERE rn <= 1"
   )
 })
 

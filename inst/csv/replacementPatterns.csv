@@ -799,7 +799,7 @@ sqlite,"DATEPART(MONTH, @date)","CAST(STRFTIME('%m', @date, 'unixepoch') AS INT)
 sqlite,"DATEPART(DAY, @date)","CAST(STRFTIME('%d', @date, 'unixepoch') AS INT)"
 sqlite,EOMONTH(@date),"STRFTIME('%s', DATETIME(@date, 'unixepoch', 'start of month', '+1 month', '-1 day'))"
 sqlite,VAR(@a),VARIANCE(@a)
-sqlite,RAND(),RANDOM()
+sqlite,RAND(),((RANDOM()+9223372036854775808) / 18446744073709551615)
 sqlite,LEN(@a),LENGTH(@a)
 sqlite,"LOG(@expression,@base)","(LOG(@expression)/LOG(@base))"
 sqlite,"ISNULL(@a,@b)","COALESCE(@a,@b)"
