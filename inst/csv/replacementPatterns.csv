@@ -669,7 +669,7 @@ bigquery,"DATEADD(month,@months,@date)","DATE_ADD(cast(@date as date), INTERVAL 
 bigquery,"DATEADD(yy,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
 bigquery,"DATEADD(yyyy,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
 bigquery,"DATEADD(year,@years,@date)","DATE_ADD(@date, INTERVAL @years YEAR)"
-bigquery,INTERVAL @([0-9]+)a.0,INTERVAL @a
+bigquery,INTERVAL @(-?[0-9]+)a.0,INTERVAL @a
 bigquery,@(([a-z]+\(.*\))|([a-z0-9_]+))a + '@b',"CONCAT(@a, '@b')"
 bigquery,'@a' + @(([a-z]+\(.*\))|([a-z0-9_]+))b,"CONCAT('@a', @b)"
 bigquery,CAST(@a AS VARCHAR(@b)) + @(([a-z]+\(.*\))|([a-z0-9_]+))c,"CONCAT(CAST(@a AS VARCHAR(@b)),@c)"
@@ -1122,18 +1122,19 @@ duckdb,TRY_CAST(@a),CAST(@a)
 duckdb,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 duckdb,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
 duckdb,"HASHBYTES('MD5',@a)","MD5(@a)"
-duckdb,"DATEADD(second,@seconds,@datetime)",(@datetime + @seconds*INTERVAL'1 second')
-duckdb,"DATEADD(minute,@minutes,@datetime)",(@datetime + @minutes*INTERVAL'1 minute')
-duckdb,"DATEADD(hour,@hours,@datetime)",(@datetime + @hours*INTERVAL'1 hour')
-duckdb,"DATEADD(d,@days,@date)",(@date + @days*INTERVAL'1 day')
-duckdb,"DATEADD(dd,@days,@date)",(@date + @days*INTERVAL'1 day')
-duckdb,"DATEADD(day,@days,@date)",(@date + @days*INTERVAL'1 day')
-duckdb,"DATEADD(m,@months,@date)",(@date + @months*INTERVAL'1 month')
-duckdb,"DATEADD(mm,@months,@date)",(@date + @months*INTERVAL'1 month')
-duckdb,"DATEADD(month,@months,@date)",(@date + @months*INTERVAL'1 month')
-duckdb,"DATEADD(yy,@years,@date)",(@date + @years*INTERVAL'1 year')
-duckdb,"DATEADD(yyyy,@years,@date)",(@date + @years*INTERVAL'1 year')
-duckdb,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
+duckdb,"DATEADD(second,@seconds,@datetime)",(@datetime + INTERVAL'@seconds second')
+duckdb,"DATEADD(minute,@minutes,@datetime)",(@datetime + INTERVAL'@minutes minute')
+duckdb,"DATEADD(hour,@hours,@datetime)",(@datetime + INTERVAL'@hours hour')
+duckdb,"DATEADD(d,@days,@date)",(@date + INTERVAL'@days day')
+duckdb,"DATEADD(dd,@days,@date)",(@date + INTERVAL'@days day')
+duckdb,"DATEADD(day,@days,@date)",(@date + INTERVAL'@days day')
+duckdb,"DATEADD(m,@months,@date)",(@date + INTERVAL'@months month')
+duckdb,"DATEADD(mm,@months,@date)",(@date + INTERVAL'@months month')
+duckdb,"DATEADD(month,@months,@date)",(@date + INTERVAL'@months month')
+duckdb,"DATEADD(yy,@years,@date)",(@date + INTERVAL'@years year')
+duckdb,"DATEADD(yyyy,@years,@date)",(@date + INTERVAL'@years year')
+duckdb,"DATEADD(year,@years,@date)",(@date + INTERVAL'@years year')
+duckdb,INTERVAL'@(-?[0-9]+)a.0 @b',INTERVAL'@a @b'
 duckdb,"DATEDIFF(d,@start, @end)","(CONVERT(DATE, @end) - CAST(@start AS DATE))"
 duckdb,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 duckdb,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))

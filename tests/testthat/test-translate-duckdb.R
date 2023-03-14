@@ -26,11 +26,11 @@ test_that("translate sql server -> DuckDB string concat", {
   expect_equal_ignore_spaces(sql, "a || ';('")
 })
 
-test_that("translate sql server -> DuckDB add month", {
-  sql <- translate("DATEADD(mm,1,date)", targetDialect = "duckdb")
+test_that("translate sql server -> DuckDB add months", {
+  sql <- translate("DATEADD(mm,2,date)", targetDialect = "duckdb")
   expect_equal_ignore_spaces(
     sql,
-    "(date + 1*INTERVAL'1 month')"
+    "(date + INTERVAL'2 month')"
   )
 })
 
@@ -218,4 +218,12 @@ test_that("translate sql server -> DuckDB DROP TABLE IF EXISTS", {
 test_that("translate sql server -> duckdb IIF", {
   sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "duckdb")
   expect_equal_ignore_spaces(sql, "SELECT CASE WHEN a>b THEN 1 ELSE b END AS max_val FROM table ;")
+})
+
+test_that("translate sql server -> DuckDB add days with period", {
+  sql <- translate("DATEADD(DAY, -2.0, date)", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(
+    sql,
+    "(date + INTERVAL'-2 day')"
+  )
 })

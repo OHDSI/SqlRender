@@ -1,3 +1,10 @@
+SqlRender 1.12.2
+================
+
+Bugfixes:
+
+1. Fixing DuckDB translation of `DATEADD()`.
+
 SqlRender 1.12.1
 ================
 
