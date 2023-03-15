@@ -644,6 +644,8 @@ netezza,"ISNUMERIC(@a)","CASE WHEN translate(@a,'0123456789','') in ('','.','-',
 netezza,"HASHBYTES('MD5',@a)","hash(@a)"
 netezza,"CONVERT(VARBINARY, @a, 1)","hex_to_binary(@a)"
 netezza,RAND(),RANDOM()
+netezza,DROP TABLE IF EXISTS #@table;,DROP TABLE @table IF EXISTS;
+netezza,DROP TABLE IF EXISTS @table;,DROP TABLE @table IF EXISTS;
 bigquery,TRY_CAST(@a),CAST(@a)
 bigquery,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 bigquery,"CONVERT(VARBINARY, @a, 1)","safe_cast(concat('0x', @a) as int64)"

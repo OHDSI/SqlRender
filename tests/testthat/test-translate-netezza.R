@@ -246,3 +246,13 @@ test_that("translate sql server -> Netezza analyze table", {
   sql <- translate("UPDATE STATISTICS results_schema.heracles_results;", targetDialect = "netezza")
   expect_equal_ignore_spaces(sql, "GENERATE STATISTICS ON results_schema.heracles_results;")
 })
+
+test_that("translate sql server -> Netezza DROP TABLE IF EXISTS", {
+  sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "netezza")
+  expect_equal_ignore_spaces(sql, "DROP TABLE test IF EXISTS;")
+})
+
+test_that("translate  -> sql server DROP TABLE IF EXISTS temp", {
+  sql <- translate("DROP TABLE IF EXISTS #my_temp;", targetDialect = "netezza")
+  expect_equal_ignore_spaces(sql, "DROP TABLE my_temp IF EXISTS;")
+})
