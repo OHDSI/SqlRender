@@ -1,3 +1,11 @@
+SqlRender 1.13.1
+================
+
+Bugfixes:
+
+1. Fixing translation of `DROP TABLE IF EXISTS` on Netezza.
+
+
 SqlRender 1.13.0
 ================
 
