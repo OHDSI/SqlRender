@@ -3,6 +3,13 @@ SqlRender 1.13.1
 
 Bugfixes:
 
+1. Fixing translation of `CAST(AS DATE)` on Oracle and Netezza when thing to cast is not a literal string.
+
+SqlRender 1.13.1
+================
+
+Bugfixes:
+
 1. Fixing translation of `DROP TABLE IF EXISTS` on Netezza.
 
 

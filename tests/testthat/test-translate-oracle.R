@@ -83,6 +83,11 @@ test_that("translate sql server -> Oracle CAST(AS DATE)", {
   expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'YYYYMMDD');")
 })
 
+test_that("translate sql server -> Oracle CAST(AS DATE) when not a character string", {
+  sql <- translate("CAST(some_date_time AS DATE);", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "CAST(some_date_time AS DATE);")
+})
+
 test_that("translate sql server -> Oracle CONVERT(AS DATE)", {
   sql <- translate("CONVERT(DATE, '20000101');", targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'YYYYMMDD');")

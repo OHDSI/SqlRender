@@ -1,7 +1,10 @@
 To,Pattern,Replacement
 oracle,TRY_CAST(@a),CAST(@a)
 oracle,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
-oracle,"CAST(@a AS DATE)","TO_DATE(@a, 'YYYYMMDD')"
+oracle,"CAST('@a' AS DATE)","TO_DATE('@a', 'YYYYMMDD')"
+oracle,"CAST('@a' + @b AS DATE)","TO_DATE('@a' + @b, 'YYYYMMDD')"
+oracle,"CAST(@a + '@b' AS DATE)","TO_DATE(@a + '@b', 'YYYYMMDD')"
+oracle,"CAST(CONCAT(@a) AS DATE)","TO_DATE(CONCAT(@a), 'YYYYMMDD')"
 oracle,"INSERT INTO @table (@columns) VALUES (@values1),(@values2)",<start_of_insert> INSERT INTO @table (@columns) VALUES (INTO @table <par_open>@columns<par_close> VALUES <par_open>@values1<par_close>\n INTO @table <par_open>@columns<par_close> VALUES <par_open>@values2<par_close>\n)
 oracle,INTO @table <par_open>@columns<par_close> VALUES <par_open>INTO @table <par_open>@columns<par_close> VALUES,INTO @table <par_open>@columns<par_close> VALUES
 oracle,<start_of_insert> @a INSERT INTO @table (@columns) VALUES (@b),INSERT ALL\n@bSELECT * FROM dual
@@ -573,7 +576,10 @@ netezza,SELECT @a INTO @b FROM @c;,CREATE TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;
 netezza,SELECT @a INTO #@b;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a;
 netezza,SELECT @a INTO @b;,CREATE TABLE @b\nAS\nSELECT @a;
 netezza,"ROUND(@a,@b)","ROUND(CAST(@a AS NUMERIC),@b)"
-netezza,CAST(@a AS DATE),"TO_DATE(@a, 'yyyymmdd')"
+netezza,"CAST('@a' AS DATE)","TO_DATE('@a', 'yyyymmdd')"
+netezza,"CAST('@a' + @b AS DATE)","TO_DATE('@a' + @b, 'yyyymmdd')"
+netezza,"CAST(@a + '@b' AS DATE)","TO_DATE(@a + '@b', 'yyyymmdd')"
+netezza,"CAST(CONCAT(@a) AS DATE)","TO_DATE(CONCAT(@a), 'yyyymmdd')"
 netezza,CAST(@a AS INT),CAST(@a AS INTEGER)
 netezza,CAST(@a AS VARCHAR),CAST(@a AS VARCHAR(1000))
 netezza,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
