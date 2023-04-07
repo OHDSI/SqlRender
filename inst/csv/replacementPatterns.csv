@@ -1020,6 +1020,7 @@ spark,"ROUND(@a,@b)","ROUND(CAST(@a AS float),@b)"
 spark,"HASHBYTES('MD5',@a)","MD5(@a)"
 spark,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","CAST(CONCAT('x', @a) AS BIT(32))"
 spark,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyy-MM-dd')"
+spark,"DATEPART(@part, @date)","DATE_PART('@part', @date)"
 spark,"DATEADD(second,@seconds,@datetime)",(@datetime + INTERVAL @seconds second)
 spark,"DATEADD(minute,@minutes,@datetime)",(@datetime + INTERVAL @minutes minute)
 spark,"DATEADD(hour,@hours,@datetime)",(@datetime + INTERVAL @hours hour)
@@ -1032,6 +1033,8 @@ spark,"DATEADD(month,@months,@date)",(@date + INTERVAL @months month)
 spark,"DATEADD(yy,@years,@date)",(@date + INTERVAL @years year)
 spark,"DATEADD(yyyy,@years,@date)",(@date + INTERVAL @years year)
 spark,"DATEADD(year,@years,@date)",(@date + INTERVAL @years year)
+spark,"date_add(@date, @(-?[0-9]+)a.0)","date_add(@date, @a)"
+spark,INTERVAL @(-?[0-9]+)a.0,INTERVAL @a
 spark,"DATEDIFF(d,@start, @end)","datediff(@end,@start)"
 spark,"DATEDIFF(dd,@start, @end)","datediff(@end,@start)"
 spark,"DATEDIFF(day,@start, @end)","datediff(@end,@start)"

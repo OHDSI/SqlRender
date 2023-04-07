@@ -1,5 +1,9 @@
-SqlRender 1.13.1
+SqlRender 1.13.2
 ================
+
+Changes:
+
+1. Adding translation of `DATEPART()` for Spark.
 
 Bugfixes:
 
