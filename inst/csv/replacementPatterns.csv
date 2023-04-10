@@ -1230,6 +1230,7 @@ snowflake,EOMONTH(@date),last_day(@date)
 snowflake,STDEV(@a),STDDEV(@a)
 snowflake,VAR(@a),VARIANCE(@a)
 snowflake,RAND(),RANDOM()
+snowflake,CEILING(@a),CEIL(@a)
 snowflake,"LOG(@expression,@base)","<L_O_G>(@base,@expression)"
 snowflake,LOG(@expression),LN(CAST((@expression) AS REAL))
 snowflake,<L_O_G>,LOG
