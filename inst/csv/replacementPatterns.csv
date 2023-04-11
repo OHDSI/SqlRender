@@ -223,6 +223,7 @@ postgresql,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
 postgresql,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 postgresql,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 postgresql,UPDATE STATISTICS @a;,ANALYZE @a;
+postgresql,"ALTER TABLE @table ALTER COLUMN @column_name @dtype","ALTER TABLE @table ALTER COLUMN @column_name TYPE @dtype"
 redshift,TRY_CAST(@a),CAST(@a)
 redshift,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 redshift,CREATE INDEX @index_name ON @table (@variable);,-- redshift does not support indexes
