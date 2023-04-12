@@ -167,6 +167,11 @@ test_that("translate sql server -> Snowflake ISNUMERIC", {
   )
 })
 
+test_that("translate sql server -> Snowflake CEILING", {
+  sql <- translate("SELECT CEILING(0.1);", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT CEIL(0.1);")
+})
+
 # Netezza tests
 
 test_that("translate sql server -> Snowflake TOP", {
