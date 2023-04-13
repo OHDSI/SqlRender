@@ -18,7 +18,7 @@ to the specified dialect"><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.0</span>
       </span>
     </div>
 
@@ -127,9 +127,9 @@ rendered? By default, this is TRUE.</p></dd>
     <h2>Details</h2>
     <p>This function looks for a SQL file with the specified name in the inst/sql/&lt;dbms&gt; folder of the
 specified package. If it doesn't find it in that folder, it will try and load the file from the
-inst/sql/sql_server folder and use the <code>translate</code> function to translate it to the requested
-dialect. It will subsequently call the <code>render</code> function with any of the additional specified
-parameters.</p>
+inst/sql or inst/sql/sql_server folder and use the <code>translate</code> function to translate it to the 
+requested dialect. It will subsequently call the <code>render</code> function with any of the additional 
+specified parameters.</p>
     </div>
 
     <div id="ref-examples">

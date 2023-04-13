@@ -1,13 +1,18 @@
-SqlRender 1.13.2
+SqlRender 1.14.0
 ================
 
 Changes:
 
 1. Adding translation of `DATEPART()` for Spark.
 
+2. Adding translation of `CEILING()` for Spark.
+
 Bugfixes:
 
 1. Fixing translation of `CAST(AS DATE)` on Oracle and Netezza when thing to cast is not a literal string.
+
+2. Fixing translation of `ALTER TABLE` for PostgreSQL.
+
 
 SqlRender 1.13.1
 ================
