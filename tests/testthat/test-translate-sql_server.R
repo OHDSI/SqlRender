@@ -25,3 +25,8 @@ test_that("translate  -> sql server CREATE TABLE IF NOT EXISTS", {
   sql <- translate("CREATE TABLE IF NOT EXISTS cdm.dbo.table (x INT);", targetDialect = "sql server")
   expect_equal_ignore_spaces(sql, "IF OBJECT_ID('cdm.dbo.table ', 'U') IS NULL CREATE TABLE cdm.dbo.table (x INT);")
 })
+
+test_that("translate sql server -> sql server temp dplyr ... pattern", {
+  sql <- translate("SELECT * FROM cdm.dbo.my_table AS cdm.dbo.my_table...1;", targetDialect = "sql server")
+  expect_equal_ignore_spaces(sql, "SELECT * FROM cdm.dbo.my_table AS cdmxdboxmy_tablexxx1;")
+})

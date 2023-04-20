@@ -539,3 +539,8 @@ test_that("translate sql server -> bigquery temp table field ref", {
   sql <- translate("SELECT #tmp.name FROM #tmp;", targetDialect = "bigquery", tempEmulationSchema = "ts")
   expect_equal_ignore_spaces(sql, sprintf("select %stmp.name from ts.%stmp;", getTempTablePrefix(), getTempTablePrefix()))
 })
+
+test_that("translate sql server -> bigquery temp dplyr ... pattern", {
+  sql <- translate("SELECT * FROM table...1;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "select * from tablexxx1;")
+})

@@ -527,3 +527,8 @@ test_that("translate sql server -> oracle temp table field ref", {
   sql <- translate("SELECT #tmp.name FROM #tmp;", targetDialect = "oracle", tempEmulationSchema = "ts")
   expect_equal_ignore_spaces(sql, sprintf("SELECT %stmp.name FROM ts.%stmp;", getTempTablePrefix(), getTempTablePrefix()))
 })
+
+test_that("translate sql server -> oracle temp dplyr ... pattern", {
+  sql <- translate("SELECT * FROM table...1;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT * FROM tablexxx1;")
+})
