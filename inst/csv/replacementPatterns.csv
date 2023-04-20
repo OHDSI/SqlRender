@@ -1,4 +1,11 @@
 To,Pattern,Replacement
+oracle,"AS drvd(@a)","AS drvd(<start>@a)"
+oracle,"<start>@a, @b)","<start>@a, <start>@b)"
+oracle,"<start>","NULL AS "
+oracle,"FROM (VALUES @a) AS drvd","FROM (<start>@a) AS drvd"
+oracle,"<start>@a, @b)","<start>@a UNION ALL <start>@b)"
+oracle,"<start>(@a)","SELECT @a"
+oracle,"FROM (SELECT @a) AS drvd(@b)","FROM (SELECT @b WHERE (0 = 1) UNION ALL SELECT @a) AS values_table"
 oracle,TRY_CAST(@a),CAST(@a)
 oracle,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 oracle,"CAST('@a' AS DATE)","TO_DATE('@a', 'YYYYMMDD')"
@@ -100,7 +107,7 @@ oracle,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 oracle,DATETIME,TIMESTAMP
 oracle,DATETIME2,TIMESTAMP
 oracle,BIGINT,NUMBER(19)
-oracle,VARCHAR(MAX),CLOB
+oracle,VARCHAR(MAX),VARCHAR2(1024)
 oracle,"NOT NULL DEFAULT @a,","DEFAULT @a NOT NULL,"
 oracle,"(@x NOT NULL DEFAULT @a)","(@x DEFAULT @a NOT NULL)"
 oracle,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;
@@ -227,6 +234,13 @@ postgresql,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @row
 postgresql,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 postgresql,UPDATE STATISTICS @a;,ANALYZE @a;
 postgresql,"ALTER TABLE @table ALTER COLUMN @a @b;","ALTER TABLE @table ALTER COLUMN @a TYPE @b;"
+redshift,"AS drvd(@a)","AS drvd(<start>@a)"
+redshift,"<start>@a, @b)","<start>@a, <start>@b)"
+redshift,"<start>","NULL AS "
+redshift,"FROM (VALUES @a) AS drvd","FROM (<start>@a) AS drvd"
+redshift,"<start>@a, @b)","<start>@a UNION ALL <start>@b)"
+redshift,"<start>(@a)","SELECT @a"
+redshift,"FROM (SELECT @a) AS drvd(@b)","FROM (SELECT @b WHERE (0 = 1) UNION ALL SELECT @a) AS values_table"
 redshift,TRY_CAST(@a),CAST(@a)
 redshift,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 redshift,CREATE INDEX @index_name ON @table (@variable);,-- redshift does not support indexes
@@ -653,6 +667,13 @@ netezza,"CONVERT(VARBINARY, @a, 1)","hex_to_binary(@a)"
 netezza,RAND(),RANDOM()
 netezza,DROP TABLE IF EXISTS #@table;,DROP TABLE @table IF EXISTS;
 netezza,DROP TABLE IF EXISTS @table;,DROP TABLE @table IF EXISTS;
+bigquery,"AS drvd(@a)","AS drvd(<start>@a)"
+bigquery,"<start>@a, @b)","<start>@a, <start>@b)"
+bigquery,"<start>","NULL AS "
+bigquery,"FROM (VALUES @a) AS drvd","FROM (<start>@a) AS drvd"
+bigquery,"<start>@a, @b)","<start>@a UNION ALL <start>@b)"
+bigquery,"<start>(@a)","SELECT @a"
+bigquery,"FROM (SELECT @a) AS drvd(@b)","FROM (SELECT @b UNION ALL SELECT @a LIMIT 999999 OFFSET 1) AS values_table"
 bigquery,TRY_CAST(@a),CAST(@a)
 bigquery,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 bigquery,"CONVERT(VARBINARY, @a, 1)","safe_cast(concat('0x', @a) as int64)"
@@ -760,6 +781,10 @@ bigquery,NEWID(),GENERATE_UUID()
 bigquery,"AS @(q[0-9]+)a","AS val_@a"
 bigquery,"(@(q[0-9]+)a","(val_@a"
 bigquery,"CHARINDEX(@a,@b)","STRPOS(@b,@a)"
+sqlite,"AS drvd(@a)","AS drvd(<start>@a)"
+sqlite,"<start>@a, @b)","<start>@a, <start>@b)"
+sqlite,"<start>","NULL AS "
+sqlite,"FROM (VALUES @a) AS drvd(@b)","FROM (SELECT @b WHERE (0 = 1) UNION ALL VALUES @a) AS values_table"
 sqlite,TRY_CAST(@a),CAST(@a)
 sqlite,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 sqlite,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
@@ -1215,6 +1240,10 @@ duckdb,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 duckdb,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 duckdb,UPDATE STATISTICS @a;,ANALYZE @a;
 duckdb,TRUNCATE TABLE @a;,DELETE FROM @a;
+snowflake,"AS drvd(@a)","AS drvd(<start>@a)"
+snowflake,"<start>@a, @b)","<start>@a, <start>@b)"
+snowflake,"<start>","NULL AS "
+snowflake,"FROM (VALUES @a) AS drvd(@b)","FROM (SELECT @b WHERE (0 = 1) UNION ALL VALUES @a) AS values_table"
 snowflake,TRY_CAST(@a),CAST(@a)
 snowflake,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 snowflake,"HASHBYTES('MD5',@a)","MD5(@a)"

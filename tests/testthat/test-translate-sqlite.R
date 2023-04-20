@@ -240,3 +240,14 @@ test_that("translate sql server -> sqlite TRY_CAST", {
   sql <- translate("SELECT TRY_CAST(x AS INT) FROM x;", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT CAST(x AS INT) FROM x;")
 })
+
+test_that("translate sql server -> sqlite drvd()", {
+  sql <- translate("SELECT
+      TRY_CAST(name AS VARCHAR(MAX)) AS name,
+      TRY_CAST(speed AS FLOAT) AS speed
+    FROM (  VALUES ('A', 1.0), ('B', 2.0)) AS drvd(name, speed);", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "SELECT
+      CAST(name AS TEXT) AS name,
+      CAST(speed AS REAL) AS speed
+    FROM (SELECT NULL AS name, NULL AS speed WHERE (0 = 1) UNION ALL VALUES ('A', 1.0), ('B', 2.0)) AS values_table;")
+})

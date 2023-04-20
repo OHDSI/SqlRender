@@ -172,9 +172,18 @@ test_that("translate sql server -> Snowflake CEILING", {
   expect_equal_ignore_spaces(sql, "SELECT CEIL(0.1);")
 })
 
-# Netezza tests
-
 test_that("translate sql server -> Snowflake TOP", {
   sql <- translate("SELECT TOP 10 * FROM my_table WHERE a = b;", targetDialect = "snowflake")
   expect_equal_ignore_spaces(sql, "SELECT  * FROM my_table WHERE a = b LIMIT 10;")
 })
+
+
+test_that("translate sql server -> snowflake drvd()", {
+  sql <- translate("SELECT
+      TRY_CAST(name AS VARCHAR(MAX)) AS name,
+      TRY_CAST(speed AS FLOAT) AS speed
+    FROM (  VALUES ('A', 1.0), ('B', 2.0)) AS drvd(name, speed);", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT\n      CAST(name AS TEXT) AS name,\n      CAST(speed AS FLOAT) AS speed\n    FROM (SELECT NULL AS name, NULL AS speed WHERE (0 = 1) UNION ALL VALUES ('A', 1.0), ('B', 2.0)) AS values_table;")
+})
+
+# rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')

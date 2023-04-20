@@ -1523,3 +1523,13 @@ test_that("translate sql server -> redshift DROP TABLE IF EXISTS", {
   sql <- translate("DROP TABLE IF EXISTS test;", targetDialect = "redshift")
   expect_equal_ignore_spaces(sql, "DROP TABLE IF EXISTS test;")
 })
+
+test_that("translate sql server -> redshift drvd()", {
+  sql <- translate("SELECT
+      TRY_CAST(name AS VARCHAR(MAX)) AS name,
+      TRY_CAST(speed AS FLOAT) AS speed
+    FROM (  VALUES ('A', 1.0), ('B', 2.0)) AS drvd(name, speed);", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "SELECT\n      CAST(name AS VARCHAR(MAX)) AS name,\n      CAST(speed AS FLOAT) AS speed\n    FROM (SELECT NULL AS name, NULL AS speed WHERE (0 = 1) UNION ALL SELECT 'A', 1.0 UNION ALL SELECT 'B', 2.0) AS values_table;")
+})
+
+# rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')

@@ -1,3 +1,11 @@
+SqlRender 1.15.0
+================
+
+Changes:
+
+1. Adding translation of `FROM (VALUES ...) AS drvd(...)` for PostgreSQL, SQL Server, Oracle, RedShift, SQLite, DuckDb, BigQuery, and Spark.
+
+
 SqlRender 1.14.0
 ================
 
