@@ -115,6 +115,7 @@ oracle,WITH @a AS @b INSERT INTO @c SELECT @d;,INSERT INTO @c WITH @a AS @b SELE
 oracle,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 oracle,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 oracle,##,<hash><hash>
+oracle,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
 oracle,#,%temp_prefix%%session_id%
 oracle,"CREATE INDEX @a ON @b (@c,@d) WHERE @e;","CREATE INDEX @a ON @b (CASE WHEN @e THEN @c END, CASE WHEN @e THEN @d END);"
 oracle,<hash><hash>,##
@@ -531,6 +532,7 @@ impala,DELETE FROM @a WHERE @b;,INSERT OVERWRITE TABLE @a SELECT * FROM @a WHERE
 impala,DELETE FROM @a;,TRUNCATE TABLE @a;
 impala,.dbo.,.
 impala,##,<hash><hash>
+impala,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
 impala,#,%temp_prefix%%session_id%
 impala,<hash><hash>,##
 impala,.location,.`location`
@@ -770,6 +772,7 @@ bigquery,DEFAULT @([0-9]+)a,""
 bigquery,DEFAULT \"@a\",""
 bigquery,"DEFAULT CURRENT_DATE()",""
 bigquery,TRUNCATE TABLE @a;,DELETE FROM @a WHERE True;
+bigquery,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
 bigquery,#,%temp_prefix%%session_id%
 bigquery,CREATE INDEX @index_name ON @table_col_cond;,-- bigquery does not support indexes
 bigquery,DROP INDEX @index_name;,-- bigquery does not support indexes
@@ -861,6 +864,7 @@ sqlite,WITH @a AS @b SELECT @c INTO @d FROM @e;,CREATE TABLE @d\nAS\nWITH @a AS 
 sqlite,SELECT @a INTO #@b FROM @c;,CREATE TEMP TABLE @b\nAS\nSELECT\n@a\nFROM\n@c;\nANALYZE @b;
 sqlite,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 sqlite,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
+sqlite,#@([^\s]+)table.@([^\s]+)field,@table.@field
 sqlite,#,temp.
 sqlite,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 sqlite,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
@@ -1013,6 +1017,7 @@ hive,"CONVERT(VARBINARY, @a, 1)","@a"
 spark,TRY_CAST(@a),CAST(@a)
 spark,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 spark,tempdb..#@table +,%temp_prefix%%session_id% ||
+spark,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
 spark,#,%temp_prefix%%session_id%
 spark,"--HINT BUCKET(@a, @b)",
 spark,"--HINT PARTITION(@a @b)",

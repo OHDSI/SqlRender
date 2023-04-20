@@ -263,8 +263,6 @@ test_that("translate sql server -> Impala escape chars", {
   )
 })
 
-# Snowflake tests
-
 test_that("translate sql server -> impala TOP", {
   sql <- translate("SELECT TOP 10 * FROM my_table WHERE a = b;", targetDialect = "impala")
   expect_equal_ignore_spaces(sql, "SELECT * FROM my_table WHERE a = b LIMIT 10;")
@@ -274,3 +272,10 @@ test_that("translate sql server -> Impala analyze table", {
   sql <- translate("UPDATE STATISTICS results_schema.heracles_results;", targetDialect = "impala")
   expect_equal_ignore_spaces(sql, "COMPUTE STATS results_schema.heracles_results;")
 })
+
+test_that("translate sql server -> impala temp table field ref", {
+  sql <- translate("SELECT #tmp.name FROM #tmp;", targetDialect = "impala", tempEmulationSchema = "ts")
+  expect_equal_ignore_spaces(sql, sprintf("SELECT %stmp.name FROM ts.%stmp;", getTempTablePrefix(), getTempTablePrefix()))
+})
+
+# rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')

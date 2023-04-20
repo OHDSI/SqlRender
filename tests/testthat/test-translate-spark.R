@@ -455,3 +455,8 @@ test_that("translate sql server -> spark DATEADD YEAR with float", {
   )
   expect_equal_ignore_spaces(sql, "DROP VIEW IF EXISTS cte ; CREATE TEMPORARY VIEW cte  AS (SELECT * FROM table);\n CREATE TABLE tmp.table \nUSING DELTA\nAS\n(SELECT\n* \nFROM\ncte);")
 })
+
+test_that("translate sql server -> spark temp table field ref", {
+  sql <- translate("SELECT #tmp.name FROM #tmp;", targetDialect = "spark", tempEmulationSchema = "ts")
+  expect_equal_ignore_spaces(sql, sprintf("SELECT %stmp.name FROM ts.%stmp;", getTempTablePrefix(), getTempTablePrefix()))
+})

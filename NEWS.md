@@ -5,6 +5,10 @@ Changes:
 
 1. Adding translation of `FROM (VALUES ...) AS drvd(...)` for PostgreSQL, SQL Server, Oracle, RedShift, SQLite, DuckDb, BigQuery, and Spark.
 
+Bugfixes:
+
+2. Correct translation when referring to temp table field for DBMSs that don't support temp tables (e.g. `SELECT #tmp.name FROM #tmp;`)
+
 
 SqlRender 1.14.0
 ================
