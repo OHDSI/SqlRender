@@ -2,7 +2,7 @@ Package: SqlRender
 Type: Package
 Title: Rendering Parameterized SQL and Translation to Dialects
 Version: 1.15.0
-Date: 2023-04-20
+Date: 2023-05-08
 Authors@R: c(
   person("Martijn", "Schuemie", , "schuemie@ohdsi.org", role = c("aut", "cre")),
   person("Marc", "Suchard", role = c("aut"))
@@ -12,7 +12,7 @@ Description: A rendering tool for parameterized SQL that also translates into
   different SQL dialects.  These dialects include 'Microsoft SQL Server', 'Oracle', 
   'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', 'Snowflake', 
   'Azure Synapse Analytics Dedicated', 'Apache Spark', and 'SQLite'.
-SystemRequirements: Java version 8 or higher (https://www.java.com/)
+SystemRequirements: Java (>= 8)
 License: Apache License 2.0
 VignetteBuilder: knitr
 URL: https://ohdsi.github.io/SqlRender/, https://github.com/OHDSI/SqlRender
