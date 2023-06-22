@@ -1,3 +1,11 @@
+SqlRender 1.15.1
+================
+
+Bugfixes:
+
+1. Fixed translation of `DATEADD()` for DuckDB when number to add is an expression instead of a verbatim number.
+
+
 SqlRender 1.15.0
 ================
 

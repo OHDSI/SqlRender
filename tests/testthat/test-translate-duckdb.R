@@ -30,7 +30,7 @@ test_that("translate sql server -> DuckDB add months", {
   sql <- translate("DATEADD(mm,2,date)", targetDialect = "duckdb")
   expect_equal_ignore_spaces(
     sql,
-    "(date + INTERVAL'2 month')"
+    "(date + TO_MONTHS(2))"
   )
 })
 
@@ -224,6 +224,6 @@ test_that("translate sql server -> DuckDB add days with period", {
   sql <- translate("DATEADD(DAY, -2.0, date)", targetDialect = "duckdb")
   expect_equal_ignore_spaces(
     sql,
-    "(date + INTERVAL'-2 day')"
+    "(date + TO_DAYS(-2.0))"
   )
 })
