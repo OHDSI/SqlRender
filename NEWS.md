@@ -1,3 +1,11 @@
+SqlRender 1.15.2
+================
+
+Bugfixes:
+
+1. Fixing translation of `DATEADD()` for DuckDB when number to add is not an integer.
+
+
 SqlRender 1.15.1
 ================
 
