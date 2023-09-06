@@ -796,6 +796,7 @@ bigquery,NEWID(),GENERATE_UUID()
 bigquery,"AS @(q[0-9]+)a","AS val_@a"
 bigquery,"(@(q[0-9]+)a","(val_@a"
 bigquery,"CHARINDEX(@a,@b)","STRPOS(@b,@a)"
+bigquery,"\"","`"
 sqlite,...@([0-9]+|y)a,xxx@a
 sqlite,"AS drvd(@a)","AS drvd(<start>@a)"
 sqlite,"<start>@a, @b)","<start>@a, <start>@b)"

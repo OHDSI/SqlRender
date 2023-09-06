@@ -37,7 +37,7 @@ test_that("translate sql server -> bigquery lowercase all but strings and variab
   )
   expect_equal_ignore_spaces(
     sql,
-    "select x.y, 'Mixed Case String' from \"MixedCaseTableName.T\" where x.z=@camelCaseVar group by x.y"
+    "select x.y, 'Mixed Case String' from `MixedCaseTableName.T` where x.z=@camelCaseVar group by x.y"
   )
 })
 
@@ -543,4 +543,9 @@ test_that("translate sql server -> bigquery temp table field ref", {
 test_that("translate sql server -> bigquery temp dplyr ... pattern", {
   sql <- translate("SELECT * FROM table...1;", targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "select * from tablexxx1;")
+})
+
+test_that("translate sql server -> bigquery quotes", {
+  sql <- translate("SELECT \"a\" from t;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "select `a` from t;")
 })

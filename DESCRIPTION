@@ -25,7 +25,6 @@ Suggests:
   testthat,
   knitr,
   rmarkdown,
-  stringr,
   shiny,
   shinydashboard
 RoxygenNote: 7.2.3

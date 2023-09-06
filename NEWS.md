@@ -9,6 +9,8 @@ Changes:
 
 3. Adding support for `IIF` for Synapse.
 
+4. Translating double quotes to backticks for BigQuery.
+
 SqlRender 1.15.2
 ================
 
