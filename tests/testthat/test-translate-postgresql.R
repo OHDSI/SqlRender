@@ -243,3 +243,13 @@ test_that("translate sql server -> postgresql IIF", {
   sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "postgresql")
   expect_equal_ignore_spaces(sql, "SELECT CASE WHEN a>b THEN 1 ELSE b END AS max_val FROM table ;")
 })
+
+test_that("translate sql server -> postgresql ALTER TABLE ADD single", {
+  sql <- translate("ALTER TABLE my_table ADD a INT;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table  ADD COLUMN a INT;")
+})
+
+test_that("translate sql server -> postgresql ALTER TABLE ADD multiple", {
+  sql <- translate("ALTER TABLE my_table ADD a INT, b INT, c VARCHAR(255);", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMN a INT, ADD COLUMN b INT, ADD COLUMN c VARCHAR(255);")
+})

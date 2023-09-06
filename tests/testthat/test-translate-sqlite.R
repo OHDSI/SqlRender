@@ -256,3 +256,13 @@ test_that("translate sql server -> sqlite temp table field ref", {
   sql <- translate("SELECT #tmp.name FROM #tmp;", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT tmp.name FROM temp.tmp;")
 })
+
+test_that("translate sql server -> sqlite ALTER TABLE ADD single", {
+  sql <- translate("ALTER TABLE my_table ADD a INT;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table  ADD a INT;")
+})
+
+test_that("translate sql server -> sqlite ALTER TABLE ADD multiple", {
+  sql <- translate("ALTER TABLE my_table ADD a INT, b INT, c VARCHAR(255);", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD a INT; ALTER TABLE my_table ADD b INT; ALTER TABLE my_table ADD c TEXT;")
+})
