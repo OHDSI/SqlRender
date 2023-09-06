@@ -1,3 +1,12 @@
+SqlRender 1.16.0
+================
+
+Changes:
+
+1. Adding support for `ALTER TABLE ADD` for SQLite and PostgreSQL.
+
+2. The `render()`, `translate()`, and `translateSingleStatement()` functions now preserve attributes of the SQL object.
+
 SqlRender 1.15.2
 ================
 
