@@ -7,6 +7,8 @@ Changes:
 
 2. The `render()`, `translate()`, and `translateSingleStatement()` functions now preserve attributes of the SQL object.
 
+3. Adding support for `IIF` for Synapse.
+
 SqlRender 1.15.2
 ================
 

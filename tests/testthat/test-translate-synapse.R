@@ -38,3 +38,8 @@ test_that("translate sql server -> synapse CREATE INDEX with WHERE", {
   sql <- translate("CREATE INDEX idx_a ON a(c1, c2) WHERE c3 <> '';", targetDialect = "synapse")
   expect_equal_ignore_spaces(sql, "CREATE INDEX idx_a ON a(c1, c2);")
 })
+
+test_that("translate sql server -> synapse IIF", {
+  sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "synapse")
+  expect_equal_ignore_spaces(sql, "SELECT CASE WHEN a>b THEN 1 ELSE b END AS max_val FROM table ;")
+})

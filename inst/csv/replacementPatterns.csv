@@ -1341,6 +1341,7 @@ synapse,CREATE INDEX @index_name ON #@table (@variable);,-- synapse does not sup
 synapse,"CONSTRAINT @a DEFAULT GETDATE()",""
 synapse,"DEFAULT GETDATE()",""
 synapse,CREATE INDEX @index_name ON @table (@variable) WHERE @b;,CREATE INDEX @index_name ON @table (@variable);
+synapse,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 sql server,.@([^\s]+)p2...@([0-9]+)p3,x@p2...@p3
 sql server,.@([^\s]+)p2...@([0-9]+)p3,x@p2...@p3
 sql server,...@([0-9]+|y)a,xxx@a
