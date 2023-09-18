@@ -11,6 +11,13 @@ Changes:
 
 4. Translating double quotes to backticks for BigQuery.
 
+Bugfixes:
+
+1. Fix translation of `drvd()` for Snowflake.
+
+1. Fix translation of 'a.b.c...d' pattern for Snowflake.
+
+
 SqlRender 1.15.2
 ================
 
