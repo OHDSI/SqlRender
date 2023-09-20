@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.0</span>
       </span>
     </div>
 
@@ -64,7 +64,18 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.15.2" id="sqlrender-1152">SqlRender 1.15.2<a class="anchor" aria-label="anchor" href="#sqlrender-1152"></a></h2>
+<h2 class="page-header" data-toc-text="1.16.0" id="sqlrender-1160">SqlRender 1.16.0<a class="anchor" aria-label="anchor" href="#sqlrender-1160"></a></h2>
+<p>Changes:</p>
+<ol style="list-style-type: decimal"><li><p>Adding support for <code>ALTER TABLE ADD</code> for SQLite and PostgreSQL.</p></li>
+<li><p>The <code><a href="../reference/render.html">render()</a></code>, <code><a href="../reference/translate.html">translate()</a></code>, and <code><a href="../reference/translateSingleStatement.html">translateSingleStatement()</a></code> functions now preserve attributes of the SQL object.</p></li>
+<li><p>Adding support for <code>IIF</code> for Synapse.</p></li>
+<li><p>Translating double quotes to backticks for BigQuery.</p></li>
+</ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>Fix translation of <code>drvd()</code> for Snowflake.</p></li>
+<li><p>Fix translation of ‘a.b.c…d’ pattern for Snowflake.</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.15.2" id="sqlrender-1152">SqlRender 1.15.2<small>2023-08-10</small><a class="anchor" aria-label="anchor" href="#sqlrender-1152"></a></h2>
 <p>Bugfixes:</p>
 <ol style="list-style-type: decimal"><li>Fixing translation of <code>DATEADD()</code> for DuckDB when number to add is not an integer.</li>
 </ol></div>

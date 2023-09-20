@@ -15,7 +15,7 @@ Bugfixes:
 
 1. Fix translation of `drvd()` for Snowflake.
 
-1. Fix translation of 'a.b.c...d' pattern for Snowflake.
+2. Fix translation of 'a.b.c...d' pattern for Snowflake.
 
 
 SqlRender 1.15.2

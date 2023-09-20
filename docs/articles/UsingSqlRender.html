@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.0</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
                         <h4 data-toc-skip class="author">Martijn J.
 Schuemie</h4>
             
-            <h4 data-toc-skip class="date">2023-08-10</h4>
+            <h4 data-toc-skip class="date">2023-09-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/SqlRender/blob/HEAD/vignettes/UsingSqlRender.Rmd" class="external-link"><code>vignettes/UsingSqlRender.Rmd</code></a></small>
       <div class="hidden name"><code>UsingSqlRender.Rmd</code></div>
@@ -356,40 +356,40 @@ SQLite.</li>
 </ul>
 <p>Similarly, many SQL syntax structures are supported. Here is a
 non-exhaustive lists of things that we know will translate well:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw">table</span>;                                        <span class="co">-- Simple selects</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> table_1 <span class="kw">INNER</span> <span class="kw">JOIN</span> table_2 <span class="kw">ON</span> a <span class="op">=</span> b;          <span class="co">-- Selects with joins </span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> table_1) tmp <span class="kw">WHERE</span> a <span class="op">=</span> b;      <span class="co">-- Nested queries</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> TOP <span class="dv">10</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw">table</span>;                                 <span class="co">-- Limiting to top rows</span></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> new_table <span class="kw">FROM</span> <span class="kw">table</span>;                         <span class="co">-- Selecting into a new table</span></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">table</span> (field <span class="dt">INT</span>);                             <span class="co">-- Creating tables</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> other_table (field_1) <span class="kw">VALUES</span> (<span class="dv">1</span>);               <span class="co">-- Inserting verbatim values           </span></span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> other_table (field_1) <span class="kw">SELECT</span> <span class="fu">value</span> <span class="kw">FROM</span> <span class="kw">table</span>;  <span class="co">-- Inserting from SELECT</span></span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> my_table;                                        <span class="co">-- Simple drop commands</span></span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> ACHILLES_analysis;                     <span class="co">-- Drop table if it exists</span></span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> cte <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw">table</span>) <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> cte;        <span class="co">-- Common table expressions</span></span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> a <span class="kw">ORDER</span> <span class="kw">BY</span> b)        <span class="co">-- OVER clauses</span></span>
-<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AS</span> <span class="ot">"Row Number"</span> <span class="kw">FROM</span> <span class="kw">table</span>;</span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="cf">CASE</span> <span class="cf">WHEN</span> a<span class="op">=</span><span class="dv">1</span> <span class="cf">THEN</span> a <span class="cf">ELSE</span> <span class="dv">0</span> <span class="cf">END</span> <span class="kw">AS</span> <span class="fu">value</span> <span class="kw">FROM</span> <span class="kw">table</span>; <span class="co">-- CASE WHEN clauses</span></span>
-<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> a <span class="kw">UNION</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> b                       <span class="co">-- UNIONs</span></span>
-<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> a <span class="kw">INTERSECT</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> b                   <span class="co">-- INTERSECTIONs</span></span>
-<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> a <span class="kw">EXCEPT</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> b                      <span class="co">-- EXCEPT</span></span>
-<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a><span class="fu">CAST</span>(<span class="st">'20220101'</span> <span class="kw">AS</span> <span class="dt">DATE</span>)                                    <span class="co">-- Cast to date</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw">table</span>;                                        <span class="co">-- Simple selects</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> table_1 <span class="kw">INNER</span> <span class="kw">JOIN</span> table_2 <span class="kw">ON</span> a <span class="op">=</span> b;          <span class="co">-- Selects with joins </span></span>
+<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> table_1) tmp <span class="kw">WHERE</span> a <span class="op">=</span> b;      <span class="co">-- Nested queries</span></span>
+<span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" tabindex="-1"></a><span class="kw">SELECT</span> TOP <span class="dv">10</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw">table</span>;                                 <span class="co">-- Limiting to top rows</span></span>
+<span id="cb30-8"><a href="#cb30-8" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> new_table <span class="kw">FROM</span> <span class="kw">table</span>;                         <span class="co">-- Selecting into a new table</span></span>
+<span id="cb30-10"><a href="#cb30-10" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> <span class="kw">table</span> (field <span class="dt">INT</span>);                             <span class="co">-- Creating tables</span></span>
+<span id="cb30-12"><a href="#cb30-12" tabindex="-1"></a></span>
+<span id="cb30-13"><a href="#cb30-13" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> other_table (field_1) <span class="kw">VALUES</span> (<span class="dv">1</span>);               <span class="co">-- Inserting verbatim values           </span></span>
+<span id="cb30-14"><a href="#cb30-14" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> other_table (field_1) <span class="kw">SELECT</span> <span class="fu">value</span> <span class="kw">FROM</span> <span class="kw">table</span>;  <span class="co">-- Inserting from SELECT</span></span>
+<span id="cb30-16"><a href="#cb30-16" tabindex="-1"></a>  </span>
+<span id="cb30-17"><a href="#cb30-17" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> my_table;                                        <span class="co">-- Simple drop commands</span></span>
+<span id="cb30-18"><a href="#cb30-18" tabindex="-1"></a></span>
+<span id="cb30-19"><a href="#cb30-19" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> ACHILLES_analysis;                     <span class="co">-- Drop table if it exists</span></span>
+<span id="cb30-20"><a href="#cb30-20" tabindex="-1"></a></span>
+<span id="cb30-21"><a href="#cb30-21" tabindex="-1"></a><span class="kw">WITH</span> cte <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw">table</span>) <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> cte;        <span class="co">-- Common table expressions</span></span>
+<span id="cb30-22"><a href="#cb30-22" tabindex="-1"></a></span>
+<span id="cb30-23"><a href="#cb30-23" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> a <span class="kw">ORDER</span> <span class="kw">BY</span> b)        <span class="co">-- OVER clauses</span></span>
+<span id="cb30-24"><a href="#cb30-24" tabindex="-1"></a>  <span class="kw">AS</span> <span class="ot">"Row Number"</span> <span class="kw">FROM</span> <span class="kw">table</span>;</span>
+<span id="cb30-25"><a href="#cb30-25" tabindex="-1"></a>  </span>
+<span id="cb30-26"><a href="#cb30-26" tabindex="-1"></a><span class="kw">SELECT</span> <span class="cf">CASE</span> <span class="cf">WHEN</span> a<span class="op">=</span><span class="dv">1</span> <span class="cf">THEN</span> a <span class="cf">ELSE</span> <span class="dv">0</span> <span class="cf">END</span> <span class="kw">AS</span> <span class="fu">value</span> <span class="kw">FROM</span> <span class="kw">table</span>; <span class="co">-- CASE WHEN clauses</span></span>
+<span id="cb30-27"><a href="#cb30-27" tabindex="-1"></a></span>
+<span id="cb30-28"><a href="#cb30-28" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> a <span class="kw">UNION</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> b                       <span class="co">-- UNIONs</span></span>
+<span id="cb30-29"><a href="#cb30-29" tabindex="-1"></a></span>
+<span id="cb30-30"><a href="#cb30-30" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> a <span class="kw">INTERSECT</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> b                   <span class="co">-- INTERSECTIONs</span></span>
+<span id="cb30-31"><a href="#cb30-31" tabindex="-1"></a></span>
+<span id="cb30-32"><a href="#cb30-32" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> a <span class="kw">EXCEPT</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> b                      <span class="co">-- EXCEPT</span></span>
+<span id="cb30-33"><a href="#cb30-33" tabindex="-1"></a></span>
+<span id="cb30-34"><a href="#cb30-34" tabindex="-1"></a><span class="fu">CAST</span>(<span class="st">'20220101'</span> <span class="kw">AS</span> <span class="dt">DATE</span>)                                    <span class="co">-- Cast to date</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="string-concatenation">String concatenation<a class="anchor" aria-label="anchor" href="#string-concatenation"></a>
@@ -419,21 +419,21 @@ two or more strings.</p>
 defining a table alias, but will also work fine without the keyword. For
 example, both these SQL statements are fine for SQL Server, PostgreSQL,
 RedShift, etc.:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Using AS keyword</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> my_table <span class="kw">AS</span> table_1</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> (</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> other_table</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>) <span class="kw">AS</span> table_2</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ON</span> table_1.person_id <span class="op">=</span> table_2.person_id;</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">-- Not using AS keyword</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> my_table table_1</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> (</span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> other_table</span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>) table_2</span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="kw">ON</span> table_1.person_id <span class="op">=</span> table_2.person_id;</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="co">-- Using AS keyword</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a><span class="kw">FROM</span> my_table <span class="kw">AS</span> table_1</span>
+<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> (</span>
+<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> other_table</span>
+<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a>) <span class="kw">AS</span> table_2</span>
+<span id="cb31-7"><a href="#cb31-7" tabindex="-1"></a><span class="kw">ON</span> table_1.person_id <span class="op">=</span> table_2.person_id;</span>
+<span id="cb31-8"><a href="#cb31-8" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" tabindex="-1"></a><span class="co">-- Not using AS keyword</span></span>
+<span id="cb31-10"><a href="#cb31-10" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb31-11"><a href="#cb31-11" tabindex="-1"></a><span class="kw">FROM</span> my_table table_1</span>
+<span id="cb31-12"><a href="#cb31-12" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> (</span>
+<span id="cb31-13"><a href="#cb31-13" tabindex="-1"></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> other_table</span>
+<span id="cb31-14"><a href="#cb31-14" tabindex="-1"></a>) table_2</span>
+<span id="cb31-15"><a href="#cb31-15" tabindex="-1"></a><span class="kw">ON</span> table_1.person_id <span class="op">=</span> table_2.person_id;</span></code></pre></div>
 <p>However, Oracle will throw an error when the <code>AS</code> keyword
 is used. In the above example, the first query will fail. It is
 therefore recommended to not use the <code>AS</code> keyword when
@@ -466,7 +466,7 @@ be created.</li>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT * FROM #children;"</span></span>
 <span><span class="fu"><a href="../reference/translate.html">translate</a></span><span class="op">(</span><span class="va">sql</span>, targetDialect <span class="op">=</span> <span class="st">"oracle"</span>, tempEmulationSchema <span class="op">=</span> <span class="st">"temp_schema"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "SELECT * FROM temp_schema.dx224bvxchildren ;"</span></span>
+<pre><code><span><span class="co">## [1] "SELECT * FROM temp_schema.pae80i6xchildren ;"</span></span>
 <span><span class="co">## attr(,"sqlDialect")</span></span>
 <span><span class="co">## [1] "oracle"</span></span></code></pre>
 <p>Note that the user will need to have write privileges on
@@ -485,11 +485,11 @@ orphan tables accumulating in the Oracle temp schema.</p>
 <p>If possible, try to avoid using temp tables altogether. Sometimes one
 could use Common Table Expressions (CTEs) when one would normally use a
 temp table. For example, instead of</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> #children <span class="kw">FROM</span> person <span class="kw">WHERE</span> year_of_birth <span class="op">&gt;</span> <span class="dv">2000</span>;</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #children <span class="kw">WHERE</span> gender <span class="op">=</span> <span class="dv">8507</span>;</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> #children <span class="kw">FROM</span> person <span class="kw">WHERE</span> year_of_birth <span class="op">&gt;</span> <span class="dv">2000</span>;</span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #children <span class="kw">WHERE</span> gender <span class="op">=</span> <span class="dv">8507</span>;</span></code></pre></div>
 <p>you could use</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> children <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> person <span class="kw">WHERE</span> year_of_birth <span class="op">&gt;</span> <span class="dv">2000</span>)</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> children <span class="kw">WHERE</span> gender <span class="op">=</span> <span class="dv">8507</span>;</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="kw">WITH</span> children <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> person <span class="kw">WHERE</span> year_of_birth <span class="op">&gt;</span> <span class="dv">2000</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> children <span class="kw">WHERE</span> gender <span class="op">=</span> <span class="dv">8507</span>;</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="implicit-casts">Implicit casts<a class="anchor" aria-label="anchor" href="#implicit-casts"></a>
@@ -497,12 +497,12 @@ temp table. For example, instead of</p>
 <p>One of the few points where SQL Server is less explicit than other
 dialects is that it allows implicit casts. For example, this code will
 work on SQL Server:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> #temp (txt <span class="dt">VARCHAR</span>);</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> #temp</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="st">'1'</span>;</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> txt <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> #temp (txt <span class="dt">VARCHAR</span>);</span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> #temp</span>
+<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a><span class="kw">SELECT</span> <span class="st">'1'</span>;</span>
+<span id="cb37-5"><a href="#cb37-5" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> txt <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div>
 <p>Even though <code>txt</code> is a VARCHAR field and we are comparing
 it with an integer, SQL Server will automatically cast one of the two to
 the correct type to allow the comparison. In contrast, other dialects
@@ -510,9 +510,9 @@ such as PosgreSQL will throw an error when trying to compare a VARCHAR
 with an INT.</p>
 <p>You should therefore always make casts explicit. In the above
 example, the last statement should be replaced with either</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> txt <span class="op">=</span> <span class="fu">CAST</span>(<span class="dv">1</span> <span class="kw">AS</span> <span class="dt">VARCHAR</span>);</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> txt <span class="op">=</span> <span class="fu">CAST</span>(<span class="dv">1</span> <span class="kw">AS</span> <span class="dt">VARCHAR</span>);</span></code></pre></div>
 <p>or</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> <span class="fu">CAST</span>(txt <span class="kw">AS</span> <span class="dt">INT</span>) <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> #temp <span class="kw">WHERE</span> <span class="fu">CAST</span>(txt <span class="kw">AS</span> <span class="dt">INT</span>) <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="case-sensitivity-in-string-comparisons">Case sensitivity in string comparisons<a class="anchor" aria-label="anchor" href="#case-sensitivity-in-string-comparisons"></a>
@@ -522,9 +522,9 @@ comparisons in a case-insensitive way, while others such as PostgreSQL
 are always case sensitive. It is therefore recommended to always assume
 case-sensitive comparisons, and to explicitly make comparisons
 case-insensitive when unsure about the case. For example, instead of</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> concept <span class="kw">WHERE</span> concep_class_id <span class="op">=</span> <span class="st">'Clinical Finding'</span></span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> concept <span class="kw">WHERE</span> concep_class_id <span class="op">=</span> <span class="st">'Clinical Finding'</span></span></code></pre></div>
 <p>it is preferred to use</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> concept <span class="kw">WHERE</span> <span class="fu">LOWER</span>(concep_class_id) <span class="op">=</span> <span class="st">'clinical finding'</span></span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> concept <span class="kw">WHERE</span> <span class="fu">LOWER</span>(concep_class_id) <span class="op">=</span> <span class="st">'clinical finding'</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="schemas-and-databases">Schemas and databases<a class="anchor" aria-label="anchor" href="#schemas-and-databases"></a>
@@ -544,7 +544,7 @@ of SQL Server’s database is the schema.</p>
 into a single parameter, which we typically call
 <code>@databaseSchema</code>. For example, we could have the
 parameterized SQL</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> @databaseSchema.person</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> @databaseSchema.person</span></code></pre></div>
 <p>where on SQL Server we can include both database and schema names in
 the value: <code>databaseSchema = "cdm_data.dbo"</code>. On other
 platforms, we can use the same code, but now only specify the schema as
@@ -557,9 +557,9 @@ wanted to use it anyway, we recommend creating two variables, one called
 <code>@database</code> and the other called
 <code>@databaseSchema</code>. For example, for this parameterized
 SQL:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> @databaseSchema.person;</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="kw">USE</span> @database;</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> person</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> @databaseSchema.person;</span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a><span class="kw">USE</span> @database;</span>
+<span id="cb43-3"><a href="#cb43-3" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> person</span></code></pre></div>
 <p>we can set <code>database = "cdm_data"</code> and the other called
 <code>databaseSchema = "cdm_data.dbo"</code>. On platforms other than
 SQL Server, the two variables will hold the same value and only on SQL
@@ -601,21 +601,21 @@ performed locally without exchanging data between nodes.</p>
 optimizations, so we’ve introduced the notion of hints. In the following
 example, a hint is provided on which field should be used for the
 distribution of data across nodes:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> one_table <span class="kw">FROM</span> other_table;</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></span>
+<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">INTO</span> one_table <span class="kw">FROM</span> other_table;</span></code></pre></div>
 <p>which will translate into the following on PDW:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="cf">IF</span> XACT_STATE() <span class="op">=</span> <span class="dv">1</span> <span class="kw">COMMIT</span>; </span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> one_table <span class="kw">WITH</span> (DISTRIBUTION <span class="op">=</span> <span class="kw">HASH</span>(person_id)) <span class="kw">AS</span></span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> other_table;</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="co">--HINT DISTRIBUTE_ON_KEY(person_id)</span></span>
+<span id="cb49-2"><a href="#cb49-2" tabindex="-1"></a><span class="cf">IF</span> XACT_STATE() <span class="op">=</span> <span class="dv">1</span> <span class="kw">COMMIT</span>; </span>
+<span id="cb49-3"><a href="#cb49-3" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> one_table <span class="kw">WITH</span> (DISTRIBUTION <span class="op">=</span> <span class="kw">HASH</span>(person_id)) <span class="kw">AS</span></span>
+<span id="cb49-4"><a href="#cb49-4" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> other_table;</span></code></pre></div>
 <p>Another tuning parameter is the key to sort a table on. This can be
 also be specified in a hint:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date);</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span></span>
+<span id="cb50-2"><a href="#cb50-2" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date);</span></code></pre></div>
 <p>translates to the following on RedShift:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date)</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>INTERLEAVED SORTKEY(start_date);</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="co">--HINT SORT_ON_KEY(INTERLEAVED:start_date)</span></span>
+<span id="cb51-2"><a href="#cb51-2" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> cdm.my_table (row_id <span class="dt">INT</span>, start_date)</span>
+<span id="cb51-3"><a href="#cb51-3" tabindex="-1"></a>INTERLEAVED SORTKEY(start_date);</span></code></pre></div>
 <p>The hints should be formatted exactly as shown above, and directly
 precede the statement where the table is created.</p>
 </div>
@@ -668,8 +668,8 @@ create an R wrapper around a rendered SQL file, using the
 <code><a href="../reference/loadRenderTranslateSql.html">loadRenderTranslateSql()</a></code> function . For example, suppose we
 have a text file called <em>test.sql</em> containing the following
 parameterized SQL:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>{<span class="kw">DEFAULT</span> @selected_value <span class="op">=</span> <span class="dv">1</span>}</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw">table</span> <span class="kw">INTO</span> result <span class="kw">where</span> x <span class="op">=</span> @selected_value;</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a>{<span class="kw">DEFAULT</span> @selected_value <span class="op">=</span> <span class="dv">1</span>}</span>
+<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="kw">table</span> <span class="kw">INTO</span> result <span class="kw">where</span> x <span class="op">=</span> @selected_value;</span></code></pre></div>
 <p>Then the command</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/createRWrapperForSql.html">createRWrapperForSql</a></span><span class="op">(</span>sqlFilename <span class="op">=</span> <span class="st">"test.sql"</span>, </span>
