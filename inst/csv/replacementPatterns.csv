@@ -1039,8 +1039,6 @@ spark,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
 spark,#,%temp_prefix%%session_id%
 spark,"--HINT BUCKET(@a, @b)",
 spark,"--HINT PARTITION(@a @b)",
-spark,"INSERT INTO @table (@columns) SELECT @values;","WITH insertion_temp AS (\n(SELECT @values) UNION ALL (SELECT @columns FROM @table))\nINSERT OVERWRITE TABLE @table (@columns) SELECT * FROM insertion_temp;"
-spark,"INSERT INTO @table (@columns) VALUES @values;","WITH insertion_temp AS (\n(SELECT * FROM VALUES @values T(@columns)) UNION ALL (SELECT @columns FROM @table))\nINSERT OVERWRITE TABLE @table (@columns) SELECT * FROM insertion_temp;"
 spark,"HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;","HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;\nOPTIMIZE @table ZORDER BY @key;"
 spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@d', 'U') IS NULL WITH @a AS @b SELECT @c INTO @d FROM @e;",HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE IF NOT EXISTS @d\nUSING DELTA\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nOPTIMIZE @d ZORDER BY @key;
 spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@b', 'U') IS NULL SELECT @a INTO @b FROM @c;",HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE IF NOT EXISTS @b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;\nOPTIMIZE @b ZORDER BY @key;
@@ -1130,7 +1128,6 @@ spark,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 spark,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as STRING) @s2)"
 spark,UPDATE STATISTICS @a;,
 spark,"SELECT @columns FROM (@a) @x,(@b) @y;","SELECT @columns FROM (@a) @x cross join (@b) @y;"
-spark,DELETE FROM @a WHERE @b;,INSERT OVERWRITE TABLE @a SELECT * FROM @a WHERE NOT (@b);
 sqlite extended,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 sqlite extended,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
 sqlite extended,+ '@a',|| '@a'
