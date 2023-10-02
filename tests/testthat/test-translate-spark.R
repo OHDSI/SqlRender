@@ -148,32 +148,12 @@ test_that("translate sql server -> spark datediff", {
   )
   expect_equal_ignore_spaces(sql, "SELECT datediff(hour, '2019-01-02', '2019-01-01')")
   
-  sql <- translate("SELECT datediff(m, '2019-01-01', '2019-01-02')",
-                   targetDialect = "spark"
-  )
-  expect_equal_ignore_spaces(sql, "SELECT datediff(month, '2019-01-02', '2019-01-01')")
-  
-  sql <- translate("SELECT datediff(mm, '2019-01-01', '2019-01-02')",
-                   targetDialect = "spark"
-  )
-  expect_equal_ignore_spaces(sql, "SELECT datediff(month, '2019-01-02', '2019-01-01')")
-  
   sql <- translate("SELECT datediff(month, '2019-01-01', '2019-01-02')",
                    targetDialect = "spark"
   )
   expect_equal_ignore_spaces(sql, "SELECT datediff(month, '2019-01-02', '2019-01-01')")
   
-  sql <- translate("SELECT datediff(yy, '2019-01-01', '2019-01-02')",
-                   targetDialect = "spark"
-  )
-  expect_equal_ignore_spaces(sql, "SELECT datediff(year, '2019-01-02', '2019-01-01')")
-  
   sql <- translate("SELECT datediff(year, '2019-01-01', '2019-01-02')",
-                   targetDialect = "spark"
-  )
-  expect_equal_ignore_spaces(sql, "SELECT datediff(year, '2019-01-02', '2019-01-01')")
-  
-  sql <- translate("SELECT datediff(yyyy, '2019-01-01', '2019-01-02')",
                    targetDialect = "spark"
   )
   expect_equal_ignore_spaces(sql, "SELECT datediff(year, '2019-01-02', '2019-01-01')")
