@@ -49,6 +49,23 @@ test_that("translate sql server -> PostgreSQL date diff (month)", {
   expect_equal_ignore_spaces(sql, "SELECT (extract(year from age(CAST(drug_era_end_date AS DATE), CAST(drug_era_start_date AS DATE)))*12 + extract(month from age(CAST(drug_era_end_date AS DATE), CAST(drug_era_start_date AS DATE))))  FROM drug_era;")
 })
 
+test_that("translate sql server -> PostgreSQL date diff (hour, minute, second)", {
+  sql <- translate("SELECT DATEDIFF(hour,drug_exposure_start_datetime,drug_exposure_end_datetime) FROM drug_exposure;",
+    targetDialect = "postgresql"
+  )
+  expect_equal_ignore_spaces(sql, "SELECT (EXTRACT(EPOCH FROM (drug_exposure_end_datetime - drug_exposure_start_datetime)) / 3600) FROM drug_exposure;")
+  
+  sql <- translate("SELECT DATEDIFF(minute,drug_exposure_start_datetime,drug_exposure_end_datetime) FROM drug_exposure;",
+    targetDialect = "postgresql"
+  )
+  expect_equal_ignore_spaces(sql, "SELECT (EXTRACT(EPOCH FROM (drug_exposure_end_datetime - drug_exposure_start_datetime)) / 60) FROM drug_exposure;")
+  
+  sql <- translate("SELECT DATEDIFF(second,drug_exposure_start_datetime,drug_exposure_end_datetime) FROM drug_exposure;",
+    targetDialect = "postgresql"
+  )
+  expect_equal_ignore_spaces(sql, "SELECT EXTRACT(EPOCH FROM (drug_exposure_end_datetime - drug_exposure_start_datetime)) FROM drug_exposure;")
+})
+
 test_that("translate sql server -> Postgres WITH SELECT", {
   sql <- translate("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
     targetDialect = "postgresql"
