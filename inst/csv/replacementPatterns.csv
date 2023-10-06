@@ -242,6 +242,8 @@ postgresql,"<token2> @b, @c;","<token2> @b, <token2> @c;"
 postgresql,"ALTER TABLE @table ADD @a;","ALTER TABLE @table <token1> @a;"
 postgresql,"<token1>",ADD COLUMN
 postgresql,"<token2>",ADD COLUMN
+postgresql,ADD COLUMN COLUMN,ADD COLUMN
+postgresql,ADD COLUMN CONSTRAINT,ADD CONSTRAINT
 redshift,...@([0-9]+|y)a,xxx@a
 redshift,"AS drvd(@a)","AS drvd(<start>@a)"
 redshift,"<start>@a, @b)","<start>@a, <start>@b)"

@@ -1,3 +1,17 @@
+SqlRender 1.16.1
+================
+
+Changes:
+
+1. Adding support for `ALTER TABLE ADD COLUMN` for PostgreSQL, even though it is not correct OhdsiSql (because it is not valid SQL Server SQL).
+
+2. Removing translation of `DELETE` and `INSERT` rules for DataBricks as no longer needed.
+
+Bugfixes: 
+
+1. Fix translation of `ALTER TABLE ADD CONTRAINT` on Postgres, which was broken by v1.16.0.
+
+
 SqlRender 1.16.0
 ================
 

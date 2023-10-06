@@ -253,3 +253,17 @@ test_that("translate sql server -> postgresql ALTER TABLE ADD multiple", {
   sql <- translate("ALTER TABLE my_table ADD a INT, b INT, c VARCHAR(255);", targetDialect = "postgresql")
   expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMN a INT, ADD COLUMN b INT, ADD COLUMN c VARCHAR(255);")
 })
+
+test_that("translate sql server -> postgresql ALTER TABLE ADD COLUMN", {
+  # Note: this is incorrect OhdsiSql, but included for legacy reasons (https://github.com/OHDSI/CohortDiagnostics/issues/1080)
+  sql <- translate("ALTER TABLE my_table ADD COLUMN a INT;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMN a INT;")
+})
+
+test_that("translate sql server -> postgresql ALTER TABLE ADD CONSTRAINT", {
+  sql <- translate("ALTER TABLE cdm.MEASUREMENT ADD CONSTRAINT xpk_MEASUREMENT PRIMARY KEY NONCLUSTERED (measurement_id);", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE cdm.MEASUREMENT ADD CONSTRAINT xpk_MEASUREMENT PRIMARY KEY (measurement_id);")
+})
+
+
+
