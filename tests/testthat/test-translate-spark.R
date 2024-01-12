@@ -431,3 +431,8 @@ test_that("translate sql server -> spark temp table field ref", {
   sql <- translate("SELECT #tmp.name FROM #tmp;", targetDialect = "spark", tempEmulationSchema = "ts")
   expect_equal_ignore_spaces(sql, sprintf("SELECT %stmp.name FROM ts.%stmp;", getTempTablePrefix(), getTempTablePrefix()))
 })
+
+test_that("translate sql server -> spark add column with default", {
+  sql <- translate("ALTER TABLE mytable ADD COLUMN mycol int DEFAULT 0;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE mytable ADD COLUMN mycol int; \n ALTER TABLE mytable SET TBLPROPERTIES('delta.feature.allowColumnDefaults' = 'supported'); \n ALTER TABLE mytable ALTER COLUMN mycol SET DEFAULT 0;")
+})
