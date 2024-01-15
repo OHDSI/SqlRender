@@ -1,3 +1,55 @@
+SqlRender 1.16.1
+================
+
+Changes:
+
+1. Adding support for `ALTER TABLE ADD COLUMN` for PostgreSQL, even though it is not correct OhdsiSql (because it is not valid SQL Server SQL).
+
+2. Removing translation of `DELETE` and `INSERT` rules for DataBricks as no longer needed.
+
+Bugfixes: 
+
+1. Fix translation of `ALTER TABLE ADD CONTRAINT` on Postgres, which was broken by v1.16.0.
+
+
+SqlRender 1.16.0
+================
+
+Changes:
+
+1. Adding support for `ALTER TABLE ADD` for SQLite and PostgreSQL.
+
+2. The `render()`, `translate()`, and `translateSingleStatement()` functions now preserve attributes of the SQL object.
+
+3. Adding support for `IIF` for Synapse.
+
+4. Translating double quotes to backticks for BigQuery.
+
+Bugfixes:
+
+1. Fix translation of `drvd()` for Snowflake.
+
+2. Fix translation of 'a.b.c...d' pattern for Snowflake.
+
+
+SqlRender 1.15.2
+================
+
+Bugfixes:
+
+1. Fixing translation of `DATEADD()` for DuckDB when number to add is not an integer.
+
+
+SqlRender 1.15.1
+================
+
+Bugfixes:
+
+1. Fixed translation of `DATEADD()` for DuckDB when number to add is an expression instead of a verbatim number.
+
+2. Fixed Synapse option in the SqlDeveloper Shiny app.
+
+
 SqlRender 1.15.0
 ================
 

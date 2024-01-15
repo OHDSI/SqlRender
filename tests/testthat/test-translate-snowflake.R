@@ -177,13 +177,36 @@ test_that("translate sql server -> Snowflake TOP", {
   expect_equal_ignore_spaces(sql, "SELECT  * FROM my_table WHERE a = b LIMIT 10;")
 })
 
-
 test_that("translate sql server -> snowflake drvd()", {
   sql <- translate("SELECT
       TRY_CAST(name AS VARCHAR(MAX)) AS name,
       TRY_CAST(speed AS FLOAT) AS speed
     FROM (  VALUES ('A', 1.0), ('B', 2.0)) AS drvd(name, speed);", targetDialect = "snowflake")
-  expect_equal_ignore_spaces(sql, "SELECT\n      CAST(name AS TEXT) AS name,\n      CAST(speed AS FLOAT) AS speed\n    FROM (SELECT NULL AS name, NULL AS speed WHERE (0 = 1) UNION ALL VALUES ('A', 1.0), ('B', 2.0)) AS values_table;")
+  expect_equal_ignore_spaces(sql, "SELECT\n      CAST(name AS TEXT) AS name,\n      CAST(speed AS FLOAT) AS speed\n    FROM (VALUES ('A', 1.0), ('B', 2.0)) AS values_table (name, speed);")
 })
 
+test_that("translate sql server -> snowflake ...", {
+  sql <- translate("SELECT x FROM my_table...1;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT x FROM my_tablexxx1;")
+})
+
+test_that("translate sql server -> snowflake a.b...", {
+  sql <- translate("SELECT x FROM a.my_table...1;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT x FROM axmy_tablexxx1;")
+})
+
+test_that("translate sql server -> snowflake a.b.c...", {
+  sql <- translate("SELECT x FROM a.b.my_table...1;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT x FROM axbxmy_tablexxx1;")
+})
+
+test_that("translate sql server -> snowflake a.b.c... in paren", {
+  sql <- translate("(SELECT x FROM a.b.my_table...1)", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "(SELECT x FROM axbxmy_tablexxx1)")
+})
+
+
+
+
 # rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')
+
