@@ -227,3 +227,7 @@ test_that("translate sql server -> DuckDB add days with period", {
     "(date + TO_DAYS(CAST(-2.0 AS INTEGER)))"
   )
 })
+test_that("translate sql server -> duckdb NEWID", {
+  sql <- translate("SELECT NEWID()", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(sql, "SELECT uuid()") 
+})
