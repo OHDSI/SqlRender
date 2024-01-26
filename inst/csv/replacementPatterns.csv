@@ -1233,7 +1233,7 @@ duckdb,"ISNULL(@a,@b)","COALESCE(@a,@b)"
 duckdb,"ISNUMERIC(@a)","CASE WHEN (CAST(@a AS VARCHAR) ~ '^([0-9]+\.?[0-9]*|\.[0-9]+)$') THEN 1 ELSE 0 END"
 duckdb,COUNT_BIG(@a),COUNT(@a)
 duckdb,SQUARE(@a),((@a)*(@a))
-duckdb,NEWID(),MD5(RANDOM()::TEXT || CLOCK_TIMESTAMP()::TEXT)
+duckdb,NEWID(),uuid()
 duckdb,USE @schema;,SET search_path TO @schema;
 duckdb,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 duckdb,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
