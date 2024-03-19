@@ -32,6 +32,9 @@ oracle,"DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"
 oracle,"DATEADD(year,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 oracle,"DATEADD(yyyy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 oracle,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
+oracle,"DATEDIFF(second,@start, @end)","EXTRACT(SECOND FROM (@end - @start))"
+oracle,"DATEDIFF(minute,@start, @end)","EXTRACT(MINUTE FROM (@end - @start))"
+oracle,"DATEDIFF(hour,@start, @end)","EXTRACT(HOUR FROM (@end - @start))"
 oracle,"DATEDIFF(day,@start, @end)",CEIL(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(dd,@start, @end)",CEIL(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(d,@start, @end)",CEIL(CAST(@end AS DATE) - CAST(@start AS DATE))
@@ -171,6 +174,9 @@ postgresql,"DATEADD(month,@months,@date)",(@date + @months*INTERVAL'1 month')
 postgresql,"DATEADD(yy,@years,@date)",(@date + @years*INTERVAL'1 year')
 postgresql,"DATEADD(yyyy,@years,@date)",(@date + @years*INTERVAL'1 year')
 postgresql,"DATEADD(year,@years,@date)",(@date + @years*INTERVAL'1 year')
+postgresql,"DATEDIFF(second,@start, @end)",EXTRACT(EPOCH FROM (@end - @start))
+postgresql,"DATEDIFF(minute,@start, @end)",(EXTRACT(EPOCH FROM (@end - @start)) / 60)
+postgresql,"DATEDIFF(hour,@start, @end)",(EXTRACT(EPOCH FROM (@end - @start)) / 3600)
 postgresql,"DATEDIFF(d,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 postgresql,"DATEDIFF(dd,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
 postgresql,"DATEDIFF(day,@start, @end)",(CAST(@end AS DATE) - CAST(@start AS DATE))
@@ -300,6 +306,7 @@ redshift,"DATEDIFF(n,@start,@end)","DATEDIFF(minute,@start,@end)"
 redshift,"DATEDIFF(ss,@start,@end)","DATEDIFF(second,@start,@end)"
 redshift,"DATEDIFF(mcs,@start,@end)","DATEDIFF(microsecond,@start,@end)"
 redshift,"DATEDIFF_BIG(dd,@start,@end)","DATEDIFF(day,@start,@end)"
+redshift,"DATEDIFF_BIG(day,@start,@end)","DATEDIFF(day,@start,@end)"
 redshift,"DATEDIFF_BIG(m,@start,@end)","DATEDIFF(month,@start,@end)"
 redshift,"DATEDIFF_BIG(mm,@start,@end)","DATEDIFF(month,@start,@end)"
 redshift,"DATEDIFF_BIG(yyyy,@start,@end)","DATEDIFF(year,@start,@end)"
@@ -309,9 +316,12 @@ redshift,"DATEDIFF_BIG(q,@start,@end)","DATEDIFF(quarter,@start,@end)"
 redshift,"DATEDIFF_BIG(wk,@start,@end)","DATEDIFF(week,@start,@end)"
 redshift,"DATEDIFF_BIG(ww,@start,@end)","DATEDIFF(week,@start,@end)"
 redshift,"DATEDIFF_BIG(hh,@start,@end)","DATEDIFF(hour,@start,@end)"
+redshift,"DATEDIFF_BIG(hour,@start,@end)","DATEDIFF(hour,@start,@end)"
 redshift,"DATEDIFF_BIG(mi,@start,@end)","DATEDIFF(minute,@start,@end)"
+redshift,"DATEDIFF_BIG(minute,@start,@end)","DATEDIFF(minute,@start,@end)"
 redshift,"DATEDIFF_BIG(n,@start,@end)","DATEDIFF(minute,@start,@end)"
 redshift,"DATEDIFF_BIG(ss,@start,@end)","DATEDIFF(second,@start,@end)"
+redshift,"DATEDIFF_BIG(second,@start,@end)","DATEDIFF(second,@start,@end)"
 redshift,"DATEDIFF_BIG(mcs,@start,@end)","DATEDIFF(microsecond,@start,@end)"
 redshift,"DATEPART(dd,@date)","DATEPART(day,@date)"
 redshift,"DATEPART(m,@date)","DATEPART(month,@date)"
@@ -1070,23 +1080,28 @@ spark,"HASHBYTES('MD5',@a)","MD5(@a)"
 spark,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","CAST(CONCAT('x', @a) AS BIT(32))"
 spark,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyy-MM-dd')"
 spark,"DATEPART(@part, @date)","DATE_PART('@part', @date)"
-spark,"DATEADD(second,@seconds,@datetime)",(@datetime + INTERVAL @seconds second)
-spark,"DATEADD(minute,@minutes,@datetime)",(@datetime + INTERVAL @minutes minute)
-spark,"DATEADD(hour,@hours,@datetime)",(@datetime + INTERVAL @hours hour)
-spark,"DATEADD(d,@days,@date)","date_add(@date, @days)"
-spark,"DATEADD(dd,@days,@date)","date_add(@date, @days)"
-spark,"DATEADD(day,@days,@date)","date_add(@date, @days)"
-spark,"DATEADD(m,@months,@date)",(@date + INTERVAL @months month)
-spark,"DATEADD(mm,@months,@date)",(@date + INTERVAL @months month)
-spark,"DATEADD(month,@months,@date)",(@date + INTERVAL @months month)
-spark,"DATEADD(yy,@years,@date)",(@date + INTERVAL @years year)
-spark,"DATEADD(yyyy,@years,@date)",(@date + INTERVAL @years year)
-spark,"DATEADD(year,@years,@date)",(@date + INTERVAL @years year)
+spark,"DATEADD(second,@seconds,@datetime)",DATE_ADD(second,@seconds,@datetime)
+spark,"DATEADD(minute,@minutes,@datetime)",DATE_ADD(minute,@minutes,@datetime)
+spark,"DATEADD(hour,@hours,@datetime)",DATE_ADD(hour,@hours,@datetime)
+spark,"DATEADD(d,@days,@date)",DATE_ADD(day,@days,@date)
+spark,"DATEADD(dd,@days,@date)",DATE_ADD(day,@days,@date)
+spark,"DATEADD(day,@days,@date)",DATE_ADD(day,@days,@date)
+spark,"DATEADD(m,@months,@date)",DATE_ADD(month,@months,@date)
+spark,"DATEADD(mm,@months,@date)",DATE_ADD(month,@months,@date)
+spark,"DATEADD(month,@months,@date)",DATE_ADD(month,@months,@date)
+spark,"DATEADD(yy,@years,@date)",DATE_ADD(year,@years,@date)
+spark,"DATEADD(yyyy,@years,@date)",DATE_ADD(year,@years,@date)
+spark,"DATEADD(year,@years,@date)",DATE_ADD(year,@years,@date)
 spark,"date_add(@date, @(-?[0-9]+)a.0)","date_add(@date, @a)"
 spark,INTERVAL @(-?[0-9]+)a.0,INTERVAL @a
+spark,"DATEDIFF(second,@start,@end)","datediff(second,@end,@start)"
+spark,"DATEDIFF(minute,@start,@end)","datediff(minute,@end,@start)"
+spark,"DATEDIFF(hour,@start,@end)","datediff(hour,@end,@start)"
 spark,"DATEDIFF(d,@start, @end)","datediff(@end,@start)"
 spark,"DATEDIFF(dd,@start, @end)","datediff(@end,@start)"
 spark,"DATEDIFF(day,@start, @end)","datediff(@end,@start)"
+spark,"DATEDIFF(month,@start,@end)","datediff(month,@end,@start)"
+spark,"DATEDIFF(year,@start,@end)","datediff(year,@end,@start)"
 spark,"CONVERT(VARCHAR,@date,112)","@date"
 spark,GETDATE(),CURRENT_DATE
 spark,CAST(@a AS varchar(@b)) +,"SUBSTRING(CAST(@a AS string), 0, @b) ||"
