@@ -24,18 +24,18 @@
 	<distributionManagement>
 		<repository>
 			<id>internal</id>
-			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
+			<url>https://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
-			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/snapshots</url>
+			<url>https://repo.ohdsi.org:8085/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>ohdsi</id>
 			<name>repo.ohdsi.org</name>
-			<url>http://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
+			<url>https://repo.ohdsi.org:8085/nexus/content/repositories/releases</url>
 		</repository>
 	</repositories>
 	<build>
