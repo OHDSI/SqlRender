@@ -1,4 +1,4 @@
-There are 2 changes and 1 bugfixes (see NEWS.md).
+There is 1 change and 4 bugfixes (see NEWS.md).
 
 ---
 
@@ -6,7 +6,7 @@ There are 2 changes and 1 bugfixes (see NEWS.md).
 * Ubuntu 20.03, R 4.3.1
 * Microsoft Windows Server 2019, R 4.3.1
 * MacOS, R 4.3.1
-* Windows 10, R 4.2.3
+* MacOS, R 4.2.3
 
 ## R CMD check results
 

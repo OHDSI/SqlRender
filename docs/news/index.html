@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.0</span>
       </span>
     </div>
 
@@ -64,7 +64,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.16.1" id="sqlrender-1161">SqlRender 1.16.1<a class="anchor" aria-label="anchor" href="#sqlrender-1161"></a></h2>
+<h2 class="page-header" data-toc-text="1.17.0" id="sqlrender-1170">SqlRender 1.17.0<a class="anchor" aria-label="anchor" href="#sqlrender-1170"></a></h2>
+<p>Changes:</p>
+<ol style="list-style-type: decimal"><li>Adding datetime calculations to Spark translation.</li>
+</ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>Fix translation of <code>NEWID()</code> for DuckDB.</p></li>
+<li><p>Fix <code>LEFT()</code> and <code>RIGHT()</code> translation on Spark.</p></li>
+<li><p>Fix some date functions on SQLite.</p></li>
+<li><p>Fix <code>DROP TABLE IF EXISTS</code> and <code>CREATE TABLE IF EXISTS</code> translation for Synapse.</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.16.1" id="sqlrender-1161">SqlRender 1.16.1<small>2023-10-07</small><a class="anchor" aria-label="anchor" href="#sqlrender-1161"></a></h2>
 <p>Changes:</p>
 <ol style="list-style-type: decimal"><li><p>Adding support for <code>ALTER TABLE ADD COLUMN</code> for PostgreSQL, even though it is not correct OhdsiSql (because it is not valid SQL Server SQL).</p></li>
 <li><p>Removing translation of <code>DELETE</code> and <code>INSERT</code> rules for DataBricks as no longer needed.</p></li>

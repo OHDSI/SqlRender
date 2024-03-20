@@ -1,3 +1,21 @@
+SqlRender 1.17.0
+================
+
+Changes:
+
+1. Adding datetime calculations to Spark translation.
+
+Bugfixes:
+
+1. Fix translation of `NEWID()` for DuckDB.
+
+2. Fix `LEFT()` and `RIGHT()` translation on Spark.
+
+3. Fix some date functions on SQLite.
+
+4. Fix `DROP TABLE IF EXISTS` and `CREATE TABLE IF EXISTS` translation for Synapse.
+
+
 SqlRender 1.16.1
 ================
 
