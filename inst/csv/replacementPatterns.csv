@@ -1353,6 +1353,9 @@ synapse,"CONSTRAINT @a DEFAULT GETDATE()",""
 synapse,"DEFAULT GETDATE()",""
 synapse,CREATE INDEX @index_name ON @table (@variable) WHERE @b;,CREATE INDEX @index_name ON @table (@variable);
 synapse,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
+synapse,DROP TABLE IF EXISTS #@table;,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;"
+synapse,DROP TABLE IF EXISTS @table;,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;"
+synapse,CREATE TABLE IF NOT EXISTS @table (@definition);,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);"
 sql server,.@([^\s]+)p2...@([0-9]+)p3,x@p2...@p3
 sql server,.@([^\s]+)p2...@([0-9]+)p3,x@p2...@p3
 sql server,...@([0-9]+|y)a,xxx@a

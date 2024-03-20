@@ -43,3 +43,19 @@ test_that("translate sql server -> synapse IIF", {
   sql <- translate("SELECT IIF(a>b, 1, b) AS max_val FROM table;", targetDialect = "synapse")
   expect_equal_ignore_spaces(sql, "SELECT CASE WHEN a>b THEN 1 ELSE b END AS max_val FROM table ;")
 })
+
+
+test_that("translate  -> sql server DROP TABLE IF EXISTS temp", {
+  sql <- translate("DROP TABLE IF EXISTS #my_temp;", targetDialect = "synapse")
+  expect_equal_ignore_spaces(sql, "IF OBJECT_ID('tempdb..#my_temp', 'U') IS NOT NULL DROP TABLE #my_temp;")
+})
+
+test_that("translate  -> sql server DROP TABLE IF EXISTS", {
+  sql <- translate("DROP TABLE IF EXISTS cdm.dbo.table;", targetDialect = "synapse")
+  expect_equal_ignore_spaces(sql, "IF OBJECT_ID('cdm.dbo.table', 'U') IS NOT NULL DROP TABLE cdm.dbo.table;")
+})
+
+test_that("translate  -> sql server CREATE TABLE IF NOT EXISTS", {
+  sql <- translate("CREATE TABLE IF NOT EXISTS cdm.dbo.table (x INT);", targetDialect = "synapse")
+  expect_equal_ignore_spaces(sql, "IF OBJECT_ID('cdm.dbo.table ', 'U') IS NULL CREATE TABLE cdm.dbo.table (x INT);")
+})
