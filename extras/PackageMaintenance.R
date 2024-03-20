@@ -22,7 +22,7 @@ devtools::spell_check()
 
 # Create manual and vignettes --------------------------------------------------
 unlink("extras/SqlRender.pdf")
-shell("R CMD Rd2pdf ./ --output=extras/SqlRender.pdf")
+system("R CMD Rd2pdf ./ --output=extras/SqlRender.pdf")
 
 dir.create("inst/doc")
 rmarkdown::render("vignettes/UsingSqlRender.Rmd",
@@ -39,7 +39,7 @@ checksum <- rJava::J("org.ohdsi.sql.JarChecksum", "computeJarChecksum")
 write(checksum, file.path("inst", "csv", "jarChecksum.txt"))
 
 # Release package --------------------------------------------------------------
-# Check if DESCRIPTION verison matches POM version:
+# Check if DESCRIPTION version matches POM version:
 descriptionVersion <- stringr::str_extract(readLines("DESCRIPTION")[grepl("^Version:", readLines("DESCRIPTION"))], "(?<=Version: ).*$")
 pomVersion <- stringr::str_extract(readLines("pom.xml")[grepl("SNAPSHOT</version>", readLines("pom.xml"))], "(?<=<version>).*(?=-SNAPSHOT</version>)")
 if (descriptionVersion != pomVersion) stop("DESCRIPTION version does not match POM version")
