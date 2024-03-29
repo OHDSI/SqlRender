@@ -1413,6 +1413,7 @@ iris,AS COUNT,AS "COUNT"
 iris,STDEV(@a),STDDEV(@a)
 iris,STDEV_POP(@a),STDDEV_POP(@a)
 iris,STDEV_SAMP(@a),STDDEV_SAMP(@a)
+iris,EOMONTH(@date),LAST_DAY(@date)
 iris,.DOMAIN ,."DOMAIN" 
 iris,"WITH @a (@cols) AS (@b)","WITH @a AS (SELECT @cols FROM (@b))"
 iris,", @a (@cols) AS (@b)",", @a AS (SELECT @cols FROM (@b))"
