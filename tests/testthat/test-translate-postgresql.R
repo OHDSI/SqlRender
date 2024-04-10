@@ -282,5 +282,9 @@ test_that("translate sql server -> postgresql ALTER TABLE ADD CONSTRAINT", {
   expect_equal_ignore_spaces(sql, "ALTER TABLE cdm.MEASUREMENT ADD CONSTRAINT xpk_MEASUREMENT PRIMARY KEY (measurement_id);")
 })
 
+test_that("translate sql server -> postgresql ALTER TABLE ALTER COLUMN", {
+  sql <- translate("ALTER TABLE my_table ALTER COLUMN a BIGINT;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ALTER COLUMN a TYPE BIGINT;")
+})
 
 

@@ -1,3 +1,13 @@
+SqlRender 1.17.1
+================
+
+Bugfixes:
+
+1. For SQLite, now translating `ALTER TABLE ALTER COLUMN BIGINT`to dummy statement (`SELECT 0;`), since all integer types are the same on SQLite.
+
+2. Fixed translation of `ALTER TABLE ALTER COLUMN` on PostgreSQL.
+
+
 SqlRender 1.17.0
 ================
 
