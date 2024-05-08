@@ -396,11 +396,6 @@ test_that("translate sql server -> bigquery DATEFROMPARTS", {
   expect_equal_ignore_spaces(sql, "select DATE(2019,1,30)")
 })
 
-# test_that("translate sql server -> bigquery offset literal", {
-#   sql <- translate("create table test_that (\"offset\" STRING);", targetDialect = "bigquery")
-#   expect_equal_ignore_spaces(sql, "create table test_that (offset STRING);")
-# })
-
 test_that("translate sql server -> bigquery EOMONTH()", {
   sql <- translate("select eomonth(payer_plan_period_start_date)", targetDialect = "bigquery")
   expect_equal_ignore_spaces(
@@ -467,7 +462,7 @@ test_that("translate sql server -> String concatenation", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "select CONCAT(last_name, ', ', first_name) from my_table;"
+    "select CONCAT(last_name, ', ', first_name) FROM my_table;"
   )
 })
 
@@ -477,7 +472,7 @@ test_that("translate sql server -> String concatenation", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "select CONCAT(first_name, CAST(middle_initial AS STRING), last_name) from my_table;"
+    "select CONCAT(first_name, CAST(middle_initial AS STRING), last_name) FROM my_table;"
   )
 })
 
@@ -487,7 +482,7 @@ test_that("translate sql server -> String concatenation", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "select CONCAT(first_name, CAST(middle_initial AS STRING), last_name) from my_table;"
+    "select CONCAT(first_name, CAST(middle_initial AS STRING), last_name) FROM my_table;"
   )
 })
 
@@ -497,7 +492,7 @@ test_that("translate sql server -> String concatenation", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "select subgroup_id, CONCAT('Persons aged ', CONCAT(cast(age_low as STRING), 'to ', cast(age_high as STRING), 'with gender = '), gender_name) from subgroups;"
+    "select subgroup_id, CONCAT('Persons aged ', CAST(age_low  AS STRING), CONCAT('to ', cast(age_high as STRING)), 'with gender = ', gender_name ) FROM subgroups;"
   )
 })
 
@@ -549,3 +544,9 @@ test_that("translate sql server -> bigquery quotes", {
   sql <- translate("SELECT \"a\" from t;", targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "select `a` from t;")
 })
+
+test_that("translate sql server -> bigquery RIGHT with implicit concat", {
+  sql <- translate("RIGHT('0' + CAST(p.month_of_birth AS VARCHAR), 2)", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "SUBSTR(CONCAT('0', cast(p.month_of_birth as STRING)),-2)")
+})
+

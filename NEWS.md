@@ -7,6 +7,8 @@ Bugfixes:
 
 2. Fixed translation of `ALTER TABLE ALTER COLUMN` on PostgreSQL.
 
+3. More robust detection of string concatenation for BigQuery.
+
 
 SqlRender 1.17.0
 ================
