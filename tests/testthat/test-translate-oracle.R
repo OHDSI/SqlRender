@@ -556,3 +556,8 @@ test_that("translate sql server -> oracle temp dplyr ... pattern", {
   sql <- translate("SELECT * FROM table...1;", targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "SELECT * FROM tablexxx1;")
 })
+
+test_that("translate sql server -> oracle bitwise and", {
+  sql <- translate("SELECT ((a+b) & c/123) FROM table;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "SELECT BITAND((a+b) , c/123) FROM table ;")
+})

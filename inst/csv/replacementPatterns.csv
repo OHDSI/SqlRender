@@ -155,6 +155,7 @@ oracle,"SELECT @a, * FROM @b ORDER BY","SELECT @a, @b.* FROM @b ORDER BY"
 oracle,"SELECT @a, * FROM @b FETCH FIRST","SELECT @a, @b.* FROM @b FETCH FIRST"
 oracle,"(SELECT @a, * FROM @b)","(SELECT @a, @b.* FROM @b)"
 oracle,"SELECT @a, * FROM @b;","SELECT @a, @b.* FROM @b;"
+oracle,(@a & @b),"BITAND(@a, @b)"
 postgresql,...@([0-9]+|y)a,xxx@a
 postgresql,TRY_CAST(@a),CAST(@a)
 postgresql,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
@@ -1349,6 +1350,7 @@ snowflake,"--HINT BUCKET(@a, @b)",
 snowflake,"--HINT PARTITION(@a @b)",
 snowflake,"--HINT DISTRIBUTE_ON_KEY(@key)",
 snowflake,#,%temp_prefix%%session_id%
+snowflake,(@a & @b),"BITAND(@a, @b)"
 synapse,...@([0-9]+|y)a,xxx@a
 synapse,VARCHAR(MAX),VARCHAR(8000)
 synapse,CREATE INDEX @index_name ON #@table (@variable);,-- synapse does not support non-clustered index on temp tables.

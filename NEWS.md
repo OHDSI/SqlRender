@@ -1,6 +1,11 @@
 SqlRender 1.17.1
 ================
 
+Changes:
+
+1. Adding translation for bitwise AND operator (`&`).
+
+
 Bugfixes:
 
 1. For SQLite, now translating `ALTER TABLE ALTER COLUMN BIGINT`to dummy statement (`SELECT 0;`), since all integer types are the same on SQLite.

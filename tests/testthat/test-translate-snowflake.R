@@ -205,7 +205,10 @@ test_that("translate sql server -> snowflake a.b.c... in paren", {
   expect_equal_ignore_spaces(sql, "(SELECT x FROM axbxmy_tablexxx1)")
 })
 
-
+test_that("translate sql server -> snowflake bitwise and", {
+  sql <- translate("SELECT ((a+b) & c/123) FROM table;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT BITAND((a+b) , c/123) FROM table ;")
+})
 
 
 # rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')
