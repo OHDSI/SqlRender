@@ -1,9 +1,11 @@
-SqlRender 1.17.1
+SqlRender 1.18.0
 ================
 
 Changes:
 
 1. Adding translation for bitwise AND operator (`&`).
+
+2. Changing temp table field name maximum length to 63-8 for throwing warnings (was 30-8). Oracle changed it's limit from 30 to 128 in version 12.2, which was released in 2021. The new limit comes from PostgreSQL, which by default allows for 63 characters. All other supported DBMSs allow for longer names.
 
 
 Bugfixes:

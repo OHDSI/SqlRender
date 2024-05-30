@@ -5,7 +5,7 @@ test_that("translate: warning when using old function", {
 })
 
 test_that("translate: warning on table name that is too long", {
-  expect_warning(translate("DROP TABLE abcdefghijklmnopqrstuvwxyz123456789", "pdw"))
+  expect_warning(translate("DROP TABLE abcdefghijklmnopqrstuvwxyz1234567890123456789012345678901234567890", "pdw"))
 })
 
 
