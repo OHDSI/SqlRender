@@ -46,6 +46,6 @@ if (descriptionVersion != pomVersion) stop("DESCRIPTION version does not match P
 
 devtools::check_win_devel()
 
-devtools::check_rhub()
+rhub::rc_submit(platforms = "atlas")
 
 devtools::release()
