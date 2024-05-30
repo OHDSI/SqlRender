@@ -19,7 +19,7 @@ navbar:
   components:
     SqlDeveloper:
       text: SqlDeveloper
-      href: https://data.ohdsi.org/SqlDeveloper/ 
+      href: https://results.ohdsi.org/app/01_SqlDeveloper
     hades:
       text: hadesLogo
       href: https://ohdsi.github.io/Hades
