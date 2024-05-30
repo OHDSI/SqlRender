@@ -277,7 +277,3 @@ test_that("translate sql server -> sqlite ALTER TABLE ALTER COLUMN", {
   sql <- translate("ALTER TABLE my_table ALTER COLUMN a BIGINT;", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT 0;")
 })
-
-
-
-

@@ -21,6 +21,6 @@ test_that("don't translate twice", {
     sql <- translate(sql, targetDialect = "postgresql"),
     "Input SQL has already been translated"
   )
-  
+
   expect_equal(attr(sql, "sqlDialect"), "oracle")
 })

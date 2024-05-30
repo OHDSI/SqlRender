@@ -156,11 +156,12 @@ translate <- function(sql,
   checkmate::assertCharacter(tempEmulationSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   if (!is.null(attr(sql, "sqlDialect"))) {
     warn("Input SQL has already been translated, so not translating again",
-         .frequency = "regularly",
-         .frequency_id = "alreadyTranslated")
+      .frequency = "regularly",
+      .frequency_id = "alreadyTranslated"
+    )
     return(sql)
   }
 
@@ -187,7 +188,7 @@ translate <- function(sql,
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSqlWithPath(as.character(sql), as.character(targetDialect), rJava::.jnull(), tempEmulationSchema, as.character(pathToReplacementPatterns))
   attributes(translatedSql) <- attributes(sql)
-  attr(translatedSql, "sqlDialect") <-targetDialect
+  attr(translatedSql, "sqlDialect") <- targetDialect
   return(translatedSql)
 }
 
@@ -250,11 +251,12 @@ translateSingleStatement <- function(sql = "",
   checkmate::assertCharacter(tempEmulationSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::assertCharacter(oracleTempSchema, len = 1, null.ok = TRUE, add = errorMessages)
   checkmate::reportAssertions(collection = errorMessages)
-  
+
   if (!is.null(attr(sql, "sqlDialect"))) {
     warn("Input SQL has already been translated, so not translating again",
-         .frequency = "regularly",
-         .frequency_id = "alreadyTranslated")
+      .frequency = "regularly",
+      .frequency_id = "alreadyTranslated"
+    )
     return(sql)
   }
 
@@ -281,7 +283,7 @@ translateSingleStatement <- function(sql = "",
   }
   translatedSql <- rJava::J("org.ohdsi.sql.SqlTranslate")$translateSingleStatementSqlWithPath(as.character(sql), as.character(targetDialect), rJava::.jnull(), tempEmulationSchema, as.character(pathToReplacementPatterns))
   attributes(translatedSql) <- attributes(sql)
-  attr(translatedSql, "sqlDialect") <-targetDialect
+  attr(translatedSql, "sqlDialect") <- targetDialect
   return(translatedSql)
 }
 

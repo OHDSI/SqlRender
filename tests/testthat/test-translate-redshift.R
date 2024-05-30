@@ -226,7 +226,7 @@ test_that("translate sql server -> RedShift DATEADD hh", {
     sql,
     "SELECT DATEADD(hour, CAST(3 as int), drug_era_end_date) FROM drug_era;"
   )
-  
+
   sql <- translate("SELECT DATEADD(hour, 3, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )
@@ -244,7 +244,7 @@ test_that("translate sql server -> RedShift DATEADD mi", {
     sql,
     "SELECT DATEADD(minute, CAST(3 as int), drug_era_end_date) FROM drug_era;"
   )
-  
+
   sql <- translate("SELECT DATEADD(minute, 3, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )
@@ -262,7 +262,7 @@ test_that("translate sql server -> RedShift DATEADD ss", {
     sql,
     "SELECT DATEADD(second, CAST(3 as int), drug_era_end_date) FROM drug_era;"
   )
-  
+
   sql <- translate("SELECT DATEADD(second, 3, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )
@@ -391,7 +391,7 @@ test_that("translate sql server -> RedShift DATEDIFF hh", {
     sql,
     "SELECT DATEDIFF(hour, drug_era_start_date, drug_era_end_date) FROM drug_era;"
   )
-  
+
   sql <- translate("SELECT DATEDIFF(hour, drug_era_start_date, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )
@@ -409,7 +409,7 @@ test_that("translate sql server -> RedShift DATEDIFF mi", {
     sql,
     "SELECT DATEDIFF(minute, drug_era_start_date, drug_era_end_date) FROM drug_era;"
   )
-  
+
   sql <- translate("SELECT DATEDIFF(minute, drug_era_start_date, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )
@@ -437,7 +437,7 @@ test_that("translate sql server -> RedShift DATEDIFF ss", {
     sql,
     "SELECT DATEDIFF(second, drug_era_start_date, drug_era_end_date) FROM drug_era;"
   )
-  
+
   sql <- translate("SELECT DATEDIFF(second, drug_era_start_date, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )
@@ -602,7 +602,7 @@ test_that("translate sql server -> RedShift DATEPART dd", {
     targetDialect = "redshift"
   )
   expect_equal_ignore_spaces(sql, "SELECT DATEPART(day, drug_era_end_date) FROM drug_era;")
-  
+
   sql <- translate("SELECT DATEPART(day, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )
@@ -670,7 +670,7 @@ test_that("translate sql server -> RedShift DATEPART hh", {
     targetDialect = "redshift"
   )
   expect_equal_ignore_spaces(sql, "SELECT DATEPART(hour, drug_era_end_date) FROM drug_era;")
-  
+
   sql <- translate("SELECT DATEPART(hour, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )
@@ -682,7 +682,7 @@ test_that("translate sql server -> RedShift DATEPART mi", {
     targetDialect = "redshift"
   )
   expect_equal_ignore_spaces(sql, "SELECT DATEPART(minute, drug_era_end_date) FROM drug_era;")
-  
+
   sql <- translate("SELECT DATEPART(minute, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )
@@ -701,7 +701,7 @@ test_that("translate sql server -> RedShift DATEPART ss", {
     targetDialect = "redshift"
   )
   expect_equal_ignore_spaces(sql, "SELECT DATEPART(second, drug_era_end_date) FROM drug_era;")
-  
+
   sql <- translate("SELECT DATEPART(second, drug_era_end_date) FROM drug_era;",
     targetDialect = "redshift"
   )

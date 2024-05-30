@@ -44,7 +44,7 @@ The parameter values can be numbers, strings, booleans, as well as vectors, whic
 
 ```{r echo=TRUE}
 sql <- "SELECT * FROM table WHERE id IN (@a);"
-render(sql, a = c(1,2,3))
+render(sql, a = c(1, 2, 3))
 ```
 
 ## Default parameter values
@@ -94,7 +94,6 @@ render(sql, x = 4, y = 4)
 
 sql <- "SELECT * FROM table {(@x == 1 | @x == 3) & @y != 3} ? {WHERE id = @x AND val = @y};"
 render(sql, x = 3, y = 4)
-
 ```
 
 
@@ -113,7 +112,7 @@ Below an example:
 
 ```{r echo=TRUE}
 sql <- "SELECT DATEDIFF(dd,a,b) FROM table; "
-translate(sql,targetDialect = "oracle")
+translate(sql, targetDialect = "oracle")
 ```
 
 The `targetDialect` parameter can have the following values:
@@ -140,7 +139,7 @@ These SQL Server functions have been tested and were found to be translated corr
 funs <- c("ABS", "ACOS", "ASIN", "ATAN", "AVG", "CAST", "CEILING", "CHARINDEX", "CONCAT", "COS", "COUNT", "COUNT_BIG", "DATEADD", "DATEDIFF", "DATEFROMPARTS", "DATETIMEFROMPARTS", "DAY", "EOMONTH", "EXP", "FLOOR", "GETDATE", "HASHBYTES*", "IIF", "ISNULL", "ISNUMERIC", "LEFT", "LEN", "LOG", "LOG10", "LOWER", "LTRIM", "MAX", "MIN", "MONTH", "NEWID", "PI", "POWER", "RAND", "RANK", "RIGHT", "ROUND", "ROW_NUMBER", "RTRIM", "SIN", "SQRT", "SQUARE", "STDEV", "SUM", "TAN", "UPPER", "VAR", "YEAR", "")
 
 
-knitr::kable(matrix(funs, ncol = 4), col.names = rep("Function",4), caption = "Functions supported by translate")
+knitr::kable(matrix(funs, ncol = 4), col.names = rep("Function", 4), caption = "Functions supported by translate")
 ```
 
 * Requires special privileges on Oracle. Has no equivalent on SQLite.
@@ -326,7 +325,7 @@ we can set `database = "cdm_data"` and the other called `databaseSchema = "cdm_d
 
 ```{r echo=TRUE}
 foo <- function(databaseSchema, dbms) {
-  database <- strsplit(databaseSchema ,"\\.")[[1]][1]
+  database <- strsplit(databaseSchema, "\\.")[[1]][1]
   sql <- "SELECT * FROM @databaseSchema.person; USE @database; SELECT * FROM person;"
   sql <- render(sql, databaseSchema = databaseSchema, database = database)
   sql <- translate(sql, targetDialect = dbms)
@@ -386,7 +385,7 @@ Which will open the default browser with the app.
 In addition, two  functions have been developed to aid the debugging process: `renderSqlFile()` and `translateSqlFile()`. These can be used to read SQL from file, render or translate it, and write it back to file. For example:
 
 ```{r eval=FALSE}
-renderSqlFile("parameterizedSql.txt","renderedSql.txt")
+renderSqlFile("parameterizedSql.txt", "renderedSql.txt")
 ```
 
 will render the file, using the default parameter values specified in the SQL. What works well for us is editing in the parameterized file, (re)running the command above, and have the rendered SQL file open in a SQL client for testing. Any problems reported by the server can be dealt with in the source SQL, and can quickly be re-rendered.
@@ -405,9 +404,11 @@ SELECT * FROM table INTO result where x = @selected_value;
 Then the command
 
 ```{r eval=FALSE}
-createRWrapperForSql(sqlFilename = "test.sql", 
-                     rFilename = "test.R", 
-                     packageName = "myPackage")
+createRWrapperForSql(
+  sqlFilename = "test.sql",
+  rFilename = "test.R",
+  packageName = "myPackage"
+)
 ```
 
 would result in the file *test.R* being generated containing this R code:
@@ -426,20 +427,20 @@ would result in the file *test.R* being generated containing this R code:
 #'
 #' @export
 test <- function(connectionDetails,
-                        selectedValue = 1) {
+                 selectedValue = 1) {
   renderedSql <- loadRenderTranslateSql("test.txt",
-              packageName = "myPackage",
-              dbms = connectionDetails$dbms,
-              selected_value = selectedValue)
+    packageName = "myPackage",
+    dbms = connectionDetails$dbms,
+    selected_value = selectedValue
+  )
   conn <- connect(connectionDetails)
 
   writeLines("Executing multiple queries. This could take a while")
-  executeSql(conn,renderedSql)
+  executeSql(conn, renderedSql)
   writeLines("Done")
 
   dummy <- dbDisconnect(conn)
 }
-
 ```
 
 This code expects the file *test.sql* to be located in the *inst/sql/sql_server/* folder of the package source.

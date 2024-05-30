@@ -207,7 +207,7 @@ test_that("translate sql server -> bigquery DATEADD", {
 
 test_that("translate sql server -> bigquery DATEADD non-integer", {
   sql <- translate("SELECT DATEADD(dd,30.0,drug_era_end_date) FROM drug_era;",
-                   targetDialect = "bigquery"
+    targetDialect = "bigquery"
   )
   expect_equal_ignore_spaces(
     sql,
@@ -549,4 +549,3 @@ test_that("translate sql server -> bigquery RIGHT with implicit concat", {
   sql <- translate("RIGHT('0' + CAST(p.month_of_birth AS VARCHAR), 2)", targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "SUBSTR(CONCAT('0', cast(p.month_of_birth as STRING)),-2)")
 })
-

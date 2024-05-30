@@ -212,4 +212,3 @@ test_that("translate sql server -> snowflake bitwise and", {
 
 
 # rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')
-
