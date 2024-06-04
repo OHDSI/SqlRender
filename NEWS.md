@@ -1,3 +1,11 @@
+SqlRender 1.18.1
+================
+
+Changes:
+
+1. Changing Spark translation of `DATEADD()` from `DATE_ADD()` to `DATEADD()` as required by some but not all Databricks instances. 
+
+
 SqlRender 1.18.0
 ================
 
