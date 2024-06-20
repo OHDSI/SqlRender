@@ -34,6 +34,14 @@ test_that("translate sql server -> DuckDB add months", {
   )
 })
 
+test_that("translate sql server -> DuckDB add years", {
+  sql <- translate("DATEADD(yy,2,date)", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(
+    sql,
+    "(date + TO_YEARS(CAST(2 AS INTEGER)))"
+  )
+})
+
 test_that("translate sql server -> DuckDB WITH SELECT INTO", {
   sql <- translate("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
     targetDialect = "duckdb"
