@@ -5,6 +5,10 @@ Changes:
 
 1. Changing Spark translation of `DATEADD()` from `DATE_ADD()` to `DATEADD()` as required by some but not all Databricks instances. 
 
+Bugfixes:
+
+1. Fixed DuckDb translation of `CAST(CONCATENATE(...) AS DATE)`.
+
 
 SqlRender 1.18.0
 ================

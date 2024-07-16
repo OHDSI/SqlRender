@@ -1218,6 +1218,9 @@ duckdb,"CONVERT(VARCHAR,@date,112)","STRFTIME(@date, '%Y%m%d')"
 duckdb,GETDATE(),CURRENT_DATE
 duckdb,"CONVERT(DATE, @a)","CAST(@a AS DATE)"
 duckdb,"CAST('@a' AS DATE)","CAST(strptime('@a', '%Y%m%d') AS DATE)"
+duckdb,"CAST('@a' + @b AS DATE)","CAST(strptime('@a' + @b, '%Y%m%d') AS DATE)"
+duckdb,"CAST(@a + '@b' AS DATE)","CAST(strptime(@a + '@b', '%Y%m%d') AS DATE)"
+duckdb,"CAST(CONCAT(@a) AS DATE)","CAST(strptime(CONCAT(@a), '%Y%m%d') AS DATE)"
 duckdb,+ '@a',|| '@a'
 duckdb,'@a' +,'@a' ||
 duckdb,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
