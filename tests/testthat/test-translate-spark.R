@@ -451,5 +451,5 @@ test_that("translate sql server -> spark add column with default", {
 
 test_that("translate sql server -> spark cast string as date", {
   sql <- translate("SELECT CAST('20191201' AS DATE);", targetDialect = "spark")
-  expect_equal_ignore_spaces(sql, "SELECT IF(try_cast('20191201'  AS DATE) IS NULL, to_date(cast('20191201'  AS STRING), 'yyyyMMdd'), try_cast('20191201'  AS DATE))")
+  expect_equal_ignore_spaces(sql, "SELECT IF(try_cast('20191201' AS DATE) IS NULL, to_date(cast('20191201' AS STRING), 'yyyyMMdd'), try_cast('20191201' AS DATE));")
 })
