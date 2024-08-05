@@ -448,3 +448,8 @@ test_that("translate sql server -> spark add column with default", {
   sql <- translate("ALTER TABLE mytable ADD COLUMN mycol int DEFAULT 0;", targetDialect = "spark")
   expect_equal_ignore_spaces(sql, "ALTER TABLE mytable ADD COLUMN mycol int; \n ALTER TABLE mytable SET TBLPROPERTIES('delta.feature.allowColumnDefaults' = 'supported'); \n ALTER TABLE mytable ALTER COLUMN mycol SET DEFAULT 0;")
 })
+
+test_that("translate sql server -> spark cast string as date", {
+  sql <- translate("SELECT CAST('20191201' AS DATE);", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "SELECT IF(try_cast('20191201' AS DATE) IS NULL, to_date(cast('20191201' AS STRING), 'yyyyMMdd'), try_cast('20191201' AS DATE));")
+})
