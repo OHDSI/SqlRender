@@ -1287,6 +1287,10 @@ snowflake,"HASHBYTES('MD5',@a)","MD5(@a)"
 snowflake,"CONVERT(VARBINARY, @a, 1)","CAST(CONCAT('x', @a) AS BIT(32))"
 snowflake,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyymmdd')"
 snowflake,"CONVERT(VARCHAR,@date,112)","TO_CHAR(@date, 'YYYYMMDD')"
+snowflake,"CAST('@a' AS DATE)","TO_DATE('@a', 'YYYYMMDD')"
+snowflake,"CAST('@a' + @b AS DATE)","TO_DATE('@a' + @b, 'YYYYMMDD')"
+snowflake,"CAST(@a + '@b' AS DATE)","TO_DATE(@a + '@b', 'YYYYMMDD')"
+snowflake,"CAST(CONCAT(@a) AS DATE)","TO_DATE(CONCAT(@a), 'YYYYMMDD')"
 snowflake,GETDATE(),CURRENT_DATE
 snowflake,+ '@a',|| '@a'
 snowflake,'@a' +,'@a' ||
