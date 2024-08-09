@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.18.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.18.1</span>
       </span>
     </div>
 
@@ -64,7 +64,15 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.18.0" id="sqlrender-1180">SqlRender 1.18.0<a class="anchor" aria-label="anchor" href="#sqlrender-1180"></a></h2>
+<h2 class="page-header" data-toc-text="1.18.1" id="sqlrender-1181">SqlRender 1.18.1<a class="anchor" aria-label="anchor" href="#sqlrender-1181"></a></h2>
+<p>Changes:</p>
+<ol style="list-style-type: decimal"><li>Changing Spark translation of <code>DATEADD()</code> from <code>DATE_ADD()</code> to <code>DATEADD()</code> as required by some but not all Databricks instances.</li>
+</ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>Fixed DuckDb translation of <code>CAST(CONCATENATE(...) AS DATE)</code>.</p></li>
+<li><p>Fix Snowflake and DataBricks translation of <code>CAST(... AS DATE)</code> when <code>...</code> is a literal.</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.18.0" id="sqlrender-1180">SqlRender 1.18.0<small>2024-05-30</small><a class="anchor" aria-label="anchor" href="#sqlrender-1180"></a></h2>
 <p>Changes:</p>
 <ol style="list-style-type: decimal"><li><p>Adding translation for bitwise AND operator (<code>&amp;</code>).</p></li>
 <li><p>Changing temp table field name maximum length to 63-8 for throwing warnings (was 30-8). Oracle changed it’s limit from 30 to 128 in version 12.2, which was released in 2021. The new limit comes from PostgreSQL, which by default allows for 63 characters. All other supported DBMSs allow for longer names.</p></li>

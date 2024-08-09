@@ -9,6 +9,7 @@ Bugfixes:
 
 1. Fixed DuckDb translation of `CAST(CONCATENATE(...) AS DATE)`.
 
+2. Fix Snowflake and DataBricks translation of `CAST(... AS DATE)` when `...` is a literal.
 
 SqlRender 1.18.0
 ================
