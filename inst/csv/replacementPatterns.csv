@@ -1421,10 +1421,7 @@ iris,STDEV_POP(@a),STDDEV_POP(@a)
 iris,STDEV_SAMP(@a),STDDEV_SAMP(@a)
 iris,EOMONTH(@date),LAST_DAY(@date)
 iris,.DOMAIN ,."DOMAIN" 
-iris,"WITH @a (@cols) AS (@b)","WITH @a AS (SELECT @cols FROM (@b))"
-iris,", @a (@cols) AS (@b)",", @a AS (SELECT @cols FROM (@b))"
 iris,"WITH @a AS (@b), @c CREATE TABLE @d AS @e;","DROP TABLE IF EXISTS @a;\n CREATE GLOBAL TEMPORARY TABLE @a AS @b;\n WITH @c CREATE TABLE @d AS @e;\n DROP TABLE IF EXISTS @a;"
 iris,WITH @a AS (@b) CREATE TABLE @c AS SELECT @d;,DROP TABLE IF EXISTS @a;\n CREATE GLOBAL TEMPORARY TABLE @a AS @b;\n CREATE TABLE @c AS SELECT @d;\n DROP TABLE IF EXISTS @a;
 iris,"WITH @a AS (@b), @c CREATE GLOBAL TEMPORARY TABLE @d AS @e;","DROP TABLE IF EXISTS @a;\n CREATE GLOBAL TEMPORARY TABLE @a AS @b;\n WITH @c CREATE GLOBAL TEMPORARY TABLE @d AS @e;\n DROP TABLE IF EXISTS @a;"
 iris,WITH @a AS (@b) CREATE GLOBAL TEMPORARY TABLE @c AS @d;,DROP TABLE IF EXISTS @a;\n CREATE GLOBAL TEMPORARY TABLE @a AS @b;\n CREATE GLOBAL TEMPORARY TABLE @c AS @d;\n DROP TABLE IF EXISTS @a;
-iris,"SELECT event_id, person_id, start_date, end_date, visit_occurrence_id FROM","SELECT event_id, person_id, start_date, end_date, visit_occurrence_id, ordinal FROM"
