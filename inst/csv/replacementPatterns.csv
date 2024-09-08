@@ -1400,9 +1400,15 @@ iris,"--HINT PARTITION(@a @b)", -- haven't looked into this yet, skip it for now
 iris,"--HINT DISTRIBUTE_ON_KEY(@key)", -- haven't looked into this yet, skip it for now
 iris,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'FM0000')||'-'||TO_CHAR(@month,'FM00')||'-'||TO_CHAR(@day,'FM00'), 'YYYY-MM-DD')"
 iris,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_TIMESTAMP(TO_CHAR(@year,'FM0000')||'-'||TO_CHAR(@month,'FM00')||'-'||TO_CHAR(@day,'FM00')||' '||TO_CHAR(@hour,'FM00')||':'||TO_CHAR(@minute,'FM00')||':'||TO_CHAR(@second,'FM00')||'.'||TO_CHAR(@ms,'FM000'), 'YYYY-MM-DD HH24:MI:SS.FF')"
-iris," DATEADD(mm, @a, @b) as "," TO_DATE(DATEADD(mm, @a, @b),'YYYY-MM-DD HH:MI:SS') as "
-iris," DATEADD(d, @a, @b) as "," TO_DATE(DATEADD(d, @a, @b),'YYYY-MM-DD HH:MI:SS') as "
-iris," DATEADD(yy, @a, @b) as "," TO_DATE(DATEADD(yy, @a, @b),'YYYY-MM-DD HH:MI:SS') as "
+iris," DATEADD(d, @a, @b) AS"," TO_DATE(DATEADD(d, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(dd, @a, @b) AS"," TO_DATE(DATEADD(dd, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(day, @a, @b) AS"," TO_DATE(DATEADD(day, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(m, @a, @b) AS"," TO_DATE(DATEADD(m, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(mm, @a, @b) AS"," TO_DATE(DATEADD(mm, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(yy, @a, @b) AS"," TO_DATE(DATEADD(yy, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(yyyy, @a, @b) AS"," TO_DATE(DATEADD(yyyy, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," COALESCE(p.birth_datetime", COALESCE(CAST(p.birth_datetime AS DATE)
+iris,"CONCAT(p.year_of_birth, @b, @c)",p.year_of_birth||'-'||@b||'-'|| @c
 iris,"CONCAT(@a, @b,","@a || CONCAT(@b,"
 iris,"CONCAT(@a,@b)",@a || @b
 iris,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);
