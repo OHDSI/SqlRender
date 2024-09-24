@@ -549,3 +549,18 @@ test_that("translate sql server -> bigquery RIGHT with implicit concat", {
   sql <- translate("RIGHT('0' + CAST(p.month_of_birth AS VARCHAR), 2)", targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "SUBSTR(CONCAT('0', cast(p.month_of_birth as STRING)),-2)")
 })
+
+test_that("translate sql server -> bigquery create temp table", {
+  sql <- translate("CREATE TABLE #temp (x INT);", targetDialect = "bigquery", tempEmulationSchema = "ts")
+  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stable;\nCREATE TABLE ts.%stable (x INT64);", getTempTablePrefix(), getTempTablePrefix()))
+})
+
+test_that("translate sql server -> bigquery select into temp table", {
+  sql <- translate("SELECT * INTO #temp FROM my_table;", targetDialect = "bigquery", tempEmulationSchema = "ts")
+  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stable;\nCREATE TABLE ts.%stable  AS\nSELECT\n* \nFROM\nmy_table;", getTempTablePrefix(), getTempTablePrefix()))
+})
+
+test_that("translate sql server -> bigquery create temp table if not exists", {
+  sql <- translate("CREATE TABLE IF NOT EXISTS #temp (x INT);", targetDialect = "bigquery", tempEmulationSchema = "ts")
+  expect_equal_ignore_spaces(sql, sprintf("create table if not exists ts.%stemp (x INT64);", getTempTablePrefix()))
+})

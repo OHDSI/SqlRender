@@ -1,3 +1,11 @@
+SqlRender 1.19.0
+================
+
+Changes:
+
+1. When creating emulated temp tables (Oracle, Spark, BigQuery), will first attempt to drop (if exist). This is to clean up any orphan tables from a previous (unsuccesful) run.
+
+
 SqlRender 1.18.1
 ================
 

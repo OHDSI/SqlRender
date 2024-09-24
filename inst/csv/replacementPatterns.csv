@@ -119,7 +119,9 @@ oracle,WITH @a AS @b INSERT INTO @c SELECT @d;,INSERT INTO @c WITH @a AS @b SELE
 oracle,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS\nSELECT\n@a\nFROM\n@c;
 oracle,SELECT @a INTO @b;,CREATE TABLE @b AS\nSELECT\n@a;
 oracle,##,<hash><hash>
+oracle,CREATE TABLE #@([^\s]+)table,DROP TABLE IF EXISTS %temp_prefix%%session_id%table;\nCREATE TABLE %temp_prefix%%session_id%table
 oracle,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
+oracle,"DROP TABLE IF EXISTS #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,#,%temp_prefix%%session_id%
 oracle,"CREATE INDEX @a ON @b (@c,@d) WHERE @e;","CREATE INDEX @a ON @b (CASE WHEN @e THEN @c END, CASE WHEN @e THEN @d END);"
 oracle,<hash><hash>,##
@@ -130,7 +132,6 @@ oracle,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a FETCH FIRST @r
 oracle,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",BEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE @table (@definition)';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -955 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
-oracle,"DROP TABLE IF EXISTS #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"DROP TABLE IF EXISTS @table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE @table';\n  EXECUTE IMMEDIATE 'DROP TABLE @table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,"FROM @a AS @b;","FROM @a NESTED @b;"
 oracle,"NESTED @a AS @b;","@a @b;"
@@ -806,6 +807,7 @@ bigquery,DEFAULT @([0-9]+)a,""
 bigquery,DEFAULT \"@a\",""
 bigquery,"DEFAULT CURRENT_DATE()",""
 bigquery,TRUNCATE TABLE @a;,DELETE FROM @a WHERE True;
+bigquery,CREATE TABLE #@([^\s]+)table,DROP TABLE IF EXISTS %temp_prefix%%session_id%table;\nCREATE TABLE %temp_prefix%%session_id%table
 bigquery,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
 bigquery,#,%temp_prefix%%session_id%
 bigquery,CREATE INDEX @index_name ON @table_col_cond;,-- bigquery does not support indexes
@@ -1058,7 +1060,6 @@ spark,TRY_CAST(@a),CAST(@a)
 spark,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 spark,tempdb..#@table +,%temp_prefix%%session_id% ||
 spark,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
-spark,#,%temp_prefix%%session_id%
 spark,"--HINT BUCKET(@a, @b)",
 spark,"--HINT PARTITION(@a @b)",
 spark,"HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;","HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;\nOPTIMIZE @table ZORDER BY @key;"
@@ -1081,6 +1082,8 @@ spark,SELECT @a INTO @b GROUP BY @c;,CREATE TABLE @b\nUSING DELTA\n AS\nSELECT\n
 spark,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table\nUSING DELTA\nAS\n@definition;",CREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;
 spark,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 spark,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+spark,CREATE TABLE #@([^\s]+)table,DROP TABLE IF EXISTS %temp_prefix%%session_id%table;\nCREATE TABLE %temp_prefix%%session_id%table
+spark,#,%temp_prefix%%session_id%
 spark,\"@a\",`@a`
 spark,+ '@a',|| '@a'
 spark,'@a' +,'@a' ||
@@ -1351,7 +1354,7 @@ snowflake,UPDATE STATISTICS @a;,
 snowflake,"--HINT BUCKET(@a, @b)",
 snowflake,"--HINT PARTITION(@a @b)",
 snowflake,"--HINT DISTRIBUTE_ON_KEY(@key)",
-snowflake,#,%temp_prefix%%session_id%
+snowflake,#,%session_id%
 snowflake,(@a & @b),"BITAND(@a, @b)"
 synapse,...@([0-9]+|y)a,xxx@a
 synapse,VARCHAR(MAX),VARCHAR(8000)

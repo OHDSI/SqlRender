@@ -561,3 +561,13 @@ test_that("translate sql server -> oracle bitwise and", {
   sql <- translate("SELECT ((a+b) & c/123) FROM table;", targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "SELECT BITAND((a+b) , c/123) FROM table ;")
 })
+
+test_that("translate sql server -> oracle create temp table", {
+  sql <- translate("CREATE TABLE #temp (x INT);", targetDialect = "oracle", tempEmulationSchema = "ts")
+  expect_equal_ignore_spaces(sql, sprintf("BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE ts.%stable';\n  EXECUTE IMMEDIATE 'DROP TABLE ts.%stable';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;\nCREATE TABLE ts.%stable (x INT);", getTempTablePrefix(), getTempTablePrefix(), getTempTablePrefix()))
+})
+
+test_that("translate sql server -> oracle select into temp table", {
+  sql <- translate("SELECT * INTO #temp FROM my_table;", targetDialect = "oracle", tempEmulationSchema = "ts")
+  expect_equal_ignore_spaces(sql, sprintf("BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE ts.%stable';\n  EXECUTE IMMEDIATE 'DROP TABLE ts.%stable';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;\nCREATE TABLE ts.%stable AS\nSELECT\n* \nFROM\nmy_table ;", getTempTablePrefix(), getTempTablePrefix(), getTempTablePrefix()))
+})
