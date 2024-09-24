@@ -456,12 +456,12 @@ test_that("translate sql server -> spark cast string as date", {
 
 test_that("translate sql server -> spark create temp table", {
   sql <- translate("CREATE TABLE #temp (x INT);", targetDialect = "spark", tempEmulationSchema = "ts")
-  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stable;\nCREATE TABLE ts.%stable  \nUSING DELTA\n AS\nSELECT\nCAST(NULL AS int) AS x  WHERE 1 = 0;", getTempTablePrefix(), getTempTablePrefix()))
+  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stemp;\nCREATE TABLE ts.%stemp  \nUSING DELTA\n AS\nSELECT\nCAST(NULL AS int) AS x  WHERE 1 = 0;", getTempTablePrefix(), getTempTablePrefix()))
 })
 
 test_that("translate sql server -> spark select into temp table", {
   sql <- translate("SELECT * INTO #temp FROM my_table;", targetDialect = "spark", tempEmulationSchema = "ts")
-  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stable;\nCREATE TABLE ts.%stable \nUSING DELTA\nAS\nSELECT\n* \nFROM\nmy_table;", getTempTablePrefix(), getTempTablePrefix()))
+  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stemp;\nCREATE TABLE ts.%stemp \nUSING DELTA\nAS\nSELECT\n* \nFROM\nmy_table;", getTempTablePrefix(), getTempTablePrefix()))
 })
 
 test_that("translate sql server -> spark create temp table if not exists", {

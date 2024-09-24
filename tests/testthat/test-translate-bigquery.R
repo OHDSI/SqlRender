@@ -552,12 +552,12 @@ test_that("translate sql server -> bigquery RIGHT with implicit concat", {
 
 test_that("translate sql server -> bigquery create temp table", {
   sql <- translate("CREATE TABLE #temp (x INT);", targetDialect = "bigquery", tempEmulationSchema = "ts")
-  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stable;\nCREATE TABLE ts.%stable (x INT64);", getTempTablePrefix(), getTempTablePrefix()))
+  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stemp;\nCREATE TABLE ts.%stemp (x INT64);", getTempTablePrefix(), getTempTablePrefix()))
 })
 
 test_that("translate sql server -> bigquery select into temp table", {
   sql <- translate("SELECT * INTO #temp FROM my_table;", targetDialect = "bigquery", tempEmulationSchema = "ts")
-  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stable;\nCREATE TABLE ts.%stable  AS\nSELECT\n* \nFROM\nmy_table;", getTempTablePrefix(), getTempTablePrefix()))
+  expect_equal_ignore_spaces(sql, sprintf("DROP TABLE IF EXISTS ts.%stemp;\nCREATE TABLE ts.%stemp  AS\nSELECT\n* \nFROM\nmy_table;", getTempTablePrefix(), getTempTablePrefix()))
 })
 
 test_that("translate sql server -> bigquery create temp table if not exists", {
