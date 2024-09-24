@@ -1354,7 +1354,7 @@ snowflake,UPDATE STATISTICS @a;,
 snowflake,"--HINT BUCKET(@a, @b)",
 snowflake,"--HINT PARTITION(@a @b)",
 snowflake,"--HINT DISTRIBUTE_ON_KEY(@key)",
-snowflake,#,%session_id%
+snowflake,#,%temp_prefix%%session_id%
 snowflake,(@a & @b),"BITAND(@a, @b)"
 synapse,...@([0-9]+|y)a,xxx@a
 synapse,VARCHAR(MAX),VARCHAR(8000)
