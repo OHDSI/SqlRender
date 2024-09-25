@@ -1326,7 +1326,7 @@ snowflake,COUNT_BIG(@a),COUNT(@a)
 snowflake,NEWID(),UUID_STRING()
 snowflake,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
 snowflake,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
-snowflake,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",DROP TABLE IF EXISTS @table;
+snowflake,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",DROP TABLE IF EXISTS #@table;
 snowflake,.dbo.,.
 snowflake,CREATE TABLE #@table (@definition),CREATE TEMP TABLE #@table (@definition)
 snowflake,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- snowflake does not support indexes

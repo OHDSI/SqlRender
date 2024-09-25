@@ -5,6 +5,10 @@ Changes:
 
 1. When creating emulated temp tables (Oracle, Spark, BigQuery), will first attempt to drop (if exist). This is to clean up any orphan tables from a previous (unsuccesful) run.
 
+Bugfixes:
+
+1. On Snowflake, fixed 'This session does not have a current schema' error when translating legacy `IF OBJECT_ID('tempdb..#table', 'U') IS NOT NULL DROP TABLE #table;`
+
 
 SqlRender 1.18.1
 ================
