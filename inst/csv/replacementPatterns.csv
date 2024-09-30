@@ -1372,3 +1372,59 @@ sql server,...@([0-9]+|y)a,xxx@a
 sql server,DROP TABLE IF EXISTS #@table;,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;"
 sql server,DROP TABLE IF EXISTS @table;,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;"
 sql server,CREATE TABLE IF NOT EXISTS @table (@definition);,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);"
+iris,...@([0-9]+)a,xxx@a  --???
+iris,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
+iris,TRY_CAST(@a),CAST(@a)
+iris,+ '@a',|| '@a'
+iris,'@a' +,'@a' ||
+iris,CAST(@a AS varchar(@b)) +,CAST(@a AS varchar(@b)) ||
+iris,+ CAST(@a AS varchar(@b)),|| CAST(@a AS varchar(@b))
+iris,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
+iris,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
+iris,COUNT_BIG(@a),COUNT(@a)
+iris,.dbo.,.
+iris,CREATE TABLE #@table (@definition),CREATE GLOBAL TEMPORARY TABLE #@table (@definition)
+iris,"WITH @a AS (@b), @c CREATE TABLE @d AS @e;","DROP TABLE IF EXISTS #@a;\n CREATE GLOBAL TEMPORARY TABLE #@a AS @b;\n WITH @c CREATE TABLE @d AS @e;\n DROP TABLE IF EXISTS #@a;"
+iris,WITH @a AS (@b) CREATE TABLE @c AS SELECT @d;,DROP TABLE IF EXISTS #@a;\n CREATE GLOBAL TEMPORARY TABLE #@a AS @b;\n CREATE TABLE @c AS SELECT @d;\n DROP TABLE IF EXISTS #@a;
+iris,"WITH @a AS (@b), @c CREATE GLOBAL TEMPORARY TABLE @d AS @e;","DROP TABLE IF EXISTS #@a;\n CREATE GLOBAL TEMPORARY TABLE #@a AS @b;\n WITH @c CREATE GLOBAL TEMPORARY TABLE @d AS @e;\n DROP TABLE IF EXISTS #@a;"
+iris,WITH @a AS (@b) CREATE GLOBAL TEMPORARY TABLE @c AS @d;,DROP TABLE IF EXISTS #@a;\n CREATE GLOBAL TEMPORARY TABLE #@a AS @b;\n CREATE GLOBAL TEMPORARY TABLE @c AS @d;\n DROP TABLE IF EXISTS #@a;
+iris,"IF OBJECT_ID('@table', 'U') IS NULL CREATE TABLE @table (@definition);",CREATE TABLE IF NOT EXISTS @table (@definition);
+iris,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE IF EXISTS @table;
+iris,"IF OBJECT_ID('tempdb..#@table', 'U') IS NOT NULL DROP TABLE #@table;",DROP TABLE IF EXISTS #@table;
+iris,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
+iris,"AS drvd(@a)","AS drvd(<start>@a)"
+iris,"<start>@a, @b)","<start>@a, <start>@b)"
+iris,"<start>","NULL AS "
+iris,"FROM (VALUES @a) AS drvd(@b)","FROM (SELECT @b WHERE (0 = 1) UNION ALL VALUES @a) AS values_table"
+iris,SELECT @a INTO #@b FROM @c;,CREATE GLOBAL TEMPORARY TABLE #@b AS SELECT @a FROM @c;
+iris,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS SELECT @a FROM @c;
+iris,SELECT @a INTO @b;,CREATE TABLE @b AS SELECT @a;
+iris,SELECT @a INTO #@b;,CREATE GLOBAL TEMPORARY TABLE #@b AS SELECT @a;
+iris,#,%temp_prefix%%session_id%
+iris,UPDATE STATISTICS @a;,TUNE TABLE @a;
+iris,"--HINT BUCKET(@a, @b)", -- haven't looked into this yet, skip it for now
+iris,"--HINT PARTITION(@a @b)", -- haven't looked into this yet, skip it for now
+iris,"--HINT DISTRIBUTE_ON_KEY(@key)", -- haven't looked into this yet, skip it for now
+iris,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'FM0000')||'-'||TO_CHAR(@month,'FM00')||'-'||TO_CHAR(@day,'FM00'), 'YYYY-MM-DD')"
+iris,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_TIMESTAMP(TO_CHAR(@year,'FM0000')||'-'||TO_CHAR(@month,'FM00')||'-'||TO_CHAR(@day,'FM00')||' '||TO_CHAR(@hour,'FM00')||':'||TO_CHAR(@minute,'FM00')||':'||TO_CHAR(@second,'FM00')||'.'||TO_CHAR(@ms,'FM000'), 'YYYY-MM-DD HH24:MI:SS.FF')"
+iris," DATEADD(d, @a, @b) AS"," TO_DATE(DATEADD(d, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(dd, @a, @b) AS"," TO_DATE(DATEADD(dd, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(day, @a, @b) AS"," TO_DATE(DATEADD(day, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(m, @a, @b) AS"," TO_DATE(DATEADD(m, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(mm, @a, @b) AS"," TO_DATE(DATEADD(mm, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(yy, @a, @b) AS"," TO_DATE(DATEADD(yy, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," DATEADD(yyyy, @a, @b) AS"," TO_DATE(DATEADD(yyyy, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
+iris," COALESCE(p.birth_datetime", COALESCE(CAST(p.birth_datetime AS DATE)
+iris,"CONCAT(p.year_of_birth, @b, @c)",p.year_of_birth||'-'||@b||'-'|| @c
+iris,"CONCAT(@a, @b,","@a || CONCAT(@b,"
+iris,"CONCAT(@a,@b)",@a || @b
+iris,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);
+iris,CREATE INDEX @index_name ON @table (@variable) WHERE @b;,CREATE INDEX @index_name ON @table (@variable);
+iris,AS MIN,AS "MIN"
+iris,AS MAX,AS "MAX"
+iris,AS COUNT,AS "COUNT"
+iris,STDEV(@a),STDDEV(@a)
+iris,STDEV_POP(@a),STDDEV_POP(@a)
+iris,STDEV_SAMP(@a),STDDEV_SAMP(@a)
+iris,EOMONTH(@date),LAST_DAY(@date)
+iris,.DOMAIN ,."DOMAIN" 

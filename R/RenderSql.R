@@ -133,7 +133,8 @@ renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
 #'
 #' @param sql                   The SQL to be translated
 #' @param targetDialect         The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                              "sqlite", "sqlite extended", "netezza", "bigquery", "snowflake", "synapse", "spark", and "redshift" are supported.
+#'                              "sqlite", "sqlite extended", "netezza", "bigquery", "snowflake", "synapse", "spark", 
+#'                              "redshift", and "iris" are supported.
 #'                              Use \code{\link{listSupportedDialects}} to get the list of supported dialects.
 #' @param oracleTempSchema      DEPRECATED: use \code{tempEmulationSchema} instead.
 #' @param tempEmulationSchema   Some database platforms like Oracle and Impala do not truly support
@@ -201,7 +202,8 @@ translate <- function(sql,
 #'
 #' @param sql                The SQL to be translated
 #' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                           "netezza", "bigquery", "snowflake", "synapse", "spark", and "redshift" are supported
+#'                           "netezza", "bigquery", "snowflake", "synapse", "spark", "redshift", and
+#'                           "iris" are supported
 #' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or
 #'                           Impala.
 #'
@@ -230,7 +232,8 @@ translateSql <- function(sql = "", targetDialect, oracleTempSchema = NULL) {
 #'
 #' @param sql                   The SQL to be translated
 #' @param targetDialect         The target dialect. Currently "oracle", "postgresql", "pdw", "impala",
-#'                              "sqlite", "sqlite extended", "netezza", "bigquery", "snowflake", "synapse", "spark", and "redshift" are supported.
+#'                              "sqlite", "sqlite extended", "netezza", "bigquery", "snowflake", "synapse", "spark", 
+#'                              "redshift", and "iris" are supported.
 #' @param oracleTempSchema      DEPRECATED: use \code{tempEmulationSchema} instead.
 #' @param tempEmulationSchema   Some database platforms like Oracle and Impala do not truly support
 #'                              temp tables. To emulate temp tables, provide a schema with write
