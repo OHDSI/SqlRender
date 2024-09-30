@@ -1,5 +1,4 @@
 library(testthat)
-library(devtools)
 library(rJava)
 
 
@@ -96,7 +95,7 @@ test_that("translate sql server -> InterSystems IRIS reserved word DOMAIN", {
 })
 test_that("translate sql server -> InterSystems IRIS reserved words for aggregates", {
   sql <- translate("SELECT MIN(x) AS min, MAX(x) AS max, COUNT(x) as COUNT FROM t", targetDialect = "iris")
-  expect_equal_ignore_spaces(sql, "SELECT MIN(x) AS \"MIN\", MAX(x) AS \"MAX\", COUNT(x) as \"COUNT\" FROM t")
+  expect_equal_ignore_spaces(sql, "SELECT MIN(x) AS \"MIN\", MAX(x) AS \"MAX\", COUNT(x) AS \"COUNT\" FROM t")
 })
 
 

@@ -1060,8 +1060,8 @@ spark,TRY_CAST(@a),CAST(@a)
 spark,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 spark,tempdb..#@table +,%temp_prefix%%session_id% ||
 spark,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
-spark,"--HINT BUCKET(@a, @b)",
-spark,"--HINT PARTITION(@a @b)",
+spark,"--HINT BUCKET(@a, @b)",""
+spark,"--HINT PARTITION(@a @b)",""
 spark,"HINT DISTRIBUTE_ON_KEY(@key) CREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;","HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE IF NOT EXISTS @table\nUSING DELTA\nAS\n@definition;\nOPTIMIZE @table ZORDER BY @key;"
 spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@d', 'U') IS NULL WITH @a AS @b SELECT @c INTO @d FROM @e;",HINT DISTRIBUTE_ON_KEY(@key)\nCREATE TABLE IF NOT EXISTS @d\nUSING DELTA\nAS\nWITH @a AS @b SELECT\n@c\nFROM\n@e;\nOPTIMIZE @d ZORDER BY @key;
 spark,"HINT DISTRIBUTE_ON_KEY(@key) IF OBJECT_ID('@b', 'U') IS NULL SELECT @a INTO @b FROM @c;",HINT DISTRIBUTE_ON_KEY(@key) \nCREATE TABLE IF NOT EXISTS @b\nUSING DELTA\nAS\nSELECT\n@a\nFROM\n@c;\nOPTIMIZE @b ZORDER BY @key;
@@ -1402,9 +1402,9 @@ iris,SELECT @a INTO @b;,CREATE TABLE @b AS SELECT @a;
 iris,SELECT @a INTO #@b;,CREATE GLOBAL TEMPORARY TABLE #@b AS SELECT @a;
 iris,#,%temp_prefix%%session_id%
 iris,UPDATE STATISTICS @a;,TUNE TABLE @a;
-iris,"--HINT BUCKET(@a, @b)", -- haven't looked into this yet, skip it for now
-iris,"--HINT PARTITION(@a @b)", -- haven't looked into this yet, skip it for now
-iris,"--HINT DISTRIBUTE_ON_KEY(@key)", -- haven't looked into this yet, skip it for now
+iris,"--HINT BUCKET(@a, @b)", "-- haven't looked into this yet, skip it for now"
+iris,"--HINT PARTITION(@a @b)", -- "haven't looked into this yet, skip it for now""
+iris,"--HINT DISTRIBUTE_ON_KEY(@key)", -- "haven't looked into this yet, skip it for now""
 iris,"DATEFROMPARTS(@year,@month,@day)","TO_DATE(TO_CHAR(@year,'FM0000')||'-'||TO_CHAR(@month,'FM00')||'-'||TO_CHAR(@day,'FM00'), 'YYYY-MM-DD')"
 iris,"DATETIMEFROMPARTS(@year,@month,@day,@hour,@minute,@second,@ms)","TO_TIMESTAMP(TO_CHAR(@year,'FM0000')||'-'||TO_CHAR(@month,'FM00')||'-'||TO_CHAR(@day,'FM00')||' '||TO_CHAR(@hour,'FM00')||':'||TO_CHAR(@minute,'FM00')||':'||TO_CHAR(@second,'FM00')||'.'||TO_CHAR(@ms,'FM000'), 'YYYY-MM-DD HH24:MI:SS.FF')"
 iris," DATEADD(d, @a, @b) AS"," TO_DATE(DATEADD(d, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"

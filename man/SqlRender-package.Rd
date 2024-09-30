@@ -6,7 +6,7 @@
 \alias{SqlRender-package}
 \title{SqlRender: Rendering Parameterized SQL and Translation to Dialects}
 \description{
-A rendering tool for parameterized SQL that also translates into different SQL dialects. These dialects include 'Microsoft SQL Server', 'Oracle', 'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', 'Snowflake', 'Azure Synapse Analytics Dedicated', 'Apache Spark', and 'SQLite'.
+A rendering tool for parameterized SQL that also translates into different SQL dialects. These dialects include 'Microsoft SQL Server', 'Oracle', 'PostgreSql', 'Amazon RedShift', 'Apache Impala', 'IBM Netezza', 'Google BigQuery', 'Microsoft PDW', 'Snowflake', 'Azure Synapse Analytics Dedicated', 'Apache Spark', 'SQLite', and 'InterSystems IRIS'.
 }
 \seealso{
 Useful links:
