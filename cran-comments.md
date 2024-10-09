@@ -13,4 +13,6 @@ There were no ERRORs or WARNINGs.
 
 ## Downstream dependencies
 
-- Achilles, allofus, CohortAlgebra, CommonDataModel, FeatureExtraction, CohortAlgebra, DatabaseConnector, DrugExposureDiagnostics, TreatmentPatterns, CDMConnector, and DrugExposureDiagnostics depend on SqlRender, and have been tested with this new version. No problems were found.
+- Achilles, allofus, CohortAlgebra, CommonDataModel, FeatureExtraction, CohortAlgebra, DatabaseConnector, DrugExposureDiagnostics, TreatmentPatterns, CDMConnector, and DrugExposureDiagnostics depend on SqlRender, and have been tested with this new version. No problems were found. 
+
+- CommonDataModel has been updated since the last attempt to release this new version. It no longer contains the offending unit test, and passes R check with this new version.
