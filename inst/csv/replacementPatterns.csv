@@ -1395,7 +1395,9 @@ iris,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 iris,"AS drvd(@a)","AS drvd(<start>@a)"
 iris,"<start>@a, @b)","<start>@a, <start>@b)"
 iris,"<start>","NULL AS "
-iris,"FROM (VALUES @a) AS drvd(@b)","FROM (SELECT @b WHERE (0 = 1) UNION ALL VALUES @a) AS values_table"
+iris,"FROM (VALUES @a) AS drvd(@b)","FROM ((SELECT @b WHERE (0 = 1)) UNION ALL VALUES @a) AS values_table"
+iris,"UNION ALL VALUES (@a), (@b)","UNION ALL (SELECT @a) UNION ALL VALUES (@b)"
+iris,"UNION ALL VALUES (@a)","UNION ALL (SELECT @a)"
 iris,SELECT @a INTO #@b FROM @c;,CREATE GLOBAL TEMPORARY TABLE #@b AS SELECT @a FROM @c;
 iris,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS SELECT @a FROM @c;
 iris,SELECT @a INTO @b;,CREATE TABLE @b AS SELECT @a;
