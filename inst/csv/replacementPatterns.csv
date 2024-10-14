@@ -1395,7 +1395,9 @@ iris,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 iris,"AS drvd(@a)","AS drvd(<start>@a)"
 iris,"<start>@a, @b)","<start>@a, <start>@b)"
 iris,"<start>","NULL AS "
-iris,"FROM (VALUES @a) AS drvd(@b)","FROM (SELECT @b WHERE (0 = 1) UNION ALL VALUES @a) AS values_table"
+iris,"FROM (VALUES @a) AS drvd(@b)","FROM ((SELECT @b WHERE (0 = 1)) UNION ALL VALUES @a) AS values_table"
+iris,"UNION ALL VALUES (@a), (@b)","UNION ALL (SELECT @a) UNION ALL VALUES (@b)"
+iris,"UNION ALL VALUES (@a)","UNION ALL (SELECT @a)"
 iris,SELECT @a INTO #@b FROM @c;,CREATE GLOBAL TEMPORARY TABLE #@b AS SELECT @a FROM @c;
 iris,SELECT @a INTO @b FROM @c;,CREATE TABLE @b AS SELECT @a FROM @c;
 iris,SELECT @a INTO @b;,CREATE TABLE @b AS SELECT @a;
@@ -1415,6 +1417,12 @@ iris," DATEADD(mm, @a, @b) AS"," TO_DATE(DATEADD(mm, @a, @b),'YYYY-MM-DD HH:MI:S
 iris," DATEADD(yy, @a, @b) AS"," TO_DATE(DATEADD(yy, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
 iris," DATEADD(yyyy, @a, @b) AS"," TO_DATE(DATEADD(yyyy, @a, @b),'YYYY-MM-DD HH:MI:SS') AS"
 iris," COALESCE(p.birth_datetime", COALESCE(CAST(p.birth_datetime AS DATE)
+iris,"COALESCE(@a, DATEADD(day,@b,@c))","COALESCE(@a, CAST (DATEADD(day,@b,@c) AS DATE))"
+iris,"COALESCE(@a, DATEADD(day,@b,@c), DATEADD(day,@d,@e))","COALESCE(@a, CAST (DATEADD(day,@b,@c) AS DATE), CAST (DATEADD(day,@d,@e) AS DATE))"
+iris,"case when DATEADD(day,@a,@b) > op_end_date then op_end_date else DATEADD(day,@a,@b) end as end_date","case when CAST (DATEADD(day,@a,@b) AS DATE) > op_end_date then op_end_date else CAST (DATEADD(day,@a,@b) AS DATE) end as end_date"
+iris,"select @a as cohort_definition_id, person_id, start_date, end_date","select @a as cohort_definition_id, person_id, CAST (start_date AS DATE), CAST (end_date AS DATE)"
+iris,"select @a as design_hash, person_id, start_date, end_date","select @a as design_hash, person_id, CAST (start_date AS DATE), CAST (end_date AS DATE)"
+iris,"select cohort_definition_id, subject_id, cohort_start_date, cohort_end_date, @a as adjusted_start_date, @b as adjusted_end_date","select cohort_definition_id, subject_id, cohort_start_date, cohort_end_date, CAST(@a AS DATE) as adjusted_start_date, CAST(@b AS DATE) as adjusted_end_date"
 iris,"CONCAT(p.year_of_birth, @b, @c)",p.year_of_birth||'-'||@b||'-'|| @c
 iris,"CONCAT(@a, @b,","@a || CONCAT(@b,"
 iris,"CONCAT(@a,@b)",@a || @b

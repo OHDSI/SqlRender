@@ -104,3 +104,10 @@ test_that("translate sql server -> InterSystems IRIS function names", {
   sql <- translate("SELECT STDEV(x), STDEV_POP(x), STDEV_SAMP(x), EOMONTH(dt) FROM t", targetDialect = "iris")
   expect_equal_ignore_spaces(sql, "SELECT STDDEV(x), STDDEV_POP(x), STDDEV_SAMP(x), LAST_DAY(dt) FROM t")
 })
+
+
+# test FROM (VALUES ... )
+test_that("translate sql server -> InterSystems IRIS FROM ( VALUES ... ) clause", {
+  sql <- translate("SELECT * FROM (SELECT TRY_CAST(a AS INT) AS a, TRY_CAST(b AS DOUBLE) AS b FROM (VALUES (1, 2), (2, 3)) AS drvd(a, b);", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT * FROM (SELECT CAST(a AS INT) AS a, CAST(b AS DOUBLE) AS b FROM ((SELECT NULL AS a, NULL AS b WHERE (0 = 1)) UNION ALL (SELECT 1, 2) UNION ALL (SELECT 2, 3)) AS values_table;")
+})
