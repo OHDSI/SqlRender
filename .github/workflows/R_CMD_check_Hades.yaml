@@ -99,8 +99,22 @@ jobs:
         
       - name: Test coverage
         if: runner.os == 'Linux'
-        run: covr::codecov(token = "${{ secrets.CODECOV_TOKEN }}")
+        run: |
+          cov <- covr::package_coverage(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+          )
+          covr::to_cobertura(cov)
         shell: Rscript {0}
+
+      - uses: codecov/codecov-action@v4
+        if: runner.os == 'Linux'
+        with:
+          file: ./cobertura.xml
+          plugin: noop
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   Release:
     needs: R-CMD-Check
