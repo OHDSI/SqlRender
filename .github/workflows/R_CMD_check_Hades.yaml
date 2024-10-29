@@ -95,6 +95,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           remotes::install_cran("covr")
+          remotes::install_cran("xml2")
         shell: Rscript {0}
         
       - name: Test coverage
