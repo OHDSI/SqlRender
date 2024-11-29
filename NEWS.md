@@ -1,3 +1,11 @@
+SqlRender 1.19.1
+================
+
+Bugfixes:
+
+1. Some additional translation rules for InterSystems IRIS.
+
+
 SqlRender 1.19.0
 ================
 
