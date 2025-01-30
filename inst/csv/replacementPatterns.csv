@@ -1144,6 +1144,8 @@ spark,UPDATE STATISTICS @a;,
 spark,"SELECT @columns FROM (@a) @x,(@b) @y;","SELECT @columns FROM (@a) @x cross join (@b) @y;"
 spark,"ALTER TABLE @table ADD COLUMN @([\w_-]+)column @type DEFAULT @default;","ALTER TABLE @table ADD COLUMN @column @type; \nALTER TABLE @table SET TBLPROPERTIES('delta.feature.allowColumnDefaults' = 'supported'); \nALTER TABLE @table ALTER COLUMN @column SET DEFAULT @default;"
 spark,"CAST(@a AS DATE)","IF(try_cast(@a AS DATE) IS NULL, to_date(cast(@a AS STRING), 'yyyyMMdd'), try_cast(@a AS DATE))"
+spark,"DATEADD(@part,@amount,@([0-9a-zA-Z_]+_date)date)","CAST(DATEA##(@part,@amount,@date) AS DATE)"
+spark,DATEA##,DATEADD
 sqlite extended,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 sqlite extended,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
 sqlite extended,+ '@a',|| '@a'

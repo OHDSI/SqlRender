@@ -422,17 +422,17 @@ test_that("translate sql server -> spark DATEADD DAY with float", {
   sql <- translate("select DATEADD(DAY, 1.0, some_date) from my_table;",
     targetDialect = "spark"
   )
-  expect_equal_ignore_spaces(sql, "select DATEADD(DAY, 1, some_date) from my_table;")
+  expect_equal_ignore_spaces(sql, "select CAST(DATEADD(DAY, 1, some_date) AS DATE) from my_table;")
 })
 
 test_that("translate sql server -> spark DATEADD YEAR with float", {
   sql <- translate("select DATEADD(YEAR, 1.0, some_date) from my_table;",
     targetDialect = "spark"
   )
-  expect_equal_ignore_spaces(sql, "select DATEADD(YEAR, 1, some_date) from my_table;")
+  expect_equal_ignore_spaces(sql, "select CAST(DATEADD(YEAR, 1, some_date) AS DATE) from my_table;")
 })
 
-test_that("translate sql server -> spark DATEADD YEAR with float", {
+test_that("translate sql server -> spark CTE", {
   sql <- translate("WITH cte AS (SELECT * FROM table) SELECT * INTO tmp.table FROM cte;",
     targetDialect = "spark"
   )
@@ -468,3 +468,18 @@ test_that("translate sql server -> spark create temp table if not exists", {
   sql <- translate("CREATE TABLE IF NOT EXISTS #temp (x INT);", targetDialect = "spark", tempEmulationSchema = "ts")
   expect_equal_ignore_spaces(sql, sprintf("CREATE TABLE IF NOT EXISTS ts.%stemp  \nUSING DELTA\n AS\nSELECT\nCAST(NULL AS int) AS x  WHERE 1 = 0;", getTempTablePrefix()))
 })
+
+rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')
+
+test_that("translate sql server -> spark DATEADD for DATE column", {
+  # If field is a date, it should remain a date after DATEADD to be consistent with other platforms:
+  sql <- translate("SELECT DATEADD(DAY, 1, start_date) FROM table;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "SELECT CAST(DATEADD(DAY,1,start_date) AS DATE) FROM table;")
+
+  sql <- translate("SELECT DATEADD(DAY, 1, START_DATE) FROM table;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "SELECT CAST(DATEADD(DAY,1,START_DATE) AS DATE) FROM table;")
+
+  sql <- translate("SELECT DATEADD(DAY, 1, start_datetime) FROM table;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(DAY,1,start_datetime) FROM table;")
+})
+

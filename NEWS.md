@@ -1,3 +1,11 @@
+SqlRender 1.19.2
+================
+
+Bugfixes:
+
+1. On DataBricks, a translation of `DATEADD()` now returns a `DATE` if the input was a `DATE`, to be consistent with other platforms. (Requires input field name to end with '_date')
+
+
 SqlRender 1.19.1
 ================
 
