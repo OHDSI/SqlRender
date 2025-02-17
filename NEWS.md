@@ -5,6 +5,10 @@ Bugfixes:
 
 1. On DataBricks, a translation of `DATEADD()` now returns a `DATE` if the input was a `DATE`, to be consistent with other platforms. (Requires input field name to end with '_date')
 
+2. When creating emulated temp tables on IRIS, will first attempt to drop (if exist). This follows behavior for Oracle, Spark, and BigQuery.
+
+3. Fixing translation of `NEWID()` and `RAND()` on IRIS.
+
 
 SqlRender 1.19.1
 ================

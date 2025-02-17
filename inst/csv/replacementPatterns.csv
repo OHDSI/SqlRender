@@ -1385,7 +1385,7 @@ iris,CAST(@a AS varchar) +,CAST(@a AS varchar) ||
 iris,+ CAST(@a AS varchar),|| CAST(@a AS varchar)
 iris,COUNT_BIG(@a),COUNT(@a)
 iris,.dbo.,.
-iris,CREATE TABLE #@table (@definition),CREATE GLOBAL TEMPORARY TABLE #@table (@definition)
+iris,CREATE TABLE #@table (@definition),DROP TABLE IF EXISTS #@table; CREATE GLOBAL TEMPORARY TABLE #@table (@definition)
 iris,"WITH @a AS (@b), @c CREATE TABLE @d AS @e;","DROP TABLE IF EXISTS #@a;\n CREATE GLOBAL TEMPORARY TABLE #@a AS @b;\n WITH @c CREATE TABLE @d AS @e;\n DROP TABLE IF EXISTS #@a;"
 iris,WITH @a AS (@b) CREATE TABLE @c AS SELECT @d;,DROP TABLE IF EXISTS #@a;\n CREATE GLOBAL TEMPORARY TABLE #@a AS @b;\n CREATE TABLE @c AS SELECT @d;\n DROP TABLE IF EXISTS #@a;
 iris,"WITH @a AS (@b), @c CREATE GLOBAL TEMPORARY TABLE @d AS @e;","DROP TABLE IF EXISTS #@a;\n CREATE GLOBAL TEMPORARY TABLE #@a AS @b;\n WITH @c CREATE GLOBAL TEMPORARY TABLE @d AS @e;\n DROP TABLE IF EXISTS #@a;"
@@ -1438,3 +1438,5 @@ iris,STDEV_POP(@a),STDDEV_POP(@a)
 iris,STDEV_SAMP(@a),STDDEV_SAMP(@a)
 iris,EOMONTH(@date),LAST_DAY(@date)
 iris,.DOMAIN ,."DOMAIN" 
+iris,NEWID(),$TSQL_NEWID()
+iris,RAND(),$TSQL_NEWID()
