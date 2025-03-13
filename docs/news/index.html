@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.2</span>
       </span>
     </div>
 
@@ -64,7 +64,14 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.19.1" id="sqlrender-1191">SqlRender 1.19.1<a class="anchor" aria-label="anchor" href="#sqlrender-1191"></a></h2>
+<h2 class="page-header" data-toc-text="1.19.2" id="sqlrender-1192">SqlRender 1.19.2<a class="anchor" aria-label="anchor" href="#sqlrender-1192"></a></h2>
+<p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>On DataBricks, a translation of <code>DATEADD()</code> now returns a <code>DATE</code> if the input was a <code>DATE</code>, to be consistent with other platforms. (Requires input field name to end with ’_date’)</p></li>
+<li><p>When creating emulated temp tables on IRIS, will first attempt to drop (if exist). This follows behavior for Oracle, Spark, and BigQuery.</p></li>
+<li><p>Fixing translation of <code>NEWID()</code> and <code>RAND()</code> on IRIS.</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.19.1" id="sqlrender-1191">SqlRender 1.19.1<small>2024-11-29</small><a class="anchor" aria-label="anchor" href="#sqlrender-1191"></a></h2>
 <p>Bugfixes:</p>
 <ol style="list-style-type: decimal"><li>Some additional translation rules for InterSystems IRIS.</li>
 </ol></div>
