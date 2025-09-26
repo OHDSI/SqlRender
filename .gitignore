@@ -13,3 +13,4 @@ standalone/build/*
 *.iml
 errorReportSql.txt
 .DS_Store
+revdep/

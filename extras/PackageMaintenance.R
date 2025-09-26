@@ -44,6 +44,8 @@ descriptionVersion <- stringr::str_extract(readLines("DESCRIPTION")[grepl("^Vers
 pomVersion <- stringr::str_extract(readLines("pom.xml")[grepl("SNAPSHOT</version>", readLines("pom.xml"))], "(?<=<version>).*(?=-SNAPSHOT</version>)")
 if (descriptionVersion != pomVersion) stop("DESCRIPTION version does not match POM version")
 
+revdepcheck::revdep_check(num_workers = 4)
+
 devtools::check_win_devel()
 
 rhub::rc_submit(platforms = "atlas")

@@ -22,3 +22,4 @@ _pkgdown.yml
 ^CRAN-RELEASE$
 .github
 ^CRAN-SUBMISSION$
+revdep
