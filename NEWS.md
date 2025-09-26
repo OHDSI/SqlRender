@@ -1,3 +1,10 @@
+SqlRender 1.19.4
+================
+
+Bugfixes:
+
+1. Translating `FLOAT` to `DOUBLE` on DataBricks (Spark), because DataBricks `FLOAT` is single precision while SQL Server `FLOAT` is double precision.
+
 SqlRender 1.19.3
 ================
 

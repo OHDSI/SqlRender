@@ -1088,7 +1088,7 @@ spark,\"@a\",`@a`
 spark,+ '@a',|| '@a'
 spark,'@a' +,'@a' ||
 spark,CREATE INDEX @index_name ON @table (@variable);,-- spark does not support indexes
-spark,"ROUND(@a,@b)","ROUND(CAST(@a AS float),@b)"
+spark,"ROUND(@a,@b)","ROUND(CAST(@a AS DOUBLE),@b)"
 spark,"HASHBYTES('MD5',@a)","MD5(@a)"
 spark,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","CAST(CONCAT('x', @a) AS BIT(32))"
 spark,"CONVERT(DATE, @a)","TO_DATE(@a, 'yyyy-MM-dd')"
@@ -1134,7 +1134,7 @@ spark,DATETIME2,TIMESTAMP
 spark,VARCHAR(MAX),STRING
 spark,VARCHAR(@a),STRING
 spark,VARCHAR,STRING
-spark,DOUBLE PRECISION,FLOAT
+spark,DOUBLE PRECISION,DOUBLE
 spark,SELECT TOP @([0-9]+)rows @a;,SELECT @a LIMIT @rows;
 spark,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 spark,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
@@ -1146,6 +1146,7 @@ spark,"ALTER TABLE @table ADD COLUMN @([\w_-]+)column @type DEFAULT @default;","
 spark,"CAST(@a AS DATE)","IF(try_cast(@a AS DATE) IS NULL, to_date(cast(@a AS STRING), 'yyyyMMdd'), try_cast(@a AS DATE))"
 spark,"DATEADD(@part,@amount,@([0-9a-zA-Z_]+_date)date)","CAST(DATEA##(@part,@amount,@date) AS DATE)"
 spark,DATEA##,DATEADD
+spark,FLOAT,DOUBLE
 sqlite extended,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 sqlite extended,"ROUND(@a,@b)","ROUND(CAST(@a AS REAL),@b)"
 sqlite extended,+ '@a',|| '@a'

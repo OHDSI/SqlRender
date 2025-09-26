@@ -22,7 +22,7 @@ test_that("translate sql server -> spark round", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "SELECT ROUND(CAST(3.14 AS float),1)"
+    "SELECT ROUND(CAST(3.14 AS DOUBLE),1)"
   )
 })
 
@@ -469,7 +469,7 @@ test_that("translate sql server -> spark create temp table if not exists", {
   expect_equal_ignore_spaces(sql, sprintf("CREATE TABLE IF NOT EXISTS ts.%stemp  \nUSING DELTA\n AS\nSELECT\nCAST(NULL AS int) AS x  WHERE 1 = 0;", getTempTablePrefix()))
 })
 
-rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')
+# rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')
 
 test_that("translate sql server -> spark DATEADD for DATE column", {
   # If field is a date, it should remain a date after DATEADD to be consistent with other platforms:
@@ -481,5 +481,10 @@ test_that("translate sql server -> spark DATEADD for DATE column", {
 
   sql <- translate("SELECT DATEADD(DAY, 1, start_datetime) FROM table;", targetDialect = "spark")
   expect_equal_ignore_spaces(sql, "SELECT DATEADD(DAY,1,start_datetime) FROM table;")
+})
+
+test_that("translate sql server -> spark create table with FLOAT", {
+  sql <- translate("CREATE TABLE a.b (x FLOAT);", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE a.b  \nUSING DELTA\n AS\nSELECT\nCAST(NULL AS DOUBLE) AS x  WHERE 1 = 0;")
 })
 
