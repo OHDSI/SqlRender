@@ -1440,3 +1440,4 @@ iris,EOMONTH(@date),LAST_DAY(@date)
 iris,.DOMAIN ,."DOMAIN" 
 iris,NEWID(),$TSQL_NEWID()
 iris,RAND(),$TSQL_NEWID()
+iris,CREATE TABLE @a AS (@b) ORDER BY @c;,CREATE TABLE @a AS @b ORDER BY @c;
