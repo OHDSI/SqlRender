@@ -136,4 +136,8 @@ test_that("translatte sql server -> InterSystems IRIS CTAS with ORDER BY", {
   sql <- translate("CREATE TABLE t AS (SELECT x FROM tt) ORDER BY x DESC;", targetDialect = "iris")
   expect_equal_ignore_spaces(sql, "CREATE TABLE t AS SELECT x FROM tt ORDER BY x DESC;")
 })
+test_that("translatte sql server -> InterSystems IRIS CTAS with ORDER BY", {
+  sql <- translate("CREATE TABLE t AS (SELECT x FROM tt ORDER BY x);", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE t AS SELECT x FROM tt ORDER BY x;")
+})
 
