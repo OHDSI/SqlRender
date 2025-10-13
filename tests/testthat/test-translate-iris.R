@@ -127,3 +127,17 @@ test_that("translate sql server -> InterSystems IRIS DDL with CTE", {
   expect_equal_ignore_spaces(sql, paste0("CREATE GLOBAL TEMPORARY TABLE ", getTempTablePrefix(), "t AS WITH a AS (SELECT 123 as test) SELECT * FROM a;"))
 })
 
+# test CTAS with ORDER BY
+test_that("translatte sql server -> InterSystems IRIS CTAS with ORDER BY", {
+  sql <- translate("CREATE TABLE t AS (SELECT x FROM tt) ORDER BY x;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE t AS SELECT x FROM tt ORDER BY x;")
+})
+test_that("translatte sql server -> InterSystems IRIS CTAS with ORDER BY", {
+  sql <- translate("CREATE TABLE t AS (SELECT x FROM tt) ORDER BY x DESC;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE t AS SELECT x FROM tt ORDER BY x DESC;")
+})
+test_that("translatte sql server -> InterSystems IRIS CTAS with ORDER BY", {
+  sql <- translate("CREATE TABLE t AS (SELECT x FROM tt ORDER BY x);", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "CREATE TABLE t AS SELECT x FROM tt ORDER BY x;")
+})
+
