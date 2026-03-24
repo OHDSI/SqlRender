@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.5</span>
       </span>
     </div>
 
@@ -64,7 +64,14 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.19.4" id="sqlrender-1194">SqlRender 1.19.4<a class="anchor" aria-label="anchor" href="#sqlrender-1194"></a></h2>
+<h2 class="page-header" data-toc-text="1.19.5" id="sqlrender-1195">SqlRender 1.19.5<a class="anchor" aria-label="anchor" href="#sqlrender-1195"></a></h2>
+<p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>Now correctly translating <code>ALTER TABLE ADD</code> on DuckDB when adding multiple columns at once.</p></li>
+<li><p>Now correctly translating <code>ALTER TABLE ALTER COLUMN</code> on DuckDB.</p></li>
+<li><p>Removing parentheses in CTAS with ORDER BY on InterSystems IRIS</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.19.4" id="sqlrender-1194">SqlRender 1.19.4<small>2025-09-26</small><a class="anchor" aria-label="anchor" href="#sqlrender-1194"></a></h2>
 <p>Bugfixes:</p>
 <ol style="list-style-type: decimal"><li>Translating <code>FLOAT</code> to <code>DOUBLE</code> on DataBricks (Spark), because DataBricks <code>FLOAT</code> is single precision while SQL Server <code>FLOAT</code> is double precision.</li>
 </ol></div>
@@ -458,7 +465,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

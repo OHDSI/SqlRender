@@ -1,3 +1,15 @@
+SqlRender 1.19.5
+================
+
+Bugfixes:
+
+1. Now correctly translating `ALTER TABLE ADD` on DuckDB when adding multiple columns at once.
+
+2. Now correctly translating `ALTER TABLE ALTER COLUMN` on DuckDB.
+
+3. Removing parentheses in CTAS with ORDER BY on InterSystems IRIS
+
+
 SqlRender 1.19.4
 ================
 

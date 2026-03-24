@@ -1283,6 +1283,9 @@ duckdb,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 duckdb,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as TEXT) @s2)"
 duckdb,UPDATE STATISTICS @a;,ANALYZE @a;
 duckdb,TRUNCATE TABLE @a;,DELETE FROM @a;
+duckdb,ALTER TABLE @a DROP CONSTRAINT @b;,CREATE TABLE @a_new AS SELECT * FROM @a;DROP TABLE @a;ALTER TABLE @a_new RENAME TO @a;
+duckdb,"ALTER TABLE @table ADD @a, @b;","ALTER TABLE @table ADD @a; ALTER TABLE @table ADD @b;"
+duckdb,"ALTER TABLE @table ALTER COLUMN @([0-9a-z_]+)a @b;","ALTER TABLE @table ALTER @a TYPE @b;"
 snowflake,.@([0-9a-z_]+)a...@([0-9]+|y)b,x@a...@b
 snowflake,.@([0-9a-z_]+)a...@([0-9]+|y)b,x@axxx@b
 snowflake,...@([0-9]+|y)a,xxx@a
