@@ -1140,7 +1140,7 @@ spark,(SELECT TOP @([0-9]+)rows @a),(SELECT @a LIMIT @rows)
 spark,SELECT DISTINCT TOP @([0-9]+)rows @a;,SELECT DISTINCT @a LIMIT @rows;
 spark,(SELECT DISTINCT TOP @([0-9]+)rows @a),(SELECT DISTINCT @a LIMIT @rows)
 spark,"WITH @cte AS (SELECT @s1 '@literal' @s2)","WITH @cte AS (SELECT @s1 CAST('@literal' as STRING) @s2)"
-spark,UPDATE STATISTICS @a;,ANALYZE TABLES @a COMPUTE STATISTICS;
+spark,UPDATE STATISTICS @a;,ANALYZE TABLE @a COMPUTE STATISTICS;
 spark,"SELECT @columns FROM (@a) @x,(@b) @y;","SELECT @columns FROM (@a) @x cross join (@b) @y;"
 spark,"ALTER TABLE @table ADD COLUMN @([\w_-]+)column @type DEFAULT @default;","ALTER TABLE @table ADD COLUMN @column @type; \nALTER TABLE @table SET TBLPROPERTIES('delta.feature.allowColumnDefaults' = 'supported'); \nALTER TABLE @table ALTER COLUMN @column SET DEFAULT @default;"
 spark,"CAST(@a AS DATE)","IF(try_cast(@a AS DATE) IS NULL, to_date(cast(@a AS STRING), 'yyyyMMdd'), try_cast(@a AS DATE))"

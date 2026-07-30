@@ -317,7 +317,7 @@ test_that("translate sql server -> spark table admin", {
   sql <- translate("UPDATE STATISTICS test;",
     targetDialect = "spark"
   )
-  expect_equal_ignore_spaces(sql, "ANALYZE TABLES test COMPUTE STATISTICS;")
+  expect_equal_ignore_spaces(sql, "ANALYZE TABLE test COMPUTE STATISTICS;")
 })
 
 test_that("translate sql server -> spark datetime", {
@@ -495,5 +495,5 @@ test_that("translate sql server -> spark ALTER TABLE ADD CONSTRAINT", {
 
 test_that("translate sql server -> spark analyze table", {
   sql <- translate("UPDATE STATISTICS results_schema.heracles_results;", targetDialect = "spark")
-  expect_equal_ignore_spaces(sql, "ANALYZE results_schema.heracles_results COMPUTE STATISTICS;")
+  expect_equal_ignore_spaces(sql, "ANALYZE TABLE results_schema.heracles_results COMPUTE STATISTICS;")
 })
