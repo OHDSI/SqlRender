@@ -302,7 +302,7 @@ test_that("translate sql server -> spark table admin", {
   sql <- translate("CREATE CLUSTERED INDEX index_name ON some_table (variable);",
     targetDialect = "spark"
   )
-  expect_equal_ignore_spaces(sql, "ALTER TABLE some_table CLUSTER BY (variable);")
+  expect_equal_ignore_spaces(sql, "")
 
   sql <- translate("CREATE UNIQUE CLUSTERED INDEX index_name ON some_table (variable);",
     targetDialect = "spark"

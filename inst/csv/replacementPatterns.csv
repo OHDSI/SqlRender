@@ -1126,7 +1126,7 @@ spark,COUNT_BIG(@a),COUNT(@a)
 spark,SQUARE(@a),((@a)*(@a))
 spark,NEWID(),UUID()
 spark,.dbo.,.
-spark,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,ALTER TABLE @table CLUSTER BY (@variable);
+spark,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,
 spark,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,ALTER TABLE @table ADD CONSTRAINT @index_name UNIQUE(@variable);
 spark,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 spark,DATETIME,TIMESTAMP
