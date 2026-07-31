@@ -307,17 +307,17 @@ test_that("translate sql server -> spark table admin", {
   sql <- translate("CREATE UNIQUE CLUSTERED INDEX index_name ON some_table (variable);",
     targetDialect = "spark"
   )
-  expect_equal_ignore_spaces(sql, "")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE some_table ADD CONSTRAINT index_name UNIQUE(variable);")
 
   sql <- translate("PRIMARY KEY NONCLUSTERED",
     targetDialect = "spark"
   )
-  expect_equal_ignore_spaces(sql, "")
+  expect_equal_ignore_spaces(sql, "PRIMARY KEY")
 
   sql <- translate("UPDATE STATISTICS test;",
     targetDialect = "spark"
   )
-  expect_equal_ignore_spaces(sql, "")
+  expect_equal_ignore_spaces(sql, "ANALYZE TABLE test COMPUTE STATISTICS;")
 })
 
 test_that("translate sql server -> spark datetime", {
@@ -488,3 +488,12 @@ test_that("translate sql server -> spark create table with FLOAT", {
   expect_equal_ignore_spaces(sql, "CREATE TABLE a.b  \nUSING DELTA\n AS\nSELECT\nCAST(NULL AS DOUBLE) AS x  WHERE 1 = 0;")
 })
 
+test_that("translate sql server -> spark ALTER TABLE ADD CONSTRAINT", {
+  sql <- translate("ALTER TABLE cdm.MEASUREMENT ADD CONSTRAINT xpk_MEASUREMENT PRIMARY KEY NONCLUSTERED (measurement_id);", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE cdm.MEASUREMENT ADD CONSTRAINT xpk_MEASUREMENT PRIMARY KEY (measurement_id);")
+})
+
+test_that("translate sql server -> spark analyze table", {
+  sql <- translate("UPDATE STATISTICS results_schema.heracles_results;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "ANALYZE TABLE results_schema.heracles_results COMPUTE STATISTICS;")
+})
