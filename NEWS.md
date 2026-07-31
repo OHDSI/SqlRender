@@ -1,3 +1,11 @@
+SqlRender 1.19.6
+================
+
+Bugfixes:
+
+1. Now correctly translating `CREATE UNIQUE CLUSTERED INDEX`, `PRIMARY KEY NONCLUSTERED`, and `UPDATE STATISTICS` on Spark.
+
+
 SqlRender 1.19.5
 ================
 
