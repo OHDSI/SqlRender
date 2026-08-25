@@ -4,7 +4,7 @@ library(rJava)
 
 # For debugging: force reload of code & patterns:
 # load_all()
-# rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('../../inst/csv/replacementPatterns.csv')
+# rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')
 
 
 expect_equal_ignore_spaces <- function(string1, string2) {
@@ -139,5 +139,31 @@ test_that("translatte sql server -> InterSystems IRIS CTAS with ORDER BY", {
 test_that("translatte sql server -> InterSystems IRIS CTAS with ORDER BY", {
   sql <- translate("CREATE TABLE t AS (SELECT x FROM tt ORDER BY x);", targetDialect = "iris")
   expect_equal_ignore_spaces(sql, "CREATE TABLE t AS SELECT x FROM tt ORDER BY x;")
+})
+
+# Test translate CAST AS DATE for literals
+test_that("translate sql server -> InterSystems IRIS CAST(AS DATE)", {
+  sql <- translate("CAST('20000101' AS DATE);", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'YYYYMMDD');")
+})
+
+test_that("translate sql server -> InterSystems IRIS CAST(AS DATE) when not a character string", {
+  sql <- translate("CAST(some_date_time AS DATE);", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "CAST(some_date_time AS DATE);")
+})
+
+test_that("translate sql server -> InterSystems IRIS CONVERT(AS DATE)", {
+  sql <- translate("CONVERT(DATE, '20000101');", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'YYYYMMDD');")
+})
+
+test_that("translate sql server -> InterSystems IRIS concatenate string operator", {
+  sql <- translate("select distinct CONVERT(DATE, cast(YEAR(observation_period_start_date) as varchar(4)) + '01' + '01') as obs_year from observation_period;",
+                   targetDialect = "iris"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "select distinct TO_DATE(cast(YEAR(observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') as obs_year from observation_period ;"
+  )
 })
 

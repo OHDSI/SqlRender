@@ -1,3 +1,11 @@
+SqlRender 1.19.7
+================
+
+Bugfixes:
+
+1. Fixing translation of literals to dates on Iris.
+
+
 SqlRender 1.19.6
 ================
 
