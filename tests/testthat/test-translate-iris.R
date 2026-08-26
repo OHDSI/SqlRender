@@ -30,7 +30,7 @@ test_that("translate sql server -> InterSystems IRIS string +", {
 })
 test_that("translate sql server -> InterSystem IRIS string concatenation DOB", {
   sql <- translate("SELECT CONCAT(p.year_of_birth, 11, 11)", targetDialect = "iris")
-  expect_equal_ignore_spaces(sql, "SELECT p.year_of_birth||'-'||11||'-'||11")
+  expect_equal_ignore_spaces(sql, "SELECT p.year_of_birth || 11 ||11")
 })
 
 
@@ -43,6 +43,11 @@ test_that("translate sql server -> InterSystems IRIS DATETIMEFROMPARTS()", {
   sql <- translate("SELECT DATETIMEFROMPARTS(yyyy, mm, dd, hh, mi, ss, ms)", targetDialect = "iris")
   expect_equal_ignore_spaces(sql, "SELECT TO_TIMESTAMP(TO_CHAR(yyyy,'FM0000')||'-'||TO_CHAR(mm,'FM00')||'-'||TO_CHAR(dd,'FM00')||' '||TO_CHAR(hh,'FM00')||':'||TO_CHAR(mi,'FM00')||':'||TO_CHAR(ss,'FM00')||'.'||TO_CHAR(ms,'FM000'), 'YYYY-MM-DD HH24:MI:SS.FF')")
 })
+test_that("translate sql server -> InterSystems IRIS Date from person (from DQD)", {
+  sql <- translate("SELECT CAST(CONCAT(p.year_of_birth, COALESCE(RIGHT('0' + CAST(p.month_of_birth AS VARCHAR), 2), '01'), COALESCE(RIGHT('0' + CAST(p.day_of_birth AS VARCHAR), 2), '01')) AS DATE) FROM cdm.person p;",
+                   targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT TO_DATE(p.year_of_birth || COALESCE(RIGHT('0' || CAST(p.month_of_birth AS VARCHAR), 2), '01') || COALESCE(RIGHT('0' || CAST(p.day_of_birth AS VARCHAR), 2), '01'), 'YYYYMMDD') FROM cdm.person p;")
+})
 
 
 
@@ -53,7 +58,7 @@ test_that("translate sql server -> InterSystems IRIS implicit CTAS", {
 })
 test_that("translate sql server -> InterSystems IRIS implicit CTTAS", {
   sql <- translate("SELECT a, b INTO #t_new FROM t;", targetDialect = "iris")
-  expect_equal_ignore_spaces(sql, paste("CREATE GLOBAL TEMPORARY TABLE ", getTempTablePrefix(), "t_new AS SELECT a, b FROM t;", sep=""))
+  expect_equal_ignore_spaces(sql, paste("CREATE GLOBAL TEMPORARY TABLE ", getTempTablePrefix(), "t_new AS SELECT a, b FROM t;", sep = ""))
 })
 
 
