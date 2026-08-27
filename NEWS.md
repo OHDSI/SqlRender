@@ -5,6 +5,8 @@ Bugfixes:
 
 1. Fixing translation of literals to dates on Iris.
 
+2. Fixing translations of FLOAT. This is now translated to DOUBLE in DuckDB, and DOUBLE PRECISION in Posgresql. In all other dialects the current translation was found to be correct.
+
 
 SqlRender 1.19.6
 ================
