@@ -75,6 +75,30 @@ test_that("translate sql server -> Oracle DATEADD", {
     sql,
     "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'day')) FROM drug_era;"
   )
+
+  sql <- translate("SELECT DATEADD(second,30,drug_era_end_date) FROM drug_era;",
+    targetDialect = "oracle"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'second')) FROM drug_era;"
+  )
+
+  sql <- translate("SELECT DATEADD(minute,30,drug_era_end_date) FROM drug_era;",
+    targetDialect = "oracle"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'minute')) FROM drug_era;"
+  )
+
+  sql <- translate("SELECT DATEADD(hour,30,drug_era_end_date) FROM drug_era;",
+    targetDialect = "oracle"
+  )
+  expect_equal_ignore_spaces(
+    sql,
+    "SELECT (drug_era_end_date + NUMTODSINTERVAL(30, 'hour')) FROM drug_era;"
+  )
 })
 
 test_that("translate sql server -> Oracle functional index", {
