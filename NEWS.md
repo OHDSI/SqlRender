@@ -5,6 +5,8 @@ Bugfixes:
 
 1. Now correctly translating `CREATE UNIQUE CLUSTERED INDEX`, `PRIMARY KEY NONCLUSTERED`, and `UPDATE STATISTICS` on Spark.
 
+2. Now correctly translating `DATEADD()` with `second`, `minute`, or `hour` on Oracle and SQLite (the datetime argument was being dropped, leaving an unresolved `@date` token in the output).
+
 
 SqlRender 1.19.5
 ================

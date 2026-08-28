@@ -34,6 +34,26 @@ test_that("translate sql server -> SQLite add month", {
   )
 })
 
+test_that("translate sql server -> SQLite add second/minute/hour", {
+  sql <- translate("DATEADD(second,30,date)", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(
+    sql,
+    "CAST(STRFTIME('%s', DATETIME(date, 'unixepoch', (30)||' seconds')) AS REAL)"
+  )
+
+  sql <- translate("DATEADD(minute,30,date)", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(
+    sql,
+    "CAST(STRFTIME('%s', DATETIME(date, 'unixepoch', (30)||' minutes')) AS REAL)"
+  )
+
+  sql <- translate("DATEADD(hour,30,date)", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(
+    sql,
+    "CAST(STRFTIME('%s', DATETIME(date, 'unixepoch', (30)||' hours')) AS REAL)"
+  )
+})
+
 test_that("translate sql server -> SQLite WITH SELECT INTO", {
   sql <- translate("WITH cte1 AS (SELECT a FROM b) SELECT c INTO d FROM cte1;",
     targetDialect = "sqlite"
