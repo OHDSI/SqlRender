@@ -878,7 +878,7 @@ sqlite,RAND(),((RANDOM()+9223372036854775808) / 18446744073709551615)
 sqlite,LEN(@a),LENGTH(@a)
 sqlite,"LOG(@expression,@base)","(LOG(@expression)/LOG(@base))"
 sqlite,"ISNULL(@a,@b)","COALESCE(@a,@b)"
-sqlite,"ISNUMERIC(@a)","CASE WHEN CAST(CAST(@a AS numeric) AS char) = RTRIM(CAST(@a AS char), '0.') THEN 1 ELSE 0 END"
+sqlite,"ISNUMERIC(@a)","CASE WHEN CAST(CAST(@a AS numeric) AS char) = RTRIM(CAST(@a AS char), '0.') OR CAST(@a AS char) = '0' THEN 1 ELSE 0 END"
 sqlite,COUNT_BIG(@a),COUNT(@a)
 sqlite,NEWID(),RANDOM()
 sqlite,"RIGHT(@a,@b)","SUBSTR(CAST(@a AS TEXT),-@b)"
@@ -1160,7 +1160,7 @@ sqlite extended,RAND(),RANDOM()
 sqlite extended,LEN(@a),LENGTH(@a)
 sqlite extended,"LOG(@expression,@base)","(LOG(@expression)/LOG(@base))"
 sqlite extended,"ISNULL(@a,@b)","COALESCE(@a,@b)"
-sqlite extended,"ISNUMERIC(@a)","CASE WHEN CAST(CAST(@a AS numeric) AS char) = RTRIM(CAST(@a AS char), '0.') THEN 1 ELSE 0 END"
+sqlite extended,"ISNUMERIC(@a)","CASE WHEN CAST(CAST(@a AS numeric) AS char) = RTRIM(CAST(@a AS char), '0.') OR CAST(@a AS char) = '0' THEN 1 ELSE 0 END"
 sqlite extended,COUNT_BIG(@a),COUNT(@a)
 sqlite extended,NEWID(),RANDOM()
 sqlite extended,"RIGHT(@a,@b)","SUBSTR(@a,-@b)"
