@@ -136,12 +136,12 @@ test_that("translate sql server -> DuckDB ISNUMERIC", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "SELECT CASE WHEN CASE WHEN (CAST(a AS VARCHAR) ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;"
+    "SELECT CASE WHEN CASE WHEN (CAST(a AS VARCHAR) ~ '^[\\-\\+]?([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;"
   )
   sql <- translate("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "duckdb")
   expect_equal_ignore_spaces(
     sql,
-    "SELECT a FROM table WHERE CASE WHEN (CAST(a AS VARCHAR) ~ '^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1"
+    "SELECT a FROM table WHERE CASE WHEN (CAST(a AS VARCHAR) ~ '^[\\-\\+]?([0-9]+\\.?[0-9]*|\\.[0-9]+)$') THEN 1 ELSE 0 END = 1"
   )
 })
 

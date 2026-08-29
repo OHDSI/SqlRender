@@ -234,17 +234,17 @@ test_that("translate sql server -> Impala ISNUMERIC", {
   sql <- translate("SELECT ISNUMERIC(a) FROM b", targetDialect = "impala")
   expect_equal_ignore_spaces(
     sql,
-    "SELECT case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end FROM b"
+    "SELECT case when regexp_like(a,'^[\\-\\+]?([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end FROM b"
   )
   sql <- translate("SELECT some FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "impala")
   expect_equal_ignore_spaces(
     sql,
-    "SELECT some FROM table WHERE case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end = 1"
+    "SELECT some FROM table WHERE case when regexp_like(a,'^[\\-\\+]?([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end = 1"
   )
   sql <- translate("SELECT some FROM table WHERE ISNUMERIC(a) = 0", targetDialect = "impala")
   expect_equal_ignore_spaces(
     sql,
-    "SELECT some FROM table WHERE case when regexp_like(a,'^([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end = 0"
+    "SELECT some FROM table WHERE case when regexp_like(a,'^[\\-\\+]?([0-9]+\\.?[0-9]*|\\.[0-9]+)$') then 1 else 0 end = 0"
   )
 })
 
