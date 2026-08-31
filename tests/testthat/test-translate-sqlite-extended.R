@@ -99,12 +99,12 @@ test_that("translate sql server -> sqlite ISNUMERIC", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "SELECT CASE WHEN CAST(CAST(a AS numeric) AS char) = RTRIM(CAST(a AS char), '0.') OR CAST(@a AS char) = '0' THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;"
+    "SELECT CASE WHEN TRIM(CAST(CAST(@a AS numeric) AS char), '0.') = TRIM(CAST(@a AS char), '0.') THEN 1 ELSE 0 END = 1 THEN a ELSE b FROM c;"
   )
   sql <- translate("SELECT a FROM table WHERE ISNUMERIC(a) = 1", targetDialect = "sqlite extended")
   expect_equal_ignore_spaces(
     sql,
-    "SELECT a FROM table WHERE CASE WHEN CAST(CAST(a AS numeric) AS char) = RTRIM(CAST(a AS char), '0.') OR CAST(@a AS char) = '0' THEN 1 ELSE 0 END = 1"
+    "SELECT a FROM table WHERE CASE WHEN TRIM(CAST(CAST(@a AS numeric) AS char), '0.') = TRIM(CAST(@a AS char), '0.') THEN 1 ELSE 0 END = 1"
   )
 })
 
