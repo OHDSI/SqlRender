@@ -20,9 +20,9 @@ oracle,<par_open>,(
 oracle,<par_close>,)
 oracle,EXCEPT,MINUS
 oracle,"CONCAT(@a, @b, @c)","CONCAT(@a, CONCAT(@b, @c))"
-oracle,"DATEADD(second,@seconds,@datetime)","(@date + NUMTODSINTERVAL(@seconds, 'second'))"
-oracle,"DATEADD(minute,@minutes,@datetime)","(@date + NUMTODSINTERVAL(@minutes, 'minute'))"
-oracle,"DATEADD(hour,@hours,@datetime)","(@date + NUMTODSINTERVAL(@hours, 'hour'))"
+oracle,"DATEADD(second,@seconds,@datetime)","(@datetime + NUMTODSINTERVAL(@seconds, 'second'))"
+oracle,"DATEADD(minute,@minutes,@datetime)","(@datetime + NUMTODSINTERVAL(@minutes, 'minute'))"
+oracle,"DATEADD(hour,@hours,@datetime)","(@datetime + NUMTODSINTERVAL(@hours, 'hour'))"
 oracle,"DATEADD(d,@days,@date)","(@date + NUMTODSINTERVAL(@days, 'day'))"
 oracle,"DATEADD(dd,@days,@date)","(@date + NUMTODSINTERVAL(@days, 'day'))"
 oracle,"DATEADD(day,@days,@date)","(@date + NUMTODSINTERVAL(@days, 'day'))"
@@ -833,9 +833,9 @@ sqlite,DATETIME,REAL
 sqlite,DATETIME2,REAL
 sqlite,"CONVERT(DATE, @a)","CAST(STRFTIME('%s', SUBSTR(CAST(@a AS TEXT), 1, 4) || '-' || SUBSTR(CAST(@a AS TEXT), 5, 2) || '-' || SUBSTR(CAST(@a AS TEXT), 7)) AS REAL)"
 sqlite,CAST(@a AS DATE),"CAST(STRFTIME('%s', SUBSTR(CAST(@a AS TEXT), 1, 4) || '-' || SUBSTR(CAST(@a AS TEXT), 5, 2) || '-' || SUBSTR(CAST(@a AS TEXT), 7)) AS REAL)"
-sqlite,"DATEADD(second,@seconds,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@seconds)||' seconds')) AS REAL)"
-sqlite,"DATEADD(minute,@minutes,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@minutes)||' minutes')) AS REAL)"
-sqlite,"DATEADD(hour,@hours,@datetime)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@hours)||' hours')) AS REAL)"
+sqlite,"DATEADD(second,@seconds,@datetime)","CAST(STRFTIME('%s', DATETIME(@datetime, 'unixepoch', (@seconds)||' seconds')) AS REAL)"
+sqlite,"DATEADD(minute,@minutes,@datetime)","CAST(STRFTIME('%s', DATETIME(@datetime, 'unixepoch', (@minutes)||' minutes')) AS REAL)"
+sqlite,"DATEADD(hour,@hours,@datetime)","CAST(STRFTIME('%s', DATETIME(@datetime, 'unixepoch', (@hours)||' hours')) AS REAL)"
 sqlite,"DATEADD(d,@days,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@days)||' days')) AS REAL)"
 sqlite,"DATEADD(dd,@days,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@days)||' days')) AS REAL)"
 sqlite,"DATEADD(day,@days,@date)","CAST(STRFTIME('%s', DATETIME(@date, 'unixepoch', (@days)||' days')) AS REAL)"
