@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.7</span>
       </span>
     </div>
 
@@ -64,9 +64,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.19.6" id="sqlrender-1196">SqlRender 1.19.6<a class="anchor" aria-label="anchor" href="#sqlrender-1196"></a></h2>
+<h2 class="page-header" data-toc-text="1.19.7" id="sqlrender-1197">SqlRender 1.19.7<a class="anchor" aria-label="anchor" href="#sqlrender-1197"></a></h2>
 <p>Bugfixes:</p>
-<ol style="list-style-type: decimal"><li>Now correctly translating <code>CREATE UNIQUE CLUSTERED INDEX</code>, <code>PRIMARY KEY NONCLUSTERED</code>, and <code>UPDATE STATISTICS</code> on Spark.</li>
+<ol style="list-style-type: decimal"><li><p>Fixing translation of literals to dates on Iris.</p></li>
+<li><p>Fixing translations of FLOAT. This is now translated to DOUBLE in DuckDB, and DOUBLE PRECISION in Posgresql. In all other dialects the current translation was found to be correct.</p></li>
+<li><p>Fixing SQLite, PosgreSQL, and DuckDB translation of <code>ISNUMERIC</code>.</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.19.6" id="sqlrender-1196">SqlRender 1.19.6<small>2026-07-31</small><a class="anchor" aria-label="anchor" href="#sqlrender-1196"></a></h2>
+<p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>Now correctly translating <code>CREATE UNIQUE CLUSTERED INDEX</code>, <code>PRIMARY KEY NONCLUSTERED</code>, and <code>UPDATE STATISTICS</code> on Spark.</p></li>
+<li><p>Now correctly translating <code>DATEADD()</code> with <code>second</code>, <code>minute</code>, or <code>hour</code> on Oracle and SQLite (the datetime argument was being dropped, leaving an unresolved <code>@date</code> token in the output).</p></li>
 </ol></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.19.5" id="sqlrender-1195">SqlRender 1.19.5<small>2026-03-25</small><a class="anchor" aria-label="anchor" href="#sqlrender-1195"></a></h2>
@@ -470,7 +478,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

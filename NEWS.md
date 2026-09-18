@@ -7,6 +7,8 @@ Bugfixes:
 
 2. Fixing translations of FLOAT. This is now translated to DOUBLE in DuckDB, and DOUBLE PRECISION in Posgresql. In all other dialects the current translation was found to be correct.
 
+3. Fixing SQLite, PosgreSQL, and DuckDB  translation of `ISNUMERIC`.
+
 
 SqlRender 1.19.6
 ================
