@@ -286,3 +286,8 @@ test_that("translate sql server -> postgresql ALTER TABLE ALTER COLUMN", {
   sql <- translate("ALTER TABLE my_table ALTER COLUMN a BIGINT;", targetDialect = "postgresql")
   expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ALTER COLUMN a TYPE BIGINT;")
 })
+
+test_that("sql server [ ] are ignored on postgresql", {
+  sql <- SqlRender::translate("SELECT [PERSON_ID] FROM PERSON", "postgresql")
+  expect_equal_ignore_spaces(sql, "SELECT PERSON_ID FROM PERSON")
+})
