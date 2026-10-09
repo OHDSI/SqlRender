@@ -262,3 +262,19 @@ test_that("translate sql server -> DuckDB ALTER TABLE ALTER COLUMN", {
   sql <- translate("ALTER TABLE my_table ALTER COLUMN a BIGINT;", targetDialect = "duckdb")
   expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ALTER a TYPE BIGINT;")
 })
+
+test_that("translate sql server -> DuckDB DROP INDEX IF EXISTS", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS my_schema.idx_1;")
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_table;", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS idx_1;")
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON #my_temp;", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS idx_1;")
+})
+
+test_that("translate sql server -> DuckDB DROP INDEX ON", {
+  sql <- translate("DROP INDEX idx_1 ON my_schema.my_table;", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(sql, "DROP INDEX my_schema.idx_1;")
+  sql <- translate("DROP INDEX idx_1 ON my_table;", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(sql, "DROP INDEX idx_1;")
+})

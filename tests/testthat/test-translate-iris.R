@@ -172,3 +172,9 @@ test_that("translate sql server -> InterSystems IRIS concatenate string operator
   )
 })
 
+test_that("translate sql server -> InterSystems IRIS DROP INDEX IF EXISTS", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;")
+  sql <- translate("DROP INDEX idx_1 ON my_table;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "DROP INDEX idx_1 ON my_table;")
+})

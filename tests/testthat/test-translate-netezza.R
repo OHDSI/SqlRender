@@ -242,6 +242,13 @@ test_that("translate sql server -> Netezza index not supported", {
   expect_equal_ignore_spaces(sql, "-- netezza does not support indexes")
 })
 
+test_that("translate sql server -> Netezza drop index not supported", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "netezza")
+  expect_equal_ignore_spaces(sql, "-- netezza does not support indexes")
+  sql <- translate("DROP INDEX idx_1 ON #my_temp;", targetDialect = "netezza")
+  expect_equal_ignore_spaces(sql, "-- netezza does not support indexes")
+})
+
 test_that("translate sql server -> Netezza analyze table", {
   sql <- translate("UPDATE STATISTICS results_schema.heracles_results;", targetDialect = "netezza")
   expect_equal_ignore_spaces(sql, "GENERATE STATISTICS ON results_schema.heracles_results;")

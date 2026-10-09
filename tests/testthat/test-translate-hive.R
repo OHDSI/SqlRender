@@ -44,6 +44,13 @@ test_that("translate sql server -> Hive index with Where is not supported", {
   expect_equal_ignore_spaces(sql, "-- hive does not support indexes")
 })
 
+test_that("translate sql server -> Hive drop index not supported", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "hive")
+  expect_equal_ignore_spaces(sql, "-- hive does not support indexes")
+  sql <- translate("DROP INDEX idx_1 ON #my_temp;", targetDialect = "hive")
+  expect_equal_ignore_spaces(sql, "-- hive does not support indexes")
+})
+
 test_that("translate sql server -> Hive CHARINDEX from position", {
   sql <- translate("SELECT CHARINDEX('test','abctest') FROM table", targetDialect = "hive")
   expect_equal_ignore_spaces(sql, "SELECT INSTR('abctest','test') FROM table")

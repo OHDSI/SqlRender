@@ -297,3 +297,19 @@ test_that("translate sql server -> sqlite ALTER TABLE ALTER COLUMN", {
   sql <- translate("ALTER TABLE my_table ALTER COLUMN a BIGINT;", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT 0;")
 })
+
+test_that("translate sql server -> SQLite DROP INDEX IF EXISTS", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS idx_1;")
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_table;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS idx_1;")
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON #my_temp;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS idx_1;")
+})
+
+test_that("translate sql server -> SQLite DROP INDEX ON", {
+  sql <- translate("DROP INDEX idx_1 ON my_schema.my_table;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "DROP INDEX idx_1;")
+  sql <- translate("DROP INDEX idx_1 ON my_table;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(sql, "DROP INDEX idx_1;")
+})
