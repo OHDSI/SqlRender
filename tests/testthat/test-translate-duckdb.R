@@ -213,6 +213,26 @@ test_that("translate sql server -> DuckDB DATEDIFF month date fields", {
   )
 })
 
+test_that("translate sql server -> DuckDB DATEDIFF hour, minute, second", {
+  sql <- translate("SELECT DATEDIFF(hour, visit_start_datetime, visit_end_datetime) FROM visit_occurrence;", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(
+    sql,
+    "SELECT DATE_DIFF('hour', CAST(visit_start_datetime AS TIMESTAMP), CAST(visit_end_datetime AS TIMESTAMP)) FROM visit_occurrence;"
+  )
+
+  sql <- translate("SELECT DATEDIFF(minute, visit_start_datetime, visit_end_datetime) FROM visit_occurrence;", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(
+    sql,
+    "SELECT DATE_DIFF('minute', CAST(visit_start_datetime AS TIMESTAMP), CAST(visit_end_datetime AS TIMESTAMP)) FROM visit_occurrence;"
+  )
+
+  sql <- translate("SELECT DATEDIFF(second, visit_start_datetime, visit_end_datetime) FROM visit_occurrence;", targetDialect = "duckdb")
+  expect_equal_ignore_spaces(
+    sql,
+    "SELECT DATE_DIFF('second', CAST(visit_start_datetime AS TIMESTAMP), CAST(visit_end_datetime AS TIMESTAMP)) FROM visit_occurrence;"
+  )
+})
+
 test_that("translate sql server -> DuckDB CEILING", {
   sql <- translate("SELECT CEILING(0.1);", targetDialect = "duckdb")
   expect_equal_ignore_spaces(sql, "SELECT CEILING(0.1);")
