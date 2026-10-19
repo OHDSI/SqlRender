@@ -298,6 +298,13 @@ test_that("translate sql server -> spark dbo", {
 })
 
 
+test_that("translate sql server -> spark drop index not supported", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "-- spark does not support indexes")
+  sql <- translate("DROP INDEX idx_1 ON #my_temp;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "-- spark does not support indexes")
+})
+
 test_that("translate sql server -> spark table admin", {
   sql <- translate("CREATE CLUSTERED INDEX index_name ON some_table (variable);",
     targetDialect = "spark"

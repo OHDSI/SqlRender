@@ -30,3 +30,10 @@ test_that("translate sql server -> sql server temp dplyr ... pattern", {
   sql <- translate("SELECT * FROM cdm.dbo.my_table AS cdm.dbo.my_table...1;", targetDialect = "sql server")
   expect_equal_ignore_spaces(sql, "SELECT * FROM cdm.dbo.my_table AS cdmxdboxmy_tablexxx1;")
 })
+
+test_that("translate sql server -> sql server DROP INDEX IF EXISTS", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "sql server")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;")
+  sql <- translate("DROP INDEX idx_1 ON my_table;", targetDialect = "sql server")
+  expect_equal_ignore_spaces(sql, "DROP INDEX idx_1 ON my_table;")
+})

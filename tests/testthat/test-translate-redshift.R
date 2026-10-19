@@ -1577,6 +1577,13 @@ test_that("translate sql server -> Redshift index not supported", {
   expect_equal_ignore_spaces(sql, "-- redshift does not support indexes")
 })
 
+test_that("translate sql server -> Redshift drop index not supported", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "-- redshift does not support indexes")
+  sql <- translate("DROP INDEX idx_1 ON #my_temp;", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "-- redshift does not support indexes")
+})
+
 test_that("translate sql server -> Redshift analyze table", {
   sql <- translate("UPDATE STATISTICS results_schema.heracles_results;", targetDialect = "redshift")
   expect_equal_ignore_spaces(sql, "ANALYZE results_schema.heracles_results;")

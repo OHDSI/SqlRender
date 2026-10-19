@@ -124,6 +124,8 @@ oracle,#@([^\s]+)table.@([^\s]+)field,%session_id%@table.@field
 oracle,"DROP TABLE IF EXISTS #@table;",BEGIN\n  EXECUTE IMMEDIATE 'TRUNCATE TABLE %temp_prefix%%session_id%@table';\n  EXECUTE IMMEDIATE 'DROP TABLE %temp_prefix%%session_id%@table';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -942 THEN\n      RAISE;\n    END IF;\nEND;
 oracle,#,%temp_prefix%%session_id%
 oracle,"CREATE INDEX @a ON @b (@c,@d) WHERE @e;","CREATE INDEX @a ON @b (CASE WHEN @e THEN @c END, CASE WHEN @e THEN @d END);"
+oracle,DROP INDEX IF EXISTS @index_name ON @table;,BEGIN\n  EXECUTE IMMEDIATE 'DROP INDEX @index_name';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -1418 THEN\n      RAISE;\n    END IF;\nEND;
+oracle,DROP INDEX @index_name ON @table;,DROP INDEX @index_name;
 oracle,<hash><hash>,##
 oracle,SELECT TOP @([0-9]+)rows @a;,SELECT @a FETCH FIRST @rows ROWS ONLY;
 oracle,(SELECT TOP @([0-9]+)rows @a),(SELECT @a FETCH FIRST @rows ROWS ONLY)
@@ -227,6 +229,10 @@ postgresql,.dbo.,.
 postgresql,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
 postgresql,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
 postgresql,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);\nCLUSTER @table USING @index_name;
+postgresql,DROP INDEX IF EXISTS @index_name ON @schema.@table;,DROP INDEX IF EXISTS @schema.@index_name;
+postgresql,DROP INDEX IF EXISTS @index_name ON @table;,DROP INDEX IF EXISTS @index_name;
+postgresql,DROP INDEX @index_name ON @schema.@table;,DROP INDEX @schema.@index_name;
+postgresql,DROP INDEX @index_name ON @table;,DROP INDEX @index_name;
 postgresql,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 postgresql,DATETIME,TIMESTAMP
 postgresql,DATETIME2,TIMESTAMP
@@ -264,6 +270,7 @@ redshift,TRY_CAST(@a),CAST(@a)
 redshift,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 redshift,CREATE INDEX @index_name ON @table (@variable);,-- redshift does not support indexes
 redshift,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- redshift does not support indexes
+redshift,DROP INDEX @index_name;,-- redshift does not support indexes
 redshift,"OVER (@a ORDER BY @b DESC)","OVER (@a O*D*R B* @b DESC ROWS UNBOUNDED PRECEDING)"
 redshift,"OVER (@a ORDER BY @b ASC)","OVER (@a O*D*R B* @b ASC ROWS UNBOUNDED PRECEDING)"
 redshift,"OVER (@a ORDER BY @((?!.*ROWS).*)b)","OVER (@a O*D*R B* @b ROWS UNBOUNDED PRECEDING)"
@@ -496,6 +503,7 @@ impala,TRY_CAST(@a),CAST(@a)
 impala,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentrue ELSE @whenfalse END"
 impala,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- impala does not support indexes
 impala,CREATE INDEX @index_name ON @table (@variable);,-- impala does not support indexes
+impala,DROP INDEX @index_name;,-- impala does not support indexes
 impala,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
 impala,COUNT_BIG(@a),COUNT(@a)
 impala,"LEFT(@str,@chars)","SUBSTR(@str,1,@chars)"
@@ -667,6 +675,7 @@ netezza,"IF OBJECT_ID('@table', 'U') IS NOT NULL DROP TABLE @table;",DROP TABLE 
 netezza,.dbo.,.
 netezza,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- netezza does not support indexes
 netezza,CREATE INDEX @index_name ON @table (@variable);,-- netezza does not support indexes
+netezza,DROP INDEX @index_name;,-- netezza does not support indexes
 netezza,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 netezza,VARCHAR(MAX),VARCHAR(1000)
 netezza,FLOAT,"FLOAT(6)"
@@ -895,6 +904,8 @@ sqlite,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @i
 sqlite,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
 sqlite,CREATE INDEX @index_name ON @schema.@table (@variable);,CREATE INDEX @index_name ON @table (@variable);
 sqlite,CREATE UNIQUE INDEX @index_name ON @schema.@table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
+sqlite,DROP INDEX IF EXISTS @index_name ON @table;,DROP INDEX IF EXISTS @index_name;
+sqlite,DROP INDEX @index_name ON @table;,DROP INDEX @index_name;
 sqlite,DROP INDEX @schema.@index_name;,DROP INDEX @index_name;
 sqlite,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 sqlite,VARCHAR(@a),TEXT
@@ -929,6 +940,7 @@ hive,"IIF(@condition, @whentrue, @whenfalse)","CASE WHEN @condition THEN @whentr
 hive,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,-- hive does not support indexes
 hive,CREATE INDEX @index_name ON @table (@variable);,-- hive does not support indexes
 hive,CREATE INDEX @index_name ON @table (@variable) WHERE @c;,-- hive does not support indexes
+hive,DROP INDEX @index_name;,-- hive does not support indexes
 hive,"CHARINDEX(@a,@b)","INSTR(@b,@a)"
 hive,COUNT_BIG(@a),COUNT(@a)
 hive,"LEFT(@str,@chars)","SUBSTR(@str,1,@chars)"
@@ -1091,6 +1103,7 @@ spark,\"@a\",`@a`
 spark,+ '@a',|| '@a'
 spark,'@a' +,'@a' ||
 spark,CREATE INDEX @index_name ON @table (@variable);,-- spark does not support indexes
+spark,DROP INDEX @index_name;,-- spark does not support indexes
 spark,"ROUND(@a,@b)","ROUND(CAST(@a AS DOUBLE),@b)"
 spark,"HASHBYTES('MD5',@a)","MD5(@a)"
 spark,"CONVERT(VARBINARY, CONCAT('0x', @a), 1)","CAST(CONCAT('x', @a) AS BIT(32))"
@@ -1177,6 +1190,8 @@ sqlite extended,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE
 sqlite extended,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
 sqlite extended,CREATE INDEX @index_name ON @schema.@table (@variable);,CREATE INDEX @index_name ON @table (@variable);
 sqlite extended,CREATE UNIQUE INDEX @index_name ON @schema.@table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
+sqlite extended,DROP INDEX IF EXISTS @index_name ON @table;,DROP INDEX IF EXISTS @index_name;
+sqlite extended,DROP INDEX @index_name ON @table;,DROP INDEX @index_name;
 sqlite extended,DROP INDEX @schema.@index_name;,DROP INDEX @index_name;
 sqlite extended,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 sqlite extended,VARCHAR(@a),TEXT
@@ -1271,6 +1286,10 @@ duckdb,.dbo.,.
 duckdb,CREATE TABLE #@table (@definition),CREATE TEMP TABLE @table (@definition)
 duckdb,CREATE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE INDEX @index_name ON @table (@variable);
 duckdb,CREATE UNIQUE CLUSTERED INDEX @index_name ON @table (@variable);,CREATE UNIQUE INDEX @index_name ON @table (@variable);
+duckdb,DROP INDEX IF EXISTS @index_name ON @schema.@table;,DROP INDEX IF EXISTS @schema.@index_name;
+duckdb,DROP INDEX IF EXISTS @index_name ON @table;,DROP INDEX IF EXISTS @index_name;
+duckdb,DROP INDEX @index_name ON @schema.@table;,DROP INDEX @schema.@index_name;
+duckdb,DROP INDEX @index_name ON @table;,DROP INDEX @index_name;
 duckdb,PRIMARY KEY NONCLUSTERED,PRIMARY KEY
 duckdb,DATETIME,TIMESTAMP
 duckdb,DATETIME2,TIMESTAMP

@@ -66,6 +66,22 @@ test_that("translate sql server -> PostgreSQL date diff (hour, minute, second)",
   expect_equal_ignore_spaces(sql, "SELECT EXTRACT(EPOCH FROM (drug_exposure_end_datetime - drug_exposure_start_datetime)) FROM drug_exposure;")
 })
 
+test_that("translate sql server -> PostgreSQL DROP INDEX IF EXISTS", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS my_schema.idx_1;")
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_table;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS idx_1;")
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON #my_temp;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "DROP INDEX IF EXISTS idx_1;")
+})
+
+test_that("translate sql server -> PostgreSQL DROP INDEX ON", {
+  sql <- translate("DROP INDEX idx_1 ON my_schema.my_table;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "DROP INDEX my_schema.idx_1;")
+  sql <- translate("DROP INDEX idx_1 ON my_table;", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "DROP INDEX idx_1;")
+})
+
 test_that("translate sql server -> Postgres WITH SELECT", {
   sql <- translate("WITH cte1 AS (SELECT a FROM b) SELECT c FROM cte1;",
     targetDialect = "postgresql"

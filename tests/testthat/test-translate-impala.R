@@ -50,6 +50,13 @@ test_that("translate sql server -> Impala index not supported", {
   expect_equal_ignore_spaces(sql, "-- impala does not support indexes")
 })
 
+test_that("translate sql server -> Impala drop index not supported", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "impala")
+  expect_equal_ignore_spaces(sql, "-- impala does not support indexes")
+  sql <- translate("DROP INDEX idx_1 ON #my_temp;", targetDialect = "impala")
+  expect_equal_ignore_spaces(sql, "-- impala does not support indexes")
+})
+
 test_that("translate sql server -> Impala USE", {
   sql <- translate("USE vocabulary;", targetDialect = "impala")
   expect_equal_ignore_spaces(sql, "USE vocabulary;")

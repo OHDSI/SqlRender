@@ -111,6 +111,21 @@ test_that("translate sql server -> Oracle functional index", {
   )
 })
 
+test_that("translate sql server -> Oracle DROP INDEX IF EXISTS", {
+  sql <- translate("DROP INDEX IF EXISTS idx_1 ON my_schema.my_table;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(
+    sql,
+    "BEGIN\n  EXECUTE IMMEDIATE 'DROP INDEX idx_1';\nEXCEPTION\n  WHEN OTHERS THEN\n    IF SQLCODE != -1418 THEN\n      RAISE;\n    END IF;\nEND;"
+  )
+})
+
+test_that("translate sql server -> Oracle DROP INDEX ON", {
+  sql <- translate("DROP INDEX idx_1 ON my_schema.my_table;", targetDialect = "oracle")
+  expect_equal_ignore_spaces(sql, "DROP INDEX idx_1;")
+  sql <- translate("DROP INDEX idx_1 ON #my_temp;", targetDialect = "oracle", tempEmulationSchema = "temp_schema")
+  expect_equal_ignore_spaces(sql, "DROP INDEX idx_1;")
+})
+
 test_that("translate sql server -> Oracle USE", {
   sql <- translate("USE vocabulary;", targetDialect = "oracle")
   expect_equal_ignore_spaces(sql, "ALTER SESSION SET current_schema = vocabulary;")
