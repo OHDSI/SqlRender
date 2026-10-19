@@ -302,3 +302,13 @@ test_that("translate sql server -> postgresql ALTER TABLE ALTER COLUMN", {
   sql <- translate("ALTER TABLE my_table ALTER COLUMN a BIGINT;", targetDialect = "postgresql")
   expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ALTER COLUMN a TYPE BIGINT;")
 })
+
+test_that("translate sql server -> postgresql ALTER TABLE ADD PRIMARY KEY", {
+  sql <- translate("ALTER TABLE my_table ADD PRIMARY KEY (a);", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD PRIMARY KEY (a);")
+})
+
+test_that("translate sql server -> postgresql ALTER TABLE ADD UNIQUE", {
+  sql <- translate("ALTER TABLE my_table ADD UNIQUE (a, b);", targetDialect = "postgresql")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD UNIQUE (a, b);")
+})

@@ -504,3 +504,33 @@ test_that("translate sql server -> spark analyze table", {
   sql <- translate("UPDATE STATISTICS results_schema.heracles_results;", targetDialect = "spark")
   expect_equal_ignore_spaces(sql, "ANALYZE TABLE results_schema.heracles_results COMPUTE STATISTICS;")
 })
+
+test_that("translate sql server -> spark ALTER TABLE ADD single", {
+  sql <- translate("ALTER TABLE my_table ADD a INT;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMN a INT;")
+})
+
+test_that("translate sql server -> spark ALTER TABLE ADD multiple", {
+  sql <- translate("ALTER TABLE my_table ADD a INT, b INT, c VARCHAR(255);", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMNS (a INT, b INT, c STRING);")
+})
+
+test_that("translate sql server -> spark ALTER TABLE ADD COLUMN", {
+  sql <- translate("ALTER TABLE my_table ADD COLUMN a INT;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMN a INT;")
+})
+
+test_that("translate sql server -> spark ALTER TABLE ADD COLUMN multiple", {
+  sql <- translate("ALTER TABLE my_table ADD COLUMN a INT, b INT;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMNS (a INT, b INT);")
+})
+
+test_that("translate sql server -> spark ALTER TABLE ADD with default", {
+  sql <- translate("ALTER TABLE mytable ADD mycol int DEFAULT 0;", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE mytable ADD COLUMN mycol int; \n ALTER TABLE mytable SET TBLPROPERTIES('delta.feature.allowColumnDefaults' = 'supported'); \n ALTER TABLE mytable ALTER COLUMN mycol SET DEFAULT 0;")
+})
+
+test_that("translate sql server -> spark ALTER TABLE ADD PRIMARY KEY", {
+  sql <- translate("ALTER TABLE my_table ADD PRIMARY KEY (a);", targetDialect = "spark")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD PRIMARY KEY (a);")
+})

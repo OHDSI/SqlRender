@@ -1607,4 +1607,29 @@ test_that("translate sql server -> redshift drvd()", {
   expect_equal_ignore_spaces(sql, "SELECT\n      CAST(name AS VARCHAR(MAX)) AS name,\n      CAST(speed AS FLOAT) AS speed\n    FROM (SELECT NULL AS name, NULL AS speed WHERE (0 = 1) UNION ALL SELECT 'A', 1.0 UNION ALL SELECT 'B', 2.0) AS values_table;")
 })
 
+test_that("translate sql server -> redshift ALTER TABLE ADD single", {
+  sql <- translate("ALTER TABLE my_table ADD a INT;", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMN a INT;")
+})
+
+test_that("translate sql server -> redshift ALTER TABLE ADD multiple", {
+  sql <- translate("ALTER TABLE my_table ADD a INT, b INT, c VARCHAR(255);", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMN a INT; ALTER TABLE my_table ADD COLUMN b INT; ALTER TABLE my_table ADD COLUMN c VARCHAR(255);")
+})
+
+test_that("translate sql server -> redshift ALTER TABLE ADD COLUMN", {
+  sql <- translate("ALTER TABLE my_table ADD COLUMN a INT;", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD COLUMN a INT;")
+})
+
+test_that("translate sql server -> redshift ALTER TABLE ADD CONSTRAINT", {
+  sql <- translate("ALTER TABLE cdm.MEASUREMENT ADD CONSTRAINT xpk_MEASUREMENT PRIMARY KEY (measurement_id);", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE cdm.MEASUREMENT ADD CONSTRAINT xpk_MEASUREMENT PRIMARY KEY (measurement_id);")
+})
+
+test_that("translate sql server -> redshift ALTER TABLE ADD PRIMARY KEY", {
+  sql <- translate("ALTER TABLE my_table ADD PRIMARY KEY (a);", targetDialect = "redshift")
+  expect_equal_ignore_spaces(sql, "ALTER TABLE my_table ADD PRIMARY KEY (a);")
+})
+
 # rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')

@@ -571,3 +571,23 @@ test_that("translate sql server -> bigquery create temp table if not exists", {
   sql <- translate("CREATE TABLE IF NOT EXISTS #temp (x INT);", targetDialect = "bigquery", tempEmulationSchema = "ts")
   expect_equal_ignore_spaces(sql, sprintf("create table if not exists ts.%stemp (x INT64);", getTempTablePrefix()))
 })
+
+test_that("translate sql server -> bigquery ALTER TABLE ADD single", {
+  sql <- translate("ALTER TABLE my_table ADD a INT;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "alter table my_table add column a INT64;")
+})
+
+test_that("translate sql server -> bigquery ALTER TABLE ADD multiple", {
+  sql <- translate("ALTER TABLE my_table ADD a INT, b INT, c VARCHAR(255);", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "alter table my_table add column a INT64, add column b INT64, add column c STRING;")
+})
+
+test_that("translate sql server -> bigquery ALTER TABLE ADD COLUMN", {
+  sql <- translate("ALTER TABLE my_table ADD COLUMN a INT;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "alter table my_table add column a INT64;")
+})
+
+test_that("translate sql server -> bigquery ALTER TABLE ADD CONSTRAINT", {
+  sql <- translate("ALTER TABLE my_table ADD CONSTRAINT pk PRIMARY KEY (a) NOT ENFORCED;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(sql, "alter table my_table add constraint pk primary key (a) not enforced;")
+})
