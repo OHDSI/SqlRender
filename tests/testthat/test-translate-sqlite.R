@@ -225,6 +225,26 @@ test_that("translate sql server -> sqlite DATEDIFF monthdate fields", {
   )
 })
 
+test_that("translate sql server -> sqlite DATEDIFF hour, minute, second", {
+  sql <- translate("SELECT DATEDIFF(hour, visit_start_datetime, visit_end_datetime) FROM visit_occurrence;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(
+    sql,
+    "SELECT ((STRFTIME('%s', STRFTIME('%Y-%m-%d %H:00:00', visit_end_datetime, 'unixepoch')) - STRFTIME('%s', STRFTIME('%Y-%m-%d %H:00:00', visit_start_datetime, 'unixepoch'))) / 3600) FROM visit_occurrence;"
+  )
+
+  sql <- translate("SELECT DATEDIFF(minute, visit_start_datetime, visit_end_datetime) FROM visit_occurrence;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(
+    sql,
+    "SELECT ((STRFTIME('%s', STRFTIME('%Y-%m-%d %H:%M:00', visit_end_datetime, 'unixepoch')) - STRFTIME('%s', STRFTIME('%Y-%m-%d %H:%M:00', visit_start_datetime, 'unixepoch'))) / 60) FROM visit_occurrence;"
+  )
+
+  sql <- translate("SELECT DATEDIFF(second, visit_start_datetime, visit_end_datetime) FROM visit_occurrence;", targetDialect = "sqlite")
+  expect_equal_ignore_spaces(
+    sql,
+    "SELECT (STRFTIME('%s', visit_end_datetime, 'unixepoch') - STRFTIME('%s', visit_start_datetime, 'unixepoch')) FROM visit_occurrence;"
+  )
+})
+
 test_that("translate sql server -> sqlite CEILING", {
   sql <- translate("SELECT CEILING(0.1);", targetDialect = "sqlite")
   expect_equal_ignore_spaces(sql, "SELECT CEIL(0.1);")
