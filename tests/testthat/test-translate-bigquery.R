@@ -215,6 +215,46 @@ test_that("translate sql server -> bigquery DATEADD non-integer", {
   )
 })
 
+test_that("translate sql server -> bigquery DATEDIFF hour, minute, second", {
+  sql <- translate("SELECT DATEDIFF(hour, visit_start_datetime, visit_end_datetime) FROM visit_occurrence;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(
+    sql,
+    "select DATETIME_DIFF(DATETIME_TRUNC(CAST(visit_end_datetime AS DATETIME), HOUR), DATETIME_TRUNC(CAST(visit_start_datetime AS DATETIME), HOUR), HOUR) from visit_occurrence;"
+  )
+
+  sql <- translate("SELECT DATEDIFF(minute, visit_start_datetime, visit_end_datetime) FROM visit_occurrence;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(
+    sql,
+    "select DATETIME_DIFF(DATETIME_TRUNC(CAST(visit_end_datetime AS DATETIME), MINUTE), DATETIME_TRUNC(CAST(visit_start_datetime AS DATETIME), MINUTE), MINUTE) from visit_occurrence;"
+  )
+
+  sql <- translate("SELECT DATEDIFF(second, visit_start_datetime, visit_end_datetime) FROM visit_occurrence;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(
+    sql,
+    "select DATETIME_DIFF(DATETIME_TRUNC(CAST(visit_end_datetime AS DATETIME), SECOND), DATETIME_TRUNC(CAST(visit_start_datetime AS DATETIME), SECOND), SECOND) from visit_occurrence;"
+  )
+})
+
+test_that("translate sql server -> bigquery DATEADD hour, minute, second", {
+  sql <- translate("SELECT DATEADD(hour, 2, visit_start_datetime) FROM visit_occurrence;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(
+    sql,
+    "select DATETIME_ADD(CAST(visit_start_datetime AS DATETIME), INTERVAL 2 HOUR) from visit_occurrence;"
+  )
+
+  sql <- translate("SELECT DATEADD(minute, -30, visit_start_datetime) FROM visit_occurrence;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(
+    sql,
+    "select DATETIME_ADD(CAST(visit_start_datetime AS DATETIME), INTERVAL -30 MINUTE) from visit_occurrence;"
+  )
+
+  sql <- translate("SELECT DATEADD(second, 90.0, visit_start_datetime) FROM visit_occurrence;", targetDialect = "bigquery")
+  expect_equal_ignore_spaces(
+    sql,
+    "select DATETIME_ADD(CAST(visit_start_datetime AS DATETIME), INTERVAL 90 SECOND) from visit_occurrence;"
+  )
+})
+
 test_that("translate sql server -> bigquery GETDATE", {
   sql <- translate("GETDATE()", targetDialect = "bigquery")
   expect_equal_ignore_spaces(sql, "CURRENT_DATE()")
