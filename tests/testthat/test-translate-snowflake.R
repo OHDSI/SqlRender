@@ -222,4 +222,29 @@ test_that("translate sql server -> Snowflake CAST(AS DATE)", {
   expect_equal_ignore_spaces(sql, "TO_DATE('20000101', 'YYYYMMDD');")
 })
 
+test_that("translate sql server -> Snowflake DATEADD m", {
+  sql <- translate("SELECT DATEADD(m, 3, drug_era_end_date) FROM drug_era;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(month, 3, drug_era_end_date) FROM drug_era;")
+})
+
+test_that("translate sql server -> Snowflake DATEADD with abbreviations unknown to Snowflake", {
+  sql <- translate("SELECT DATEADD(qq, 1, a), DATEADD(ww, 1, a), DATEADD(n, 1, a), DATEADD(ss, 1, a), DATEADD(mcs, 1, a) FROM t;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(quarter, 1, a), DATEADD(week, 1, a), DATEADD(minute, 1, a), DATEADD(second, 1, a), DATEADD(microsecond, 1, a) FROM t;")
+})
+
+test_that("translate sql server -> Snowflake DATEDIFF m", {
+  sql <- translate("SELECT DATEDIFF(m, observation_period_start_date, observation_period_end_date) FROM observation_period;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(month, observation_period_start_date, observation_period_end_date) FROM observation_period;")
+})
+
+test_that("translate sql server -> Snowflake DATEDIFF with abbreviations unknown to Snowflake", {
+  sql <- translate("SELECT DATEDIFF(qq, a, b), DATEDIFF(ww, a, b), DATEDIFF(n, a, b), DATEDIFF(ss, a, b), DATEDIFF(mcs, a, b) FROM t;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT DATEDIFF(quarter, a, b), DATEDIFF(week, a, b), DATEDIFF(minute, a, b), DATEDIFF(second, a, b), DATEDIFF(microsecond, a, b) FROM t;")
+})
+
+test_that("translate sql server -> Snowflake DATEADD and DATEDIFF with abbreviations Snowflake shares", {
+  sql <- translate("SELECT DATEADD(mm, 1, a), DATEADD(dd, 1, a), DATEADD(yy, 1, a), DATEADD(hh, 1, a), DATEADD(mi, 1, a), DATEDIFF(mm, a, b), DATEDIFF(dd, a, b), DATEDIFF(hour, a, b) FROM t;", targetDialect = "snowflake")
+  expect_equal_ignore_spaces(sql, "SELECT DATEADD(mm, 1, a), DATEADD(dd, 1, a), DATEADD(yy, 1, a), DATEADD(hh, 1, a), DATEADD(mi, 1, a), DATEDIFF(mm, a, b), DATEDIFF(dd, a, b), DATEDIFF(hour, a, b) FROM t;")
+})
+
 # rJava::J('org.ohdsi.sql.SqlTranslate')$setReplacementPatterns('inst/csv/replacementPatterns.csv')
