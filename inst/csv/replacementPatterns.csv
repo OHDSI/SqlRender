@@ -32,9 +32,9 @@ oracle,"DATEADD(m,@months,@date)","ADD_MONTHS(@date, @months)"
 oracle,"DATEADD(year,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 oracle,"DATEADD(yyyy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
 oracle,"DATEADD(yy,@years,@date)","ADD_MONTHS(@date, 12 * @years)"
-oracle,"DATEDIFF(second,@start, @end)","EXTRACT(SECOND FROM (@end - @start))"
-oracle,"DATEDIFF(minute,@start, @end)","EXTRACT(MINUTE FROM (@end - @start))"
-oracle,"DATEDIFF(hour,@start, @end)","EXTRACT(HOUR FROM (@end - @start))"
+oracle,"DATEDIFF(second,@start, @end)","ROUND((CAST(@end AS DATE) - CAST(@start AS DATE)) * 86400)"
+oracle,"DATEDIFF(minute,@start, @end)","ROUND((TRUNC(CAST(@end AS DATE), 'MI') - TRUNC(CAST(@start AS DATE), 'MI')) * 1440)"
+oracle,"DATEDIFF(hour,@start, @end)","ROUND((TRUNC(CAST(@end AS DATE), 'HH24') - TRUNC(CAST(@start AS DATE), 'HH24')) * 24)"
 oracle,"DATEDIFF(day,@start, @end)",CEIL(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(dd,@start, @end)",CEIL(CAST(@end AS DATE) - CAST(@start AS DATE))
 oracle,"DATEDIFF(d,@start, @end)",CEIL(CAST(@end AS DATE) - CAST(@start AS DATE))

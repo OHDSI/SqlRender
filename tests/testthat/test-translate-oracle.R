@@ -30,7 +30,7 @@ test_that("translate sql server -> Oracle DATEDIFF", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "SELECT EXTRACT(SECOND FROM (drug_era_end_date - drug_era_start_date)) FROM drug_era;"
+    "SELECT ROUND((CAST(drug_era_end_date AS DATE) - CAST(drug_era_start_date AS DATE)) * 86400) FROM drug_era;"
   )
 
   sql <- translate("SELECT DATEDIFF(minute,drug_era_start_date,drug_era_end_date) FROM drug_era;",
@@ -38,7 +38,7 @@ test_that("translate sql server -> Oracle DATEDIFF", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "SELECT EXTRACT(MINUTE FROM (drug_era_end_date - drug_era_start_date)) FROM drug_era;"
+    "SELECT ROUND((TRUNC(CAST(drug_era_end_date AS DATE), 'MI') - TRUNC(CAST(drug_era_start_date AS DATE), 'MI')) * 1440) FROM drug_era;"
   )
 
   sql <- translate("SELECT DATEDIFF(hour,drug_era_start_date,drug_era_end_date) FROM drug_era;",
@@ -46,7 +46,7 @@ test_that("translate sql server -> Oracle DATEDIFF", {
   )
   expect_equal_ignore_spaces(
     sql,
-    "SELECT EXTRACT(HOUR FROM (drug_era_end_date - drug_era_start_date)) FROM drug_era;"
+    "SELECT ROUND((TRUNC(CAST(drug_era_end_date AS DATE), 'HH24') - TRUNC(CAST(drug_era_start_date AS DATE), 'HH24')) * 24) FROM drug_era;"
   )
 })
 
