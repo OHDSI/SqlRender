@@ -1375,6 +1375,18 @@ snowflake,DAY(@date),EXTRACT(DAY FROM @date)
 snowflake,"DATEPART(YEAR, @date)",EXTRACT(YEAR FROM @date)
 snowflake,"DATEPART(MONTH, @date)",EXTRACT(MONTH FROM @date)
 snowflake,"DATEPART(DAY, @date)",EXTRACT(DAY FROM @date)
+snowflake,"DATEADD(m,@n,@date)","DATEADD(month,@n,@date)"
+snowflake,"DATEADD(qq,@n,@date)","DATEADD(quarter,@n,@date)"
+snowflake,"DATEADD(ww,@n,@date)","DATEADD(week,@n,@date)"
+snowflake,"DATEADD(n,@n,@date)","DATEADD(minute,@n,@date)"
+snowflake,"DATEADD(ss,@n,@date)","DATEADD(second,@n,@date)"
+snowflake,"DATEADD(mcs,@n,@date)","DATEADD(microsecond,@n,@date)"
+snowflake,"DATEDIFF(m,@start,@end)","DATEDIFF(month,@start,@end)"
+snowflake,"DATEDIFF(qq,@start,@end)","DATEDIFF(quarter,@start,@end)"
+snowflake,"DATEDIFF(ww,@start,@end)","DATEDIFF(week,@start,@end)"
+snowflake,"DATEDIFF(n,@start,@end)","DATEDIFF(minute,@start,@end)"
+snowflake,"DATEDIFF(ss,@start,@end)","DATEDIFF(second,@start,@end)"
+snowflake,"DATEDIFF(mcs,@start,@end)","DATEDIFF(microsecond,@start,@end)"
 snowflake,EOMONTH(@date),last_day(@date)
 snowflake,STDEV(@a),STDDEV(@a)
 snowflake,VAR(@a),VARIANCE(@a)
