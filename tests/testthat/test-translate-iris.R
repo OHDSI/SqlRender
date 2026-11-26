@@ -168,7 +168,7 @@ test_that("translate sql server -> InterSystems IRIS concatenate string operator
   )
   expect_equal_ignore_spaces(
     sql,
-    "select distinct TO_DATE(cast(YEAR(observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') as obs_year from observation_period ;"
+    "SELECT DISTINCT %EXACT(TO_DATE(cast(YEAR(observation_period_start_date) as varchar(4)) || '01' || '01', 'YYYYMMDD') ) AS obs_year  FROM observation_period;"
   )
 })
 
@@ -178,3 +178,45 @@ test_that("translate sql server -> InterSystems IRIS DROP INDEX IF EXISTS", {
   sql <- translate("DROP INDEX idx_1 ON my_table;", targetDialect = "iris")
   expect_equal_ignore_spaces(sql, "DROP INDEX idx_1 ON my_table;")
 })
+
+test_that("translate sql server -> InterSystems IRIS GROUP BY exact 1 field semicolon", {
+  sql <- translate("SELECT a, COUNT(*), GROUP BY a;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT a, COUNT(*), GROUP BY %EXACT(a);")
+})
+
+test_that("translate sql server -> InterSystems IRIS GROUP BY exact 2 fields semicolon", {
+  sql <- translate("SELECT a, b, GROUP BY a, b;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT a, b, GROUP BY %EXACT(a), %EXACT(b);")
+})
+
+test_that("translate sql server -> InterSystems IRIS GROUP BY exact 1 field closing parenthesis", {
+  sql <- translate("SELECT a FROM (SELECT a GROUP BY a) tmp;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM (SELECT a GROUP BY %EXACT(a)) tmp;")
+})
+
+test_that("translate sql server -> InterSystems IRIS GROUP BY exact 2 field closing parenthesis", {
+  sql <- translate("SELECT a FROM (SELECT a, b GROUP BY a, b) tmp;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT a FROM (SELECT a, b GROUP BY %EXACT(a), %EXACT(b)) tmp;")
+})
+
+test_that("translate sql server -> InterSystems IRIS GROUP BY exact 1 field union", {
+  sql <- translate("SELECT a GROUP BY a UNION ALL SELECT c;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT a GROUP BY %EXACT(a) UNION ALL SELECT c;")
+})
+
+test_that("translate sql server -> InterSystems IRIS GROUP BY exact 2 field union", {
+  sql <- translate("SELECT a, b, GROUP BY a, b UNION ALL SELECT c;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT a, b, GROUP BY %EXACT(a), %EXACT(b) UNION ALL SELECT c;")
+})
+
+
+test_that("translate sql server -> InterSystems IRIS DISTINCT exact 1 field", {
+  sql <- translate("SELECT DISTINCT a FROM b;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT DISTINCT %EXACT(a) AS a FROM b;")
+})
+
+test_that("translate sql server -> InterSystems IRIS DISTINCT exact 2 fields", {
+  sql <- translate("SELECT DISTINCT a, b FROM c;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "SELECT DISTINCT %EXACT(a) AS a, %EXACT(b ) AS b FROM c;")
+})
+

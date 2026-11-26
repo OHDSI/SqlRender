@@ -1,3 +1,10 @@
+SqlRender 1.19.8
+================
+
+Bugfixes:
+
+1. Fixed `DISTINCT` and `GROUP BY` on IRIS (requires `%EXACT()` to avoid silent conversion to upper case).
+
 SqlRender 1.19.7
 ================
 

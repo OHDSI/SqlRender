@@ -1509,3 +1509,45 @@ iris,NEWID(),$TSQL_NEWID()
 iris,RAND(),$TSQL_NEWID()
 iris,CREATE TABLE @a AS (@b) ORDER BY @c;,CREATE TABLE @a AS @b ORDER BY @c;
 iris,CREATE TABLE @a AS (@b ORDER BY @c);,CREATE TABLE @a AS @b ORDER BY @c;
+iris,;," __ENDGB__ __SEMI__"
+iris,HAVING," __ENDGB__ __HAVING__"
+iris,ORDER BY," __ENDGB__ __ORDERBY__"
+iris,UNION," __ENDGB__ __UNION__"
+iris,"GROUP BY @a __ENDGB__","__GB_DONE__ __GB_WRAP__(@a) __ENDGB__"
+iris,"GROUP BY @a )","__GB_DONE__ __GB_WRAP__(@a))"
+iris,"__GB_WRAP__(@a, @b)","%EXACT(@a), __GB_WRAP__(@b)"
+iris,"__GB_WRAP__(@a)","%EXACT(@a)"
+iris,__GB_DONE__,GROUP BY
+iris,"__ENDGB__ __SEMI__",;
+iris,"__ENDGB__ __HAVING__",HAVING
+iris,"__ENDGB__ __ORDERBY__",ORDER BY
+iris,"__ENDGB__ __UNION__",UNION
+iris,FROM,"__ENDSD__ __FROM__"
+iris,INTO,"__ENDSD__ __INTO__"
+iris,;,"__ENDSD__ __SEMI__"
+iris,"SELECT DISTINCT TOP (@n) @a __ENDSD__","__SD_DONE__ TOP (@n) __SD_WRAP__(@a) __ENDSD__"
+iris,"SELECT DISTINCT @a __ENDSD__","__SD_DONE__ __SD_WRAP__(@a) __ENDSD__"
+iris,"SELECT DISTINCT @a )","__SD_DONE__ __SD_WRAP__(@a))"
+iris,"__SD_WRAP__(@a, @b)","__SD_ITEM__(@a), __SD_WRAP__(@b)"
+iris,"__SD_WRAP__(@a)","__SD_ITEM__(@a)"
+iris,"__SD_ITEM__(*)",*
+iris,"__SD_ITEM__(@t.*)",@t.*
+iris,"__SD_ITEM__(@a AS @b)","%EXACT(@a) AS @b"
+iris,"__SD_ITEM__(NULL)",NULL
+iris,"__SD_ITEM__(@a END)","%EXACT(@a END)"
+iris,"__SD_ITEM__(@a(@b))","%EXACT(@a(@b))"
+iris,"__SD_ITEM__((@a))","%EXACT((@a))"
+iris,"__SD_ITEM__(@a + @b)","%EXACT(@a + @b)"
+iris,"__SD_ITEM__(@a - @b)","%EXACT(@a - @b)"
+iris,"__SD_ITEM__(@a * @b)","%EXACT(@a * @b)"
+iris,"__SD_ITEM__(@a / @b)","%EXACT(@a / @b)"
+iris,"__SD_ITEM__(@a || @b)","%EXACT(@a || @b)"
+iris,"__SD_ITEM__(-@a)","%EXACT(-@a)"
+iris,"__SD_ITEM__(@s.@t.@c)","%EXACT(@s.@t.@c) AS @c"
+iris,"__SD_ITEM__(@t.@c)","%EXACT(@t.@c) AS @c"
+iris,"__SD_ITEM__(@c)","%EXACT(@c) AS @c"
+iris,"%EXACT(%EXACT(@a))","%EXACT(@a)"
+iris,__SD_DONE__,SELECT DISTINCT
+iris,"__ENDSD__ __FROM__",FROM
+iris,"__ENDSD__ __INTO__",INTO
+iris,"__ENDSD__ __SEMI__",;
