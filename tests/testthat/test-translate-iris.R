@@ -220,3 +220,7 @@ test_that("translate sql server -> InterSystems IRIS DISTINCT exact 2 fields", {
   expect_equal_ignore_spaces(sql, "SELECT DISTINCT %EXACT(a) AS a, %EXACT(b ) AS b FROM c;")
 })
 
+test_that("translate sql server -> InterSystems TRUNCATE TABLE", {
+  sql <- translate("TRUNCATE TABLE a; DROP TABLE a;", targetDialect = "iris")
+  expect_equal_ignore_spaces(sql, "DELETE FROM a; DROP TABLE a;")
+})

@@ -12,6 +12,8 @@ Bugfixes:
 
 2. Fixed `DATEADD` and `DATEDIFF` for hours, minutes, and seconds on DuckDB, SQLite, Snowflake, BigQuery, and Oracle.
 
+3. Fixed `TRUNCATE TABLE` on IRIS (`TRUNCATE TABLE` exists but requires special privileges. Using `DELETE FROM` instead).
+
 
 SqlRender 1.19.7
 ================

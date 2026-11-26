@@ -1569,3 +1569,4 @@ iris,__SD_DONE__,SELECT DISTINCT
 iris,"__ENDSD__ __FROM__",FROM
 iris,"__ENDSD__ __INTO__",INTO
 iris,"__ENDSD__ __SEMI__",;
+iris,TRUNCATE TABLE @a;,DELETE FROM @a;
