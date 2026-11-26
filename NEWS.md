@@ -1,9 +1,17 @@
-SqlRender 1.19.8
+SqlRender 1.20.0
 ================
+
+Changes:
+
+1. Added support for translation of `DROP INDEX [IF EXISTS]` on all database platforms.
+
 
 Bugfixes:
 
 1. Fixed `DISTINCT` and `GROUP BY` on IRIS (requires `%EXACT()` to avoid silent conversion to upper case).
+
+2. Fixed `DATEADD` and `DATEDIFF` for hours, minutes, and seconds on DuckDB, SQLite, Snowflake, BigQuery, and Oracle.
+
 
 SqlRender 1.19.7
 ================
@@ -45,6 +53,7 @@ SqlRender 1.19.4
 Bugfixes:
 
 1. Translating `FLOAT` to `DOUBLE` on DataBricks (Spark), because DataBricks `FLOAT` is single precision while SQL Server `FLOAT` is double precision.
+
 
 SqlRender 1.19.3
 ================
