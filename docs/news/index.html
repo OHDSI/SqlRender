@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SqlRender</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.20.0</span>
       </span>
     </div>
 
@@ -64,7 +64,16 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.19.7" id="sqlrender-1197">SqlRender 1.19.7<a class="anchor" aria-label="anchor" href="#sqlrender-1197"></a></h2>
+<h2 class="page-header" data-toc-text="1.20.0" id="sqlrender-1200">SqlRender 1.20.0<a class="anchor" aria-label="anchor" href="#sqlrender-1200"></a></h2>
+<p>Changes:</p>
+<ol style="list-style-type: decimal"><li>Added support for translation of <code>DROP INDEX [IF EXISTS]</code> on all database platforms.</li>
+</ol><p>Bugfixes:</p>
+<ol style="list-style-type: decimal"><li><p>Fixed <code>DISTINCT</code> and <code>GROUP BY</code> on IRIS (requires <code>%EXACT()</code> to avoid silent conversion to upper case).</p></li>
+<li><p>Fixed <code>DATEADD</code> and <code>DATEDIFF</code> for hours, minutes, and seconds on DuckDB, SQLite, Snowflake, BigQuery, and Oracle.</p></li>
+<li><p>Fixed <code>TRUNCATE TABLE</code> on IRIS (<code>TRUNCATE TABLE</code> exists but requires special privileges. Using <code>DELETE FROM</code> instead).</p></li>
+</ol></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.19.7" id="sqlrender-1197">SqlRender 1.19.7<small>2026-09-18</small><a class="anchor" aria-label="anchor" href="#sqlrender-1197"></a></h2>
 <p>Bugfixes:</p>
 <ol style="list-style-type: decimal"><li><p>Fixing translation of literals to dates on Iris.</p></li>
 <li><p>Fixing translations of FLOAT. This is now translated to DOUBLE in DuckDB, and DOUBLE PRECISION in Posgresql. In all other dialects the current translation was found to be correct.</p></li>
